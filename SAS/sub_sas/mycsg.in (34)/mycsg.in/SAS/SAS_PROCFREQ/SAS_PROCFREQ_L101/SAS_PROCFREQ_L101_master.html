@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCFREQ_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Create sample datasets
+</h1>
+ 
+<ul>
+<li>`class01` is a direct copy of `sashelp.class` and is used in most examples</li>
+<li>`class02` introduces a missing value in `sex` so that the learner can observe how PROC FREQ handles missing category values</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="10">
+data class01;
+    set sashelp.class;
+run;
+ 
+data class02;
+    set sashelp.class;
+    if age=16 then sex="";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="26">
+data class01;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class02;
+set sashelp.class;
+if age=16 then sex="";
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS02 has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFREQ_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+PROC FREQ with all defaults
+</h1>
+<ul>
+<li>If `data=` is not used, PROC FREQ analyses the most recently created dataset in the session</li>
+<li>PROC FREQ creates one-way frequency tables for all variables by default</li>
+<li>No output dataset is created unless additional options request one</li>
+<li>The default statistics shown are frequency, percent, cumulative frequency, and cumulative percent</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc freq;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc freq;
+ERROR: File WORK.TEMP.DATA does not exist.
+run;
+ 
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review the output window and notice that a separate frequency table is produced for each variable</li>
+</ul>
+ 
+<h1>
+Using the DATA= option to mention the input dataset
+</h1>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc freq data=class01;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+ 
+ 
+proc freq data=class01;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Using the TABLES statement to request frequencies for a specific variable
+</h1>
+ 
+<ul>
+<li>The `tables` statement limits the report to the variables listed</li>
+<li>Here we request a one-way table for `sex` only</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Using the TABLES statement to request frequencies for multiple individual variables
+</h1>
+ 
+<ul>
+<li>List multiple variables separated by spaces on the same TABLES statement</li>
+<li>PROC FREQ creates one separate one-way table for each variable listed</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Using multiple TABLES statements
+</h1>
+ 
+<ul>
+<li>Multiple TABLES statements can also be used instead of listing all variables in one statement</li>
+<li>The final result is similar, but the code may be easier to read in some situations</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="6">
+proc freq data=class01;
+    tables sex;
+    tables age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc freq data=class01;
+tables sex;
+tables age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Using BY group processing to obtain frequencies of one variable grouped by another variable
+</h1>
+<ul>
+<li>Use a BY statement for the grouping variable</li>
+<li>Before using BY processing, the dataset must be sorted by the same BY variable</li>
+<li>PROC FREQ then creates a separate frequency table for each BY group</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="10">
+proc sort data=class01 out=class_sort;
+    by sex;
+run;
+ 
+proc freq data=class_sort;
+    by sex;
+    tables age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+proc sort data=class01 out=class_sort;
+by sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SORT has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc freq data=class_sort;
+by sex;
+tables age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS_SORT.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Cross tabulation to obtain frequencies of one variable grouped by another variable
+</h1>
+<ul>
+<li>List the variables separated by an asterisk</li>
+<li>The unique values of the first listed variable appear as rows</li>
+<li>The unique values of the second listed variable appear as columns</li>
+<li>Frequency, percent, row percent, and column percent are shown in the cells by default</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex*age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex*age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Cross tabulation of more than two variables
+</h1>
+ 
+<ul>
+<li>For more than two variables, PROC FREQ creates layered tables</li>
+<li>A separate table is created for each unique value of the first listed variable in a three-way table</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data class_agegroup;
+    set class01;
+    length age_group $10;
+    if age lt 13 then age_group="Pre-teen";
+    else if age lt 19 then age_group="Teen";
+run;
+ 
+proc freq data=class_agegroup;
+    tables age_group*age*sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="27">
+data class_agegroup;
+set class01;
+length age_group $10;
+if age lt 13 then age_group="Pre-teen";
+else if age lt 19 then age_group="Teen";
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_AGEGROUP has 19 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc freq data=class_agegroup;
+tables age_group*age*sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS_AGEGROUP.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Options to control the statistics displayed in the output window
+</h1>
+ 
+<h2>
+One-way tables default output
+</h2>
+ 
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+One-way tables suppress cumulative statistics
+</h2>
+<textarea id="codeBlock11" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex / nocum;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock11" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal11">View Log</button><div class="modal fade" id="logModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex / nocum;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+One-way tables suppress percent
+</h2>
+<textarea id="codeBlock12" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex / nopercent;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock12" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal12">View Log</button><div class="modal fade" id="logModal12" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex / nopercent;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+One-way tables suppress count
+</h2>
+<ul>
+<li>The `nocount` option suppresses the display of frequencies in the output table</li>
+<li>This corrects a common misunderstanding that count cannot be suppressed</li>
+</ul>
+ 
+<textarea id="codeBlock13" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex / nocount;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock13" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal13">View Log</button><div class="modal fade" id="logModal13" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+proc freq data=class01;
+tables sex / nocount;
+-------
+1
+WARNING 1-322: Assuming the symbol NOCOL was misspelled as nocount.
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+One-way tables suppress multiple possible elements
+</h2>
+ 
+<ul>
+<li>Multiple table options can be listed together after a slash</li>
+</ul>
+ 
+<textarea id="codeBlock14" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex / nopercent nocum;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock14" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal14">View Log</button><div class="modal fade" id="logModal14" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex / nopercent nocum;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+N-way tables default output
+</h2>
+<ul>
+<li>For two-way tables, the default statistics include frequency, percent, row percent, and column percent</li>
+</ul>
+ 
+<textarea id="codeBlock15" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex*age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock15" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal15">View Log</button><div class="modal fade" id="logModal15" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex*age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+N-way tables suppress percent values
+</h2>
+<textarea id="codeBlock16" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class01;
+    tables sex*age / nopercent norow nocol;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock16" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal16">View Log</button><div class="modal fade" id="logModal16" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class01;
+tables sex*age / nopercent norow nocol;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+Display missing values as a valid category
+</h2>
+ 
+<ul>
+<li>By default, missing values are excluded from one-way frequency tables in many situations</li>
+<li>The `missing` option tells PROC FREQ to treat missing values as a valid category level</li>
+<li>We use `class02` here because one value of `sex` was intentionally set to missing</li>
+</ul>
+ 
+<textarea id="codeBlock17" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=class02;
+    tables sex / missing;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock17" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal17">View Log</button><div class="modal fade" id="logModal17" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=class02;
+tables sex / missing;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS02.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`proc freq` is used for one-way and multiway frequency tables</li>
+<li>The `tables` statement controls which variables are tabulated</li>
+<li>BY processing requires prior sorting and creates separate tables for each BY group</li>
+<li>Table options such as `nocum`, `nopercent`, `nocount`, `norow`, and `nocol` control what is displayed</li>
+<li>The `missing` option lets missing values appear as a valid category in the output</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+
