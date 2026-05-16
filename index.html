@@ -48,22 +48,16 @@
     }
 
     .item{
+      padding:16px 18px;
       border-bottom:1px solid #eee;
+      transition:0.2s;
     }
 
     .item:last-child{
       border-bottom:none;
     }
 
-    .item a{
-      display:block;
-      padding:16px 18px;
-      text-decoration:none;
-      color:#222;
-      transition:0.2s;
-    }
-
-    .item a:hover{
+    .item:hover{
       background:#f9f9f9;
     }
 
@@ -95,9 +89,6 @@
 </div>
 
 <script>
-
-const baseUrl =
-"https://pratap-082020.github.io/QnA_mycsg/";
 
 let allFiles = [
 
@@ -167,14 +158,7 @@ function renderFiles(files){
     fileList.innerHTML += `
     
       <div class="item">
-      
-        <a
-          href="${baseUrl}${file}"
-          target="_blank"
-        >
-          ${file}
-        </a>
-
+        ${file}
       </div>
 
     `;
