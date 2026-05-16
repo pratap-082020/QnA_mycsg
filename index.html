@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTML Pages</title>
+  <title>QnA Pages</title>
 
   <style>
 
@@ -15,13 +15,13 @@
 
     body{
       font-family:Arial, sans-serif;
-      background:#f6f6f6;
+      background:#f5f5f5;
       padding:30px 15px;
       color:#222;
     }
 
     .container{
-      max-width:700px;
+      max-width:800px;
       margin:auto;
     }
 
@@ -80,7 +80,7 @@
 
 <div class="container">
 
-  <h1>HTML Pages</h1>
+  <h1>QnA HTML Pages</h1>
 
   <input
     type="text"
@@ -96,39 +96,64 @@
 
 <script>
 
-let allFiles = [];
+const baseUrl =
+"https://pratap-082020.github.io/QnA_mycsg/";
 
-async function loadFiles(){
+let allFiles = [
 
-  const response = await fetch('./');
+"adam.adae.html",
+"adam.adlb.html",
+"adam.adsl.html",
+"adam.adtte.html",
+"adam.bds.html",
+"adam.general.html",
+"domain.clinical_domain_standards.html",
+"domain.general.html",
+"domain.regulatory.html",
+"domain.terminology.html",
+"domain.trial_design_aspects.html",
+"sas.clinical_sas.html",
+"sas.data_step.html",
+"sas.functions.html",
+"sas.general.html",
+"sas.log_issues.html",
+"sas.macros.html",
+"sas.ods.html",
+"sas.proc_datasets.html",
+"sas.proc_format.html",
+"sas.proc_freq.html",
+"sas.proc_means.html",
+"sas.proc_print.html",
+"sas.proc_report.html",
+"sas.proc_sort.html",
+"sas.proc_sql.html",
+"sas.programming_logics.html",
+"sas.system_options.html",
+"sdtm.adverse_events.html",
+"sdtm.comments.html",
+"sdtm.concomitant_medications.html",
+"sdtm.demographics.html",
+"sdtm.disposition.html",
+"sdtm.exposure.html",
+"sdtm.findings.html",
+"sdtm.medical_history.html",
+"sdtm.subject_elements.html",
+"sdtm.subject_visits.html",
+"sdtm.suppqual.html",
+"sdtm.trial_design.html",
+"sdtm_general.html",
+"statistics.clinical_trials_statistics.html",
+"statistics.general.html",
+"statistics.sas_statistics_procedures.html",
+"statistics.statistics_tests.html",
+"tlf.figures.html",
+"tlf.general.html",
+"tlf.listings.html",
+"tlf.tables.html"
 
-  const text = await response.text();
+];
 
-  const parser = new DOMParser();
-
-  const doc = parser.parseFromString(text, 'text/html');
-
-  const links = [...doc.querySelectorAll('a')];
-
-  links.forEach(link => {
-
-    const href = link.getAttribute('href');
-
-    if(
-      href &&
-      href.endsWith('.html') &&
-      href !== 'index.html'
-    ){
-      allFiles.push(href);
-    }
-
-  });
-
-  allFiles.sort();
-
-  renderFiles(allFiles);
-
-}
+allFiles.sort();
 
 function renderFiles(files){
 
@@ -143,7 +168,10 @@ function renderFiles(files){
     
       <div class="item">
       
-        <a href="${file}">
+        <a
+          href="${baseUrl}${file}"
+          target="_blank"
+        >
           ${file}
         </a>
 
@@ -174,7 +202,7 @@ document
 
   });
 
-loadFiles();
+renderFiles(allFiles);
 
 </script>
 
