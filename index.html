@@ -1,20 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Files and Folders</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Pages</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:Arial, sans-serif;
+      background:#f6f6f6;
+      padding:30px 15px;
+      color:#222;
+    }
+
+    .container{
+      max-width:700px;
+      margin:auto;
+    }
+
+    h1{
+      font-size:28px;
+      margin-bottom:20px;
+    }
+
+    input{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:10px;
+      margin-bottom:20px;
+      font-size:15px;
+      outline:none;
+      background:white;
+    }
+
+    .list{
+      background:white;
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    .item{
+      border-bottom:1px solid #eee;
+    }
+
+    .item:last-child{
+      border-bottom:none;
+    }
+
+    .item a{
+      display:block;
+      padding:16px 18px;
+      text-decoration:none;
+      color:#222;
+      transition:0.2s;
+    }
+
+    .item a:hover{
+      background:#f9f9f9;
+    }
+
+    .count{
+      margin-top:12px;
+      font-size:13px;
+      color:#777;
+    }
+
+  </style>
 </head>
+
 <body>
-<div>
-  <h1>Files and Folders</h1>
-  <ul>
-    <li><a href="folder1/">📁 folder1</a></li>
-    <li><a href="folder2/">📁 folder2</a></li>
-    <li><a href="report.pdf">📄 report.pdf</a></li>
-    <li><a href="data.xlsx">📄 data.xlsx</a></li>
-    <li><a href="image.png">🖼️ image.png</a></li>
-  </ul>
+
+<div class="container">
+
+  <h1>HTML Pages</h1>
+
+  <input
+    type="text"
+    id="search"
+    placeholder="Search file..."
+  >
+
+  <div class="list" id="fileList"></div>
+
+  <div class="count" id="count"></div>
+
 </div>
+
+<script>
+
+let allFiles = [];
+
+async function loadFiles(){
+
+  const response = await fetch('./');
+
+  const text = await response.text();
+
+  const parser = new DOMParser();
+
+  const doc = parser.parseFromString(text, 'text/html');
+
+  const links = [...doc.querySelectorAll('a')];
+
+  links.forEach(link => {
+
+    const href = link.getAttribute('href');
+
+    if(
+      href &&
+      href.endsWith('.html') &&
+      href !== 'index.html'
+    ){
+      allFiles.push(href);
+    }
+
+  });
+
+  allFiles.sort();
+
+  renderFiles(allFiles);
+
+}
+
+function renderFiles(files){
+
+  const fileList =
+    document.getElementById('fileList');
+
+  fileList.innerHTML = '';
+
+  files.forEach(file => {
+
+    fileList.innerHTML += `
+    
+      <div class="item">
+      
+        <a href="${file}">
+          ${file}
+        </a>
+
+      </div>
+
+    `;
+
+  });
+
+  document.getElementById('count').innerHTML =
+    `${files.length} files`;
+
+}
+
+document
+  .getElementById('search')
+  .addEventListener('input', function(){
+
+    const value =
+      this.value.toLowerCase();
+
+    const filtered =
+      allFiles.filter(file =>
+        file.toLowerCase().includes(value)
+      );
+
+    renderFiles(filtered);
+
+  });
+
+loadFiles();
+
+</script>
+
 </body>
 </html>
