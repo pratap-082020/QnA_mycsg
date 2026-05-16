@@ -3,19 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QnA HTML Pages</title>
+  <title>QnA Pages</title>
 
   <style>
 
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
     body{
-      font-family: Arial, sans-serif;
+      font-family:Arial, sans-serif;
       background:#f5f5f5;
-      padding:30px;
+      padding:30px 15px;
       color:#222;
     }
 
     .container{
-      max-width:800px;
+      max-width:900px;
       margin:auto;
     }
 
@@ -24,28 +30,59 @@
       margin-bottom:20px;
     }
 
-    .list{
+    input{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:10px;
+      margin-bottom:20px;
+      font-size:15px;
+      outline:none;
+      background:white;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
       background:white;
       border-radius:10px;
       overflow:hidden;
-      border:1px solid #ddd;
     }
 
-    .item{
-      padding:14px 18px;
+    th{
+      background:#222;
+      color:white;
+      text-align:left;
+      padding:14px;
+      font-size:15px;
+    }
+
+    td{
+      padding:14px;
       border-bottom:1px solid #eee;
+      font-size:14px;
     }
 
-    .item:last-child{
-      border-bottom:none;
-    }
-
-    .item:hover{
+    tr:hover{
       background:#fafafa;
     }
 
-  </style>
+    a{
+      color:#0066cc;
+      text-decoration:none;
+    }
 
+    a:hover{
+      text-decoration:underline;
+    }
+
+    .count{
+      margin-top:12px;
+      font-size:13px;
+      color:#777;
+    }
+
+  </style>
 </head>
 
 <body>
@@ -54,66 +91,302 @@
 
   <h1>QnA HTML Pages</h1>
 
-  <div class="list">
+  <input
+    type="text"
+    id="search"
+    placeholder="Search domain or topic..."
+  >
 
-    <div class="item">adam.adae.html</div>
-    <div class="item">adam.adlb.html</div>
-    <div class="item">adam.adsl.html</div>
-    <div class="item">adam.adtte.html</div>
-    <div class="item">adam.bds.html</div>
-    <div class="item">adam.general.html</div>
+  <table>
 
-    <div class="item">domain.clinical_domain_standards.html</div>
-    <div class="item">domain.general.html</div>
-    <div class="item">domain.regulatory.html</div>
-    <div class="item">domain.terminology.html</div>
-    <div class="item">domain.trial_design_aspects.html</div>
+    <thead>
+      <tr>
+        <th>Domain</th>
+        <th>Topic</th>
+      </tr>
+    </thead>
 
-    <div class="item">sas.clinical_sas.html</div>
-    <div class="item">sas.data_step.html</div>
-    <div class="item">sas.functions.html</div>
-    <div class="item">sas.general.html</div>
-    <div class="item">sas.log_issues.html</div>
-    <div class="item">sas.macros.html</div>
-    <div class="item">sas.ods.html</div>
-    <div class="item">sas.proc_datasets.html</div>
-    <div class="item">sas.proc_format.html</div>
-    <div class="item">sas.proc_freq.html</div>
-    <div class="item">sas.proc_means.html</div>
-    <div class="item">sas.proc_print.html</div>
-    <div class="item">sas.proc_report.html</div>
-    <div class="item">sas.proc_sort.html</div>
-    <div class="item">sas.proc_sql.html</div>
-    <div class="item">sas.programming_logics.html</div>
-    <div class="item">sas.system_options.html</div>
+    <tbody id="tableBody"></tbody>
 
-    <div class="item">sdtm.adverse_events.html</div>
-    <div class="item">sdtm.comments.html</div>
-    <div class="item">sdtm.concomitant_medications.html</div>
-    <div class="item">sdtm.demographics.html</div>
-    <div class="item">sdtm.disposition.html</div>
-    <div class="item">sdtm.exposure.html</div>
-    <div class="item">sdtm.findings.html</div>
-    <div class="item">sdtm.medical_history.html</div>
-    <div class="item">sdtm.subject_elements.html</div>
-    <div class="item">sdtm.subject_visits.html</div>
-    <div class="item">sdtm.suppqual.html</div>
-    <div class="item">sdtm.trial_design.html</div>
-    <div class="item">sdtm_general.html</div>
+  </table>
 
-    <div class="item">statistics.clinical_trials_statistics.html</div>
-    <div class="item">statistics.general.html</div>
-    <div class="item">statistics.sas_statistics_procedures.html</div>
-    <div class="item">statistics.statistics_tests.html</div>
-
-    <div class="item">tlf.figures.html</div>
-    <div class="item">tlf.general.html</div>
-    <div class="item">tlf.listings.html</div>
-    <div class="item">tlf.tables.html</div>
-
-  </div>
+  <div class="count" id="count"></div>
 
 </div>
+
+<script>
+
+const baseUrl =
+"https://pratap-082020.github.io/QnA_mycsg/";
+
+const files = [
+
+{
+  domain:"adam",
+  topic:"adae",
+  file:"adam.adae.html"
+},
+
+{
+  domain:"adam",
+  topic:"adlb",
+  file:"adam.adlb.html"
+},
+
+{
+  domain:"adam",
+  topic:"adsl",
+  file:"adam.adsl.html"
+},
+
+{
+  domain:"adam",
+  topic:"adtte",
+  file:"adam.adtte.html"
+},
+
+{
+  domain:"adam",
+  topic:"bds",
+  file:"adam.bds.html"
+},
+
+{
+  domain:"adam",
+  topic:"general",
+  file:"adam.general.html"
+},
+
+{
+  domain:"domain",
+  topic:"clinical_domain_standards",
+  file:"domain.clinical_domain_standards.html"
+},
+
+{
+  domain:"domain",
+  topic:"general",
+  file:"domain.general.html"
+},
+
+{
+  domain:"domain",
+  topic:"regulatory",
+  file:"domain.regulatory.html"
+},
+
+{
+  domain:"domain",
+  topic:"terminology",
+  file:"domain.terminology.html"
+},
+
+{
+  domain:"domain",
+  topic:"trial_design_aspects",
+  file:"domain.trial_design_aspects.html"
+},
+
+{
+  domain:"sas",
+  topic:"clinical_sas",
+  file:"sas.clinical_sas.html"
+},
+
+{
+  domain:"sas",
+  topic:"data_step",
+  file:"sas.data_step.html"
+},
+
+{
+  domain:"sas",
+  topic:"functions",
+  file:"sas.functions.html"
+},
+
+{
+  domain:"sas",
+  topic:"general",
+  file:"sas.general.html"
+},
+
+{
+  domain:"sas",
+  topic:"log_issues",
+  file:"sas.log_issues.html"
+},
+
+{
+  domain:"sas",
+  topic:"macros",
+  file:"sas.macros.html"
+},
+
+{
+  domain:"sas",
+  topic:"ods",
+  file:"sas.ods.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_datasets",
+  file:"sas.proc_datasets.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_format",
+  file:"sas.proc_format.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_freq",
+  file:"sas.proc_freq.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_means",
+  file:"sas.proc_means.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_print",
+  file:"sas.proc_print.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_report",
+  file:"sas.proc_report.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_sort",
+  file:"sas.proc_sort.html"
+},
+
+{
+  domain:"sas",
+  topic:"proc_sql",
+  file:"sas.proc_sql.html"
+},
+
+{
+  domain:"sas",
+  topic:"programming_logics",
+  file:"sas.programming_logics.html"
+},
+
+{
+  domain:"sas",
+  topic:"system_options",
+  file:"sas.system_options.html"
+},
+
+{
+  domain:"tlf",
+  topic:"figures",
+  file:"tlf.figures.html"
+},
+
+{
+  domain:"tlf",
+  topic:"general",
+  file:"tlf.general.html"
+},
+
+{
+  domain:"tlf",
+  topic:"listings",
+  file:"tlf.listings.html"
+},
+
+{
+  domain:"tlf",
+  topic:"tables",
+  file:"tlf.tables.html"
+}
+
+];
+
+files.sort((a,b) =>
+  a.domain.localeCompare(b.domain)
+);
+
+function renderTable(data){
+
+  const tableBody =
+    document.getElementById("tableBody");
+
+  tableBody.innerHTML = "";
+
+  data.forEach(item => {
+
+    tableBody.innerHTML += `
+    
+      <tr>
+
+        <td>
+          ${item.domain.toUpperCase()}
+        </td>
+
+        <td>
+
+          <a
+            href="${baseUrl}${item.file}"
+            target="_blank"
+          >
+            ${item.topic}
+          </a>
+
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+  document.getElementById("count").innerHTML =
+    `${data.length} topics`;
+
+}
+
+document
+  .getElementById("search")
+  .addEventListener("input", function(){
+
+    const value =
+      this.value.toLowerCase();
+
+    const filtered =
+      files.filter(item =>
+
+        item.domain
+          .toLowerCase()
+          .includes(value)
+
+        ||
+
+        item.topic
+          .toLowerCase()
+          .includes(value)
+
+      );
+
+    renderTable(filtered);
+
+  });
+
+renderTable(files);
+
+</script>
 
 </body>
 </html>
