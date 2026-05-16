@@ -3,20 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QnA Pages</title>
+  <title>QnA HTML Pages</title>
 
   <style>
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-    }
-
     body{
-      font-family:Arial, sans-serif;
+      font-family: Arial, sans-serif;
       background:#f5f5f5;
-      padding:30px 15px;
+      padding:30px;
       color:#222;
     }
 
@@ -30,27 +24,16 @@
       margin-bottom:20px;
     }
 
-    input{
-      width:100%;
-      padding:14px;
-      border:none;
-      border-radius:10px;
-      margin-bottom:20px;
-      font-size:15px;
-      outline:none;
-      background:white;
-    }
-
     .list{
       background:white;
-      border-radius:12px;
+      border-radius:10px;
       overflow:hidden;
+      border:1px solid #ddd;
     }
 
     .item{
-      padding:16px 18px;
+      padding:14px 18px;
       border-bottom:1px solid #eee;
-      transition:0.2s;
     }
 
     .item:last-child{
@@ -58,16 +41,11 @@
     }
 
     .item:hover{
-      background:#f9f9f9;
-    }
-
-    .count{
-      margin-top:12px;
-      font-size:13px;
-      color:#777;
+      background:#fafafa;
     }
 
   </style>
+
 </head>
 
 <body>
@@ -76,119 +54,66 @@
 
   <h1>QnA HTML Pages</h1>
 
-  <input
-    type="text"
-    id="search"
-    placeholder="Search file..."
-  >
+  <div class="list">
 
-  <div class="list" id="fileList"></div>
+    <div class="item">adam.adae.html</div>
+    <div class="item">adam.adlb.html</div>
+    <div class="item">adam.adsl.html</div>
+    <div class="item">adam.adtte.html</div>
+    <div class="item">adam.bds.html</div>
+    <div class="item">adam.general.html</div>
 
-  <div class="count" id="count"></div>
+    <div class="item">domain.clinical_domain_standards.html</div>
+    <div class="item">domain.general.html</div>
+    <div class="item">domain.regulatory.html</div>
+    <div class="item">domain.terminology.html</div>
+    <div class="item">domain.trial_design_aspects.html</div>
+
+    <div class="item">sas.clinical_sas.html</div>
+    <div class="item">sas.data_step.html</div>
+    <div class="item">sas.functions.html</div>
+    <div class="item">sas.general.html</div>
+    <div class="item">sas.log_issues.html</div>
+    <div class="item">sas.macros.html</div>
+    <div class="item">sas.ods.html</div>
+    <div class="item">sas.proc_datasets.html</div>
+    <div class="item">sas.proc_format.html</div>
+    <div class="item">sas.proc_freq.html</div>
+    <div class="item">sas.proc_means.html</div>
+    <div class="item">sas.proc_print.html</div>
+    <div class="item">sas.proc_report.html</div>
+    <div class="item">sas.proc_sort.html</div>
+    <div class="item">sas.proc_sql.html</div>
+    <div class="item">sas.programming_logics.html</div>
+    <div class="item">sas.system_options.html</div>
+
+    <div class="item">sdtm.adverse_events.html</div>
+    <div class="item">sdtm.comments.html</div>
+    <div class="item">sdtm.concomitant_medications.html</div>
+    <div class="item">sdtm.demographics.html</div>
+    <div class="item">sdtm.disposition.html</div>
+    <div class="item">sdtm.exposure.html</div>
+    <div class="item">sdtm.findings.html</div>
+    <div class="item">sdtm.medical_history.html</div>
+    <div class="item">sdtm.subject_elements.html</div>
+    <div class="item">sdtm.subject_visits.html</div>
+    <div class="item">sdtm.suppqual.html</div>
+    <div class="item">sdtm.trial_design.html</div>
+    <div class="item">sdtm_general.html</div>
+
+    <div class="item">statistics.clinical_trials_statistics.html</div>
+    <div class="item">statistics.general.html</div>
+    <div class="item">statistics.sas_statistics_procedures.html</div>
+    <div class="item">statistics.statistics_tests.html</div>
+
+    <div class="item">tlf.figures.html</div>
+    <div class="item">tlf.general.html</div>
+    <div class="item">tlf.listings.html</div>
+    <div class="item">tlf.tables.html</div>
+
+  </div>
 
 </div>
-
-<script>
-
-let allFiles = [
-
-"adam.adae.html",
-"adam.adlb.html",
-"adam.adsl.html",
-"adam.adtte.html",
-"adam.bds.html",
-"adam.general.html",
-"domain.clinical_domain_standards.html",
-"domain.general.html",
-"domain.regulatory.html",
-"domain.terminology.html",
-"domain.trial_design_aspects.html",
-"sas.clinical_sas.html",
-"sas.data_step.html",
-"sas.functions.html",
-"sas.general.html",
-"sas.log_issues.html",
-"sas.macros.html",
-"sas.ods.html",
-"sas.proc_datasets.html",
-"sas.proc_format.html",
-"sas.proc_freq.html",
-"sas.proc_means.html",
-"sas.proc_print.html",
-"sas.proc_report.html",
-"sas.proc_sort.html",
-"sas.proc_sql.html",
-"sas.programming_logics.html",
-"sas.system_options.html",
-"sdtm.adverse_events.html",
-"sdtm.comments.html",
-"sdtm.concomitant_medications.html",
-"sdtm.demographics.html",
-"sdtm.disposition.html",
-"sdtm.exposure.html",
-"sdtm.findings.html",
-"sdtm.medical_history.html",
-"sdtm.subject_elements.html",
-"sdtm.subject_visits.html",
-"sdtm.suppqual.html",
-"sdtm.trial_design.html",
-"sdtm_general.html",
-"statistics.clinical_trials_statistics.html",
-"statistics.general.html",
-"statistics.sas_statistics_procedures.html",
-"statistics.statistics_tests.html",
-"tlf.figures.html",
-"tlf.general.html",
-"tlf.listings.html",
-"tlf.tables.html"
-
-];
-
-allFiles.sort();
-
-function renderFiles(files){
-
-  const fileList =
-    document.getElementById('fileList');
-
-  fileList.innerHTML = '';
-
-  files.forEach(file => {
-
-    fileList.innerHTML += `
-    
-      <div class="item">
-        ${file}
-      </div>
-
-    `;
-
-  });
-
-  document.getElementById('count').innerHTML =
-    `${files.length} files`;
-
-}
-
-document
-  .getElementById('search')
-  .addEventListener('input', function(){
-
-    const value =
-      this.value.toLowerCase();
-
-    const filtered =
-      allFiles.filter(file =>
-        file.toLowerCase().includes(value)
-      );
-
-    renderFiles(filtered);
-
-  });
-
-renderFiles(allFiles);
-
-</script>
 
 </body>
 </html>
