@@ -1,0 +1,58 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_RELREC_L101;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data adverse;
+infile datalines dlm='|' dsd missover;
+input STUDY : $5. SUBJECT : $4. AESPID : $1. AETERM : $20.;
+label STUDY ='STUDY' SUBJECT ='SUBJECT' AESPID ='AESPID' AETERM ='AETERM';
+format ;
+datalines4;
+MYCSG|1001|1|Pneumonia
+MYCSG|1001|2|Headache
+MYCSG|1002|1|Sepsis
+MYCSG|1002|2|Hemoglobin decreased
+;;;;
+run;
+
+data eos;
+infile datalines dlm='|' dsd missover;
+input STUDY : $5. SUBJECT : $4. DSSPID : $4. DSTERM : $13. DSAENO : $1.;
+label STUDY ='STUDY' SUBJECT ='SUBJECT' DSSPID ='DSSPID' DSTERM ='DSTERM' DSAENO ='DSAENO';
+format ;
+datalines4;
+MYCSG|1001|3001|Completed|
+MYCSG|1002|3001|Adverse Event|1
+;;;;
+run;
+
+data conmeds;
+infile datalines dlm='|' dsd missover;
+input STUDY : $5. SUBJECT : $4. CMSPID : $1. CMTRT : $12. CMAENO : $1.;
+label STUDY ='STUDY' SUBJECT ='SUBJECT' CMSPID ='CMSPID' CMTRT ='CMTRT' CMAENO ='CMAENO';
+format ;
+datalines4;
+MYCSG|1001|1|Azithromycin|1
+MYCSG|1001|2|Benadryl|1
+MYCSG|1002|1|Omeprazole|
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

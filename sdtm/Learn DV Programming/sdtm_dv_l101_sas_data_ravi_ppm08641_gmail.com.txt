@@ -1,0 +1,50 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_DV_L101;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. USUBJID : $10. RFSTDTC : $10.;
+label STUDYID ='STUDYID' USUBJID ='USUBJID' RFSTDTC ='RFSTDTC';
+format ;
+datalines4;
+MYCSG|MYCSG-1001|2023-01-04
+MYCSG|MYCSG-1002|2023-02-14
+MYCSG|MYCSG-1003|2023-03-15
+MYCSG|MYCSG-1004|2023-04-22
+MYCSG|MYCSG-1005|2023-05-18
+MYCSG|MYCSG-1006|2023-06-02
+;;;;
+run;
+
+data protdev;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. SUBJECT : $4. FOLDERSEQ : BEST. FOLDERNAME : $19. RECORDPOSITION : best32. TERM : $351. DVSTDAT_RAW : $11. DVENDAT_RAW : $11. MAJOR : $3. CODED : $31.;
+label STUDYID ='STUDYID' SUBJECT ='SUBJECT' FOLDERSEQ ='FolderSeq' FOLDERNAME ='FolderName' TERM ='TERM' DVSTDAT_RAW ='DVSTDAT_RAW' DVENDAT_RAW ='DVENDAT_RAW' MAJOR ='MAJOR' CODED ='CODED';
+format ;
+datalines4;
+MYCSG|1001|990|Protocol Deviations|1|TOOK ASPIRIN|10-JAN-2023|11-JAN-2023|Yes|PROHIBITED MEDS
+MYCSG|1002|990|Protocol Deviations|2|Drug Metformin administered|20-FEB-2023|20-FEB-2023|No|EXCLUDED CONCOMITANT MEDICATIOn
+MYCSG|1003|990|Protocol Deviations|3|CT SCAN not perfomed within visit window for visit 3|02-APR-2023||No|STUDY PROCEDURES
+MYCSG|1004|990|Protocol Deviations|4|"The patient did not attend the Site for an ""early termination-End of study"" visit. Therefore, none of the protocol procedures for early termination were performed (physical examination, vital signs, laboratory assessments, and immunogenicity). This situation is considered a protocol deviation and the information needs to be submitted to LEC by site."|01-SEP-2023||No|STUDY PROCEDURES
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

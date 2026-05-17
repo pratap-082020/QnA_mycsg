@@ -1,0 +1,62 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_IE_L101;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. DOMAIN : $2. USUBJID : $10. SUBJID : $4. RFSTDTC : $10. RFENDTC : $10. SEX : $1.;
+label STUDYID ='STUDYID' DOMAIN ='DOMAIN' USUBJID ='USUBJID' SUBJID ='SUBJID' RFSTDTC ='RFSTDTC' RFENDTC ='RFENDTC' SEX ='SEX';
+format ;
+datalines4;
+MYCSG|DM|MYCSG-1001|1001|2010-01-15|2010-01-30|F
+MYCSG|DM|MYCSG-2003|2003|2010-02-03|2010-02-10|F
+MYCSG|DM|MYCSG-3010|3010|2010-03-06|2010-03-08|M
+MYCSG|DM|MYCSG-4001|4001||2010-06-10|M
+;;;;
+run;
+
+data se;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. DOMAIN : $2. USUBJID : $10. SESEQ : BEST. ETCD : $4. ELEMENT : $9. TAETORD : BEST. EPOCH : $9. SESTDTC : $10. SEENDTC : $10. SEUPDES : $1.;
+label STUDYID ='STUDYID' DOMAIN ='DOMAIN' USUBJID ='USUBJID' SESEQ ='SESEQ' ETCD ='ETCD' ELEMENT ='ELEMENT' TAETORD ='TAETORD' EPOCH ='EPOCH' SESTDTC ='SESTDTC' SEENDTC ='SEENDTC' SEUPDES ='SEUPDES';
+format ;
+datalines4;
+MYCSG|SE|MYCSG-1001|1|SCRN|SCREENING|1|SCREENING|2010-01-03|2010-01-15|
+MYCSG|SE|MYCSG-1001|2|ACT|ACTIVE|2|TREATMENT|2010-01-15|2010-01-25|
+MYCSG|SE|MYCSG-1001|3|FU|FOLLOW-UP|3|FOLLOW-UP|2010-01-25|2010-01-30|
+MYCSG|SE|MYCSG-2003|1|SCRN|SCREENING|1|SCREENING|2010-01-27|2010-02-03|
+MYCSG|SE|MYCSG-2003|2|ACT|ACTIVE|2|TREATMENT|2010-02-03|2010-02-10|
+MYCSG|SE|MYCSG-3010|1|SCRN|SCREENING|1|SCREENING|2010-03-06|2010-03-08|
+MYCSG|SE|MYCSG-4001|1|SCRN|SCREENING|1|SCREENING|2010-06-08|2010-06-11|
+;;;;
+run;
+
+data eligcrit;
+infile datalines dlm='|' dsd missover;
+input project : $5. subject : $4. folderseq : BEST. foldername : $9. recordposition : BEST. IEDAT : $11. ICRIT01 : $3. ICRIT02 : $3. ECRIT01 : $3.;
+label project ='project' subject ='subject' folderseq ='folderseq' foldername ='foldername' recordposition ='recordposition' IEDAT ='IEDAT' ICRIT01 ='ICRIT01' ICRIT02 ='ICRIT02' ECRIT01 ='ECRIT01';
+format ;
+datalines4;
+MYCSG|4001|1|Screening|0|10/JUN/2010|Yes|No|Yes
+MYCSG|2003|1|Screening|0|01/FEB/2010|No|Yes|No
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

@@ -1,0 +1,59 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_DD_L101;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. DOMAIN : $2. USUBJID : $10. SUBJID : $4. RFSTDTC : $10. RFENDTC : $10. SEX : $1.;
+label STUDYID ='STUDYID' DOMAIN ='DOMAIN' USUBJID ='USUBJID' SUBJID ='SUBJID' RFSTDTC ='RFSTDTC' RFENDTC ='RFENDTC' SEX ='SEX';
+format ;
+datalines4;
+MYCSG|DM|MYCSG-1001|1001|2010-01-15|2010-01-30|F
+MYCSG|DM|MYCSG-2003|2003|2010-02-03|2010-02-10|F
+MYCSG|DM|MYCSG-3010|3010|2010-03-06|2010-03-08|M
+;;;;
+run;
+
+data se;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. DOMAIN : $2. USUBJID : $10. SESEQ : BEST. ETCD : $4. ELEMENT : $9. TAETORD : BEST. EPOCH : $9. SESTDTC : $10. SEENDTC : $10. SEUPDES : $1.;
+label STUDYID ='STUDYID' DOMAIN ='DOMAIN' USUBJID ='USUBJID' SESEQ ='SESEQ' ETCD ='ETCD' ELEMENT ='ELEMENT' TAETORD ='TAETORD' EPOCH ='EPOCH' SESTDTC ='SESTDTC' SEENDTC ='SEENDTC' SEUPDES ='SEUPDES';
+format ;
+datalines4;
+MYCSG|SE|MYCSG-1001|1|SCRN|SCREENING|1|SCREENING|2010-01-03|2010-01-15|
+MYCSG|SE|MYCSG-1001|2|ACT|ACTIVE|2|TREATMENT|2010-01-15|2010-01-25|
+MYCSG|SE|MYCSG-1001|3|FU|FOLLOW-UP|3|FOLLOW-UP|2010-01-25|2010-01-30|
+MYCSG|SE|MYCSG-2003|1|SCRN|SCREENING|1|SCREENING|2010-01-27|2010-02-03|
+MYCSG|SE|MYCSG-2003|2|ACT|ACTIVE|2|TREATMENT|2010-02-03|2010-02-10|
+MYCSG|SE|MYCSG-3010|1|SCRN|SCREENING|1|SCREENING|2010-03-06|2010-03-08|
+;;;;
+run;
+
+data dd_death;
+infile datalines dlm='|' dsd missover;
+input project : $5. subject : $4. folderseq : BEST. foldername : $13. recordposition : BEST. DDDAT : $11. AUTOPSY : $3. PRMCAUS : $5. PRMCAUSSP : $20. SECCAUS : $16.;
+label project ='project' subject ='subject' folderseq ='folderseq' foldername ='foldername' recordposition ='recordposition' DDDAT ='DDDAT' AUTOPSY ='AUTOPSY' PRMCAUS ='PRMCAUS' PRMCAUSSP ='PRMCAUSSP' SECCAUS ='SECCAUS';
+format ;
+datalines4;
+MYCSG|3010|910|Death details|0|08/MAR/2010|Yes|Other|Sudden cardiac death|Vascular rupture
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

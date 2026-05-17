@@ -1,0 +1,47 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_FA_LGE01;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data ceevents;
+infile datalines dlm='|' dsd missover;
+input PROJECT : $5. SUBJECT : $10. FOLDERNAME : $6. FOLDERSEQ : BEST. RECORDPOSITION : BEST. CEDAT_RAW : $11. GEDAY : BEST. GEDAT_RAW : $11. DIAOCCUR_1 : $3. DIANUM_1 : $2. DIAOCCUR_2 : $3. DIANUM_2 : $1. DIAOCCUR_3 : $3. DIANUM_3 : $1. VOMOCCUR_1 : $3. VOMNUM_1 : $1. VOMOCCUR_2 : $3. VOMNUM_2 : $1. VOMOCCUR_3 : $3. VOMNUM_3 : $1. TEMP : $4.;
+label PROJECT ='PROJECT' SUBJECT ='SUBJECT' FOLDERNAME ='FOLDERNAME' FOLDERSEQ ='FOLDERSEQ' RECORDPOSITION ='RECORDPOSITION' CEDAT_RAW ='CEDAT_RAW' GEDAY ='GEDAY' GEDAT_RAW ='GEDAT_RAW' DIAOCCUR_1 ='DIAOCCUR_1' DIANUM_1 ='DIANUM_1' DIAOCCUR_2 ='DIAOCCUR_2' DIANUM_2 ='DIANUM_2' DIAOCCUR_3 ='DIAOCCUR_3' DIANUM_3 ='DIANUM_3' VOMOCCUR_1 ='VOMOCCUR_1' VOMNUM_1 ='VOMNUM_1' VOMOCCUR_2 ='VOMOCCUR_2' VOMNUM_2 ='VOMNUM_2' VOMOCCUR_3 ='VOMOCCUR_3' VOMNUM_3 ='VOMNUM_3' TEMP ='TEMP';
+format ;
+datalines4;
+MYCSG|MYCSG-1001|Events|98|0|15 JAN 2020|1|15 JAN 2020|Yes|3|Yes|5|Yes|4|Yes|3|No||No||37.8
+MYCSG|MYCSG-1001|Events|98|0|15 JAN 2020|2|16 JAN 2020|Yes|10|Yes|8|Yes|3|No||Yes|1|Yes|1|37.5
+MYCSG|MYCSG-1001|Events|98|0|15 JAN 2020|3|17 JAN 2020|Yes|8|Yes|3|Yes|2|No||No||No||37
+MYCSG|MYCSG-1001|Events|98|0|15 JAN 2020|4|18 JAN 2020|Yes|3|Yes|2|Yes|1|No||No||No||37
+MYCSG|MYCSG-1001|Events|98|0|15 JAN 2020|5|19 JAN 2020|No||No||No||No||No||No||37
+MYCSG|MYCSG-1001|Events|98|0|15 JAN 2020|6|20 JAN 2020|No||No||No||No||No||No||37
+;;;;
+run;
+
+data cedetails;
+infile datalines dlm='|' dsd missover;
+input PROJECT : $5. SUBJECT : $10. FOLDERNAME : $13. FOLDERSEQ : BEST. RECORDPOSITION : BEST. CEDAT_RAW : $11. HCARE : $3. HCARE_TYPE : $14. OREHYD : $3. IVREHYD : $3. HOSP : $3.;
+label PROJECT ='PROJECT' SUBJECT ='SUBJECT' FOLDERNAME ='FOLDERNAME' FOLDERSEQ ='FOLDERSEQ' RECORDPOSITION ='RECORDPOSITION' CEDAT_RAW ='CEDAT_RAW' HCARE ='HCARE' HCARE_TYPE ='HCARE_TYPE' OREHYD ='OREHYD' IVREHYD ='IVREHYD' HOSP ='HOSP';
+format ;
+datalines4;
+MYCSG|MYCSG-1001|Event Details|99|1|15 JAN 2020|Yes|Emergency Room|Yes|Yes|Yes
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

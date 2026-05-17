@@ -1,0 +1,81 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_MH_LCSG801;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data mh801_1;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $7. REPEATNUM : BEST. MHTERM : $15. MHDAT : $8. MHSTDAT : $8.;
+label STUDY ='Study Number' PT ='Subject Identifier' REPEATNUM ='Repeat Sequence Number' MHTERM ='Medical History Term' MHDAT ='Collection Date' MHSTDAT ='Date of Diagnosis';
+format ;
+datalines4;
+CSG801|101-001|1|Type 2 Diabetes|20150103|20130314
+CSG801|101-002|1|Type 1 Diabetes|20150208|201001
+CSG801|201-001|1|Type 2 Diabetes|20141214|20050602
+;;;;
+run;
+
+data mh801_2;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $7. REPEATNUM : BEST. MHTERM : $27. MHDAT : $8. MHSTDAT : $8. MHOCCUR : $1.;
+label STUDY ='Study Number' PT ='Subject Identifier' REPEATNUM ='Repeat Sequence Number' MHTERM ='Medical History Term' MHDAT ='Collection Date' MHSTDAT ='Date of Diagnosis' MHOCCUR ='Occur?';
+format ;
+datalines4;
+CSG801|101-001|1|DIABETIC RETINOPATHY|20150103||N
+CSG801|101-001|1|NEUROPATHY|20150103||N
+CSG801|101-001|1|NEPHROPATHY|20150103||N
+CSG801|101-001|1|PERIPHERAL VASCULAR DISEASE|20150103||N
+CSG801|101-001|1|DIABETIC KETOACIDOSIS|20150103||N
+CSG801|101-002|1|DIABETIC RETINOPATHY|20150208|20140924|Y
+CSG801|101-002|1|NEUROPATHY|20150208||N
+CSG801|101-002|1|NEPHROPATHY|20150208||N
+CSG801|101-002|1|PERIPHERAL VASCULAR DISEASE|20150208||N
+CSG801|101-002|1|DIABETIC KETOACIDOSIS|20150208||N
+CSG801|201-001|1|DIABETIC RETINOPATHY|20141214||N
+CSG801|201-001|1|NEUROPATHY|20141214||N
+CSG801|201-001|1|NEPHROPATHY|20141214|201001|Y
+CSG801|201-001|1|PERIPHERAL VASCULAR DISEASE|20141214|201001|Y
+CSG801|201-001|1|DIABETIC KETOACIDOSIS|20141214||N
+;;;;
+run;
+
+data mh801_3;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $7. REPEATNUM : BEST. MHTERM : $19. MHDAT : $8. MHSTDAT : $8. MHENDAT : $8. MHONGO : $3.;
+label STUDY ='Study Number' PT ='Subject Identifier' REPEATNUM ='Repeat Sequence Number' MHTERM ='Medical History Term' MHDAT ='Collection Date' MHSTDAT ='Start Date' MHENDAT ='End Date' MHONGO ='Ongoing?';
+format ;
+datalines4;
+CSG801|101-001|1|High Blood Pressure|20150103|20121221||Yes
+CSG801|101-002|1|Appendectomy|20150208|20140501|20140501|
+;;;;
+run;
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $14. RFSTDTC : $10.;
+label USUBJID ='Unique Subject Identifier' RFSTDTC ='Subject Reference Start Date/Time';
+format ;
+datalines4;
+CSG801-101-001|2015-01-15
+CSG801-101-002|2015-02-12
+CSG801-201-001|2014-12-21
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

@@ -1,0 +1,82 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_SU_L101;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. USUBJID : $10. RFSTDTC : $10. RFXSTDTC : $10.;
+label STUDYID ='STUDYID' USUBJID ='USUBJID' RFSTDTC ='RFSTDTC' RFXSTDTC ='RFXSTDTC';
+format ;
+datalines4;
+MYCSG|MYCSG-1001|2023-01-04|2023-01-04
+MYCSG|MYCSG-1002|2023-02-14|2023-02-14
+MYCSG|MYCSG-1003|2023-03-15|2023-03-15
+MYCSG|MYCSG-1004|2023-04-22|2023-04-22
+MYCSG|MYCSG-1005|2023-05-18|2023-05-18
+MYCSG|MYCSG-1006|2023-06-02|2023-06-02
+;;;;
+run;
+
+data sualc;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. SUBJECT : $4. FOLDERSEQ : BEST. FOLDERNAME : $13. RECORDPOSITION : best32. SUNCF : $7. SUSTDAT : $10. SUENDAT : $11. SUDSTXT_BEER : $1. SUDOSFRQ_BEER : $14. SUDSTXT_WINE : $1. SUDOSFRQ_WINE : $8. SUDSTXT_SPIRITS : $1. SUDOSFRQ_SPIRITS : $14.;
+label STUDYID ='STUDYID' SUBJECT ='SUBJECT' FOLDERSEQ ='FolderSeq' FOLDERNAME ='FolderName' SUNCF ='SUNCF' SUSTDAT ='SUSTDAT' SUENDAT ='SUENDAT' SUDSTXT_BEER ='SUDSTXT_BEER' SUDOSFRQ_BEER ='SUDOSFRQ_BEER' SUDSTXT_WINE ='SUDSTXT_WINE' SUDOSFRQ_WINE ='SUDOSFRQ_WINE' SUDSTXT_SPIRITS ='SUDSTXT_SPIRITS' SUDOSFRQ_SPIRITS ='SUDOSFRQ_SPIRITS';
+format ;
+datalines4;
+MYCSG|1001|990|Substance Use|1|Never||||||||
+MYCSG|1002|990|Substance Use|2|Current|UN-UN-1984||2|QM-Every month|1|QD-Daily|1|QM-Every month
+MYCSG|1003|990|Substance Use|3|Former|UN-UN-1975|18-JUN-2010|||||1|QD-Daily
+MYCSG|1004|990|Substance Use|4|Current|UN-UN-2020||7|QW-Every week||||
+MYCSG|1005|990|Substance Use|5|Never||||||||
+MYCSG|1006|990|Substance Use|6|Never||||||||
+;;;;
+run;
+
+data sucaf;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. SUBJECT : $4. FOLDERSEQ : BEST. FOLDERNAME : $13. RECORDPOSITION : best32. SUNCF : $7. SUSTDAT : $11. SUENDAT : $11. SUDSTXT_COFFEE : $1. SUDOSFRQ_COFFEE : $8. SUDSTXT_SODA : $1. SUDOSFRQ_SODA : $1. SUDSTXT_TEA : $1. SUDOSFRQ_TEA : $8.;
+label STUDYID ='STUDYID' SUBJECT ='SUBJECT' FOLDERSEQ ='FolderSeq' FOLDERNAME ='FolderName' SUNCF ='SUNCF' SUSTDAT ='SUSTDAT' SUENDAT ='SUENDAT' SUDSTXT_COFFEE ='SUDSTXT_COFFEE' SUDOSFRQ_COFFEE ='SUDOSFRQ_COFFEE' SUDSTXT_SODA ='SUDSTXT_SODA' SUDOSFRQ_SODA ='SUDOSFRQ_SODA' SUDSTXT_TEA ='SUDSTXT_TEA' SUDOSFRQ_TEA ='SUDOSFRQ_TEA';
+format ;
+datalines4;
+MYCSG|1001|990|Substance Use|1|Current|UN-UN-1980||2|QD-Daily||||
+MYCSG|1002|990|Substance Use|2|Current|UN-UN-1980||2|QD-Daily||||
+MYCSG|1003|990|Substance Use|3|Never||||||||
+MYCSG|1004|990|Substance Use|4|Former|01-JAN-2020|31-DEC-2020|||||1|QD-Daily
+MYCSG|1005|990|Substance Use|5|Never||||||||
+MYCSG|1006|990|Substance Use|6|Never||||||||
+;;;;
+run;
+
+data sutob;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. SUBJECT : $4. FOLDERSEQ : BEST. FOLDERNAME : $13. RECORDPOSITION : best32. SUNCF : $7. SUSTDAT : $10. SUENDAT : $10. SUDSTXT_CIGARETTES : $1. SUDOSFRQ_CIGARETTES : $8. SUDSTXT_CIGARS : $1. SUDOSFRQ_CIGARS : $8. SUDSTXT_PIPEFULS : $1. SUDOSFRQ_PIPEFULS : $13.;
+label STUDYID ='STUDYID' SUBJECT ='SUBJECT' FOLDERSEQ ='FolderSeq' FOLDERNAME ='FolderName' SUNCF ='SUNCF' SUSTDAT ='SUSTDAT' SUENDAT ='SUENDAT' SUDSTXT_CIGARETTES ='SUDSTXT_CIGARETTES' SUDOSFRQ_CIGARETTES ='SUDOSFRQ_CIGARETTES' SUDSTXT_CIGARS ='SUDSTXT_CIGARS' SUDOSFRQ_CIGARS ='SUDOSFRQ_CIGARS' SUDSTXT_PIPEFULS ='SUDSTXT_PIPEFULS' SUDOSFRQ_PIPEFULS ='SUDOSFRQ_PIPEFULS';
+format ;
+datalines4;
+MYCSG|1001|990|Substance Use|1|Never||||||||
+MYCSG|1002|990|Substance Use|2|Never||||||||
+MYCSG|1003|990|Substance Use|3|Never||||||||
+MYCSG|1004|990|Substance Use|4|Never||||||||
+MYCSG|1005|990|Substance Use|5|Fomer|UN-UN-2010|UN-UN-2010|||1|QD-Daily|1|QW-Every week
+MYCSG|1006|990|Substance Use|6|Current|UN-UN-2010||3|QD-Daily||||
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

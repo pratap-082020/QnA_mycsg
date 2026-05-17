@@ -1,0 +1,48 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: SDTM_QS_LEQ5D3L;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data eq5d3l;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. SUBJECT : BEST. FOLDERSEQ : BEST. FOLDERNAME : $11. RECORDPOSITION : best32. QSDAT_RAW : $200. EQ5D3L_1 : $200. EQ5D3L_2 : $200. EQ5D3L_3 : $200. EQ5D3L_4 : $200. EQ5D3L_5 : $200. EQ5D3L_6 : $200.;
+label STUDYID ='STUDYID' SUBJECT ='SUBJECT' FOLDERSEQ ='FolderSeq' FOLDERNAME ='FolderName';
+format ;
+datalines4;
+MYCSG|1001|101|Screening|1|07 JAN 2023|1-I have no problems in walking about|2-I have some problems washing or dressing myself|3-I am unable to perform my usual activities|3-I have extreme pain or discomfort|2-I am moderately anxious or depressed|62
+MYCSG|1001|201|Day 1|2|21 JAN 2023|3-I am confined to bed|2-I have some problems washing or dressing myself|1-I have no problems with performing my usual activities|1-I have no pain or discomfort|3-I am extremely anxious or depressed|57
+MYCSG|1001|205|Month 4|3|21 MAY 2023|2-I have some problems in walking about|1-I have no problems with self-care|3-I am unable to perform my usual activities|3-I have extreme pain or discomfort|2-I am moderately anxious or depressed|71
+MYCSG|1002|101|Screening|4|31 JAN 2023|1-I have no problems in walking about|1-I have no problems with self-care|1-I have no problems with performing my usual activities|2-I have moderate pain or discomfort|2-I am moderately anxious or depressed|66
+MYCSG|1002|201|Day 1|5|14 FEB 2023|3-I am confined to bed|3-I am unable to wash or dress myself|1-I have no problems with performing my usual activities|2-I have moderate pain or discomfort|2-I am moderately anxious or depressed|55
+MYCSG|1002|205|Month 4|6|14 JUN 2023|3-I am confined to bed|2-I have some problems washing or dressing myself|3-I am unable to perform my usual activities|1-I have no pain or discomfort|2-I am moderately anxious or depressed|93
+;;;;
+run;
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $5. USUBJID : $10. RFSTDTC : $10. RFXSTDTC : $10.;
+label STUDYID ='STUDYID' USUBJID ='USUBJID' RFSTDTC ='RFSTDTC' RFXSTDTC ='RFXSTDTC';
+format ;
+datalines4;
+MYCSG|MYCSG-1001|2023-01-21|2023-01-21
+MYCSG|MYCSG-1002|2023-02-14|2023-02-14
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
