@@ -1,0 +1,201 @@
+```html id="8z7v1m"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CRF Domains</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  padding:30px 15px;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+}
+
+h1{
+  font-size:28px;
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:20px;
+  font-size:15px;
+  background:white;
+  outline:none;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+th{
+  background:#222;
+  color:white;
+  text-align:left;
+  padding:14px;
+}
+
+td{
+  padding:14px;
+  border-bottom:1px solid #eee;
+}
+
+a{
+  color:#0066cc;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>CRF Domains</h1>
+
+  <input
+    type="text"
+    id="search"
+    placeholder="Search domain..."
+  >
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Domain</th>
+      </tr>
+    </thead>
+
+    <tbody id="tableBody"></tbody>
+
+  </table>
+
+</div>
+
+<script>
+
+const baseUrl =
+"https://pratap-082020.github.io/QnA_mycsg/crfs/";
+
+const files = [
+
+  "AE",
+  "CE",
+  "CM",
+  "CV",
+  "DA",
+  "DD",
+  "DM",
+  "DS",
+  "EC",
+  "EG",
+  "EX",
+  "FA",
+  "HO",
+  "IE",
+  "LB",
+  "MH",
+  "ML",
+  "OE",
+  "PC",
+  "PE",
+  "PR",
+  "QS",
+  "RE",
+  "RP",
+  "RS",
+  "SC",
+  "SU",
+  "TR",
+  "TU",
+  "VS",
+  "XG"
+
+];
+
+files.sort();
+
+function renderTable(data){
+
+  const tableBody =
+    document.getElementById("tableBody");
+
+  tableBody.innerHTML = "";
+
+  data.forEach(file => {
+
+    tableBody.innerHTML += `
+
+      <tr>
+
+        <td>
+
+          <a
+            href="${baseUrl}${file}.html"
+            target="_blank"
+          >
+            ${file}
+          </a>
+
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+}
+
+document
+  .getElementById("search")
+  .addEventListener("input", function(){
+
+    const value =
+      this.value.toLowerCase();
+
+    const filtered =
+      files.filter(file =>
+        file.toLowerCase().includes(value)
+      );
+
+    renderTable(filtered);
+
+  });
+
+renderTable(files);
+
+</script>
+
+</body>
+
+</html>
+```
