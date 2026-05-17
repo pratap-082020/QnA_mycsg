@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Programming Explorer</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  padding:30px;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+}
+
+h1{
+  margin-bottom:20px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th{
+  background:#222;
+  color:white;
+  text-align:left;
+  padding:14px;
+}
+
+td{
+  padding:14px;
+  border-bottom:1px solid #eee;
+}
+
+tr:hover{
+  background:#fafafa;
+}
+
+.folder{
+  font-weight:bold;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.download{
+  border:none;
+  padding:8px 12px;
+  border-radius:5px;
+  color:white;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.rdata{
+  background:#1f77b4;
+}
+
+.rprogram{
+  background:#2ca02c;
+}
+
+.sasdata{
+  background:#ff7f0e;
+}
+
+.sasprogram{
+  background:#d62728;
+}
+
+.info{
+  background:white;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Programming Explorer</h1>
+
+<div class="info">
+
+  Click button below and select the folder
+  where this HTML file exists.
+
+  <br><br>
+
+  The app will:
+  <ul style="margin-top:10px; margin-left:20px;">
+    <li>scan all subfolders</li>
+    <li>detect matching files</li>
+    <li>create download buttons automatically</li>
+  </ul>
+
+  <br>
+
+  <button onclick="selectRootFolder()"
+          class="download rprogram">
+
+    Select Current Folder
+
+  </button>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+  <th>Folder</th>
+  <th>Downloads</th>
+</tr>
+
+</thead>
+
+<tbody id="tableBody">
+
+<tr>
+  <td colspan="2">
+    No folder selected
+  </td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+async function selectRootFolder(){
+
+  const rootHandle =
+    await window.showDirectoryPicker();
+
+  scanFolders(rootHandle);
+
+}
+
+async function scanFolders(rootHandle){
+
+  const tableBody =
+    document.getElementById("tableBody");
+
+  tableBody.innerHTML = "";
+
+  for await (const folder of rootHandle.values()){
+
+    if(folder.kind !== "directory"){
+      continue;
+    }
+
+    let buttons = "";
+
+    for await (const file of folder.values()){
+
+      if(file.kind !== "file"){
+        continue;
+      }
+
+      const fileName =
+        file.name;
+
+      if(fileName.includes("r_data")){
+
+        buttons += createButton(
+          "R Data",
+          "rdata",
+          file
+        );
+
+      }
+
+      if(fileName.includes("r_program")){
+
+        buttons += createButton(
+          "R Program",
+          "rprogram",
+          file
+        );
+
+      }
+
+      if(fileName.includes("sas_data")){
+
+        buttons += createButton(
+          "SAS Data",
+          "sasdata",
+          file
+        );
+
+      }
+
+      if(fileName.includes("sas_program")){
+
+        buttons += createButton(
+          "SAS Program",
+          "sasprogram",
+          file
+        );
+
+      }
+
+    }
+
+    if(buttons !== ""){
+
+      tableBody.innerHTML += `
+
+        <tr>
+
+          <td class="folder">
+
+            ${folder.name}
+
+          </td>
+
+          <td class="actions">
+
+            ${buttons}
+
+          </td>
+
+        </tr>
+
+      `;
+    }
+
+  }
+
+  if(tableBody.innerHTML === ""){
+
+    tableBody.innerHTML = `
+
+      <tr>
+
+        <td colspan="2">
+
+          No matching files found
+
+        </td>
+
+      </tr>
+
+    `;
+  }
+
+}
+
+function createButton(
+  label,
+  className,
+  fileHandle
+){
+
+  const fn =
+    Math.random()
+      .toString(36)
+      .substring(2);
+
+  window[fn] = async function(){
+
+    const file =
+      await fileHandle.getFile();
+
+    const url =
+      URL.createObjectURL(file);
+
+    const a =
+      document.createElement("a");
+
+    a.href = url;
+
+    a.download = file.name;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+  };
+
+  return `
+
+    <button
+      class="download ${className}"
+      onclick="${fn}()">
+
+      ${label}
+
+    </button>
+
+  `;
+}
+
+</script>
+
+</body>
+
+</html>
