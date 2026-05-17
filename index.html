@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Project Explorer</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  padding:30px 15px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+}
+
+h1{
+  margin-bottom:20px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th{
+  background:#222;
+  color:white;
+  padding:14px;
+  text-align:left;
+}
+
+td{
+  padding:14px;
+  border-bottom:1px solid #eee;
+}
+
+tr:hover{
+  background:#fafafa;
+  cursor:pointer;
+}
+
+.folder{
+  font-weight:bold;
+}
+
+.file{
+  color:#444;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Project Explorer</h1>
+
+<table>
+
+<thead>
+
+<tr>
+  <th>Name</th>
+  <th>Type</th>
+</tr>
+
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+const items = [
+
+  {
+    name:"crfs/",
+    type:"Folder"
+  },
+
+  {
+    name:"adam/",
+    type:"Folder"
+  },
+
+  {
+    name:"AE.html",
+    type:"File"
+  },
+
+  {
+    name:"CE.html",
+    type:"File"
+  },
+
+  {
+    name:"index.html",
+    type:"File"
+  }
+
+];
+
+function renderTable(){
+
+  const tableBody =
+    document.getElementById("tableBody");
+
+  tableBody.innerHTML = "";
+
+  items.forEach(item => {
+
+    tableBody.innerHTML += `
+
+      <tr onclick="openItem('${item.name}')">
+
+        <td class="${
+          item.type === 'Folder'
+          ? 'folder'
+          : 'file'
+        }">
+
+          ${item.name}
+
+        </td>
+
+        <td>
+
+          ${item.type}
+
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+}
+
+function openItem(path){
+
+  window.location.href = path;
+
+}
+
+renderTable();
+
+</script>
+
+</body>
+
+</html>
