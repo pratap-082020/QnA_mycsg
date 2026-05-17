@@ -1,101 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
+
   <title>Programming Domains</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+
+    body{
+      font-family:Arial,sans-serif;
+      padding:20px;
+      background:#f5f5f5;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+    h2{
+      margin-bottom:20px;
     }
 
-    a {
-      display: block;
-      padding: 10px;
-      background: #f2f2f2;
-      border-radius: 6px;
-      text-decoration: none;
-      color: #333;
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+      gap:12px;
     }
 
-    a:hover {
-      background: #d9edf7;
+    a{
+      display:block;
+      padding:12px;
+      background:white;
+      border-radius:8px;
+      text-decoration:none;
+      color:#333;
+      box-shadow:0 0 5px rgba(0,0,0,0.1);
+      transition:0.2s;
     }
+
+    a:hover{
+      background:#d9edf7;
+      transform:translateY(-2px);
+    }
+
   </style>
+
 </head>
 
 <body>
 
-<h2>Learn Programming Folders</h2>
+<h2>Programming Folders</h2>
 
-<div class="grid">
+<div class="grid" id="folderGrid"></div>
 
-  <a href="Learn AE Programming/">AE</a>
-  <a href="Learn PC Programming/">PC</a>
+<script>
 
-  <a href="Learn CE Programming/">CE</a>
-  <a href="Learn PE Programming/">PE</a>
+const folders = [
 
-  <a href="Learn CM Programming/">CM</a>
-  <a href="Learn PP Programming/">PP</a>
+  "Learn AE Programming",
+  "Learn PC Programming",
+  "Learn CE Programming",
+  "Learn PE Programming",
+  "Learn CM Programming",
+  "Learn PP Programming",
+  "Learn CV Programming",
+  "Learn PR Programming",
+  "Learn DA Programming",
+  "Learn QS Programming",
+  "Learn DD Programming",
+  "Learn RE Programming",
+  "Learn DM Programming",
+  "Learn RELREC Programming",
+  "Learn DS Programming",
+  "Learn RP Programming",
+  "Learn DV Programming",
+  "Learn RS Programming",
+  "Learn EC Programming",
+  "Learn SE Programming",
+  "Learn EG Programming",
+  "Learn SU Programming",
+  "Learn EX Programming",
+  "Learn SV Programming",
+  "Learn FA Programming",
+  "Learn TR Programming",
+  "Learn FT Programming",
+  "Learn TU Programming",
+  "Learn HO Programming",
+  "Learn VS Programming",
+  "Learn IE Programming",
+  "TA",
+  "Learn IS Programming",
+  "TE",
+  "Learn LB Programming",
+  "TI",
+  "Learn MH Programming",
+  "TS",
+  "Learn MO Programming",
+  "TV"
 
-  <a href="Learn CV Programming/">CV</a>
-  <a href="Learn PR Programming/">PR</a>
+];
 
-  <a href="Learn DA Programming/">DA</a>
-  <a href="Learn QS Programming/">QS</a>
+const grid = document.getElementById("folderGrid");
 
-  <a href="Learn DD Programming/">DD</a>
-  <a href="Learn RE Programming/">RE</a>
+folders.forEach(folder => {
 
-  <a href="Learn DM Programming/">DM</a>
-  <a href="Learn RELREC Programming/">RELREC</a>
+    const a = document.createElement("a");
 
-  <a href="Learn DS Programming/">DS</a>
-  <a href="Learn RP Programming/">RP</a>
+    a.href = encodeURIComponent(folder) + "/index.html";
 
-  <a href="Learn DV Programming/">DV</a>
-  <a href="Learn RS Programming/">RS</a>
+    a.innerText = folder;
 
-  <a href="Learn EC Programming/">EC</a>
-  <a href="Learn SE Programming/">SE</a>
+    grid.appendChild(a);
 
-  <a href="Learn EG Programming/">EG</a>
-  <a href="Learn SU Programming/">SU</a>
+});
 
-  <a href="Learn EX Programming/">EX</a>
-  <a href="Learn SV Programming/">SV</a>
-
-  <a href="Learn FA Programming/">FA</a>
-  <a href="Learn TR Programming/">TR</a>
-
-  <a href="Learn FT Programming/">FT</a>
-  <a href="Learn TU Programming/">TU</a>
-
-  <a href="Learn HO Programming/">HO</a>
-  <a href="Learn VS Programming/">VS</a>
-
-  <a href="Learn IE Programming/">IE</a>
-  <a href="TA/">TA</a>
-
-  <a href="Learn IS Programming/">IS</a>
-  <a href="TE/">TE</a>
-
-  <a href="Learn LB Programming/">LB</a>
-  <a href="TI/">TI</a>
-
-  <a href="Learn MH Programming/">MH</a>
-  <a href="TS/">TS</a>
-
-  <a href="Learn MO Programming/">MO</a>
-  <a href="TV/">TV</a>
-
-</div>
+</script>
 
 </body>
 </html>
