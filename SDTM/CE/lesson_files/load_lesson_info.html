@@ -1,0 +1,121 @@
+
+<!-- saved from url=(0066)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_CE_LGE01 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><p>&nbsp;</p>
+<table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>In clinical trials, when taking a drug or investigational product, the trial participant (subject) may experience some medical occurrences along with the intended effect of the drug.</li>
+<li>Some of these medical occurrences could be untoward or unintended and we call those untoward events as 'adverse events'.&nbsp;</li>
+<li>Some of the medical occurrences could be of specific interest within the context of a study and such occurrences which cannot be classed as 'adverse events' are called 'clinical events'</li>
+<li>The occurrences which cannot be classed as 'adverse events' will be specified in the study protocol</li>
+<li>Some examples of medical occurrences which could be classed as 'clinical events'
+<ul>
+<li>Decreased blood glucose levels (hypoglycemia) in a study examining the treatment of controlling blood glucose in the treatment of diabetes</li>
+<li>Headache in a study examining new treatment options for migraine</li>
+<li>Seizures in an epilepsy study</li>
+<li>Fever in a vaccine study</li>
+<li>Pain at the site of injection in an injectible vaccine study</li>
+</ul>
+</li>
+<li>In most cases, we collect information on whether specific event of interest occurred or not, and additional information when it occurred</li>
+<li>The additional information collected about the event will be reported in FA domain.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Term described by the subject to explain the event</li>
+<li>Standardized term for the event</li>
+<li>Did the event occur?<br>
+<ul>
+<li>No</li>
+<li>Yes
+<ul>
+<li>&nbsp;Start date/time of the event</li>
+<li>Status of the event - ongoing or ended?
+<ul>
+<li>If ended, end date/time of the event</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Information not collected
+<ul>
+<li>Reason for non-collection</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Severity/intensity of the event</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

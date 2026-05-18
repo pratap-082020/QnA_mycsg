@@ -24,7 +24,7 @@
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
       gap:20px;
-      max-width:900px;
+      max-width:1000px;
       margin:auto;
     }
 
@@ -37,6 +37,7 @@
       font-size:16px;
       cursor:pointer;
       transition:0.2s;
+      width:100%;
     }
 
     button:hover{
@@ -70,6 +71,18 @@
     Download sas_program.sas
   </button>
 
+  <button onclick="openPage('lesson.html')">
+    Open Lesson
+  </button>
+
+  <button onclick="openPage('specs.html')">
+    Open Specs
+  </button>
+
+  <button onclick="openPage('concept.html')">
+    Open Concept
+  </button>
+
 </div>
 
 <script>
@@ -87,6 +100,12 @@ function downloadFile(fileName){
     link.click();
 
     document.body.removeChild(link);
+
+}
+
+function openPage(pageName){
+
+    window.location.href = pageName;
 
 }
 
