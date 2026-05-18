@@ -1,0 +1,231 @@
+
+<!-- saved from url=(0071)https://mycsg.in/load_lesson_info.php?type=SPEC&lesson=SDTM_RELREC_L101 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./f.txt"></script><script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    <meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head>
+    <body><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script async="" src="./f(1).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col">
+
+<div id="sashtmltable_wrapper" class="dt-container dt-empty-footer"><div class="dt-layout-row"><div class="dt-layout-cell dt-start "><div class="dt-length"><select name="sashtmltable_length" aria-controls="sashtmltable" class="dt-input" id="dt-length-0"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select><label for="dt-length-0"> entries per page</label></div></div><div class="dt-layout-cell dt-end "><div class="dt-search"><label for="dt-search-0">Search:</label><input type="search" class="dt-input" id="dt-search-0" placeholder="" aria-controls="sashtmltable"></div></div></div><div class="dt-layout-row dt-layout-table"><div class="dt-layout-cell "><table id="sashtmltable" class="table table-sm .w-auto display sashtmltable dataTable" aria-describedby="sashtmltable_info" style="width: 80%; border: 1px solid black;"><colgroup><col data-dt-column="0" style="width: 0px;"><col data-dt-column="1" style="width: 0px;"><col data-dt-column="2" style="width: 0px;"><col data-dt-column="3" style="width: 0px;"><col data-dt-column="4" style="width: 0px;"><col data-dt-column="5" style="width: 0px;"><col data-dt-column="6" style="width: 0px;"><col data-dt-column="7" style="width: 0px;"></colgroup>
+<thead><tr role="row"><th data-name="ROWORDER" data-dt-column="0" rowspan="1" colspan="1" class="dt-type-numeric dt-orderable-asc dt-orderable-desc dt-ordering-asc" aria-sort="ascending" aria-label="ROWORDER: Activate to invert sorting" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">ROWORDER</span><span class="dt-column-order"></span></th><th data-name="SUPP" data-dt-column="1" rowspan="1" colspan="1" class="dt-type-numeric dt-orderable-asc dt-orderable-desc" aria-label="SUPP: Activate to sort" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">SUPP</span><span class="dt-column-order"></span></th><th data-name="VARIABLE_NAME" data-dt-column="2" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="VARIABLE_NAME: Activate to sort" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">VARIABLE_NAME</span><span class="dt-column-order"></span></th><th data-name="VARIABLE_LABEL" data-dt-column="3" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="VARIABLE_LABEL: Activate to sort" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">VARIABLE_LABEL</span><span class="dt-column-order"></span></th><th data-name="TYPE" data-dt-column="4" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="TYPE: Activate to sort" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">TYPE</span><span class="dt-column-order"></span></th><th data-name="GENERAL_COMMENT" data-dt-column="5" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="GENERAL_COMMENT: Activate to sort" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">GENERAL_COMMENT</span><span class="dt-column-order"></span></th><th data-name="FORM_EOS" data-dt-column="6" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="FORM_EOS: Activate to sort" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">FORM_EOS</span><span class="dt-column-order"></span></th><th data-name="FORM_CONMEDS" data-dt-column="7" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="FORM_CONMEDS: Activate to sort" tabindex="0" style="border: 1px solid black;"><span class="dt-column-title" role="button">FORM_CONMEDS</span><span class="dt-column-order"></span></th></tr></thead>
+<tbody><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">001 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">General </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">When the subject discontinued a study due to an adverse event, the event line number is captured on EOS form to indicate the relationship between the discontinuation and a specific adverse event. <br> The line number of each adverse event in adverse event is mapped to SDTM variable AESPID.<br> Each row on EOS form is uniquely identified within a subject using line number and it is mapped to SDTM variable DSSPID<br> A link is established between DSSPID and AESPID using eos.dsaeno. </td><td style="border: 1px solid black;">When the subject took a medication for an adverse event, the event line number is captured on CONMEDS form to indicate the relationship between the treatment used and a specific adverse event. <br> The line number of each adverse event in adverse event is mapped to SDTM variable AESPID.<br> Each row on CONMEDS form is uniquely identified within a subject using line number and it is mapped to SDTM variable CMSPID<br> A link is established between CMSPID and AESPID using conmeds.cmaeno. </td>
+</tr><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">002 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">STUDYID </td><td style="border: 1px solid black;">Study Identifier </td><td style="border: 1px solid black;">Char </td><td style="border: 1px solid black;">Populate as 'MYCSG' </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">  </td>
+</tr><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">003 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">RDOMAIN </td><td style="border: 1px solid black;">Related Domain Abbreviation </td><td style="border: 1px solid black;">Char </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">Create two records for each non-missing value of eos.dsaeno (where eos.SUBJECT = adverse.SUBJECT and eos.dsaeno = adverse.aespid ) and set to 'DS' and 'AE' </td><td style="border: 1px solid black;">Create two records for each non-missing value of conmeds.cmaeno (where conmeds.SUBJECT = adverse.SUBJECT and conmeds.cmaeno = adverse.aespid ) and set to 'CM' and 'AE' </td>
+</tr><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">004 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">USUBJID </td><td style="border: 1px solid black;">Unique Subject Identifier </td><td style="border: 1px solid black;">Char </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">Concatenate sdtm.relrec.STUDYID to SUBJECT with a hyphen in between. </td><td style="border: 1px solid black;">Concatenate sdtm.relrec.STUDYID to SUBJECT with a hyphen in between. </td>
+</tr><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">005 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">IDVAR </td><td style="border: 1px solid black;">Identifying Variable </td><td style="border: 1px solid black;">Char </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">Set to DSSPID when RDOMAIN = DS and 'AESPID' when RDOMAIN = AE </td><td style="border: 1px solid black;">Set to CMSPID when RDOMAIN = CM and 'AESPID' when RDOMAIN = AE </td>
+</tr><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">006 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">IDVARVAL </td><td style="border: 1px solid black;">Identifying Variable Value </td><td style="border: 1px solid black;">Char </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">Set to eos.dsspid when RDOMAIN = DS and adverse.aespid when RDOMAIN = AE </td><td style="border: 1px solid black;">Set to conmeds.cmspid when RDOMAIN = CM and adverse.aespid when RDOMAIN = AE </td>
+</tr><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">007 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">RELTYPE </td><td style="border: 1px solid black;">Relationship Type </td><td style="border: 1px solid black;">Char </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">Leave null </td><td style="border: 1px solid black;">Leave null </td>
+</tr><tr>
+<td class="dt-type-numeric sorting_1" style="border: 1px solid black;">008 </td><td class="dt-type-numeric" style="border: 1px solid black;">  </td><td style="border: 1px solid black;">RELID </td><td style="border: 1px solid black;">Relationship Identifier </td><td style="border: 1px solid black;">Char </td><td style="border: 1px solid black;">  </td><td style="border: 1px solid black;">Concatenate "DSAE" as a prefix to eos.dsspid. </td><td style="border: 1px solid black;">Concatenate "CMAE" as a prefix to conmeds.cmspid. </td>
+</tr></tbody>
+<tfoot></tfoot></table></div></div><div class="dt-layout-row"><div class="dt-layout-cell dt-start "><div class="dt-info" aria-live="polite" id="sashtmltable_info" role="status">Showing 1 to 8 of 8 entries</div></div><div class="dt-layout-cell dt-end "><div class="dt-paging paging_full_numbers"><button class="dt-paging-button disabled first" role="link" type="button" aria-controls="sashtmltable" aria-disabled="true" aria-label="First" data-dt-idx="first" tabindex="-1">«</button><button class="dt-paging-button disabled previous" role="link" type="button" aria-controls="sashtmltable" aria-disabled="true" aria-label="Previous" data-dt-idx="previous" tabindex="-1">‹</button><button class="dt-paging-button current" role="link" type="button" aria-controls="sashtmltable" aria-current="page" data-dt-idx="0" tabindex="0">1</button><button class="dt-paging-button disabled next" role="link" type="button" aria-controls="sashtmltable" aria-disabled="true" aria-label="Next" data-dt-idx="next" tabindex="-1">›</button><button class="dt-paging-button disabled last" role="link" type="button" aria-controls="sashtmltable" aria-disabled="true" aria-label="Last" data-dt-idx="last" tabindex="-1">»</button></div></div></div></div>
+<script>
+  var columnWidths = {"derivation":"30%","general_comment":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script></div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(1).html" data-google-container-id="1.a7ihbbjl25ld" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe src="./aframe(1).html" width="0" height="0" style="display: none;"></iframe></body><iframe id="google_esf" name="google_esf" src="./zrt_lookup_fy2021.html" style="display: none;"></iframe></html>

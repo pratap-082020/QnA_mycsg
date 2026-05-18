@@ -1,0 +1,132 @@
+
+<!-- saved from url=(0068)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_EC_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>In clinical trials, we administer 'study treatments' to the subjects over time as per study requirement</li>
+<li>We need to report the data as collected for these study drug administrations</li>
+<li>SDTM standard has standard data structure for reporting such data - "Exposure as Collected (EC)"</li>
+<li>EC domains falls under interventions class of the SDTM domains</li>
+<li>In some studies, we collect both planned doses to be given and actual dose given. We report both planned and actual dosages in EC domain
+<ul>
+<li>We use the variable ECMOOD to distinguish between planned and actual dose records&nbsp;
+<ul>
+<li>On the record where planned dose is reported we populate ECMOOD as 'SCHEDULED'</li>
+<li>On the record where actual dose is reported we populate ECMOOD as 'PERFORMED'</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>EC domain is expected to have a record structure of "One record per protocol-specified study treatment, collected-dosing interval, per subject, per mood".</li>
+<li>Any treatments other than study treatments must be reported in CM domain.</li>
+<li>'Study treatments' include
+<ul>
+<li>Investigational drug</li>
+<li>Control&nbsp;
+<ul>
+<li>Existing marketed product</li>
+<li>Placebo</li>
+</ul>
+</li>
+<li>Any other medications specified in protocol like co-therapies</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Treatment name</li>
+<li>Treatment administered
+<ul>
+<li>Yes</li>
+<li>No
+<ul>
+<li>Reason when not administered</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Start date/time of the treatment</li>
+<li>End date/time of the treatment</li>
+<li>Dose and dosing unit of the treatment</li>
+<li>Frequency of administration (once daily/twice daily etc.)</li>
+<li>Route of administration (oral/intravenous/intramuscular etc.)</li>
+<li>Dosage form (tablet/capsule/injection etc.)</li>
+<li>Location of administration (Hand/Thigh etc.)</li>
+<li>Laterality (Left/Right etc.)</li>
+<li>Was the dose adjusted for any reason?
+<ul>
+<li>Reason for adjustment</li>
+</ul>
+</li>
+<li>Lot number of the treatment package</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

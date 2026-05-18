@@ -1,0 +1,92 @@
+
+<!-- saved from url=(0068)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_TI_LCSG801 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><p>&nbsp;</p>
+<table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>In every clinical trial, each patient will be enrolled into the study only if they meet prespecified conditions mentioned in the study protocol</li>
+<li>These 'prespecified conditions' are called 'Inclusion criteria' and 'Exclusion criteria'</li>
+<li>Subject should meet all inclusion criteria to be eligible for enrollment</li>
+<li>Subject should NOT meet any exclusion criteria&nbsp;</li>
+<li>SDTM standard has a standard domain for capturing all the inclusion/exclusion criteria - "Trial Inclusion/Exclusion Criteria (TI)"</li>
+<li>TI dataset has an expected record structure of 'One record per I/E criterion'</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Study identifier</li>
+<li>Domain name</li>
+<li>Incl/Excl Criterion Short Name</li>
+<li>Inclusion/Exclusion Criterion</li>
+<li>Inclusion/Exclusion Category</li>
+<li>Protocol criteria versions</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

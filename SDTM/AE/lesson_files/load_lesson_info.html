@@ -1,0 +1,116 @@
+
+<!-- saved from url=(0068)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_AE_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><p>&nbsp;</p>
+<table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<p>In clinical trials, when taking a drug or investigational product, the trial participant (subject) may experience some untoward medical occurrences along with the intended effect of the drug. These untoward medical occurrences are called 'Adverse events'.</p>
+<p>An&nbsp;<strong>adverse event</strong>&nbsp;(<strong>AE</strong>) is any untoward medical occurrence in a patient or clinical investigation subject administered a pharmaceutical product and which does not necessarily have a causal relationship with this treatment. An adverse event can therefore be any unfavorable and unintended sign (including an abnormal laboratory finding), symptom, or disease temporally associated with the use of a medicinal (investigational) product, whether related to the medicinal (investigational) product.</p>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Term described by the subject to explain the adverse event</li>
+<li>&nbsp;Start date/time of the event</li>
+<li>Status of the event - ongoing or ended?
+<ul>
+<li>If ended, end date/time of the event</li>
+</ul>
+</li>
+<li>Severity of the event</li>
+<li>Pattern of the event if applicable</li>
+<li>Any additional medication given/taken to treat the event</li>
+<li>Location and laterality of the event if applicable</li>
+<li>Investigator's assessment/action of the event
+<ul>
+<li>Relationship/causality to the study drug</li>
+<li>Relation to non-study treatment</li>
+<li>Is the event serious?
+<ul>
+<li>If yes, specific criteria on why the event is considered serious.
+<ul>
+<li>Caused cancer</li>
+<li>Caused congenital anomaly or birth defect</li>
+<li>Caused Persistent or Significant Disability/Incapacity</li>
+<li>Resulted in death of the subject</li>
+<li>Is the event life threatening</li>
+<li>Caused hospitalization or prolonged existing hospitalization</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Action taken with the study treatment</li>
+<li>Did the event occur with overdose of study medication</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

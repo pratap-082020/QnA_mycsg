@@ -1,0 +1,92 @@
+
+<!-- saved from url=(0068)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_CM_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<p>When participating in clinical trials, the subjects might already have been on some medications or may need to take additional medications while on study. These additional medications taken prior or alongside the study medications are termed as prior/concomitant medications.</p>
+<p>Information on these medications to understand if there is any impact of these other medications on the safety or efficacy of study medication.</p>
+<p>In most cases, this information is collected by asking the subjects to report any medications taken and one entry will be made for a constant dosing interval for each medication. However, there will be cases where we may specifically want to understand if the subject is taking a particular medication. We call this scenario capturing the usage of prespecified medications. For example, we may ask if the patient was exposed to any antibiotics or corticosteroids in the last three months. etc.</p>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Medication name</li>
+<li>Start date/time of the medication</li>
+<li>Status of the medication - ongoing or ended?
+<ul>
+<li>If ended, end date/time of the medication</li>
+</ul>
+</li>
+<li>Dose and dosing unit of the medication</li>
+<li>Frequency of administration (once daily/twice daily etc.)</li>
+<li>Route of administration (oral/intravenous/intramuscular etc.)</li>
+<li>Dosage form (tablet/capsule/injection etc.)</li>
+<li>Indication for which the medication is taken (e.g.: paracetamol could be taken for fever or general body pain - same medication different purpose)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

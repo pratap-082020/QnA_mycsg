@@ -1,0 +1,246 @@
+
+<!-- saved from url=(0070)https://mycsg.in/load_lesson_info.php?type=SASPROG&lesson=SDTM_PC_L101 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script src="./f.txt"></script><script async="" src="./f(1).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head><body><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col">
+<style>
+.csg-subscribe-wrap{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin: -8px -8px 0 -8px;
+}
+.csg-subscribe-note{
+  margin: 0;
+  padding: 8px 14px;
+  border: 0;
+  border-top: 1px solid #d8e7fb;
+  border-bottom: 1px solid #d8e7fb;
+  border-radius: 0;
+  background: #eef5ff;
+  color: #244d7c;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.csg-subscribe-note a{
+  color: #0f5fc5;
+  font-weight: 700;
+  text-decoration: none;
+}
+.csg-subscribe-note a:hover{
+  text-decoration: underline;
+}
+</style>
+<div class="csg-subscribe-wrap">
+  <div class="csg-subscribe-note">
+    Thank you for your R subscription. Adding SAS can also help you practice the same lesson workflow with SAS input data. <a href="https://mycsg.in/purchase_options.php" target="_parent">Explore subscriptions</a>
+  </div>
+</div><div style="font-family: Courier New; font-size: 11pt">
+<span style="color:#008000;background-color:#ffffff;">/*=========================================================<br>Include&nbsp;the&nbsp;data&nbsp;file<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;root2=&amp;root.SDTM\SDTM_PC\SDTM_PC_L101\SDTM_PC_L101;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%include</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"&amp;root2._data.sas"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">options</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">validvarname</span><span style="color:#000000;background-color:#ffffff;">=upcase;<br></span>
+<span style="color:#008000;background-color:#ffffff;">/*=========================================================<br>Programming&nbsp;for&nbsp;the&nbsp;Task<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#008000;background-color:#ffffff;">*==============================================================================;</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#008000;background-color:#ffffff;">*Create&nbsp;variables&nbsp;which&nbsp;are&nbsp;directly&nbsp;based&nbsp;on&nbsp;raw&nbsp;variables;</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#008000;background-color:#ffffff;">*==============================================================================;</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;pc01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pcon;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;studyid=</span><span style="color:#800080;background-color:#ffffff;">"MYCSG"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;usubjid=cats(</span><span style="color:#800080;background-color:#ffffff;">"MYCSG-"</span><span style="color:#000000;background-color:#ffffff;">,subject);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;domain=</span><span style="color:#800080;background-color:#ffffff;">"PC"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;pcgrpid=grpid;<br>&nbsp;&nbsp;&nbsp;&nbsp;pctestcd=</span><span style="color:#800080;background-color:#ffffff;">"DRUGA"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;pctest=</span><span style="color:#800080;background-color:#ffffff;">"Drug&nbsp;A"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;pcorres=result;<br>&nbsp;&nbsp;&nbsp;&nbsp;pcorresu=unit;<br>&nbsp;&nbsp;&nbsp;&nbsp;pcstresc=pcorres;<br>&nbsp;&nbsp;&nbsp;&nbsp;pcstresn=input(pcstresc,??</span><span style="color:#008080;background-color:#ffffff;">best.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;pcstresu=pcorresu;<br>&nbsp;&nbsp;&nbsp;&nbsp;pcspec=spec;<br>&nbsp;&nbsp;&nbsp;&nbsp;pclloq=</span><b><span style="color:#008080;background-color:#ffffff;">0.1</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;pculoq=</span><b><span style="color:#008080;background-color:#ffffff;">20</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;visitnum=folderseq;<br>&nbsp;&nbsp;&nbsp;&nbsp;visit=scan(foldername,</span><b><span style="color:#008080;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><span style="color:#800080;background-color:#ffffff;">'-'</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;pcdtc=catx(</span><span style="color:#800080;background-color:#ffffff;">"T"</span><span style="color:#000000;background-color:#ffffff;">,put(input(pcdat_raw,</span><span style="color:#008080;background-color:#ffffff;">date11.</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#008080;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">),pctim);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;pctpt=pctpt;<br>&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pceltm&nbsp;$</span><b><span style="color:#008080;background-color:#ffffff;">20</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pctpt=</span><span style="color:#800080;background-color:#ffffff;">"PREDOSE"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;pctptnum=</span><b><span style="color:#008080;background-color:#ffffff;">0</span></b><span style="color:#000000;background-color:#ffffff;">;&nbsp;pceltm=</span><span style="color:#800080;background-color:#ffffff;">"-PT15M"</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pctpt=</span><span style="color:#800080;background-color:#ffffff;">"1H30MIN"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;pctptnum=</span><b><span style="color:#008080;background-color:#ffffff;">1.5</span></b><span style="color:#000000;background-color:#ffffff;">;&nbsp;pceltm=</span><span style="color:#800080;background-color:#ffffff;">"PT1H30M"</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pctpt=</span><span style="color:#800080;background-color:#ffffff;">"6H"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;pctptnum=</span><b><span style="color:#008080;background-color:#ffffff;">6</span></b><span style="color:#000000;background-color:#ffffff;">;&nbsp;pceltm=</span><span style="color:#800080;background-color:#ffffff;">"PT6H"</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pctpt=</span><span style="color:#800080;background-color:#ffffff;">"24H"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;pctptnum=</span><b><span style="color:#008080;background-color:#ffffff;">24</span></b><span style="color:#000000;background-color:#ffffff;">;&nbsp;pceltm=</span><span style="color:#800080;background-color:#ffffff;">"PT24H"</span><span style="color:#000000;background-color:#ffffff;">;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;pctptref=catx(</span><span style="color:#800080;background-color:#ffffff;">"&nbsp;"</span><span style="color:#000000;background-color:#ffffff;">,GRPID,</span><span style="color:#800080;background-color:#ffffff;">"dose"</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;pcrftdtc=dosing_time;<br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#008000;background-color:#ffffff;">*==============================================================================;</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#008000;background-color:#ffffff;">*Create&nbsp;SEQ&nbsp;variable;</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#008000;background-color:#ffffff;">*==============================================================================;</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=pc01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid&nbsp;pctestcd&nbsp;pcdtc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;pc02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pc01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid&nbsp;pctestcd&nbsp;pcdtc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;first.usubjid&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pcseq=</span><b><span style="color:#008080;background-color:#ffffff;">1</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pcseq+</span><b><span style="color:#008080;background-color:#ffffff;">1</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#008000;background-color:#ffffff;">*==============================================================================;</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#008000;background-color:#ffffff;">*Keep&nbsp;only&nbsp;required&nbsp;variables;</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#008000;background-color:#ffffff;">*==============================================================================;</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;keepvars=STUDYID&nbsp;DOMAIN&nbsp;USUBJID&nbsp;PCSEQ&nbsp;PCGRPID&nbsp;PCTESTCD&nbsp;PCTEST&nbsp;PCORRES&nbsp;PCORRESU<br>PCSTRESC&nbsp;PCSTRESN&nbsp;PCSTRESU&nbsp;PCSPEC&nbsp;PCLLOQ&nbsp;PCULOQ&nbsp;VISITNUM&nbsp;VISIT&nbsp;PCDTC&nbsp;PCTPT&nbsp;PCTPTNUM<br>PCELTM&nbsp;PCTPTREF&nbsp;PCRFTDTC<br>;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;pc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">retain</span><span style="color:#000000;background-color:#ffffff;">&nbsp;&amp;</span><span style="color:#008080;background-color:#ffffff;">keepvars.</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;pc02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;&amp;</span><span style="color:#008080;background-color:#ffffff;">keepvars.</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span></div></div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(3).html" data-google-container-id="1.9ruxnfz03vq4" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe src="./aframe(3).html" width="0" height="0" style="display: none;"></iframe></body></html>

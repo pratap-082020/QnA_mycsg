@@ -1,0 +1,121 @@
+
+<!-- saved from url=(0068)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_EX_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>In clinical trials, we administer 'study treatments' to the subjects over time as per requirement</li>
+<li>We need to report the exposure of these study drug administrations in terms of 'protocol-specified unit'</li>
+<li>SDTM standard has standard data structure for reporting such data - "Exposure (EX)"</li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li>Understanding 'Protocol-specified unit'
+<ul>
+<li>Example 1: The protocol may specify that 50 mg of drug will be administered but the collection is in terms number of tablets administered. Let's say, to receive 50 mg, subject has to take two tablets of 25mg each.&nbsp;
+<ul>
+<li>We report the number of tablets taken in EC domain</li>
+<li>We translate the information from number of tablets and strength of the tablet to actual dose received and present in EX. If two tablets are taken then EXDOSE will be 50 mg, if only one tablet is taken then EXDOSE will be 25 mg.</li>
+</ul>
+</li>
+<li>Example 2: The protocol may specify that 100mg of drug has to be administered and the dosage form is an infusion of 100 ml. The collection here can only be made in terms of total volume of infusion administered.&nbsp;
+<ul>
+<li>We report the volume administered in EC domain</li>
+<li>We translate the information from volume of infusion administered and strength to actual dose received and present in EX. If 100 ml of infusion is administered, then EXDOSE is 100 mg. If only 35 ml is administered, then EXDOSE will only be 35 mg (1ml==1mg).&nbsp;</li>
+</ul>
+</li>
+<li>Example 3: In some studies, where both planned dose and actual dose are collected, we use EC to present both doses. In EX, we only present the actual dose records.</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li>EX domain falls under interventions class of the SDTM domains and has an expected record structure of 'One record per protocol-specified study treatment, constant-dosing interval'</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Treatment name</li>
+<li>Start date/time of the treatment</li>
+<li>End date/time of the treatment</li>
+<li>Dose and dosing unit of the treatment</li>
+<li>Frequency of administration (once daily/twice daily etc.)</li>
+<li>Route of administration (oral/intravenous/intramuscular etc.)</li>
+<li>Dosage form (tablet/capsule/injection etc.)</li>
+<li>Location of administration (Hand/Thigh etc.)</li>
+<li>Laterality (Left/Right etc.)</li>
+<li>Was the dose adjusted for any reason?
+<ul>
+<li>Reason for adjustment</li>
+</ul>
+</li>
+<li>Lot number of the treatment package</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

@@ -1,0 +1,112 @@
+
+<!-- saved from url=(0068)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_TA_LCSG801 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><p>&nbsp;</p>
+<table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>The entire duration of expected participation in a clinical trial can be split into several distinct periods of time</li>
+<li>These distinct periods of time are called 'elements'</li>
+<li>An element may involve 'treatment' or 'no treatment'
+<ul>
+<li>'Treatment' elements involve treating the subjects with one of the study drugs - investigational drug or matching control - active control or placebo</li>
+<li>'No treatment' elements include
+<ul>
+<li>preparing a subject for treatment - screening</li>
+<li>washing out of any prior treatments - washout</li>
+<li>observation period post treatment - follow-up</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>SDTM standard has a dataset named 'Trial Elements', which is used to describe all the possible 'elements' within a study</li>
+<li>A subject's journey in the trial can be described as a combination of these elements</li>
+<li>SDTM describes 'Arm' as the planned path through the trial</li>
+<li>SDTM standard has a dataset named 'Trial Arms' to describe the sequence of elements for each arm</li>
+<li>The expected record structure for TA domain is 'One record per planned Element per Arm'</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Study identifier</li>
+<li>Domain name</li>
+<li>Planned Arm Code</li>
+<li>Description of Planned Arm</li>
+<li>Planned order of element within arm</li>
+<li>Element code</li>
+<li>Description of the element</li>
+<li>Branching rule</li>
+<li>Transition rule where applicable</li>
+<li>Epoch</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

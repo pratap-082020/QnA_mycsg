@@ -1,0 +1,110 @@
+
+<!-- saved from url=(0065)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_IE_L101 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><p>&nbsp;</p>
+<table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>In every clinical trial, each patient will be enrolled into the study only if they meet prespecified conditions mentioned in the study protocol</li>
+<li>These 'prespecified conditions' are called 'Inclusion criteria' and 'Exclusion criteria'</li>
+<li>Subject should meet all inclusion criteria to be eligible for enrollment</li>
+<li>Subject should NOT meet any exclusion criteria&nbsp;</li>
+<li>SDTM standard has a standard domain for capturing these findings - "Inclusion/Exclusion Criteria Not Met (IE)"</li>
+<li>Note that we only capture the information for the inclusion criteria not met and exclusion criteria met in IE dataset</li>
+<li>IE dataset belongs to Findings class and has an expected record structure of 'One record per inclusion/exclusion criterion not met per subject'</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Date of assessment</li>
+<li>Short name of the test</li>
+<li>Name of the test</li>
+<li>Result
+<ul>
+<li>in original units</li>
+<li>in standard units (converted to standard terminology of Y/N)</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="text-align: center; background-color: rgb(248, 202, 198);">
+<h2>Other notes</h2>
+</td>
+</tr>
+<tr>
+<td style="text-align: left;">
+<ul>
+<li>In most studies, IE criteria will be evaluated only once at the time of screening</li>
+<li>In some studies, IE criteria will be evaluated more than once, for example at screening visit for the first time and subsequently at the visit of randomization for the second time.</li>
+<li>In the above cases, we will present both instances in IE - using VISITNUM/VISIT to differentiate between these two instances of IE criteria evaluation&nbsp;</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

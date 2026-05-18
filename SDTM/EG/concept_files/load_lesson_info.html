@@ -1,0 +1,123 @@
+
+<!-- saved from url=(0068)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_EG_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><p>&nbsp;</p>
+<table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>In some clinical trials, we may have to collect data about different parameters from electrocardiogram (ECG) and its interpretation</li>
+<li>Some example data points are:
+<ul>
+<li>PR interval</li>
+<li>ST interval</li>
+<li>QT interval</li>
+<li>QRS duration</li>
+<li>RR interval</li>
+<li>Interpretation</li>
+</ul>
+</li>
+<li>SDTM standard has a standard domain for capturing these findings - "ECG Test Results (EG)"</li>
+<li>EG dataset belongs to Findings class and has an expected record structure of 'One record per finding or result per time point per visit per subject'</li>
+</ul>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="data:image/png;base64,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" alt="CV Physiology | Electrocardiogram (EKG, ECG)"></p>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Date of assessment</li>
+<li>Test performed status
+<ul>
+<li>Yes</li>
+<li>No&nbsp;
+<ul>
+<li>Reason not performed</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Short name of the test</li>
+<li>Name of the test</li>
+<li>Position of the subject when test was performed</li>
+<li>Method of test or examination</li>
+<li>Result
+<ul>
+<li>in original units</li>
+<li>in standard units</li>
+</ul>
+</li>
+<li>Derived information
+<ul>
+<li>Baseline flag - when results of a test are collected over pre and post treatment period</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

@@ -1,0 +1,1175 @@
+
+<!-- saved from url=(0073)https://mycsg.in/load_lesson_info.php?type=RTVDATA&lesson=SDTM_LB_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./f.txt"></script><script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    <meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head>
+    <body><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script async="" src="./f(1).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col">dm&lt;-tribble(<br>
+~usubjid,~rfstdtc,<br>
+"CSG001-1001","2010-01-01",<br>
+"CSG001-1002","2010-01-01",<br>
+"CSG001-1003","2010-01-03",<br>
+"CSG001-1004","2010-01-05",<br>
+"CSG001-1005","2010-02-05",<br>
+"CSG001-1006","2010-03-02",<br>
+"CSG001-1007","2010-04-15",<br>
+"CSG001-1008","2010-06-27",<br>
+)<br>
+<br>
+lab_chem&lt;-tribble(<br>
+~study,~pt,~studypt,~folder,~lbdt_raw,~test,~specimen,~coll_rslt,~coll_unit,~lower,~upper,<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","ALB","Serum","3","g/dL","4","6",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","ALP","Serum","10299","U/L","2994","9581",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","ALT","Serum","2395","umol/hL","599","3360",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","AMYLASE","Serum","7485","U/L","3174","7365",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","AST","Serum","1078","umol/hL","599","2395",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","BICARB","Serum","20","mEq/L","18","30",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","BILDIR","Serum","0.3","mg/dL","0","0.3",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","BILI","Serum","1.29","mg/dL","0.1","1.2",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","CA","Serum","8.92","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","CACR","Serum","8.27","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","CHOL","Serum","162.55","mg/dL","149.81","198.84",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","CL","Serum","91","mEq/L","98","106",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","CREAT","Serum","1.78","mg/dL","1","2",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","GGT","Serum","28.56","U/L","8","78",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","HDL","Serum","40.15","mg/dL","40.15","",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","K","Serum","5.9","mEq/L","3.5","5.5",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","LDH","Serum","99.4","U/L","59.88","100",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","LDL","Serum","107.34","mg/dL","0","129.73",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","MG","Serum","1.77","mg/dL","1.8","3.6",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","PHOS","Serum","4.22","mg/dL","3","4.49",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","PROT","Serum","6","g/dL","6","8",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","SODIUM","Serum","126","mEq/L","135","147",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","TRIG","Serum","119.74","mg/dL","40","200",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","UREAN","Serum","17.6","mg/dL","8.1","19.9",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","ALB","Serum","40","g/L","40","60",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","ALP","Serum","143.72","ukat/L","49.9","159.68",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","ALT","Serum","1916","umol/hL","599","3360",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","AMYLASE","Serum","5569","U/L","3174","7365",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","AST","Serum","1078","umol/hL","599","2395",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","BICARB","Serum","25","mEq/L","18","30",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","BILDIR","Serum","0.1","mg/dL","0","0.3",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","BILI","Serum","0.85","mg/dL","0.1","1.2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","CA","Serum","8.88","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","CACR","Serum","9.9","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","CHOL","Serum","192.28","mg/dL","149.81","198.84",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","CL","Serum","113","mEq/L","98","106",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","CREAT","Serum","1.66","mg/dL","1","2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","GGT","Serum","33.41","U/L","8","78",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","HDL","Serum","36.68","mg/dL","40.15","",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","K","Serum","4","mEq/L","3.5","5.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","LDH","Serum","104.79","U/L","59.88","100",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","LDL","Serum","92.66","mg/dL","0","129.73",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","MG","Serum","2.24","mg/dL","1.8","3.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","PHOS","Serum","3.07","mg/dL","3","4.49",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","PROT","Serum","6","g/dL","6","8",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","SODIUM","Serum","126","mEq/L","135","147",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","TRIG","Serum","142.12","mg/dL","40","200",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","UREAN","Serum","17.6","mg/dL","8.1","19.9",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","ALB","Serum","&lt;4","g/dL","4","6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","ALP","Serum","5389","U/L","2994","9581",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","ALT","Serum","1138","umol/hL","599","3360",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","AMYLASE","Serum","5150","U/L","3174","7365",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","AST","Serum","2395","umol/hL","599","2395",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","BICARB","Serum","25","mEq/L","18","30",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","BILDIR","Serum","0","mg/dL","0","0.3",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","BILI","Serum","0.24","mg/dL","0.1","1.2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","CA","Serum","8.71","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","CACR","Serum","10.48","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","CHOL","Serum","154.05","mg/dL","149.81","198.84",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","CL","Serum","89","mEq/L","98","106",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","CREAT","Serum","1.04","mg/dL","1","2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","GGT","Serum","36.47","U/L","8","78",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","HDL","Serum","36.29","mg/dL","40.15","",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","K","Serum","4.4","mEq/L","3.5","5.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","LDH","Serum","62.28","U/L","59.88","100",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","LDL","Serum","86.87","mg/dL","0","129.73",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","MG","Serum","2.79","mg/dL","1.8","3.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","PHOS","Serum","3.72","mg/dL","3","4.49",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","PROT","Serum","9","g/dL","6","8",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","SODIUM","Serum","150","mEq/L","135","147",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","TRIG","Serum","111.59","mg/dL","40","200",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","UREAN","Serum","17.9","mg/dL","8.1","19.9",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","ALB","Serum","3","g/dL","4","6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","ALP","Serum","6527","U/L","2994","9581",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","ALT","Serum","1078","umol/hL","599","3360",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","AMYLASE","Serum","4012","U/L","3174","7365",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","AST","Serum","659","umol/hL","599","2395",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","BICARB","Serum","19","mEq/L","18","30",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","BILDIR","Serum","0.3","mg/dL","0","0.3",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","BILI","Serum","0.84","mg/dL","0.1","1.2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","CA","Serum","9.62","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","CACR","Serum","8.38","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","CHOL","Serum","135.52","mg/dL","149.81","198.84",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","CL","Serum","97","mEq/L","98","106",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","CREAT","Serum","1.33","mg/dL","1","2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","GGT","Serum","41.56","U/L","8","78",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","HDL","Serum","38.22","mg/dL","40.15","",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","K","Serum","5.5","mEq/L","3.5","5.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","LDH","Serum","84.43","U/L","59.88","100",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","LDL","Serum","13.51","mg/dL","0","129.73",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","MG","Serum","1.89","mg/dL","1.8","3.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","PHOS","Serum","4.64","mg/dL","3","4.49",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","PROT","Serum","7","g/dL","6","8",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","SODIUM","Serum","151","mEq/L","135","147",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","TRIG","Serum","161.86","mg/dL","40","200",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","UREAN","Serum","16","mg/dL","8.1","19.9",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","ALB","Serum","6","g/dL","4","6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","ALP","Serum","10359","U/L","2994","9581",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","ALT","Serum","1317","umol/hL","599","3360",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","AMYLASE","Serum","4311","U/L","3174","7365",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","AST","Serum","2395","umol/hL","599","2395",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","BICARB","Serum","31","mEq/L","18","30",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","BILI","Serum","0.53","mg/dL","0.1","1.2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","CA","Serum","8.25","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","CACR","Serum","10.66","mg/dL","8.5","10.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","CHOL","Serum","156.37","mg/dL","149.81","198.84",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","CL","Serum","95","mEq/L","98","106",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","CREAT","Serum","1.28","mg/dL","1","2",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","GGT","Serum","73.83","U/L","8","78",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","HDL","Serum","40.15","mg/dL","40.15","",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","K","Serum","4.4","mEq/L","3.5","5.5",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","LDH","Serum","60.48","U/L","59.88","100",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","LDL","Serum","58.69","mg/dL","0","129.73",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","MG","Serum","2.52","mg/dL","1.8","3.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","PHOS","Serum","4.53","mg/dL","3","4.49",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","PROT","Serum","6","g/dL","6","8",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","SODIUM","Serum","127","mEq/L","135","147",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","TRIG","Serum","58.32","mg/dL","40","200",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","UREAN","Serum","18.8","mg/dL","8.1","19.9",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","ALB","Serum","5","g/dL","4","6",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","ALP","Serum","6766","U/L","2994","9581",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","ALT","Serum","1856","umol/hL","599","3360",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","AMYLASE","Serum","4551","U/L","3174","7365",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","AST","Serum","1198","umol/hL","599","2395",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","BICARB","Serum","25","mEq/L","18","30",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","BILDIR","Serum","0.3","mg/dL","0","0.3",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","BILI","Serum","0.91","mg/dL","0.1","1.2",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","CA","Serum","8.2","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","CACR","Serum","9.07","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","CHOL","Serum","216.22","mg/dL","149.81","198.84",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","CL","Serum","113","mEq/L","98","106",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","CREAT","Serum","2.02","mg/dL","1","2",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","GGT","Serum","25.21","U/L","8","78",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","HDL","Serum","37.45","mg/dL","40.15","",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","K","Serum","5.7","mEq/L","3.5","5.5",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","LDH","Serum","58.08","U/L","59.88","100",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","LDL","Serum","40.93","mg/dL","0","129.73",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","MG","Serum","3.67","mg/dL","1.8","3.6",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","PHOS","Serum","4.47","mg/dL","3","4.49",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","SODIUM","Serum","160","mEq/L","135","147",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","TRIG","Serum","65.84","mg/dL","40","200",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","UREAN","Serum","13.7","mg/dL","8.1","19.9",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","ALB","Serum","5","g/dL","4","6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","ALP","Serum","4611","U/L","2994","9581",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","ALT","Serum","2275","umol/hL","599","3360",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","AMYLASE","Serum","5210","U/L","3174","7365",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","AST","Serum","2036","umol/hL","599","2395",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","BICARB","Serum","33","mEq/L","18","30",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","BILDIR","Serum","0.1","mg/dL","0","0.3",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","BILI","Serum","0.54","mg/dL","0.1","1.2",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","CA","Serum","10.44","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","CACR","Serum","9.93","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","CHOL","Serum","215.06","mg/dL","149.81","198.84",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","CL","Serum","116","mEq/L","98","106",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","CREAT","Serum","1.44","mg/dL","1","2",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","GGT","Serum","52.58","U/L","8","78",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","HDL","Serum","39.38","mg/dL","40.15","",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","K","Serum","4.3","mEq/L","3.5","5.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","LDH","Serum","70.66","U/L","59.88","100",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","LDL","Serum","35.91","mg/dL","0","129.73",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","MG","Serum","3.54","mg/dL","1.8","3.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","PHOS","Serum","3.87","mg/dL","3","4.49",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","SODIUM","Serum","127","mEq/L","135","147",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","TRIG","Serum","174.16","mg/dL","40","200",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","UREAN","Serum","16.2","mg/dL","8.1","19.9",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","ALB","Serum","6","g/dL","4","6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","ALP","Serum","3353","U/L","2994","9581",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","ALT","Serum","1557","umol/hL","599","3360",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","AMYLASE","Serum","4072","U/L","3174","7365",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","AST","Serum","1078","umol/hL","599","2395",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","BICARB","Serum","25","mEq/L","18","30",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","BILDIR","Serum","0","mg/dL","0","0.3",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","BILI","Serum","0.33","mg/dL","0.1","1.2",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","CA","Serum","8.25","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","CACR","Serum","8.63","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","CHOL","Serum","191.89","mg/dL","149.81","198.84",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","CL","Serum","97","mEq/L","98","106",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","CREAT","Serum","1.91","mg/dL","1","2",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","GGT","Serum","15.93","U/L","8","78",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","HDL","Serum","39.77","mg/dL","40.15","",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","K","Serum","5.4","mEq/L","3.5","5.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","LDH","Serum","98.2","U/L","59.88","100",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","LDL","Serum","36.68","mg/dL","0","129.73",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","MG","Serum","2.96","mg/dL","1.8","3.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","PHOS","Serum","4.01","mg/dL","3","4.49",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","SODIUM","Serum","132","mEq/L","135","147",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","TRIG","Serum","148.05","mg/dL","40","200",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","UREAN","Serum","13.4","mg/dL","8.1","19.9",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","ALB","Serum","4","g/dL","4","6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","ALP","Serum","5269","U/L","2994","9581",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","ALT","Serum","2156","umol/hL","599","3360",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","AMYLASE","Serum","4790","U/L","3174","7365",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","AST","Serum","1317","umol/hL","599","2395",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","BICARB","Serum","31","mEq/L","18","30",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","BILI","Serum","1.07","mg/dL","0.1","1.2",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","CA","Serum","8.89","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","CACR","Serum","8.02","mg/dL","8.5","10.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","CHOL","Serum","138.61","mg/dL","149.81","198.84",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","CL","Serum","95","mEq/L","98","106",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","CREAT","Serum","2.15","mg/dL","1","2",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","GGT","Serum","81.32","U/L","8","78",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","HDL","Serum","38.22","mg/dL","40.15","",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","K","Serum","4","mEq/L","3.5","5.5",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","LDH","Serum","76.05","U/L","59.88","100",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","LDL","Serum","116.99","mg/dL","0","129.73",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","MG","Serum","3.85","mg/dL","1.8","3.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","PHOS","Serum","3.04","mg/dL","3","4.49",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","SODIUM","Serum","126","mEq/L","135","147",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","TRIG","Serum","73.89","mg/dL","40","200",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","UREAN","Serum","8.1","mg/dL","8.1","19.9",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","ALB","Serum","6","g/dL","4","6",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","ALP","Serum","3413","U/L","2994","9581",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","ALT","Serum","1617","umol/hL","599","3360",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","AMYLASE","Serum","4671","U/L","3174","7365",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","AST","Serum","719","umol/hL","599","2395",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","BICARB","Serum","28","mEq/L","18","30",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","BILI","Serum","0.46","mg/dL","0.1","1.2",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","CA","Serum","11.26","mg/dL","8.5","10.5",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","CACR","Serum","10.69","mg/dL","8.5","10.5",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","CHOL","Serum","142.08","mg/dL","149.81","198.84",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","CL","Serum","112","mEq/L","98","106",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","CREAT","Serum","1.33","mg/dL","1","2",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","GGT","Serum","11.2","U/L","8","78",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","HDL","Serum","38.22","mg/dL","40.15","",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","K","Serum","4.7","mEq/L","3.5","5.5",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","LDH","Serum","64.07","U/L","59.88","100",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","LDL","Serum","18.53","mg/dL","0","129.73",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","MG","Serum","2.6","mg/dL","1.8","3.6",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","PHOS","Serum","4.12","mg/dL","3","4.49",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","SODIUM","Serum","145","mEq/L","135","147",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","TRIG","Serum","144.43","mg/dL","40","200",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","UREAN","Serum","15.7","mg/dL","8.1","19.9",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","ALB","Serum","3","g/dL","4","6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","ALP","Serum","10000","U/L","2994","9581",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","ALT","Serum","1976","umol/hL","599","3360",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","AMYLASE","Serum","7665","U/L","3174","7365",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","AST","Serum","2156","umol/hL","599","2395",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","BICARB","Serum","17","mEq/L","18","30",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","BILI","Serum","0.38","mg/dL","0.1","1.2",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","CA","Serum","9.71","mg/dL","8.5","10.5",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","CACR","Serum","8.1","mg/dL","8.5","10.5",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","CHOL","Serum","135.52","mg/dL","149.81","198.84",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","CL","Serum","90","mEq/L","98","106",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","CREAT","Serum","1.46","mg/dL","1","2",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","GGT","Serum","74.67","U/L","8","78",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","HDL","Serum","36.68","mg/dL","40.15","",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","K","Serum","5","mEq/L","3.5","5.5",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","LDH","Serum","108.38","U/L","59.88","100",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","LDL","Serum","43.24","mg/dL","0","129.73",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","MG","Serum","3.52","mg/dL","1.8","3.6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","PHOS","Serum","4.56","mg/dL","3","4.49",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","PROT","Serum","6","g/dL","6","8",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","SODIUM","Serum","142","mEq/L","135","147",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","TRIG","Serum","79.12","mg/dL","40","200",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","UREAN","Serum","12.9","mg/dL","8.1","19.9",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","ALB","Serum","4","g/dL","4","6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","ALP","Serum","9880","U/L","2994","9581",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","ALT","Serum","2216","umol/hL","420","3360",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","AMYLASE","Serum","5210","U/L","3174","7365",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","AST","Serum","719","umol/hL","599","2395",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","BICARB","Serum","29","mEq/L","18","30",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","BILDIR","Serum","0","mg/dL","0","0.3",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","BILI","Serum","0.5","mg/dL","0.1","1.2",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","CA","Serum","8.21","mg/dL","8.5","10.5",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","CACR","Serum","7.86","mg/dL","8.5","10.5",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","CHOL","Serum","208.88","mg/dL","149.81","198.84",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","CL","Serum","96","mEq/L","98","106",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","CREAT","Serum","1.54","mg/dL","1","2",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","GGT","Serum","23.65","U/L","8","78",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","HDL","Serum","39.77","mg/dL","40.15","",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","K","Serum","4.6","mEq/L","3.5","5.5",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","LDH","Serum","90.42","U/L","59.88","100",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","LDL","Serum","3.86","mg/dL","0","129.73",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","MG","Serum","3.59","mg/dL","1.8","3.6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","PHOS","Serum","4.64","mg/dL","3","4.49",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","SODIUM","Serum","133","mEq/L","135","147",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","TRIG","Serum","203.98","mg/dL","40","200",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","UREAN","Serum","11.8","mg/dL","8.1","19.9",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","ALB","Serum","4","g/dL","4","6",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","ALP","Serum","7844","U/L","2994","9581",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","ALT","Serum","599","umol/hL","420","3360",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","AMYLASE","Serum","6108","U/L","3174","7365",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","AST","Serum","1737","umol/hL","599","2395",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","BICARB","Serum","32","mEq/L","18","30",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","BILDIR","Serum","0.1","mg/dL","0","0.3",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","BILI","Serum","1.23","mg/dL","0.1","1.2",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","CA","Serum","8.18","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","CACR","Serum","8.47","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","CHOL","Serum","149.03","mg/dL","149.81","198.84",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","CL","Serum","92","mEq/L","98","106",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","CREAT","Serum","1.12","mg/dL","1","2",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","GGT","Serum","61.32","U/L","8","78",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","HDL","Serum","39","mg/dL","40.15","",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","K","Serum","4.6","mEq/L","3.5","5.5",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","LDH","Serum","109.58","U/L","59.88","100",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","LDL","Serum","98.07","mg/dL","0","129.73",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","MG","Serum","3.58","mg/dL","1.8","3.6",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","PHOS","Serum","4.31","mg/dL","3","4.49",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","PROT","Serum","6","g/dL","6","8",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","SODIUM","Serum","158","mEq/L","135","147",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","TRIG","Serum","100.18","mg/dL","40","200",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","UREAN","Serum","12.3","mg/dL","8.1","19.9",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","ALB","Serum","4","g/dL","4","6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","ALP","Serum","4731","U/L","2994","9581",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","ALT","Serum","2335","umol/hL","420","3360",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","AMYLASE","Serum","3413","U/L","3174","7365",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","AST","Serum","1497","umol/hL","599","2395",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","BICARB","Serum","30","mEq/L","18","30",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","BILI","Serum","0.28","mg/dL","0.1","1.2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","CA","Serum","10.26","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","CACR","Serum","10.76","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","CHOL","Serum","172.2","mg/dL","149.81","198.84",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","CL","Serum","112","mEq/L","98","106",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","CREAT","Serum","1.13","mg/dL","1","2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","GGT","Serum","78.56","U/L","8","78",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","HDL","Serum","38.61","mg/dL","40.15","",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","K","Serum","4.8","mEq/L","3.5","5.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","LDH","Serum","84.43","U/L","59.88","100",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","LDL","Serum","5.41","mg/dL","0","129.73",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","MG","Serum","1.81","mg/dL","1.8","3.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","PHOS","Serum","3.87","mg/dL","3","4.49",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","SODIUM","Serum","146","mEq/L","135","147",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","TRIG","Serum","211.5","mg/dL","40","200",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","UREAN","Serum","13.4","mg/dL","8.1","19.9",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","ALB","Serum","5","g/dL","4","6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","ALP","Serum","7605","U/L","2994","9581",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","ALT","Serum","1976","umol/hL","420","3360",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","AMYLASE","Serum","3353","U/L","3174","7365",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","AST","Serum","2575","umol/hL","599","2395",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","BICARB","Serum","28","mEq/L","18","30",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","BILI","Serum","1.18","mg/dL","0.1","1.2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","CA","Serum","11.51","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","CACR","Serum","8.8","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","CHOL","Serum","166.02","mg/dL","149.81","198.84",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","CL","Serum","92","mEq/L","98","106",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","CREAT","Serum","1.56","mg/dL","1","2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","GGT","Serum","70.36","U/L","8","78",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","HDL","Serum","37.84","mg/dL","40.15","",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","K","Serum","4.3","mEq/L","3.5","5.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","LDH","Serum","97.01","U/L","59.88","100",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","LDL","Serum","71.81","mg/dL","0","129.73",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","MG","Serum","3.44","mg/dL","1.8","3.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","PHOS","Serum","4.69","mg/dL","3","4.49",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","PROT","Serum","7","g/dL","6","8",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","SODIUM","Serum","147","mEq/L","135","147",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","TRIG","Serum","199.29","mg/dL","40","200",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","UREAN","Serum","21.8","mg/dL","8.1","19.9",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","ALB","Serum","6","g/dL","4","6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","ALP","Serum","8263","U/L","2994","9581",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","ALT","Serum","958","umol/hL","420","3360",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","AMYLASE","Serum","6587","U/L","3174","7365",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","AST","Serum","1916","umol/hL","599","2395",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","BICARB","Serum","27","mEq/L","18","30",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","BILDIR","Serum","0","mg/dL","0","0.3",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","BILI","Serum","0.65","mg/dL","0.1","1.2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","CA","Serum","8.87","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","CACR","Serum","10.71","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","CHOL","Serum","144.02","mg/dL","149.81","198.84",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","CL","Serum","112","mEq/L","98","106",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","CREAT","Serum","1.2","mg/dL","1","2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","GGT","Serum","39.7","U/L","8","78",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","HDL","Serum","39.38","mg/dL","40.15","",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","K","Serum","4.2","mEq/L","3.5","5.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","LDH","Serum","95.81","U/L","59.88","100",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","LDL","Serum","89.96","mg/dL","0","129.73",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","MG","Serum","3.96","mg/dL","1.8","3.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","PHOS","Serum","3.47","mg/dL","3","4.49",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","PROT","Serum","7","g/dL","6","8",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","SODIUM","Serum","138","mEq/L","135","147",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","TRIG","Serum","209.12","mg/dL","40","200",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","UREAN","Serum","18.5","mg/dL","8.1","19.9",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","ALB","Serum","6","g/dL","4","6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","ALP","Serum","5868","U/L","2994","9581",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","ALT","Serum","2096","umol/hL","420","3360",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","AMYLASE","Serum","4910","U/L","3174","7365",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","AST","Serum","958","umol/hL","599","2395",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","BICARB","Serum","20","mEq/L","18","30",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","BILI","Serum","1.05","mg/dL","0.1","1.2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","CA","Serum","11.33","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","CACR","Serum","10.88","mg/dL","8.5","10.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","CHOL","Serum","211.97","mg/dL","149.81","198.84",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","CL","Serum","107","mEq/L","98","106",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","CREAT","Serum","1.21","mg/dL","1","2",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","GGT","Serum","58.92","U/L","8","78",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","HDL","Serum","36.68","mg/dL","40.15","",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","K","Serum","4.2","mEq/L","3.5","5.5",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","LDH","Serum","68.26","U/L","59.88","100",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","LDL","Serum","87.26","mg/dL","0","129.73",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","MG","Serum","3.72","mg/dL","1.8","3.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","PHOS","Serum","3.26","mg/dL","3","4.49",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","PROT","Serum","7","g/dL","6","8",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","SODIUM","Serum","158","mEq/L","135","147",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","TRIG","Serum","179.91","mg/dL","40","200",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","UREAN","Serum","16.5","mg/dL","8.1","19.9",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","ALB","Serum","6","g/dL","4","6",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","ALP","Serum","8982","U/L","2994","9581",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","ALT","Serum","1976","umol/hL","420","3360",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","AMYLASE","Serum","3713","U/L","3174","7365",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","AST","Serum","838","umol/hL","599","2395",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","BICARB","Serum","18","mEq/L","18","30",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","BILDIR","Serum","0.2","mg/dL","0","0.3",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","BILI","Serum","0.74","mg/dL","0.1","1.2",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","CA","Serum","8.53","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","CACR","Serum","9.1","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","CHOL","Serum","178.38","mg/dL","149.81","198.84",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","CL","Serum","96","mEq/L","98","106",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","CREAT","Serum","2","mg/dL","1","2",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","GGT","Serum","77.13","U/L","8","78",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","HDL","Serum","36.68","mg/dL","40.15","",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","K","Serum","3.5","mEq/L","3.5","5.5",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","LDH","Serum","91.62","U/L","59.88","100",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","LDL","Serum","91.12","mg/dL","0","129.73",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","MG","Serum","2.53","mg/dL","1.8","3.6",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","PHOS","Serum","4.62","mg/dL","3","4.49",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","PROT","Serum","7","g/dL","6","8",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","SODIUM","Serum","125","mEq/L","135","147",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","TRIG","Serum","113.27","mg/dL","40","200",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","UREAN","Serum","18.5","mg/dL","8.1","19.9",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","ALB","Serum","4","g/dL","4","6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","ALP","Serum","7964","U/L","2994","9581",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","ALT","Serum","2096","umol/hL","420","3360",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","AMYLASE","Serum","6168","U/L","3174","7365",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","AST","Serum","898","umol/hL","599","2395",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","BICARB","Serum","28","mEq/L","18","30",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","BILDIR","Serum","0.1","mg/dL","0","0.3",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","BILI","Serum","0.21","mg/dL","0.1","1.2",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","CA","Serum","10.98","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","CACR","Serum","9.37","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","CHOL","Serum","150.58","mg/dL","149.81","198.84",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","CL","Serum","110","mEq/L","98","106",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","CREAT","Serum","1.19","mg/dL","1","2",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","GGT","Serum","61.8","U/L","8","78",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","HDL","Serum","37.45","mg/dL","40.15","",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","K","Serum","5.9","mEq/L","3.5","5.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","LDH","Serum","82.04","U/L","59.88","100",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","LDL","Serum","30.12","mg/dL","0","129.73",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","MG","Serum","3.25","mg/dL","1.8","3.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","PHOS","Serum","3.91","mg/dL","3","4.49",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","PROT","Serum","9","g/dL","6","8",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","SODIUM","Serum","153","mEq/L","135","147",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","TRIG","Serum","150.97","mg/dL","40","200",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","UREAN","Serum","9","mg/dL","8.1","19.9",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","ALB","Serum","5","g/dL","4","6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","ALP","Serum","8084","U/L","2994","9581",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","ALT","Serum","2036","umol/hL","420","3360",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","AMYLASE","Serum","4371","U/L","3174","7365",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","AST","Serum","2275","umol/hL","599","2395",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","BICARB","Serum","32","mEq/L","18","30",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","BILDIR","Serum","0.1","mg/dL","0","0.3",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","BILI","Serum","0.78","mg/dL","0.1","1.2",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","CA","Serum","8.5","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","CACR","Serum","9.63","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","CHOL","Serum","176.06","mg/dL","149.81","198.84",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","CL","Serum","104","mEq/L","98","106",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","CREAT","Serum","1.98","mg/dL","1","2",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","GGT","Serum","41.32","U/L","8","78",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","HDL","Serum","38.61","mg/dL","40.15","",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","K","Serum","5.5","mEq/L","3.5","5.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","LDH","Serum","98.8","U/L","59.88","100",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","LDL","Serum","84.17","mg/dL","0","129.73",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","MG","Serum","3.8","mg/dL","1.8","3.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","PHOS","Serum","3.82","mg/dL","3","4.49",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","PROT","Serum","6","g/dL","6","8",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","SODIUM","Serum","131","mEq/L","135","147",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","TRIG","Serum","148.94","mg/dL","40","200",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","UREAN","Serum","12","mg/dL","8.1","19.9",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","ALB","Serum","3","g/dL","4","6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","ALP","Serum","4910","U/L","2994","9581",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","ALT","Serum","&lt;=300","umol/hL","420","3360",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","AMYLASE","Serum","4311","U/L","3174","7365",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","AST","Serum","&gt;2601","umol/hL","599","2395",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","BICARB","Serum","31","mEq/L","18","30",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","BILDIR","Serum","0.1","mg/dL","0","0.3",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","BILI","Serum","0.97","mg/dL","0.1","1.2",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","CA","Serum","11.23","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","CACR","Serum","11.09","mg/dL","8.5","10.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","CHOL","Serum","146.72","mg/dL","149.81","198.84",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","CL","Serum","111","mEq/L","98","106",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","CREAT","Serum","1.34","mg/dL","1","2",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","GGT","Serum","14.07","U/L","8","78",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","HDL","Serum","36.68","mg/dL","40.15","",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","K","Serum","3.5","mEq/L","3.5","5.5",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","LDH","Serum","77.84","U/L","59.88","100",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","LDL","Serum","64.09","mg/dL","0","129.73",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","MG","Serum","2.21","mg/dL","1.8","3.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","PHOS","Serum","4.45","mg/dL","3","4.49",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","PROT","Serum","8","g/dL","6","8",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","SODIUM","Serum","124","mEq/L","135","147",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","TRIG","Serum","69.74","mg/dL","40","200",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","UREAN","Serum","15.7","mg/dL","8.1","19.9",<br>
+)<br>
+<br>
+lab_hema&lt;-tribble(<br>
+~study,~pt,~studypt,~folder,~lbdt_raw,~test,~specimen,~coll_rslt,~coll_unit,~lower,~upper,<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","EOS","Whole blood","2100","/uL","500","3000",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","FIBRINO","Plasma","260","mg/dL","150","350",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","HCT","Whole blood","50","%","38","54",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","HGB","Whole blood","19","g/dL","14","18",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","LYM","Whole blood","36000","/uL","10000","40000",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","MCH","Whole blood","30","pg/cell","27","32",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","MCHC","Whole blood","39","g/dL","33","36",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","MCV","Whole blood","103","um^3","80","94",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","MONO","Whole blood","3000","/uL","2000","8000",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","NEUT","Whole blood","7900","/uL","1800","7500",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","NEUTSG","Whole blood","53000","/uL","25000","60000",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","PT","Plasma","17","s","10","20",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","RBC","Whole blood","0.57","10^6 /uL","0.45","0.6",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","RETI","Whole blood","60","10^3 /uL","23","90",<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","WBC","Whole blood","50000","/uL","50000","100000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","EOS","Whole blood","2500","/uL","500","3000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","FIBRINO","Plasma","140","mg/dL","150","350",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","HCT","Whole blood","40","%","38","54",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","HGB","Whole blood","13","g/dL","14","18",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","LYM","Whole blood","17000","/uL","10000","40000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","MCH","Whole blood","27","pg/cell","27","32",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","MCHC","Whole blood","35","g/dL","33","36",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","MCV","Whole blood","93","um^3","80","94",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","MONO","Whole blood","4000","/uL","2000","8000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","NEUT","Whole blood","5500","/uL","1800","7500",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","NEUTSG","Whole blood","62000","/uL","25000","60000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","PT","Plasma","21","s","10","20",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","RBC","Whole blood","0.5","10^6 /uL","0.45","0.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","RETI","Whole blood","49","10^3 /uL","23","90",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","WBC","Whole blood","81000","/uL","50000","100000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","EOS","Whole blood","3300","/uL","500","3000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","FIBRINO","Plasma","380","mg/dL","150","350",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","HCT","Whole blood","54","%","38","54",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","HGB","Whole blood","16","g/dL","14","18",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","LYM","Whole blood","18000","/uL","10000","40000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","MCH","Whole blood","29","pg/cell","27","32",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","MCHC","Whole blood","34","g/dL","33","36",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","MCV","Whole blood","83","um^3","80","94",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","MONO","Whole blood","8000","/uL","2000","8000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","NEUT","Whole blood","4500","/uL","1800","7500",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","NEUTSG","Whole blood","48000","/uL","25000","60000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","PT","Plasma","22","s","10","20",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","RBC","Whole blood","0.48","10^6 /uL","0.45","0.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","RETI","Whole blood","79","10^3 /uL","23","90",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","WBC","Whole blood","71000","/uL","50000","100000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","EOS","Whole blood","600","/uL","500","3000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","FIBRINO","Plasma","380","mg/dL","150","350",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","HCT","Whole blood","45","%","38","54",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","HGB","Whole blood","18","g/dL","14","18",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","LYM","Whole blood","17000","/uL","10000","40000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","MCH","Whole blood","33","pg/cell","27","32",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","MCHC","Whole blood","39","g/dL","33","36",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","MCV","Whole blood","76","um^3","80","94",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","MONO","Whole blood","3000","/uL","2000","8000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","NEUT","Whole blood","5700","/uL","1800","7500",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","NEUTSG","Whole blood","64000","/uL","25000","60000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","PT","Plasma","9","s","10","20",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","RBC","Whole blood","0.55","10^6 /uL","0.45","0.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","RETI","Whole blood","34","10^3 /uL","23","90",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","WBC","Whole blood","51000","/uL","50000","100000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","EOS","Whole blood","2900","/uL","500","3000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","FIBRINO","Plasma","180","mg/dL","150","350",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","HCT","Whole blood","43","%","38","54",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","HGB","Whole blood","15","g/dL","14","18",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","LYM","Whole blood","16000","/uL","10000","40000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","MCH","Whole blood","31","pg/cell","27","32",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","MCHC","Whole blood","37","g/dL","33","36",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","MCV","Whole blood","88","um^3","80","94",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","MONO","Whole blood","8000","/uL","2000","8000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","NEUT","Whole blood","7600","/uL","1800","7500",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","NEUTSG","Whole blood","54000","/uL","25000","60000",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","PT","Plasma","11","s","10","20",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","RBC","Whole blood","0.59","10^6 /uL","0.45","0.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","RETI","Whole blood","48","10^3 /uL","23","90",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","WBC","Whole blood","60000","/uL","50000","100000",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","EOS","Whole blood","2600","/uL","500","3000",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","FIBRINO","Plasma","310","mg/dL","150","350",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","HCT","Whole blood","41","%","38","54",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","HGB","Whole blood","18","g/dL","14","18",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","LYM","Whole blood","29000","/uL","10000","40000",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","MCH","Whole blood","28","pg/cell","27","32",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","MCHC","Whole blood","37","g/dL","33","36",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","MCV","Whole blood","78","um^3","80","94",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","MONO","Whole blood","2000","/uL","2000","8000",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","NEUT","Whole blood","8000","/uL","1800","7500",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","NEUTSG","Whole blood","51000","/uL","25000","60000",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","PT","Plasma","10","s","10","20",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","RBC","Whole blood","0.56","10^6 /uL","0.45","0.6",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","RETI","Whole blood","98","10^3 /uL","23","90",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","WBC","Whole blood","82000","/uL","50000","100000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","EOS","Whole blood","1400","/uL","500","3000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","FIBRINO","Plasma","340","mg/dL","150","350",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","HCT","Whole blood","55","%","38","54",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","HGB","Whole blood","20","g/dL","14","18",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","LYM","Whole blood","41000","/uL","10000","40000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","MCH","Whole blood","31","pg/cell","27","32",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","MCHC","Whole blood","38","g/dL","33","36",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","MCV","Whole blood","100","um^3","80","94",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","MONO","Whole blood","6000","/uL","2000","8000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","NEUT","Whole blood","5500","/uL","1800","7500",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","NEUTSG","Whole blood","60000","/uL","25000","60000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","PT","Plasma","16","s","10","20",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","RBC","Whole blood","0.52","10^6 /uL","0.45","0.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","RETI","Whole blood","29","10^3 /uL","23","90",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","WBC","Whole blood","68000","/uL","50000","100000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","EOS","Whole blood","2700","/uL","500","3000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","FIBRINO","Plasma","230","mg/dL","150","350",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","HCT","Whole blood","50","%","38","54",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","HGB","Whole blood","20","g/dL","14","18",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","LYM","Whole blood","21000","/uL","10000","40000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","MCH","Whole blood","25","pg/cell","27","32",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","MCHC","Whole blood","38","g/dL","33","36",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","MCV","Whole blood","79","um^3","80","94",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","MONO","Whole blood","8000","/uL","2000","8000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","NEUT","Whole blood","7200","/uL","1800","7500",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","NEUTSG","Whole blood","46000","/uL","25000","60000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","PT","Plasma","16","s","10","20",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","RBC","Whole blood","0.46","10^6 /uL","0.45","0.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","RETI","Whole blood","51","10^3 /uL","23","90",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","WBC","Whole blood","80000","/uL","50000","100000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","EOS","Whole blood","500","/uL","500","3000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","FIBRINO","Plasma","230","mg/dL","150","350",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","HCT","Whole blood","42","%","38","54",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","HGB","Whole blood","15","g/dL","14","18",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","LYM","Whole blood","27000","/uL","10000","40000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","MCH","Whole blood","32","pg/cell","27","32",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","MCHC","Whole blood","38","g/dL","33","36",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","MCV","Whole blood","77","um^3","80","94",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","MONO","Whole blood","7000","/uL","2000","8000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","NEUT","Whole blood","3200","/uL","1800","7500",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","NEUTSG","Whole blood","25000","/uL","25000","60000",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","PT","Plasma","19","s","10","20",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","RBC","Whole blood","0.63","10^6 /uL","0.45","0.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","RETI","Whole blood","43","10^3 /uL","23","90",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","WBC","Whole blood","99000","/uL","50000","100000",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","EOS","Whole blood","1500","/uL","500","3000",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","FIBRINO","Plasma","370","mg/dL","150","350",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","HCT","Whole blood","37","%","38","54",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","HGB","Whole blood","15","g/dL","14","18",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","LYM","Whole blood","35000","/uL","10000","40000",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","MCH","Whole blood","24","pg/cell","27","32",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","MCHC","Whole blood","37","g/dL","33","36",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","MCV","Whole blood","91","um^3","80","94",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","MONO","Whole blood","5000","/uL","2000","8000",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","NEUT","Whole blood","3500","/uL","1800","7500",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","NEUTSG","Whole blood","25000","/uL","25000","60000",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","PT","Plasma","12","s","10","20",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","RBC","Whole blood","0.6","10^6 /uL","0.45","0.6",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","RETI","Whole blood","46","10^3 /uL","23","90",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","WBC","Whole blood","71000","/uL","50000","100000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","EOS","Whole blood","3000","/uL","500","3000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","FIBRINO","Plasma","210","mg/dL","150","350",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","HCT","Whole blood","37","%","38","54",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","HGB","Whole blood","16","g/dL","14","18",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","LYM","Whole blood","18000","/uL","10000","40000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","MCH","Whole blood","32","pg/cell","27","32",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","MCHC","Whole blood","32","g/dL","33","36",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","MCV","Whole blood","73","um^3","80","94",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","MONO","Whole blood","2000","/uL","2000","8000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","NEUT","Whole blood","5300","/uL","1800","7500",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","NEUTSG","Whole blood","33000","/uL","25000","60000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","PT","Plasma","14","s","10","20",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","RBC","Whole blood","0.48","10^6 /uL","0.45","0.6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","RETI","Whole blood","38","10^3 /uL","23","90",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","WBC","Whole blood","65000","/uL","50000","100000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","EOS","Whole blood","1200","/uL","500","3000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","FIBRINO","Plasma","150","mg/dL","150","350",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","HCT","Whole blood","44","%","38","54",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","HGB","Whole blood","14","g/dL","14","18",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","LYM","Whole blood","31000","/uL","10000","40000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","MCH","Whole blood","34","pg/cell","27","32",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","MCHC","Whole blood","32","g/dL","33","36",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","MCV","Whole blood","73","um^3","80","94",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","MONO","Whole blood","9000","/uL","2000","8000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","NEUT","Whole blood","6200","/uL","1800","7500",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","NEUTSG","Whole blood","47000","/uL","25000","60000",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","PT","Plasma","18","s","10","20",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","RBC","Whole blood","0.51","10^6 /uL","0.45","0.6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","RETI","Whole blood","53","10^3 /uL","23","90",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","WBC","Whole blood","59000","/uL","50000","100000",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","EOS","Whole blood","2100","/uL","500","3000",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","FIBRINO","Plasma","190","mg/dL","150","350",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","HCT","Whole blood","55","%","38","54",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","HGB","Whole blood","15","g/dL","14","18",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","LYM","Whole blood","38000","/uL","10000","40000",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","MCH","Whole blood","29","pg/cell","27","32",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","MCHC","Whole blood","31","g/dL","33","36",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","MCV","Whole blood","74","um^3","80","94",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","MONO","Whole blood","7000","/uL","2000","8000",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","NEUT","Whole blood","7700","/uL","1800","7500",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","NEUTSG","Whole blood","46000","/uL","25000","60000",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","PT","Plasma","21","s","10","20",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","RBC","Whole blood","0.46","10^6 /uL","0.45","0.6",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","RETI","Whole blood","65","10^3 /uL","23","90",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","WBC","Whole blood","103000","/uL","50000","100000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","EOS","Whole blood","2600","/uL","500","3000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","FIBRINO","Plasma","280","mg/dL","150","350",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","HCT","Whole blood","40","%","38","54",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","HGB","Whole blood","14","g/dL","14","18",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","LYM","Whole blood","13000","/uL","10000","40000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","MCH","Whole blood","32","pg/cell","27","32",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","MCHC","Whole blood","36","g/dL","33","36",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","MCV","Whole blood","95","um^3","80","94",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","MONO","Whole blood","4000","/uL","2000","8000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","NEUT","Whole blood","7300","/uL","1800","7500",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","NEUTSG","Whole blood","48000","/uL","25000","60000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","PT","Plasma","15","s","10","20",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","RBC","Whole blood","0.47","10^6 /uL","0.45","0.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","RETI","Whole blood","82","10^3 /uL","23","90",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","WBC","Whole blood","52000","/uL","50000","100000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","EOS","Whole blood","2600","/uL","500","3000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","FIBRINO","Plasma","350","mg/dL","150","350",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","HCT","Whole blood","42","%","38","54",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","HGB","Whole blood","14","g/dL","14","18",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","LYM","Whole blood","41000","/uL","10000","40000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","MCH","Whole blood","29","pg/cell","27","32",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","MCHC","Whole blood","32","g/dL","33","36",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","MCV","Whole blood","94","um^3","80","94",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","MONO","Whole blood","3000","/uL","2000","8000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","NEUT","Whole blood","7200","/uL","1800","7500",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","NEUTSG","Whole blood","37000","/uL","25000","60000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","PT","Plasma","10","s","10","20",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","RBC","Whole blood","0.48","10^6 /uL","0.45","0.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","RETI","Whole blood","31","10^3 /uL","23","90",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","WBC","Whole blood","93000","/uL","50000","100000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","EOS","Whole blood","2600","/uL","500","3000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","FIBRINO","Plasma","200","mg/dL","150","350",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","HCT","Whole blood","48","%","38","54",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","HGB","Whole blood","15","g/dL","14","18",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","LYM","Whole blood","25000","/uL","10000","40000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","MCH","Whole blood","28","pg/cell","27","32",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","MCHC","Whole blood","38","g/dL","33","36",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","MCV","Whole blood","99","um^3","80","94",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","MONO","Whole blood","7000","/uL","2000","8000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","NEUT","Whole blood","5000","/uL","1800","7500",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","NEUTSG","Whole blood","42000","/uL","25000","60000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","PT","Plasma","17","s","10","20",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","RBC","Whole blood","0.53","10^6 /uL","0.45","0.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","RETI","Whole blood","24","10^3 /uL","23","90",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","WBC","Whole blood","86000","/uL","50000","100000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","EOS","Whole blood","1400","/uL","500","3000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","FIBRINO","Plasma","300","mg/dL","150","350",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","HCT","Whole blood","50","%","38","54",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","HGB","Whole blood","15","g/dL","14","18",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","LYM","Whole blood","24000","/uL","10000","40000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","MCH","Whole blood","26","pg/cell","27","32",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","MCHC","Whole blood","31","g/dL","33","36",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","MCV","Whole blood","82","um^3","80","94",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","MONO","Whole blood","3000","/uL","2000","8000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","NEUT","Whole blood","4300","/uL","1800","7500",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","NEUTSG","Whole blood","63000","/uL","25000","60000",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","PT","Plasma","18","s","10","20",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","RBC","Whole blood","0.46","10^6 /uL","0.45","0.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","RETI","Whole blood","77","10^3 /uL","23","90",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","WBC","Whole blood","67000","/uL","50000","100000",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","EOS","Whole blood","1500","/uL","500","3000",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","FIBRINO","Plasma","150","mg/dL","150","350",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","HCT","Whole blood","51","%","38","54",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","HGB","Whole blood","19","g/dL","14","18",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","LYM","Whole blood","13000","/uL","10000","40000",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","MCH","Whole blood","31","pg/cell","27","32",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","MCHC","Whole blood","36","g/dL","33","36",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","MCV","Whole blood","96","um^3","80","94",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","MONO","Whole blood","3000","/uL","2000","8000",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","NEUT","Whole blood","2400","/uL","1800","7500",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","NEUTSG","Whole blood","25000","/uL","25000","60000",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","PT","Plasma","11","s","10","20",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","RBC","Whole blood","0.46","10^6 /uL","0.45","0.6",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","RETI","Whole blood","55","10^3 /uL","23","90",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","WBC","Whole blood","109000","/uL","50000","100000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","BASO","Whole blood","1000","/uL","0","1000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","EOS","Whole blood","2300","/uL","500","3000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","FIBRINO","Plasma","250","mg/dL","150","350",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","HCT","Whole blood","50","%","38","54",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","HGB","Whole blood","15","g/dL","14","18",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","LYM","Whole blood","16000","/uL","10000","40000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","MCH","Whole blood","34","pg/cell","27","32",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","MCHC","Whole blood","33","g/dL","33","36",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","MCV","Whole blood","88","um^3","80","94",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","MONO","Whole blood","3000","/uL","2000","8000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","NEUT","Whole blood","3700","/uL","1800","7500",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","NEUTSG","Whole blood","32000","/uL","25000","60000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","PT","Plasma","22","s","10","20",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","RBC","Whole blood","0.59","10^6 /uL","0.45","0.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","RETI","Whole blood","74","10^3 /uL","23","90",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","WBC","Whole blood","59000","/uL","50000","100000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","EOS","Whole blood","2600","/uL","500","3000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","FIBRINO","Plasma","330","mg/dL","150","350",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","HCT","Whole blood","51","%","38","54",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","HGB","Whole blood","17","g/dL","14","18",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","LYM","Whole blood","27000","/uL","10000","40000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","MCH","Whole blood","31","pg/cell","27","32",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","MCHC","Whole blood","39","g/dL","33","36",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","MCV","Whole blood","76","um^3","80","94",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","MONO","Whole blood","5000","/uL","2000","8000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","NEUT","Whole blood","4500","/uL","1800","7500",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","NEUTSG","Whole blood","31000","/uL","25000","60000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","PT","Plasma","14","s","10","20",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","RBC","Whole blood","0.51","10^6 /uL","0.45","0.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","RETI","Whole blood","53","10^3 /uL","23","90",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","WBC","Whole blood","105000","/uL","50000","100000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","BASO","Whole blood","0","/uL","0","1000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","EOS","Whole blood","2700","/uL","500","3000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","FIBRINO","Plasma","260","mg/dL","150","350",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","HCT","Whole blood","46","%","38","54",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","HGB","Whole blood","16","g/dL","14","18",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","LYM","Whole blood","42000","/uL","10000","40000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","MCH","Whole blood","29","pg/cell","27","32",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","MCHC","Whole blood","32","g/dL","33","36",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","MCV","Whole blood","92","um^3","80","94",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","MONO","Whole blood","7000","/uL","2000","8000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","NEUT","Whole blood","4400","/uL","1800","7500",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","NEUTSG","Whole blood","31000","/uL","25000","60000",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","PT","Plasma","22","s","10","20",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","RBC","Whole blood","0.6","10^6 /uL","0.45","0.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","RETI","Whole blood","76","10^3 /uL","23","90",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","WBC","Whole blood","61000","/uL","50000","100000",<br>
+)<br>
+<br>
+lab_urin&lt;-tribble(<br>
+~study,~pt,~studypt,~folder,~lbdt_raw,~test,~specimen,~coll_rslt,~coll_unit,~lower,~upper,<br>
+"CSG001",1004,"CSG001-1004","SCR","02/Jan/2010","CA","Urine","180.4","mg/dL","100.2","300.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 1","05/Jan/2010","CA","Urine","212.4","mg/dL","100.2","300.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 2","12/Jan/2010","CA","Urine","300.6","mg/dL","100.2","300.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 3","18/Jan/2010","CA","Urine","168.3","mg/dL","100.2","300.6",<br>
+"CSG001",1004,"CSG001-1004","WEEK 4","25/Jan/2010","CA","Urine","212.4","mg/dL","100.2","300.6",<br>
+"CSG001",1005,"CSG001-1005","SCR","02/Feb/2010","CA","Urine","164.3","mg/dL","100.2","300.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 1","05/Feb/2010","CA","Urine","144.3","mg/dL","100.2","300.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 2","12/Feb/2010","CA","Urine","200.4","mg/dL","100.2","300.6",<br>
+"CSG001",1005,"CSG001-1005","WEEK 3","19/Feb/2010","CA","Urine","160.3","mg/dL","100.2","300.6",<br>
+"CSG001",1006,"CSG001-1006","SCR","27/Feb/2010","CA","Urine","228.5","mg/dL","100.2","300.6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 1","02/Mar/2010","CA","Urine","256.5","mg/dL","100.2","300.6",<br>
+"CSG001",1006,"CSG001-1006","WEEK 2","10/Mar/2010","CA","Urine","180.4","mg/dL","100.2","300.6",<br>
+"CSG001",1007,"CSG001-1007","SCR","12/Apr/2010","CA","Urine","224.4","mg/dL","100.2","300.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 1","15/Apr/2010","CA","Urine","288.6","mg/dL","100.2","300.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 2","22/Apr/2010","CA","Urine","276.6","mg/dL","100.2","300.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 3","29/Apr/2010","CA","Urine","176.4","mg/dL","100.2","300.6",<br>
+"CSG001",1007,"CSG001-1007","WEEK 4","06/May/2010","CA","Urine","216.4","mg/dL","100.2","300.6",<br>
+"CSG001",1008,"CSG001-1008","SCR","24/Jun/2010","CA","Urine","268.5","mg/dL","100.2","300.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 1","27/Jun/2010","CA","Urine","144.3","mg/dL","100.2","300.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 2","04/Jul/2010","CA","Urine","100.2","mg/dL","100.2","300.6",<br>
+"CSG001",1008,"CSG001-1008","WEEK 3","11/Jul/2010","CA","Urine","248.5","mg/dL","100.2","300.6",<br>
+)<br>
+<br>
+lab_meta&lt;-tribble(<br>
+~lbcat,~lbtestcd,~lbtest,~lborresu,~lbstresu,~conversion,~decimals,~standard_,~notes,<br>
+"CHEMISTRY","ALB","Albumin","g/dL","g/L",10,1,0,"",<br>
+"CHEMISTRY","ALB","Albumin","g/L","g/L",1,1,1,"",<br>
+"CHEMISTRY","ALB","Albumin","mmol/L","g/L",66.46,1,0,"",<br>
+"CHEMISTRY","ALP","Alkaline Phosphatase","U/L","U/L",1,1,1,"",<br>
+"CHEMISTRY","ALP","Alkaline Phosphatase","ukat/L","U/L",60,1,0,"",<br>
+"CHEMISTRY","ALT","Alanine Aminotransferase","U/L","U/L",1,1,1,"",<br>
+"CHEMISTRY","ALT","Alanine Aminotransferase","umol/hL","U/L",0.0167,1,0,"",<br>
+"CHEMISTRY","AMYLASE","Amylase","U/L","U/L",1,1,1,"",<br>
+"CHEMISTRY","AST","Aspartate Aminotransferase","umol/hL","U/L",0.0167,1,0,"",<br>
+"CHEMISTRY","BICARB","Bicarbonate","mEq/L","mmol/L",1,1,0,"",<br>
+"CHEMISTRY","BICARB","Bicarbonate","mmol/L","mmol/L",1,1,1,"",<br>
+"CHEMISTRY","BILDIR","Direct Bilirubin","mg/dL","umol/L",17.1,1,0,"",<br>
+"CHEMISTRY","BILDIR","Direct Bilirubin","umol/L","umol/L",1,1,1,"",<br>
+"CHEMISTRY","BILI","Bilirubin","mg/dL","umol/L",17.1,2,0,"",<br>
+"CHEMISTRY","BILI","Bilirubin","umol/L","umol/L",1,2,1,"",<br>
+"CHEMISTRY","CA","Calcium","mg/dL","mmol/L",0.2495,2,0,"",<br>
+"CHEMISTRY","CA","Calcium","mmol/L","mmol/L",1,2,1,"",<br>
+"CHEMISTRY","CACR","Calcium Corrected","mg/dL","mmol/L",0.2495,2,0,"",<br>
+"CHEMISTRY","CACR","Calcium Corrected","mmol/L","mmol/L",1,2,1,"",<br>
+"CHEMISTRY","CHOL","Cholesterol","mg/dL","mmol/L",0.0259,2,0,"",<br>
+"CHEMISTRY","CHOL","Cholesterol","mmol/L","mmol/L",1,2,1,"",<br>
+"CHEMISTRY","CL","Chloride","mEq/L","mmol/L",1,1,0,"",<br>
+"CHEMISTRY","CL","Chloride","mmol/L","mmol/L",1,1,1,"",<br>
+"CHEMISTRY","CREAT","Creatinine","mg/dL","umol/L",88.4,2,0,"",<br>
+"CHEMISTRY","CREAT","Creatinine","umol/L","umol/L",1,2,1,"",<br>
+"CHEMISTRY","GGT","Gamma Glutamyl Transferase","U/L","U/L",1,1,1,"",<br>
+"CHEMISTRY","HDL","HDL Cholesterol","mg/dL","mmol/L",0.0259,1,0,"",<br>
+"CHEMISTRY","HDL","HDL Cholesterol","mmol/L","mmol/L",1,1,1,"",<br>
+"CHEMISTRY","K","Potassium","mEq/L","mmol/L",1,2,0,"",<br>
+"CHEMISTRY","K","Potassium","mmol/L","mmol/L",1,2,1,"",<br>
+"CHEMISTRY","LDH","Lactate Dehydrogenase","U/L","U/L",1,1,1,"",<br>
+"CHEMISTRY","LDL","LDL Cholesterol","mg/dL","mmol/L",0.0259,1,0,"",<br>
+"CHEMISTRY","LDL","LDL Cholesterol","mmol/L","mmol/L",1,1,1,"",<br>
+"CHEMISTRY","MG","Magnesium","mg/dL","mmol/L",0.4114,2,0,"",<br>
+"CHEMISTRY","MG","Magnesium","mmol/L","mmol/L",1,2,1,"",<br>
+"CHEMISTRY","PHOS","Phosphate","mg/dL","mmol/L",0.3226,2,0,"",<br>
+"CHEMISTRY","PHOS","Phosphate","mmol/L","mmol/L",1,2,1,"",<br>
+"CHEMISTRY","PROT","Protein","g/L","g/L",1,1,1,"",<br>
+"CHEMISTRY","PROT","Protein","g/dL","g/L",10,1,0,"",<br>
+"CHEMISTRY","SODIUM","Sodium","mEq/L","mmol/L",1,1,0,"",<br>
+"CHEMISTRY","SODIUM","Sodium","mmol/L","mmol/L",1,1,1,"",<br>
+"CHEMISTRY","TRIG","Triglycerides","mg/dL","mmol/L",0.0113,1,0,"",<br>
+"CHEMISTRY","TRIG","Triglycerides","mmol/L","mmol/L",1,1,1,"",<br>
+"CHEMISTRY","UREAN","Urea Nitrogen","mg/dL","mmol/L",0.3571,1,0,"",<br>
+"CHEMISTRY","UREAN","Urea Nitrogen","mmol/L","mmol/L",1,1,1,"",<br>
+"HEMATOLOGY","BASO","Basophils","/uL","10^9/L",0.001,1,0,"",<br>
+"HEMATOLOGY","BASO","Basophils","10^9/L","10^9/L",1,1,1,"",<br>
+"HEMATOLOGY","EOS","Eosinophils","/uL","10^9/L",0.001,2,0,"",<br>
+"HEMATOLOGY","EOS","Eosinophils","10^9/L","10^9/L",1,2,1,"",<br>
+"HEMATOLOGY","FIBRINO","Fibrinogen","mg/dL","g/L",0.01,1,0,"",<br>
+"HEMATOLOGY","FIBRINO","Fibrinogen","g/L","g/L",1,1,1,"",<br>
+"HEMATOLOGY","HCT","Hematocrit","%","%",1,1,1,"",<br>
+"HEMATOLOGY","HGB","Hemoglobin","g/dL","g/L",10,1,0,"",<br>
+"HEMATOLOGY","HGB","Hemoglobin","g/L","g/L",1,1,1,"",<br>
+"HEMATOLOGY","LYM","Lymphocytes","/uL","10^9/L",0.001,1,0,"",<br>
+"HEMATOLOGY","LYM","Lymphocytes","10^9/L","10^9/L",1,1,1,"",<br>
+"HEMATOLOGY","MCH","Ery. Mean Corpuscular Hemoglobin","pg/cell","fmol",0.0621,2,0,"",<br>
+"HEMATOLOGY","MCH","Ery. Mean Corpuscular Hemoglobin","fmol","fmol",1,2,1,"",<br>
+"HEMATOLOGY","MCHC","Ery. Mean Corpuscular HGB Concentration","g/dL","mmol/L",0.6206,2,0,"",<br>
+"HEMATOLOGY","MCHC","Ery. Mean Corpuscular HGB Concentration","mmol/L","mmol/L",1,2,1,"",<br>
+"HEMATOLOGY","MCV","Ery. Mean Corpuscular Volume","um^3","fL",1,1,0,"",<br>
+"HEMATOLOGY","MCV","Ery. Mean Corpuscular Volume","fL","fL",1,1,1,"",<br>
+"HEMATOLOGY","MONO","Monocytes","/uL","10^9/L",0.001,1,0,"",<br>
+"HEMATOLOGY","MONO","Monocytes","10^9/L","10^9/L",1,1,1,"",<br>
+"HEMATOLOGY","NEUT","Neutrophils","/uL","10^9/L",0.001,2,0,"",<br>
+"HEMATOLOGY","NEUT","Neutrophils","10^9/L","10^9/L",1,2,1,"",<br>
+"HEMATOLOGY","NEUTSG","Neutrophils, Segmented","/uL","10^9/L",0.001,1,0,"",<br>
+"HEMATOLOGY","NEUTSG","Neutrophils, Segmented","10^9/L","10^9/L",1,1,1,"",<br>
+"HEMATOLOGY","PT","Prothrombin Time","s","s",1,1,1,"",<br>
+"HEMATOLOGY","PT","Prothrombin Time","sec","s",1,1,0,"",<br>
+"HEMATOLOGY","RBC","Erythrocytes","10^6 /uL","10^12/L",1,2,0,"",<br>
+"HEMATOLOGY","RBC","Erythrocytes","10^12/L","10^12/L",1,2,1,"",<br>
+"HEMATOLOGY","RETI","Reticulocytes","10^3 /uL","10^3 /uL",1,1,1,"",<br>
+"HEMATOLOGY","WBC","Leukocytes","/uL","10^9/L",0.001,2,0,"",<br>
+"HEMATOLOGY","WBC","Leukocytes","10^9/L","10^9/L",1,2,1,"",<br>
+"URINALYSIS","CA","Calcium","mg/dL","mmol/L",0.2495,1,0,"",<br>
+"URINALYSIS","CA","Calcium","mmol/L","mmol/L",1,1,1,"",<br>
+)<br>
+<br>
+</div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(5).html" data-google-container-id="1.vfo05tb9u0o0" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe src="./aframe(5).html" width="0" height="0" style="display: none;"></iframe></body></html>

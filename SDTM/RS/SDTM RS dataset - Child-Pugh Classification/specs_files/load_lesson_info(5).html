@@ -1,0 +1,230 @@
+
+<!-- saved from url=(0071)https://mycsg.in/load_lesson_info.php?type=SASDATA&lesson=SDTM_RS_LCHPU -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body>
+<style>
+.csg-upsell-wrap{
+  min-height: 70vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(circle at top right, rgba(22,163,74,.10), transparent 30%),
+    linear-gradient(180deg, #fbfff8 0%, #ffffff 100%);
+}
+.csg-upsell-stack{
+  width: min(760px, 100%);
+}
+.csg-upsell-card{
+  width: 100%;
+  background: #fff;
+  border: 1px solid #dcebd2;
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.10);
+  overflow: hidden;
+}
+.csg-upsell-head{
+  padding: 18px 22px;
+  background: linear-gradient(135deg, #f1fde9, #fbfff8);
+  border-bottom: 1px solid #dcebd2;
+}
+.csg-upsell-kicker{
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #e7f7d9;
+  color: #2d6a18;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.csg-upsell-title{
+  margin: 0;
+  color: #1f2d17;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.csg-upsell-body{
+  padding: 22px;
+  color: #42526b;
+  font-size: 17px;
+}
+.csg-upsell-body p{
+  margin: 0 0 14px;
+}
+.csg-upsell-points{
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+.csg-upsell-points li{
+  position: relative;
+  margin: 0 0 10px;
+  padding-left: 28px;
+  color: #213047;
+}
+.csg-upsell-points li:before{
+  content: '\2713';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #16a34a;
+  font-weight: 700;
+}
+.csg-upsell-actions{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.csg-upsell-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 170px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.csg-upsell-btn-primary{
+  background: #198754;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(25, 135, 84, 0.20);
+}
+.csg-upsell-btn-primary:hover{
+  color: #fff;
+  background: #157347;
+  text-decoration: none;
+}
+.csg-upsell-btn-secondary{
+  background: #f5f8fc;
+  color: #1d4f91;
+  border: 1px solid #cfe0f5;
+}
+.csg-upsell-btn-secondary:hover{
+  background: #eaf2fb;
+  color: #153b6d;
+  text-decoration: none;
+}
+.csg-recording-upsell-card{
+  margin-top: 18px;
+  border-color: #cfe5f4;
+}
+.csg-recording-upsell-head{
+  padding: 18px 22px;
+  background: linear-gradient(135deg, #eef8ff, #fbfdff);
+  border-bottom: 1px solid #cfe5f4;
+}
+.csg-recording-upsell-kicker{
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.csg-recording-upsell-title{
+  margin: 0;
+  color: #14324b;
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.csg-recording-upsell-points li:before{
+  color: #0284c7;
+}
+.csg-recording-upsell-btn{
+  background: #0f766e;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(15, 118, 110, 0.20);
+}
+.csg-recording-upsell-btn:hover{
+  color: #fff;
+  background: #115e59;
+  text-decoration: none;
+}
+@media (max-width: 576px){
+  .csg-upsell-wrap{ padding: 18px 12px; }
+  .csg-upsell-title{ font-size: 23px; }
+  .csg-recording-upsell-title{ font-size: 22px; }
+  .csg-upsell-body{ font-size: 16px; }
+  .csg-upsell-actions{ flex-direction: column; }
+  .csg-upsell-btn{ width: 100%; }
+}
+</style>
+<div class="csg-upsell-wrap">
+  <div class="csg-upsell-stack">
+    <div class="csg-upsell-card">
+      <div class="csg-upsell-head">
+        <span class="csg-upsell-kicker">Thanks for your R subscription</span>
+        <h2 class="csg-upsell-title">Add SAS for lesson-linked practice data</h2>
+      </div>
+      <div class="csg-upsell-body">
+        <p>SAS access can help you practice the same lesson flow with SAS programs and input data.</p>
+        <ul class="csg-upsell-points">
+
+        <li>Work through the lesson in SAS alongside your R track</li>
+        <li>Open SAS input datasets tied to this lesson</li>
+        <li>Build hands-on familiarity across both programming tracks</li>
+        </ul>
+        <div class="csg-upsell-actions">
+          <a class="csg-upsell-btn csg-upsell-btn-primary" href="https://mycsg.in/purchase_options.php" target="_parent">View Subscription Plans</a>
+        </div>
+      </div>
+    </div>
+    
+  <div class="csg-upsell-card csg-recording-upsell-card">
+    <div class="csg-recording-upsell-head">
+      <span class="csg-recording-upsell-kicker">Recorded Training Access</span>
+      <h2 class="csg-recording-upsell-title">Prefer self-paced videos? Purchase SAS recordings</h2>
+    </div>
+    <div class="csg-upsell-body">
+      <p>Recorded training packages include Clinical SAS sessions plus related programs and practice data access.</p>
+      <ul class="csg-upsell-points csg-recording-upsell-points">
+        <li>Watch previous Clinical SAS training sessions at your pace</li>
+        <li>Use related lesson programs and practice files during the access period</li>
+        <li>Download recordings while your recording access is active</li>
+      </ul>
+      <div class="csg-upsell-actions">
+        <a class="csg-upsell-btn csg-recording-upsell-btn" href="https://mycsg.in/purchase_recordings.php" target="_parent">View Recording Packages</a>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

@@ -1,0 +1,457 @@
+
+<!-- saved from url=(0079)https://mycsg.in/load_lesson_info.php?type=TIDYVERSEPROG&lesson=SDTM_SV_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./f.txt"></script><script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    <meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head>
+    <body><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script async="" src="./f(1).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(5).html" data-google-container-id="1.kwzsdlot4pdc" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col"><div class="d-flex align-items-center justify-content-end flex-wrap mb-3"><button type="button" class="btn btn-sm btn-outline-primary" id="copySelectedRProgram">Copy R Program</button></div><pre><code class="language-r hljs" style="font-size: 18px;"><span class="hljs-comment">#source("D:/SAS/Home/dev/clinical_sas_samples/mycsg/mycsg_config.R")</span>
+<span class="hljs-comment">#rmac1-std1</span>
+<span class="hljs-comment">#rmac1-std2</span>
+<span class="hljs-comment">#rmac1-std3</span>
+ 
+ 
+setwd<span class="hljs-punctuation">(</span>dirname<span class="hljs-punctuation">(</span>rstudioapi<span class="hljs-operator">::</span>getActiveDocumentContext<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span><span class="hljs-operator">$</span>path<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span>
+ 
+ 
+library<span class="hljs-punctuation">(</span>glue<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>tidyverse<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>haven<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>assertthat<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>huxtable<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>data.table<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>hms<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>lubridate<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>pharmaRTF<span class="hljs-punctuation">)</span>
+ 
+ 
+source<span class="hljs-punctuation">(</span><span class="hljs-string">"./SDTM_SV_LCSG001_data.r"</span><span class="hljs-punctuation">)</span>
+ 
+ 
+<span class="hljs-comment"># Read input datasets and keep relevant columns</span>
+ipadmin01 <span class="hljs-operator">&lt;-</span> ipadmin <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> folder<span class="hljs-punctuation">,</span> ipstdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename<span class="hljs-punctuation">(</span>date <span class="hljs-operator">=</span> ipstdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>inputdataset<span class="hljs-operator">=</span><span class="hljs-string">"IPADMIN"</span><span class="hljs-punctuation">)</span>
+ 
+lab_chem01 <span class="hljs-operator">&lt;-</span> lab_chem <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> folder<span class="hljs-punctuation">,</span> lbdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename<span class="hljs-punctuation">(</span>date <span class="hljs-operator">=</span> lbdt_raw<span class="hljs-punctuation">)</span><span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>inputdataset<span class="hljs-operator">=</span><span class="hljs-string">"LAB_CHEM"</span><span class="hljs-punctuation">)</span>
+ 
+lab_hema01 <span class="hljs-operator">&lt;-</span> lab_hema <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> folder<span class="hljs-punctuation">,</span> lbdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename<span class="hljs-punctuation">(</span>date <span class="hljs-operator">=</span> lbdt_raw<span class="hljs-punctuation">)</span><span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>inputdataset<span class="hljs-operator">=</span><span class="hljs-string">"LAB_HEMA"</span><span class="hljs-punctuation">)</span>
+ 
+eq5d3l01 <span class="hljs-operator">&lt;-</span> eq5d3l <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> folder<span class="hljs-punctuation">,</span> dt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename<span class="hljs-punctuation">(</span>date <span class="hljs-operator">=</span> dt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>inputdataset<span class="hljs-operator">=</span><span class="hljs-string">"EQ5D3L"</span><span class="hljs-punctuation">)</span>
+ 
+physmeas01 <span class="hljs-operator">&lt;-</span> physmeas <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> folder<span class="hljs-punctuation">,</span> pmdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename<span class="hljs-punctuation">(</span>date <span class="hljs-operator">=</span> pmdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>inputdataset<span class="hljs-operator">=</span><span class="hljs-string">"PHYSMEAS"</span><span class="hljs-punctuation">)</span>
+ 
+vitals01 <span class="hljs-operator">&lt;-</span> vitals <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> folder<span class="hljs-punctuation">,</span> vsdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename<span class="hljs-punctuation">(</span>date <span class="hljs-operator">=</span> vsdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>inputdataset<span class="hljs-operator">=</span><span class="hljs-string">"VITALS"</span><span class="hljs-punctuation">)</span>
+ 
+ecg01 <span class="hljs-operator">&lt;-</span> ecg <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> folder<span class="hljs-punctuation">,</span> egdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename<span class="hljs-punctuation">(</span>date <span class="hljs-operator">=</span> egdt_raw<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>inputdataset<span class="hljs-operator">=</span><span class="hljs-string">"ECG"</span><span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Combine all date datasets into one</span>
+dates01 <span class="hljs-operator">&lt;-</span> bind_rows<span class="hljs-punctuation">(</span>ipadmin01<span class="hljs-punctuation">,</span> lab_chem01<span class="hljs-punctuation">,</span> lab_hema01<span class="hljs-punctuation">,</span> eq5d3l01<span class="hljs-punctuation">,</span> physmeas01<span class="hljs-punctuation">,</span> vitals01<span class="hljs-punctuation">,</span> ecg01<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>
+ sdtmdomain <span class="hljs-operator">=</span> case_when<span class="hljs-punctuation">(</span>
+ inputdataset <span class="hljs-operator">%in%</span> <span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span><span class="hljs-string">"LAB_HEMA"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"LAB_CHEM"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"LB"</span><span class="hljs-punctuation">,</span>
+ inputdataset <span class="hljs-operator">==</span> <span class="hljs-string">"EQ5D3L"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"QS"</span><span class="hljs-punctuation">,</span>
+ inputdataset <span class="hljs-operator">%in%</span> <span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span><span class="hljs-string">"PHYSMEAS"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"VITALS"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"VS"</span><span class="hljs-punctuation">,</span>
+ inputdataset <span class="hljs-operator">==</span> <span class="hljs-string">"ECG"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"EG"</span><span class="hljs-punctuation">,</span>
+ inputdataset <span class="hljs-operator">==</span> <span class="hljs-string">"IPADMIN"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"EC,EX"</span>
+ <span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ 
+ dayn <span class="hljs-operator">=</span> <span class="hljs-built_in">as.numeric</span><span class="hljs-punctuation">(</span>word<span class="hljs-punctuation">(</span>date<span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ day <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>dayn<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> sprintf<span class="hljs-punctuation">(</span><span class="hljs-string">"%02d"</span><span class="hljs-punctuation">,</span> dayn<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">=</span> toupper<span class="hljs-punctuation">(</span>word<span class="hljs-punctuation">(</span>date<span class="hljs-punctuation">,</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span> sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ month <span class="hljs-operator">=</span> case_when<span class="hljs-punctuation">(</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"JAN"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"01"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"FEB"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"02"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"MAR"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"03"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"APR"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"04"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"MAY"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"05"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"JUN"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"06"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"JUL"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"07"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"AUG"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"08"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"SEP"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"09"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"OCT"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"10"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"NOV"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"11"</span><span class="hljs-punctuation">,</span>
+ monthc <span class="hljs-operator">==</span> <span class="hljs-string">"DEC"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"12"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-literal">TRUE</span> <span class="hljs-operator">~</span> <span class="hljs-string">"-"</span>
+ <span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ year <span class="hljs-operator">=</span> word<span class="hljs-punctuation">(</span>date<span class="hljs-punctuation">,</span><span class="hljs-number">3</span><span class="hljs-punctuation">,</span>sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ year <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>year<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"UNK"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">,</span> year<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ isodtc <span class="hljs-operator">=</span> str_c<span class="hljs-punctuation">(</span>year<span class="hljs-punctuation">,</span> month<span class="hljs-punctuation">,</span> day<span class="hljs-punctuation">,</span> sep <span class="hljs-operator">=</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ 
+ isodtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>isodtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">5</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"-----"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>isodtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">6</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> isodtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ isodtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>isodtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">4</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"----"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>isodtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">5</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> isodtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ isodtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>isodtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">2</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"--"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>isodtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">3</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> isodtc<span class="hljs-punctuation">)</span>
+ 
+ <span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span><span class="hljs-operator">-</span>dayn<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span>monthc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span>year<span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Create VISITNUM and VISIT variables</span>
+dates02 <span class="hljs-operator">&lt;-</span> dates01 <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>
+ visit <span class="hljs-operator">=</span> case_when<span class="hljs-punctuation">(</span>
+ folder <span class="hljs-operator">==</span> <span class="hljs-string">"SCR"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"SCREENING"</span><span class="hljs-punctuation">,</span>
+ str_detect<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"WEEK"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> toupper<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ str_detect<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"^FU\\d+"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> paste<span class="hljs-punctuation">(</span><span class="hljs-string">"FOLLOW-UP"</span><span class="hljs-punctuation">,</span> str_remove<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"FU"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ str_detect<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"^UNS_"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"UNSCHEDULED"</span>
+ <span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ visitnum <span class="hljs-operator">=</span> case_when<span class="hljs-punctuation">(</span>
+ folder <span class="hljs-operator">==</span> <span class="hljs-string">"SCR"</span> <span class="hljs-operator">~</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+ str_detect<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"WEEK"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-number">100</span> <span class="hljs-operator">+</span> <span class="hljs-built_in">as.numeric</span><span class="hljs-punctuation">(</span>str_remove_all<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"\\D"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ str_detect<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"^FU\\d+"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-number">200</span> <span class="hljs-operator">+</span> <span class="hljs-built_in">as.numeric</span><span class="hljs-punctuation">(</span>str_remove<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"FU"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ str_detect<span class="hljs-punctuation">(</span>folder<span class="hljs-punctuation">,</span> <span class="hljs-string">"^UNS_"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-number">999</span>
+ <span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ sdtmdomain2<span class="hljs-operator">=</span>ifelse<span class="hljs-punctuation">(</span>visitnum<span class="hljs-operator">==</span><span class="hljs-number">999</span><span class="hljs-punctuation">,</span>sdtmdomain<span class="hljs-punctuation">,</span><span class="hljs-string">""</span><span class="hljs-punctuation">)</span>
+ <span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment">#==============================================================================;</span>
+<span class="hljs-comment">#Create one row per each date - concatenating sdtm domains into a single value;</span>
+<span class="hljs-comment">#==============================================================================;</span>
+ 
+dates03 <span class="hljs-operator">&lt;-</span> dates02 <span class="hljs-operator">%&gt;%</span>
+ distinct<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">,</span>visitnum<span class="hljs-punctuation">,</span>visit<span class="hljs-punctuation">,</span>isodtc<span class="hljs-punctuation">,</span>sdtmdomain2<span class="hljs-punctuation">)</span>
+ 
+dates04 <span class="hljs-operator">&lt;-</span> dates03 <span class="hljs-operator">%&gt;%</span>
+ arrange<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">,</span>visitnum<span class="hljs-punctuation">,</span>visit<span class="hljs-punctuation">,</span>isodtc<span class="hljs-punctuation">,</span>sdtmdomain2<span class="hljs-punctuation">)</span>
+ 
+dates05 <span class="hljs-operator">&lt;-</span> dates04 <span class="hljs-operator">%&gt;%</span>
+ group_by<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">,</span>visitnum<span class="hljs-punctuation">,</span>visit<span class="hljs-punctuation">,</span>isodtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ summarize<span class="hljs-punctuation">(</span>svupdes<span class="hljs-operator">=</span>paste<span class="hljs-punctuation">(</span>sdtmdomain2<span class="hljs-punctuation">,</span> collapse <span class="hljs-operator">=</span> <span class="hljs-string">", "</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ ungroup<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment">#==============================================================================;</span>
+<span class="hljs-comment">#Get the earliest and latest end dates in each visit and create SVUPDES variable</span>
+<span class="hljs-comment">#==============================================================================;</span>
+ 
+ 
+svstdtc <span class="hljs-operator">&lt;-</span> dates05 <span class="hljs-operator">%&gt;%</span>
+ arrange<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> visitnum<span class="hljs-punctuation">,</span> visit<span class="hljs-punctuation">,</span> isodtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ group_by<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> visitnum<span class="hljs-punctuation">,</span> visit<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ slice<span class="hljs-punctuation">(</span><span class="hljs-number">1</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>svstdtc<span class="hljs-operator">=</span>isodtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span><span class="hljs-operator">-</span>isodtc<span class="hljs-punctuation">,</span><span class="hljs-operator">-</span>svupdes<span class="hljs-punctuation">)</span>
+ 
+svendtc <span class="hljs-operator">&lt;-</span> dates05 <span class="hljs-operator">%&gt;%</span>
+ arrange<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> visitnum<span class="hljs-punctuation">,</span> visit<span class="hljs-punctuation">,</span> isodtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ group_by<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> visitnum<span class="hljs-punctuation">,</span> visit<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ slice<span class="hljs-punctuation">(</span>n<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>svendtc<span class="hljs-operator">=</span>isodtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span><span class="hljs-operator">-</span>isodtc<span class="hljs-punctuation">)</span>
+ 
+ 
+<span class="hljs-comment">#==============================================================================;</span>
+<span class="hljs-comment"># Combine start and end dates into a single dataset;</span>
+<span class="hljs-comment">#==============================================================================;</span>
+ 
+sv01 <span class="hljs-operator">&lt;-</span> left_join<span class="hljs-punctuation">(</span>svstdtc<span class="hljs-punctuation">,</span> svendtc<span class="hljs-punctuation">,</span> by <span class="hljs-operator">=</span> <span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span><span class="hljs-string">"study"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"pt"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"visitnum"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"visit"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment">#==============================================================================;</span>
+<span class="hljs-comment">#Remap unscheduled visit;</span>
+<span class="hljs-comment">#==============================================================================;</span>
+ 
+sv02 <span class="hljs-operator">&lt;-</span> sv01 <span class="hljs-operator">%&gt;%</span>
+ arrange<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">,</span>visitnum<span class="hljs-punctuation">,</span>visit<span class="hljs-punctuation">,</span>svstdtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>temp_visitnum<span class="hljs-operator">=</span>ifelse<span class="hljs-punctuation">(</span>visitnum<span class="hljs-operator">!=</span><span class="hljs-number">999</span><span class="hljs-punctuation">,</span>visitnum<span class="hljs-punctuation">,</span><span class="hljs-literal">NA</span> <span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ temp_visit<span class="hljs-operator">=</span>ifelse<span class="hljs-punctuation">(</span>visitnum<span class="hljs-operator">!=</span><span class="hljs-number">999</span><span class="hljs-punctuation">,</span>visit<span class="hljs-punctuation">,</span><span class="hljs-literal">NA</span> <span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span>
+ 
+sv03 <span class="hljs-operator">&lt;-</span> sv02 <span class="hljs-operator">%&gt;%</span>
+ group_by<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ fill<span class="hljs-punctuation">(</span>temp_visitnum<span class="hljs-punctuation">,</span>.direction <span class="hljs-operator">=</span> <span class="hljs-string">"down"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ fill<span class="hljs-punctuation">(</span>temp_visit<span class="hljs-punctuation">,</span>.direction <span class="hljs-operator">=</span> <span class="hljs-string">"down"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ ungroup<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span>
+ 
+sv04 <span class="hljs-operator">&lt;-</span> sv03 <span class="hljs-operator">%&gt;%</span>
+ arrange<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">,</span>temp_visitnum<span class="hljs-punctuation">,</span>temp_visit<span class="hljs-punctuation">,</span>visitnum<span class="hljs-punctuation">,</span>visit<span class="hljs-punctuation">,</span>svstdtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ group_by<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">,</span>temp_visitnum<span class="hljs-punctuation">,</span>temp_visit<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>seq1 <span class="hljs-operator">=</span> row_number<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> seq2 <span class="hljs-operator">=</span> seq1<span class="hljs-operator">-</span><span class="hljs-number">1</span><span class="hljs-punctuation">,</span> seq3 <span class="hljs-operator">=</span> seq2<span class="hljs-operator">*</span><span class="hljs-number">0.01</span><span class="hljs-punctuation">,</span>
+ orig_visitnum <span class="hljs-operator">=</span> visitnum<span class="hljs-punctuation">,</span>
+ orig_visit <span class="hljs-operator">=</span> visit<span class="hljs-punctuation">,</span>
+ visitnum <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>seq2<span class="hljs-operator">&gt;</span><span class="hljs-number">0</span><span class="hljs-punctuation">,</span>temp_visitnum<span class="hljs-operator">+</span>seq3<span class="hljs-punctuation">,</span>visitnum<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ visit <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>seq2<span class="hljs-operator">&gt;</span><span class="hljs-number">0</span><span class="hljs-punctuation">,</span>paste<span class="hljs-punctuation">(</span>temp_visit<span class="hljs-punctuation">,</span><span class="hljs-string">" "</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"UNSCHEDULED"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">" "</span><span class="hljs-punctuation">,</span> sprintf<span class="hljs-punctuation">(</span><span class="hljs-string">"%02d"</span><span class="hljs-punctuation">,</span>seq2<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>visit<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ ungroup<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span>
+ 
+sv05 <span class="hljs-operator">&lt;-</span> sv04 <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>
+ studyid <span class="hljs-operator">=</span> study<span class="hljs-punctuation">,</span>
+ domain <span class="hljs-operator">=</span> <span class="hljs-string">"SV"</span><span class="hljs-punctuation">,</span>
+ usubjid <span class="hljs-operator">=</span> paste<span class="hljs-punctuation">(</span>studyid<span class="hljs-punctuation">,</span>pt<span class="hljs-punctuation">,</span> sep <span class="hljs-operator">=</span> <span class="hljs-string">'-'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ svstdt <span class="hljs-operator">=</span> as.Date<span class="hljs-punctuation">(</span>svstdtc<span class="hljs-punctuation">,</span><span class="hljs-string">"%Y-%m-%d"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ svendt <span class="hljs-operator">=</span> as.Date<span class="hljs-punctuation">(</span>svendtc<span class="hljs-punctuation">,</span><span class="hljs-string">"%Y-%m-%d"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-punctuation">)</span>
+ 
+sv06 <span class="hljs-operator">&lt;-</span> sv05 <span class="hljs-operator">%&gt;%</span>
+ left_join<span class="hljs-punctuation">(</span>dm <span class="hljs-operator">%&gt;%</span> select<span class="hljs-punctuation">(</span>usubjid<span class="hljs-punctuation">,</span>rfstdtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> by<span class="hljs-operator">=</span><span class="hljs-string">'usubjid'</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>rfstdt<span class="hljs-operator">=</span>as.Date<span class="hljs-punctuation">(</span>rfstdtc<span class="hljs-punctuation">,</span><span class="hljs-string">"%Y-%m-%d"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ svstdy <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>rfstdt<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>svstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> svstdt <span class="hljs-operator">-</span> rfstdt <span class="hljs-operator">+</span> <span class="hljs-built_in">as.numeric</span><span class="hljs-punctuation">(</span>svstdt <span class="hljs-operator">&gt;=</span> rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ svendy <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>rfstdt<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>svendt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> svendt <span class="hljs-operator">-</span> rfstdt <span class="hljs-operator">+</span> <span class="hljs-built_in">as.numeric</span><span class="hljs-punctuation">(</span>svendt <span class="hljs-operator">&gt;=</span> rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename_all<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Define the list of variables to keep</span>
+varlist <span class="hljs-operator">&lt;-</span> <span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span><span class="hljs-string">"STUDYID"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"DOMAIN"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"USUBJID"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"VISITNUM"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"VISIT"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"SVSTDTC"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-string">"SVENDTC"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"SVSTDY"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"SVENDY"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"SVUPDES"</span><span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Create the sv dataset with selected columns</span>
+sv <span class="hljs-operator">&lt;-</span> sv06 <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>all_of<span class="hljs-punctuation">(</span>varlist<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span>
+ 
+output <span class="hljs-operator">&lt;-</span> sv
+ 
+<span class="hljs-comment">#==============================================================================;</span>
+</code></pre><script>
+(function() {
+  var btn = document.getElementById('copySelectedRProgram');
+  if (!btn) return;
+  var text = "#source(\"D:/SAS/Home/dev/clinical_sas_samples/mycsg/mycsg_config.R\")\r\n#rmac1-std1\r\n#rmac1-std2\r\n#rmac1-std3\r\n \r\n \r\nsetwd(dirname(rstudioapi::getActiveDocumentContext()$path))\r\n \r\n \r\nlibrary(glue)\r\nlibrary(tidyverse)\r\nlibrary(haven)\r\nlibrary(assertthat)\r\nlibrary(huxtable)\r\nlibrary(data.table)\r\nlibrary(hms)\r\nlibrary(lubridate)\r\nlibrary(pharmaRTF)\r\n \r\n \r\nsource(\"./SDTM_SV_LCSG001_data.r\")\r\n \r\n \r\n# Read input datasets and keep relevant columns\r\nipadmin01 <- ipadmin %>%\r\n filter(!is.na(folder)) %>%\r\n select(study, pt, folder, ipstdt_raw) %>%\r\n rename(date = ipstdt_raw) %>%\r\n mutate(inputdataset=\"IPADMIN\")\r\n \r\nlab_chem01 <- lab_chem %>%\r\n filter(!is.na(folder)) %>%\r\n select(study, pt, folder, lbdt_raw) %>%\r\n rename(date = lbdt_raw)%>%\r\n mutate(inputdataset=\"LAB_CHEM\")\r\n \r\nlab_hema01 <- lab_hema %>%\r\n filter(!is.na(folder)) %>%\r\n select(study, pt, folder, lbdt_raw) %>%\r\n rename(date = lbdt_raw)%>%\r\n mutate(inputdataset=\"LAB_HEMA\")\r\n \r\neq5d3l01 <- eq5d3l %>%\r\n filter(!is.na(folder)) %>%\r\n select(study, pt, folder, dt_raw) %>%\r\n rename(date = dt_raw) %>%\r\n mutate(inputdataset=\"EQ5D3L\")\r\n \r\nphysmeas01 <- physmeas %>%\r\n filter(!is.na(folder)) %>%\r\n select(study, pt, folder, pmdt_raw) %>%\r\n rename(date = pmdt_raw) %>%\r\n mutate(inputdataset=\"PHYSMEAS\")\r\n \r\nvitals01 <- vitals %>%\r\n filter(!is.na(folder)) %>%\r\n select(study, pt, folder, vsdt_raw) %>%\r\n rename(date = vsdt_raw) %>%\r\n mutate(inputdataset=\"VITALS\")\r\n \r\necg01 <- ecg %>%\r\n filter(!is.na(folder)) %>%\r\n select(study, pt, folder, egdt_raw) %>%\r\n rename(date = egdt_raw) %>%\r\n mutate(inputdataset=\"ECG\")\r\n \r\n# Combine all date datasets into one\r\ndates01 <- bind_rows(ipadmin01, lab_chem01, lab_hema01, eq5d3l01, physmeas01, vitals01, ecg01) %>%\r\n mutate(\r\n sdtmdomain = case_when(\r\n inputdataset %in% c(\"LAB_HEMA\", \"LAB_CHEM\") ~ \"LB\",\r\n inputdataset == \"EQ5D3L\" ~ \"QS\",\r\n inputdataset %in% c(\"PHYSMEAS\", \"VITALS\") ~ \"VS\",\r\n inputdataset == \"ECG\" ~ \"EG\",\r\n inputdataset == \"IPADMIN\" ~ \"EC,EX\"\r\n ),\r\n \r\n dayn = as.numeric(word(date, 1, sep='/')),\r\n day = if_else(!is.na(dayn), sprintf(\"%02d\", dayn), \"-\"),\r\n monthc = toupper(word(date, 2, sep='/')),\r\n month = case_when(\r\n monthc == \"JAN\" ~ \"01\",\r\n monthc == \"FEB\" ~ \"02\",\r\n monthc == \"MAR\" ~ \"03\",\r\n monthc == \"APR\" ~ \"04\",\r\n monthc == \"MAY\" ~ \"05\",\r\n monthc == \"JUN\" ~ \"06\",\r\n monthc == \"JUL\" ~ \"07\",\r\n monthc == \"AUG\" ~ \"08\",\r\n monthc == \"SEP\" ~ \"09\",\r\n monthc == \"OCT\" ~ \"10\",\r\n monthc == \"NOV\" ~ \"11\",\r\n monthc == \"DEC\" ~ \"12\",\r\n TRUE ~ \"-\"\r\n ),\r\n year = word(date,3,sep='/'),\r\n year = if_else(toupper(year) == \"UNK\", \"-\", year),\r\n isodtc = str_c(year, month, day, sep = \"-\"),\r\n \r\n isodtc = ifelse(str_sub(isodtc, -5) == \"-----\", str_sub(isodtc, end = -6), isodtc),\r\n isodtc = ifelse(str_sub(isodtc, -4) == \"----\", str_sub(isodtc, end = -5), isodtc),\r\n isodtc = ifelse(str_sub(isodtc, -2) == \"--\", str_sub(isodtc, end = -3), isodtc)\r\n \r\n ) %>%\r\n select(-dayn, -monthc, -year)\r\n \r\n# Create VISITNUM and VISIT variables\r\ndates02 <- dates01 %>%\r\n mutate(\r\n visit = case_when(\r\n folder == \"SCR\" ~ \"SCREENING\",\r\n str_detect(folder, \"WEEK\") ~ toupper(folder),\r\n str_detect(folder, \"^FU\\\\d+\") ~ paste(\"FOLLOW-UP\", str_remove(folder, \"FU\")),\r\n str_detect(folder, \"^UNS_\") ~ \"UNSCHEDULED\"\r\n ),\r\n visitnum = case_when(\r\n folder == \"SCR\" ~ 1,\r\n str_detect(folder, \"WEEK\") ~ 100 + as.numeric(str_remove_all(folder, \"\\\\D\")),\r\n str_detect(folder, \"^FU\\\\d+\") ~ 200 + as.numeric(str_remove(folder, \"FU\")),\r\n str_detect(folder, \"^UNS_\") ~ 999\r\n ),\r\n sdtmdomain2=ifelse(visitnum==999,sdtmdomain,\"\")\r\n )\r\n \r\n#==============================================================================;\r\n#Create one row per each date - concatenating sdtm domains into a single value;\r\n#==============================================================================;\r\n \r\ndates03 <- dates02 %>%\r\n distinct(study,pt,visitnum,visit,isodtc,sdtmdomain2)\r\n \r\ndates04 <- dates03 %>%\r\n arrange(study,pt,visitnum,visit,isodtc,sdtmdomain2)\r\n \r\ndates05 <- dates04 %>%\r\n group_by(study,pt,visitnum,visit,isodtc) %>%\r\n summarize(svupdes=paste(sdtmdomain2, collapse = \", \")) %>%\r\n ungroup()\r\n \r\n#==============================================================================;\r\n#Get the earliest and latest end dates in each visit and create SVUPDES variable\r\n#==============================================================================;\r\n \r\n \r\nsvstdtc <- dates05 %>%\r\n arrange(study, pt, visitnum, visit, isodtc) %>%\r\n group_by(study, pt, visitnum, visit) %>%\r\n slice(1) %>%\r\n mutate(svstdtc=isodtc) %>%\r\n select(-isodtc,-svupdes)\r\n \r\nsvendtc <- dates05 %>%\r\n arrange(study, pt, visitnum, visit, isodtc) %>%\r\n group_by(study, pt, visitnum, visit) %>%\r\n slice(n()) %>%\r\n mutate(svendtc=isodtc) %>%\r\n select(-isodtc)\r\n \r\n \r\n#==============================================================================;\r\n# Combine start and end dates into a single dataset;\r\n#==============================================================================;\r\n \r\nsv01 <- left_join(svstdtc, svendtc, by = c(\"study\", \"pt\", \"visitnum\", \"visit\"))\r\n \r\n#==============================================================================;\r\n#Remap unscheduled visit;\r\n#==============================================================================;\r\n \r\nsv02 <- sv01 %>%\r\n arrange(study,pt,visitnum,visit,svstdtc) %>%\r\n mutate(temp_visitnum=ifelse(visitnum!=999,visitnum,NA ),\r\n temp_visit=ifelse(visitnum!=999,visit,NA ))\r\n \r\nsv03 <- sv02 %>%\r\n group_by(study,pt) %>%\r\n fill(temp_visitnum,.direction = \"down\") %>%\r\n fill(temp_visit,.direction = \"down\") %>%\r\n ungroup()\r\n \r\nsv04 <- sv03 %>%\r\n arrange(study,pt,temp_visitnum,temp_visit,visitnum,visit,svstdtc) %>%\r\n group_by(study,pt,temp_visitnum,temp_visit) %>%\r\n mutate(seq1 = row_number(), seq2 = seq1-1, seq3 = seq2*0.01,\r\n orig_visitnum = visitnum,\r\n orig_visit = visit,\r\n visitnum = ifelse(seq2>0,temp_visitnum+seq3,visitnum),\r\n visit = ifelse(seq2>0,paste(temp_visit,\" \", \"UNSCHEDULED\", \" \", sprintf(\"%02d\",seq2)),visit)) %>%\r\n ungroup()\r\n \r\nsv05 <- sv04 %>%\r\n mutate(\r\n studyid = study,\r\n domain = \"SV\",\r\n usubjid = paste(studyid,pt, sep = '-'),\r\n svstdt = as.Date(svstdtc,\"%Y-%m-%d\"),\r\n svendt = as.Date(svendtc,\"%Y-%m-%d\"),\r\n )\r\n \r\nsv06 <- sv05 %>%\r\n left_join(dm %>% select(usubjid,rfstdtc), by='usubjid') %>%\r\n mutate(rfstdt=as.Date(rfstdtc,\"%Y-%m-%d\"),\r\n svstdy = ifelse(!is.na(rfstdt) & !is.na(svstdt), svstdt - rfstdt + as.numeric(svstdt >= rfstdt), NA),\r\n svendy = ifelse(!is.na(rfstdt) & !is.na(svendt), svendt - rfstdt + as.numeric(svendt >= rfstdt), NA)) %>%\r\n rename_all(toupper)\r\n \r\n# Define the list of variables to keep\r\nvarlist <- c(\"STUDYID\", \"DOMAIN\", \"USUBJID\", \"VISITNUM\", \"VISIT\", \"SVSTDTC\",\r\n \"SVENDTC\", \"SVSTDY\", \"SVENDY\", \"SVUPDES\")\r\n \r\n# Create the sv dataset with selected columns\r\nsv <- sv06 %>%\r\n select(all_of(varlist))\r\n \r\noutput <- sv\r\n \r\n#==============================================================================;\r\n";
+  function fallbackCopy(value) {
+    var ta = document.createElement('textarea');
+    ta.value = value;
+    ta.setAttribute('readonly', 'readonly');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function mark(message) {
+    var label = btn.getAttribute('data-label') || btn.textContent || 'Copy R Program';
+    if (!btn.getAttribute('data-label')) btn.setAttribute('data-label', label);
+    btn.textContent = message;
+    window.setTimeout(function() { btn.textContent = label; }, 1300);
+  }
+  btn.addEventListener('click', function() {
+    var p = navigator.clipboard && window.isSecureContext
+      ? navigator.clipboard.writeText(text)
+      : new Promise(function(resolve, reject) { fallbackCopy(text) ? resolve() : reject(new Error('copy failed')); });
+    p.then(function() { mark('Copied'); }).catch(function() { mark('Copy Failed'); });
+  });
+})();
+</script><script>if (window.hljs) { hljs.highlightAll(); }</script><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script></div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<iframe src="./aframe(4).html" width="0" height="0" style="display: none;"></iframe></body></html>

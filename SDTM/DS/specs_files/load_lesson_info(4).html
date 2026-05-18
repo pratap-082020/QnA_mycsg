@@ -1,0 +1,342 @@
+
+<!-- saved from url=(0073)https://mycsg.in/load_lesson_info.php?type=SASPROG&lesson=SDTM_DS_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script src="./f(5).txt"></script><script async="" src="./f(6).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head><body><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col">
+<style>
+.csg-subscribe-wrap{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin: -8px -8px 0 -8px;
+}
+.csg-subscribe-note{
+  margin: 0;
+  padding: 8px 14px;
+  border: 0;
+  border-top: 1px solid #d8e7fb;
+  border-bottom: 1px solid #d8e7fb;
+  border-radius: 0;
+  background: #eef5ff;
+  color: #244d7c;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.csg-subscribe-note a{
+  color: #0f5fc5;
+  font-weight: 700;
+  text-decoration: none;
+}
+.csg-subscribe-note a:hover{
+  text-decoration: underline;
+}
+</style>
+<div class="csg-subscribe-wrap">
+  <div class="csg-subscribe-note">
+    Thank you for your R subscription. Adding SAS can also help you practice the same lesson workflow with SAS input data. <a href="https://mycsg.in/purchase_options.php" target="_parent">Explore subscriptions</a>
+  </div>
+</div><div style="font-family: Courier New; font-size: 13pt">
+<span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Include&nbsp;the&nbsp;data&nbsp;file<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;root2=&amp;root.SDTM\SDTM_DS\SDTM_DS_LCSG001\SDTM_DS_LCSG001;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%include</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"&amp;root2._data.sas"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">options</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">validvarname</span><span style="color:#000000;background-color:#ffffff;">=upcase;<br></span>
+<span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Programming&nbsp;for&nbsp;the&nbsp;Task<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Read&nbsp;input&nbsp;datasets<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dm01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dm;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;enrl01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;enrlment;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;eos01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;eos;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;eoip01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;eoip;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;records&nbsp;that&nbsp;come&nbsp;from&nbsp;Enrollment&nbsp;Dataset<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;protmil01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;enrl01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;usubjid&nbsp;dsstdtc&nbsp;protvers&nbsp;cnstvers&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">20</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dscat&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">30</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dsdecod&nbsp;dsterm&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">200</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;studyid=study;<br>&nbsp;&nbsp;&nbsp;usubjid=catx(</span><span style="color:#800080;background-color:#ffffff;">"-"</span><span style="color:#000000;background-color:#ffffff;">,study,pt);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">not</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(icdt_raw)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsstdtc=put(input(icdt_raw,??&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date11.</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsterm=</span><span style="color:#800080;background-color:#ffffff;">"INFORMED&nbsp;CONSENT&nbsp;OBTAINED"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsdecod=dsterm;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dscat=</span><span style="color:#800080;background-color:#ffffff;">"PROTOCOL&nbsp;MILESTONE"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;protvers=prtvers;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cnstvers=icvers;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">output</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">call</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(dsstdtc,dsterm,dsdecod,dscat,cnstvers,protvers);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">not</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(enrldt_raw)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsstdtc=put(input(enrldt_raw,??&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date11.</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsterm=</span><span style="color:#800080;background-color:#ffffff;">"ENROLLED"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsdecod=</span><span style="color:#800080;background-color:#ffffff;">"ELIGIBILITY&nbsp;CRITERIA&nbsp;MET"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dscat=</span><span style="color:#800080;background-color:#ffffff;">"PROTOCOL&nbsp;MILESTONE"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">output</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">call</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(dsstdtc,dsterm,dsdecod,dscat,cnstvers,protvers);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">not</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(randdt_raw)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsstdtc=put(input(randdt_raw,??&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date11.</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsterm=</span><span style="color:#800080;background-color:#ffffff;">"RANDOMIZED"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsdecod=</span><span style="color:#800080;background-color:#ffffff;">"RANDOMIZED"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dscat=</span><span style="color:#800080;background-color:#ffffff;">"PROTOCOL&nbsp;MILESTONE"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsrefid=randno;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">output</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;usubjid&nbsp;dsstdtc&nbsp;dscat&nbsp;dsdecod&nbsp;dsterm&nbsp;cnstvers&nbsp;protvers&nbsp;dsrefid;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;the&nbsp;records&nbsp;coming&nbsp;form&nbsp;EOIP&nbsp;raw&nbsp;dataset<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dispevnt01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;eoip01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;usubjid&nbsp;dsstdtc&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">20</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dscat&nbsp;dsscat&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">30</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dsdecod&nbsp;dsterm&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">200</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;studyid=study;<br>&nbsp;&nbsp;&nbsp;usubjid=catx(</span><span style="color:#800080;background-color:#ffffff;">"-"</span><span style="color:#000000;background-color:#ffffff;">,study,pt);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">not</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(eostdt_raw)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsstdtc=put(input(eostdt_raw,??&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date11.</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsterm=eoterm;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsdecod=upcase(dsterm);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dscat=</span><span style="color:#800080;background-color:#ffffff;">"DISPOSITION&nbsp;EVENT"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsscat=</span><span style="color:#800080;background-color:#ffffff;">"END&nbsp;OF&nbsp;INVESTIGATIONAL&nbsp;PRODUCT"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">output</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;usubjid&nbsp;dsstdtc&nbsp;dscat&nbsp;dsscat&nbsp;dsdecod&nbsp;dsterm;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;the&nbsp;records&nbsp;coming&nbsp;form&nbsp;EOS&nbsp;raw&nbsp;dataset<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dispevnt02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;eos01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;usubjid&nbsp;dsstdtc&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">20</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dscat&nbsp;dsscat&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">30</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dsdecod&nbsp;dsterm&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">200</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;studyid=study;<br>&nbsp;&nbsp;&nbsp;usubjid=catx(</span><span style="color:#800080;background-color:#ffffff;">"-"</span><span style="color:#000000;background-color:#ffffff;">,study,pt);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">not</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(eostdt_raw)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsstdtc=put(input(eostdt_raw,??&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date11.</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsterm=eoterm;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsdecod=upcase(dsterm);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dscat=</span><span style="color:#800080;background-color:#ffffff;">"DISPOSITION&nbsp;EVENT"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dsscat=</span><span style="color:#800080;background-color:#ffffff;">"END&nbsp;OF&nbsp;STUDY"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">output</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;usubjid&nbsp;dsstdtc&nbsp;dscat&nbsp;dsscat&nbsp;dsdecod&nbsp;dsterm;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Combine&nbsp;the&nbsp;records&nbsp;of&nbsp;protocol&nbsp;milestones&nbsp;and&nbsp;disposition&nbsp;events<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;ds01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;protmil01&nbsp;dispevnt01&nbsp;dispevnt02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;domain=</span><span style="color:#800080;background-color:#ffffff;">"DS"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;study&nbsp;day&nbsp;variable<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=ds01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=dm01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;ds02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">merge</span><span style="color:#000000;background-color:#ffffff;">&nbsp;ds01(</span><span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=a)&nbsp;dm01(</span><span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=b&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=usubjid&nbsp;rfstdtc);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;a;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">not</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(rfstdtc)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;rfstdt=input(substrn(rfstdtc,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">10</span></b><span style="color:#000000;background-color:#ffffff;">),??</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">not</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(dsstdtc)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dsstdt=input(substrn(dsstdtc,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">10</span></b><span style="color:#000000;background-color:#ffffff;">),??</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;nmiss(rfstdt,dsstdt)=</span><b><span style="color:#08726d;background-color:#ffffff;">0</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dsstdy=dsstdt-rfstdt+(dsstdt&nbsp;ge&nbsp;rfstdt);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">format</span><span style="color:#000000;background-color:#ffffff;">&nbsp;rfstdt&nbsp;dsstdt&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date9.</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;sequence&nbsp;variable<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=ds02&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=ds03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid&nbsp;dsstdtc;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;ds03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;ds03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid&nbsp;dsstdtc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;first.usubjid&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dsseq=</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dsseq+</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Assign&nbsp;attributes&nbsp;to&nbsp;the&nbsp;variables&nbsp;and&nbsp;keep&nbsp;only&nbsp;required&nbsp;variables<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;keepvars=STUDYID&nbsp;&nbsp;&nbsp;DOMAIN&nbsp;&nbsp;USUBJID&nbsp;DSSEQ&nbsp;&nbsp;&nbsp;DSREFID&nbsp;DSTERM&nbsp;&nbsp;DSDECOD&nbsp;<br>DSCAT&nbsp;&nbsp;&nbsp;DSSCAT&nbsp;&nbsp;DSSTDTC&nbsp;DSSTDY&nbsp;&nbsp;PROTVERS&nbsp;&nbsp;&nbsp;&nbsp;CNSTVERS<br>;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;suppvars=PROTVERS&nbsp;&nbsp;CNSTVERS;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;ds04;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">attrib</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;STUDYID&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Study&nbsp;Identifier'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DOMAIN&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Domain&nbsp;Abbreviation'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;USUBJID&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Unique&nbsp;Subject&nbsp;Identifier'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSSEQ&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Sequence&nbsp;Number'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSREFID&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Reference&nbsp;ID'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSTERM&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Reported&nbsp;Term&nbsp;for&nbsp;the&nbsp;Disposition&nbsp;Event'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSDECOD&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Standardized&nbsp;Disposition&nbsp;Term'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSCAT&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Category&nbsp;for&nbsp;Disposition&nbsp;Event'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSSCAT&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Subcategory&nbsp;for&nbsp;Disposition&nbsp;Event'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSSTDTC&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Start&nbsp;Date/Time&nbsp;of&nbsp;Disposition&nbsp;Event'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DSSTDY&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Study&nbsp;Day&nbsp;of&nbsp;Start&nbsp;of&nbsp;Disposition&nbsp;Event'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;PROTVERS&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Enrolled&nbsp;Protocol&nbsp;Version'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;CNSTVERS&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Enrolled&nbsp;Consent&nbsp;Version'</span><span style="color:#000000;background-color:#ffffff;"><br>;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;ds03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;&amp;keepvars;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;supplemetary&nbsp;domain<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=ds04&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=suppds01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;domain&nbsp;usubjid&nbsp;dsseq;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">transpose</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=suppds01&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=suppds02(</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(col1=qval)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(qval&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">))&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">name</span><span style="color:#000000;background-color:#ffffff;">=qnam&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=qlabel;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;domain&nbsp;usubjid&nbsp;dsseq;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">var</span><span style="color:#000000;background-color:#ffffff;">&nbsp;&amp;</span><span style="color:#08726d;background-color:#ffffff;">suppvars.</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;suppds03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">attrib</span><span style="color:#000000;background-color:#ffffff;">&nbsp;STUDYID&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Study&nbsp;Identifier'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RDOMAIN&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Related&nbsp;Domain&nbsp;Abbreviation'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USUBJID&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Unique&nbsp;Subject&nbsp;Identifier'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IDVAR&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Identifying&nbsp;Variable'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IDVARVAL&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Identifying&nbsp;Variable&nbsp;Value'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QNAM&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Qualifier&nbsp;Variable&nbsp;Name'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QLABEL&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Qualifier&nbsp;Variable&nbsp;Label'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QVAL&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Data&nbsp;Value'</span><span style="color:#000000;background-color:#ffffff;"><br>;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">retain</span><span style="color:#000000;background-color:#ffffff;">&nbsp;studyid&nbsp;rdomain&nbsp;usubjid&nbsp;idvar&nbsp;idvarval&nbsp;qnam&nbsp;qlabel&nbsp;qval;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;suppds02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;idvar=</span><span style="color:#800080;background-color:#ffffff;">"DSSEQ"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;idvarval=cats(dsseq);<br>&nbsp;&nbsp;&nbsp;rdomain=domain;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">drop</span><span style="color:#000000;background-color:#ffffff;">&nbsp;domain&nbsp;dsseq;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Save&nbsp;final&nbsp;copies&nbsp;of&nbsp;the&nbsp;datasets&nbsp;with&nbsp;dataset&nbsp;labels<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">options</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">validvarname</span><span style="color:#000000;background-color:#ffffff;">=v7;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=DS04&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=osCSG001.ds(</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">"Disposition"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">drop</span><span style="color:#000000;background-color:#ffffff;">=&amp;</span><span style="color:#08726d;background-color:#ffffff;">suppvars.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=suppDS03&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=osCSG001.suppds(</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">"Supplemental&nbsp;Qualifiers&nbsp;for&nbsp;Disposition"</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid&nbsp;idvar&nbsp;idvarval;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;xpt&nbsp;files<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;xptpath=</span><span style="color:#0000ff;background-color:#ffffff;">%sysfunc</span><span style="color:#000000;background-color:#ffffff;">(pathname(osCSG001))\xpt\;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">libname</span><span style="color:#000000;background-color:#ffffff;">&nbsp;ds&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">xport</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"&amp;xptpath.\ds.xpt"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">copy</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=osCSG001&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=ds;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">select</span><span style="color:#000000;background-color:#ffffff;">&nbsp;ds;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">libname</span><span style="color:#000000;background-color:#ffffff;">&nbsp;suppds&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">xport</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"&amp;xptpath.\suppDS.xpt"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">copy</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=osCSG001&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=suppds;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">select</span><span style="color:#000000;background-color:#ffffff;">&nbsp;suppds;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">libname</span><span style="color:#000000;background-color:#ffffff;">&nbsp;ds;<br></span>
+<span style="color:#0000ff;background-color:#ffffff;">libname</span><span style="color:#000000;background-color:#ffffff;">&nbsp;suppds;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span></div></div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(5).html" data-google-container-id="1.uxko6nxoieel" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe src="./aframe(3).html" width="0" height="0" style="display: none;"></iframe></body></html>

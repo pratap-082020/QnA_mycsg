@@ -1,0 +1,426 @@
+
+<!-- saved from url=(0079)https://mycsg.in/load_lesson_info.php?type=TIDYVERSEPROG&lesson=SDTM_AE_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./f.txt"></script><script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    <meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head>
+    <body><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script async="" src="./f(1).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col"><div class="d-flex align-items-center justify-content-end flex-wrap mb-3"><button type="button" class="btn btn-sm btn-outline-primary" id="copySelectedRProgram">Copy R Program</button></div><pre><code class="language-r hljs" style="font-size: 18px;"><span class="hljs-comment">#source("D:/SAS/Home/dev/clinical_sas_samples/mycsg/mycsg_config.R")</span>
+<span class="hljs-comment">#rmac1-std1</span>
+<span class="hljs-comment">#rmac1-std2</span>
+<span class="hljs-comment">#rmac1-std3</span>
+ 
+ 
+setwd<span class="hljs-punctuation">(</span>dirname<span class="hljs-punctuation">(</span>rstudioapi<span class="hljs-operator">::</span>getActiveDocumentContext<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span><span class="hljs-operator">$</span>path<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span>
+ 
+ 
+library<span class="hljs-punctuation">(</span>glue<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>tidyverse<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>haven<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>assertthat<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>huxtable<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>data.table<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>hms<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>lubridate<span class="hljs-punctuation">)</span>
+library<span class="hljs-punctuation">(</span>pharmaRTF<span class="hljs-punctuation">)</span>
+ 
+ 
+source<span class="hljs-punctuation">(</span><span class="hljs-string">"./SDTM_AE_LCSG001_data.r"</span><span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Read input datasets</span>
+ae01 <span class="hljs-operator">&lt;-</span> adverse
+dm01 <span class="hljs-operator">&lt;-</span> dm
+se01 <span class="hljs-operator">&lt;-</span> se
+ 
+<span class="hljs-comment"># Create variables which are directly based on the existing raw variables</span>
+ae02 <span class="hljs-operator">&lt;-</span> ae01 <span class="hljs-operator">%&gt;%</span>
+ filter<span class="hljs-punctuation">(</span>aevt <span class="hljs-operator">!=</span> <span class="hljs-string">""</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>
+ domain <span class="hljs-operator">=</span> <span class="hljs-string">"AE"</span><span class="hljs-punctuation">,</span>
+ studyid <span class="hljs-operator">=</span> study<span class="hljs-punctuation">,</span>
+ usubjid <span class="hljs-operator">=</span> paste<span class="hljs-punctuation">(</span>study<span class="hljs-punctuation">,</span> pt<span class="hljs-punctuation">,</span> sep <span class="hljs-operator">=</span> <span class="hljs-string">'-'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeterm <span class="hljs-operator">=</span> aevt<span class="hljs-punctuation">,</span>
+ aellt <span class="hljs-operator">=</span> aellt<span class="hljs-punctuation">,</span>
+ aedecod <span class="hljs-operator">=</span> aedecod<span class="hljs-punctuation">,</span>
+ aecat <span class="hljs-operator">=</span> aecat<span class="hljs-punctuation">,</span>
+ aebodsys <span class="hljs-operator">=</span> aebodsys<span class="hljs-punctuation">,</span>
+ aesev <span class="hljs-operator">=</span> toupper<span class="hljs-punctuation">(</span>aesev<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeser <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>aeser<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>aeser<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> aeser<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeacn <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>aeacn<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO ACTION TAKEN"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"DOSE NOT CHANGED"</span><span class="hljs-punctuation">,</span> toupper<span class="hljs-punctuation">(</span>aeacn<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeacnoth <span class="hljs-operator">=</span> aeacnoth<span class="hljs-punctuation">,</span>
+ aerel <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>aerel<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>aerel<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> aerel<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeout <span class="hljs-operator">=</span> toupper<span class="hljs-punctuation">(</span>aeout<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aescong <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>scong<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>scong<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA_character_</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aesdisab <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>sdisab<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>sdisab<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA_character_</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aesdth <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>sdeath<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>sdeath<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA_character_</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeshosp <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>shosp<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>shosp<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA_character_</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeslife <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>slife<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>slife<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA_character_</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aesmie <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>smie<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"YES"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>smie<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"NO"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA_character_</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ stdayn <span class="hljs-operator">=</span> suppressWarnings<span class="hljs-punctuation">(</span><span class="hljs-built_in">as.numeric</span><span class="hljs-punctuation">(</span>word<span class="hljs-punctuation">(</span>aestdt_raw<span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ stday <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>stdayn<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> sprintf<span class="hljs-punctuation">(</span><span class="hljs-string">"%02d"</span><span class="hljs-punctuation">,</span> stdayn<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">=</span> toupper<span class="hljs-punctuation">(</span>word<span class="hljs-punctuation">(</span>aestdt_raw<span class="hljs-punctuation">,</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span> sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ stmonth <span class="hljs-operator">=</span> case_when<span class="hljs-punctuation">(</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"JAN"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"01"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"FEB"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"02"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"MAR"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"03"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"APR"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"04"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"MAY"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"05"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"JUN"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"06"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"JUL"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"07"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"AUG"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"08"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"SEP"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"09"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"OCT"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"10"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"NOV"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"11"</span><span class="hljs-punctuation">,</span>
+ stmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"DEC"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"12"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-literal">TRUE</span> <span class="hljs-operator">~</span> <span class="hljs-string">"-"</span>
+ <span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ styear <span class="hljs-operator">=</span> word<span class="hljs-punctuation">(</span>aestdt_raw<span class="hljs-punctuation">,</span><span class="hljs-number">3</span><span class="hljs-punctuation">,</span>sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ styear <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>styear<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"UNK"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">,</span> styear<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aestdtc <span class="hljs-operator">=</span> str_c<span class="hljs-punctuation">(</span>styear<span class="hljs-punctuation">,</span> stmonth<span class="hljs-punctuation">,</span> stday<span class="hljs-punctuation">,</span> sep <span class="hljs-operator">=</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ 
+ aestdtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">5</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"-----"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">6</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> aestdtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aestdtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">4</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"----"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">5</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> aestdtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aestdtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">2</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"--"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">3</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> aestdtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ 
+ 
+ endayn <span class="hljs-operator">=</span> <span class="hljs-built_in">as.numeric</span><span class="hljs-punctuation">(</span>word<span class="hljs-punctuation">(</span>aeendt_raw<span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ enday <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>endayn<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> sprintf<span class="hljs-punctuation">(</span><span class="hljs-string">"%02d"</span><span class="hljs-punctuation">,</span> endayn<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">=</span> toupper<span class="hljs-punctuation">(</span>word<span class="hljs-punctuation">(</span>aeendt_raw<span class="hljs-punctuation">,</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span> sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ enmonth <span class="hljs-operator">=</span> case_when<span class="hljs-punctuation">(</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"JAN"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"01"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"FEB"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"02"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"MAR"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"03"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"APR"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"04"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"MAY"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"05"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"JUN"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"06"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"JUL"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"07"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"AUG"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"08"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"SEP"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"09"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"OCT"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"10"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"NOV"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"11"</span><span class="hljs-punctuation">,</span>
+ enmonthc <span class="hljs-operator">==</span> <span class="hljs-string">"DEC"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"12"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-literal">TRUE</span> <span class="hljs-operator">~</span> <span class="hljs-string">"-"</span>
+ <span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ enyear <span class="hljs-operator">=</span> word<span class="hljs-punctuation">(</span>aeendt_raw<span class="hljs-punctuation">,</span><span class="hljs-number">3</span><span class="hljs-punctuation">,</span>sep<span class="hljs-operator">=</span><span class="hljs-string">'/'</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ enyear <span class="hljs-operator">=</span> if_else<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">(</span>enyear<span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"UNK"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">,</span> enyear<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeendtc <span class="hljs-operator">=</span> str_c<span class="hljs-punctuation">(</span>enyear<span class="hljs-punctuation">,</span> enmonth<span class="hljs-punctuation">,</span> enday<span class="hljs-punctuation">,</span> sep <span class="hljs-operator">=</span> <span class="hljs-string">"-"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ 
+ aeendtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>aeendtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">5</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"-----"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>aeendtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">6</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> aeendtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeendtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>aeendtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">4</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"----"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>aeendtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">5</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> aeendtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeendtc <span class="hljs-operator">=</span> ifelse<span class="hljs-punctuation">(</span>str_sub<span class="hljs-punctuation">(</span>aeendtc<span class="hljs-punctuation">,</span> <span class="hljs-operator">-</span><span class="hljs-number">2</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">==</span> <span class="hljs-string">"--"</span><span class="hljs-punctuation">,</span> str_sub<span class="hljs-punctuation">(</span>aeendtc<span class="hljs-punctuation">,</span> end <span class="hljs-operator">=</span> <span class="hljs-operator">-</span><span class="hljs-number">3</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> aeendtc<span class="hljs-punctuation">)</span>
+ 
+ 
+ <span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Derive study day variables and AETRTEM</span>
+ae03 <span class="hljs-operator">&lt;-</span> ae02 <span class="hljs-operator">%&gt;%</span>
+ left_join<span class="hljs-punctuation">(</span>select<span class="hljs-punctuation">(</span>dm01<span class="hljs-punctuation">,</span>usubjid<span class="hljs-punctuation">,</span> rfstdtc<span class="hljs-punctuation">,</span> rfxendtc<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>by<span class="hljs-operator">=</span><span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span><span class="hljs-string">"usubjid"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>
+ rfstdt <span class="hljs-operator">=</span> as.Date<span class="hljs-punctuation">(</span>rfstdtc<span class="hljs-punctuation">,</span> format <span class="hljs-operator">=</span> <span class="hljs-string">"%Y-%m-%d"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aestdt <span class="hljs-operator">=</span> as.Date<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">,</span> format <span class="hljs-operator">=</span> <span class="hljs-string">"%Y-%m-%d"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeendt <span class="hljs-operator">=</span> as.Date<span class="hljs-punctuation">(</span>aeendtc<span class="hljs-punctuation">,</span> format <span class="hljs-operator">=</span> <span class="hljs-string">"%Y-%m-%d"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ rfxendt <span class="hljs-operator">=</span> as.Date<span class="hljs-punctuation">(</span>substr<span class="hljs-punctuation">(</span>rfxendtc<span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-number">10</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> format <span class="hljs-operator">=</span> <span class="hljs-string">"%Y-%m-%d"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ rfxen15dtc <span class="hljs-operator">=</span> as.Date<span class="hljs-punctuation">(</span>rfxendt <span class="hljs-operator">+</span> <span class="hljs-number">15</span><span class="hljs-punctuation">,</span> origin <span class="hljs-operator">=</span> <span class="hljs-string">"1970-01-01"</span><span class="hljs-punctuation">,</span> tz <span class="hljs-operator">=</span> <span class="hljs-string">"UTC"</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aestdy<span class="hljs-operator">=</span>ifelse<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>aestdt<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ ifelse<span class="hljs-punctuation">(</span><span class="hljs-punctuation">(</span>aestdt<span class="hljs-operator">&gt;=</span>rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>aestdt<span class="hljs-operator">-</span>rfstdt<span class="hljs-operator">+</span><span class="hljs-number">1</span><span class="hljs-punctuation">,</span>aestdt<span class="hljs-operator">-</span>rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aeendy<span class="hljs-operator">=</span>ifelse<span class="hljs-punctuation">(</span><span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>aeendt<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-operator">!</span><span class="hljs-built_in">is.na</span><span class="hljs-punctuation">(</span>rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ ifelse<span class="hljs-punctuation">(</span><span class="hljs-punctuation">(</span>aeendt<span class="hljs-operator">&gt;=</span>rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>aeendt<span class="hljs-operator">-</span>rfstdt<span class="hljs-operator">+</span><span class="hljs-number">1</span><span class="hljs-punctuation">,</span>aeendt<span class="hljs-operator">-</span>rfstdt<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> <span class="hljs-literal">NA</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ aetrtem <span class="hljs-operator">=</span> case_when<span class="hljs-punctuation">(</span>
+ prefdose <span class="hljs-operator">==</span> <span class="hljs-string">"Y"</span> <span class="hljs-operator">~</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-string">""</span> <span class="hljs-operator">&lt;</span> substr<span class="hljs-punctuation">(</span>rfstdtc<span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-number">10</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> substr<span class="hljs-punctuation">(</span>rfstdtc<span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-number">10</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">&lt;=</span> aestdtc <span class="hljs-operator">&amp;</span> aestdtc <span class="hljs-operator">&lt;=</span> rfxen15dtc <span class="hljs-operator">~</span> <span class="hljs-string">"Y"</span><span class="hljs-punctuation">,</span>
+ aestdtc <span class="hljs-operator">!=</span> <span class="hljs-string">""</span> <span class="hljs-operator">~</span> <span class="hljs-string">"N"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-literal">TRUE</span> <span class="hljs-operator">~</span> <span class="hljs-string">"N"</span>
+ <span class="hljs-punctuation">)</span>
+ <span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Derive EPOCH variable</span>
+se02 <span class="hljs-operator">&lt;-</span> se01 <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>short <span class="hljs-operator">=</span> str_to_lower<span class="hljs-punctuation">(</span>substr<span class="hljs-punctuation">(</span>epoch<span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-number">1</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ arrange<span class="hljs-punctuation">(</span>usubjid<span class="hljs-punctuation">,</span> short<span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Process SE dataset such that start date and end date of each epoch come onto a single record</span>
+epochstart <span class="hljs-operator">&lt;-</span> se02 <span class="hljs-operator">%&gt;%</span>
+ pivot_wider<span class="hljs-punctuation">(</span>names_from <span class="hljs-operator">=</span> short<span class="hljs-punctuation">,</span> values_from <span class="hljs-operator">=</span> sestdtc<span class="hljs-punctuation">,</span> id_cols <span class="hljs-operator">=</span> <span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span>usubjid<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> names_prefix <span class="hljs-operator">=</span> <span class="hljs-string">"s"</span><span class="hljs-punctuation">,</span> values_fill<span class="hljs-operator">=</span><span class="hljs-string">""</span><span class="hljs-punctuation">)</span>
+ 
+epochend <span class="hljs-operator">&lt;-</span> se02 <span class="hljs-operator">%&gt;%</span>
+ pivot_wider<span class="hljs-punctuation">(</span>names_from <span class="hljs-operator">=</span> short<span class="hljs-punctuation">,</span> values_from <span class="hljs-operator">=</span> seendtc<span class="hljs-punctuation">,</span> id_cols <span class="hljs-operator">=</span> <span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span>usubjid<span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span> names_prefix <span class="hljs-operator">=</span> <span class="hljs-string">"e"</span><span class="hljs-punctuation">,</span> values_fill<span class="hljs-operator">=</span><span class="hljs-string">""</span><span class="hljs-punctuation">)</span>
+ 
+epochdates <span class="hljs-operator">&lt;-</span> left_join<span class="hljs-punctuation">(</span>epochstart<span class="hljs-punctuation">,</span> epochend<span class="hljs-punctuation">,</span> by <span class="hljs-operator">=</span> <span class="hljs-string">"usubjid"</span><span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Compare AESTDTC with each epoch's start and end dates and assign epoch value</span>
+ae04 <span class="hljs-operator">&lt;-</span> ae03 <span class="hljs-operator">%&gt;%</span>
+ left_join<span class="hljs-punctuation">(</span>epochdates<span class="hljs-punctuation">,</span>by<span class="hljs-operator">=</span><span class="hljs-string">"usubjid"</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>
+ ss7<span class="hljs-operator">=</span>substr<span class="hljs-punctuation">(</span>ss<span class="hljs-punctuation">,</span><span class="hljs-number">1</span><span class="hljs-punctuation">,</span><span class="hljs-number">7</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ st7<span class="hljs-operator">=</span>substr<span class="hljs-punctuation">(</span>st<span class="hljs-punctuation">,</span><span class="hljs-number">1</span><span class="hljs-punctuation">,</span><span class="hljs-number">7</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ sf7<span class="hljs-operator">=</span>substr<span class="hljs-punctuation">(</span>sf<span class="hljs-punctuation">,</span><span class="hljs-number">1</span><span class="hljs-punctuation">,</span><span class="hljs-number">7</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">,</span>
+ 
+ epoch<span class="hljs-operator">=</span>case_when<span class="hljs-punctuation">(</span>
+ 
+ nchar<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">)</span><span class="hljs-operator">==</span><span class="hljs-number">10</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span>ss <span class="hljs-operator">&lt;=</span> aestdtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span><span class="hljs-punctuation">(</span>aestdtc <span class="hljs-operator">&lt;</span> st<span class="hljs-punctuation">)</span><span class="hljs-operator">|</span>st<span class="hljs-operator">==</span><span class="hljs-string">""</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"SCREENING"</span><span class="hljs-punctuation">,</span>
+ nchar<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">)</span><span class="hljs-operator">==</span><span class="hljs-number">10</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span>st <span class="hljs-operator">&lt;=</span> aestdtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span><span class="hljs-punctuation">(</span>aestdtc <span class="hljs-operator">&lt;</span> sf<span class="hljs-punctuation">)</span><span class="hljs-operator">|</span>sf<span class="hljs-operator">==</span><span class="hljs-string">""</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"TREATMENT"</span><span class="hljs-punctuation">,</span>
+ nchar<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">)</span><span class="hljs-operator">==</span><span class="hljs-number">10</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span>aestdtc <span class="hljs-operator">&gt;</span> sf<span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"FOLLOW-UP"</span><span class="hljs-punctuation">,</span>
+ 
+ nchar<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">)</span><span class="hljs-operator">==</span><span class="hljs-number">7</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span>ss7 <span class="hljs-operator">&lt;</span> aestdtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span><span class="hljs-punctuation">(</span>aestdtc <span class="hljs-operator">&lt;</span> st7<span class="hljs-punctuation">)</span><span class="hljs-operator">|</span>st<span class="hljs-operator">==</span><span class="hljs-string">""</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"SCREENING"</span><span class="hljs-punctuation">,</span>
+ nchar<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">)</span><span class="hljs-operator">==</span><span class="hljs-number">7</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span>st7 <span class="hljs-operator">&lt;</span> aestdtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span><span class="hljs-punctuation">(</span>aestdtc <span class="hljs-operator">&lt;</span> sf7<span class="hljs-punctuation">)</span><span class="hljs-operator">|</span>sf<span class="hljs-operator">==</span><span class="hljs-string">""</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">~</span> <span class="hljs-string">"TREATMENT"</span><span class="hljs-punctuation">,</span>
+ nchar<span class="hljs-punctuation">(</span>aestdtc<span class="hljs-punctuation">)</span><span class="hljs-operator">==</span><span class="hljs-number">7</span> <span class="hljs-operator">&amp;</span> <span class="hljs-punctuation">(</span>aestdtc <span class="hljs-operator">&gt;</span> sf7<span class="hljs-punctuation">)</span> <span class="hljs-operator">&amp;</span> sf7<span class="hljs-operator">!=</span><span class="hljs-string">""</span><span class="hljs-operator">~</span> <span class="hljs-string">"FOLLOW-UP"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-punctuation">)</span>
+ 
+ <span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Create AESEQ variable</span>
+ae05 <span class="hljs-operator">&lt;-</span> ae04 <span class="hljs-operator">%&gt;%</span>
+ arrange<span class="hljs-punctuation">(</span>usubjid<span class="hljs-punctuation">,</span> aedecod<span class="hljs-punctuation">,</span> aestdtc<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ group_by<span class="hljs-punctuation">(</span>usubjid<span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ mutate<span class="hljs-punctuation">(</span>aeseq <span class="hljs-operator">=</span> row_number<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ ungroup<span class="hljs-punctuation">(</span><span class="hljs-punctuation">)</span> <span class="hljs-operator">%&gt;%</span>
+ rename_all<span class="hljs-punctuation">(</span>toupper<span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># You can access ae06 as the final dataframe</span>
+varlist <span class="hljs-operator">&lt;-</span> <span class="hljs-built_in">c</span><span class="hljs-punctuation">(</span>
+ <span class="hljs-string">"STUDYID"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"DOMAIN"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"USUBJID"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESEQ"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AETERM"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AELLT"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AEDECOD"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AECAT"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-string">"AEBODSYS"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESEV"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESER"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AEACN"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AEACNOTH"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AEREL"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AEOUT"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESCONG"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-string">"AESDISAB"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESDTH"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESHOSP"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESLIFE"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESMIE"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"EPOCH"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AESTDTC"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AEENDTC"</span><span class="hljs-punctuation">,</span>
+ <span class="hljs-string">"AESTDY"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AEENDY"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"PREFDOSE"</span><span class="hljs-punctuation">,</span> <span class="hljs-string">"AETRTEM"</span>
+<span class="hljs-punctuation">)</span>
+ 
+<span class="hljs-comment"># Create ae07 data frame with specified attributes and column labels</span>
+ae06 <span class="hljs-operator">&lt;-</span> ae05 <span class="hljs-operator">%&gt;%</span>
+ select<span class="hljs-punctuation">(</span>all_of<span class="hljs-punctuation">(</span>varlist<span class="hljs-punctuation">)</span><span class="hljs-punctuation">)</span>
+ 
+output <span class="hljs-operator">&lt;-</span> ae06
+ 
+<span class="hljs-comment">#==============================================================================;</span>
+; </code></pre><script>
+(function() {
+  var btn = document.getElementById('copySelectedRProgram');
+  if (!btn) return;
+  var text = "#source(\"D:/SAS/Home/dev/clinical_sas_samples/mycsg/mycsg_config.R\")\r\n#rmac1-std1\r\n#rmac1-std2\r\n#rmac1-std3\r\n \r\n \r\nsetwd(dirname(rstudioapi::getActiveDocumentContext()$path))\r\n \r\n \r\nlibrary(glue)\r\nlibrary(tidyverse)\r\nlibrary(haven)\r\nlibrary(assertthat)\r\nlibrary(huxtable)\r\nlibrary(data.table)\r\nlibrary(hms)\r\nlibrary(lubridate)\r\nlibrary(pharmaRTF)\r\n \r\n \r\nsource(\"./SDTM_AE_LCSG001_data.r\")\r\n \r\n# Read input datasets\r\nae01 <- adverse\r\ndm01 <- dm\r\nse01 <- se\r\n \r\n# Create variables which are directly based on the existing raw variables\r\nae02 <- ae01 %>%\r\n filter(aevt != \"\") %>%\r\n mutate(\r\n domain = \"AE\",\r\n studyid = study,\r\n usubjid = paste(study, pt, sep = '-'),\r\n aeterm = aevt,\r\n aellt = aellt,\r\n aedecod = aedecod,\r\n aecat = aecat,\r\n aebodsys = aebodsys,\r\n aesev = toupper(aesev),\r\n aeser = if_else(toupper(aeser) == \"YES\", \"Y\", if_else(toupper(aeser) == \"NO\", \"N\", aeser)),\r\n aeacn = if_else(toupper(aeacn) == \"NO ACTION TAKEN\", \"DOSE NOT CHANGED\", toupper(aeacn)),\r\n aeacnoth = aeacnoth,\r\n aerel = if_else(toupper(aerel) == \"YES\", \"Y\", if_else(toupper(aerel) == \"NO\", \"N\", aerel)),\r\n aeout = toupper(aeout),\r\n aescong = if_else(toupper(scong) == \"YES\", \"Y\", if_else(toupper(scong) == \"NO\", \"N\", NA_character_)),\r\n aesdisab = if_else(toupper(sdisab) == \"YES\", \"Y\", if_else(toupper(sdisab) == \"NO\", \"N\", NA_character_)),\r\n aesdth = if_else(toupper(sdeath) == \"YES\", \"Y\", if_else(toupper(sdeath) == \"NO\", \"N\", NA_character_)),\r\n aeshosp = if_else(toupper(shosp) == \"YES\", \"Y\", if_else(toupper(shosp) == \"NO\", \"N\", NA_character_)),\r\n aeslife = if_else(toupper(slife) == \"YES\", \"Y\", if_else(toupper(slife) == \"NO\", \"N\", NA_character_)),\r\n aesmie = if_else(toupper(smie) == \"YES\", \"Y\", if_else(toupper(smie) == \"NO\", \"N\", NA_character_)),\r\n stdayn = suppressWarnings(as.numeric(word(aestdt_raw, 1, sep='/'))),\r\n stday = if_else(!is.na(stdayn), sprintf(\"%02d\", stdayn), \"-\"),\r\n stmonthc = toupper(word(aestdt_raw, 2, sep='/')),\r\n stmonth = case_when(\r\n stmonthc == \"JAN\" ~ \"01\",\r\n stmonthc == \"FEB\" ~ \"02\",\r\n stmonthc == \"MAR\" ~ \"03\",\r\n stmonthc == \"APR\" ~ \"04\",\r\n stmonthc == \"MAY\" ~ \"05\",\r\n stmonthc == \"JUN\" ~ \"06\",\r\n stmonthc == \"JUL\" ~ \"07\",\r\n stmonthc == \"AUG\" ~ \"08\",\r\n stmonthc == \"SEP\" ~ \"09\",\r\n stmonthc == \"OCT\" ~ \"10\",\r\n stmonthc == \"NOV\" ~ \"11\",\r\n stmonthc == \"DEC\" ~ \"12\",\r\n TRUE ~ \"-\"\r\n ),\r\n styear = word(aestdt_raw,3,sep='/'),\r\n styear = if_else(toupper(styear) == \"UNK\", \"-\", styear),\r\n aestdtc = str_c(styear, stmonth, stday, sep = \"-\"),\r\n \r\n aestdtc = ifelse(str_sub(aestdtc, -5) == \"-----\", str_sub(aestdtc, end = -6), aestdtc),\r\n aestdtc = ifelse(str_sub(aestdtc, -4) == \"----\", str_sub(aestdtc, end = -5), aestdtc),\r\n aestdtc = ifelse(str_sub(aestdtc, -2) == \"--\", str_sub(aestdtc, end = -3), aestdtc),\r\n \r\n \r\n endayn = as.numeric(word(aeendt_raw, 1, sep='/')),\r\n enday = if_else(!is.na(endayn), sprintf(\"%02d\", endayn), \"-\"),\r\n enmonthc = toupper(word(aeendt_raw, 2, sep='/')),\r\n enmonth = case_when(\r\n enmonthc == \"JAN\" ~ \"01\",\r\n enmonthc == \"FEB\" ~ \"02\",\r\n enmonthc == \"MAR\" ~ \"03\",\r\n enmonthc == \"APR\" ~ \"04\",\r\n enmonthc == \"MAY\" ~ \"05\",\r\n enmonthc == \"JUN\" ~ \"06\",\r\n enmonthc == \"JUL\" ~ \"07\",\r\n enmonthc == \"AUG\" ~ \"08\",\r\n enmonthc == \"SEP\" ~ \"09\",\r\n enmonthc == \"OCT\" ~ \"10\",\r\n enmonthc == \"NOV\" ~ \"11\",\r\n enmonthc == \"DEC\" ~ \"12\",\r\n TRUE ~ \"-\"\r\n ),\r\n enyear = word(aeendt_raw,3,sep='/'),\r\n enyear = if_else(toupper(enyear) == \"UNK\", \"-\", enyear),\r\n aeendtc = str_c(enyear, enmonth, enday, sep = \"-\"),\r\n \r\n aeendtc = ifelse(str_sub(aeendtc, -5) == \"-----\", str_sub(aeendtc, end = -6), aeendtc),\r\n aeendtc = ifelse(str_sub(aeendtc, -4) == \"----\", str_sub(aeendtc, end = -5), aeendtc),\r\n aeendtc = ifelse(str_sub(aeendtc, -2) == \"--\", str_sub(aeendtc, end = -3), aeendtc)\r\n \r\n \r\n )\r\n \r\n# Derive study day variables and AETRTEM\r\nae03 <- ae02 %>%\r\n left_join(select(dm01,usubjid, rfstdtc, rfxendtc),by=c(\"usubjid\")) %>%\r\n mutate(\r\n rfstdt = as.Date(rfstdtc, format = \"%Y-%m-%d\"),\r\n aestdt = as.Date(aestdtc, format = \"%Y-%m-%d\"),\r\n aeendt = as.Date(aeendtc, format = \"%Y-%m-%d\"),\r\n rfxendt = as.Date(substr(rfxendtc, 1, 10), format = \"%Y-%m-%d\"),\r\n rfxen15dtc = as.Date(rfxendt + 15, origin = \"1970-01-01\", tz = \"UTC\"),\r\n aestdy=ifelse(!is.na(aestdt) & !is.na(rfstdt),\r\n ifelse((aestdt>=rfstdt),aestdt-rfstdt+1,aestdt-rfstdt), NA),\r\n aeendy=ifelse(!is.na(aeendt) & !is.na(rfstdt),\r\n ifelse((aeendt>=rfstdt),aeendt-rfstdt+1,aeendt-rfstdt), NA),\r\n aetrtem = case_when(\r\n prefdose == \"Y\" ~ \"N\",\r\n \"\" < substr(rfstdtc, 1, 10) & substr(rfstdtc, 1, 10) <= aestdtc & aestdtc <= rfxen15dtc ~ \"Y\",\r\n aestdtc != \"\" ~ \"N\",\r\n TRUE ~ \"N\"\r\n )\r\n )\r\n \r\n# Derive EPOCH variable\r\nse02 <- se01 %>%\r\n mutate(short = str_to_lower(substr(epoch, 1, 1))) %>%\r\n arrange(usubjid, short)\r\n \r\n# Process SE dataset such that start date and end date of each epoch come onto a single record\r\nepochstart <- se02 %>%\r\n pivot_wider(names_from = short, values_from = sestdtc, id_cols = c(usubjid), names_prefix = \"s\", values_fill=\"\")\r\n \r\nepochend <- se02 %>%\r\n pivot_wider(names_from = short, values_from = seendtc, id_cols = c(usubjid), names_prefix = \"e\", values_fill=\"\")\r\n \r\nepochdates <- left_join(epochstart, epochend, by = \"usubjid\")\r\n \r\n# Compare AESTDTC with each epoch's start and end dates and assign epoch value\r\nae04 <- ae03 %>%\r\n left_join(epochdates,by=\"usubjid\") %>%\r\n mutate(\r\n ss7=substr(ss,1,7),\r\n st7=substr(st,1,7),\r\n sf7=substr(sf,1,7),\r\n \r\n epoch=case_when(\r\n \r\n nchar(aestdtc)==10 & (ss <= aestdtc) & ((aestdtc < st)|st==\"\") ~ \"SCREENING\",\r\n nchar(aestdtc)==10 & (st <= aestdtc) & ((aestdtc < sf)|sf==\"\") ~ \"TREATMENT\",\r\n nchar(aestdtc)==10 & (aestdtc > sf) ~ \"FOLLOW-UP\",\r\n \r\n nchar(aestdtc)==7 & (ss7 < aestdtc) & ((aestdtc < st7)|st==\"\") ~ \"SCREENING\",\r\n nchar(aestdtc)==7 & (st7 < aestdtc) & ((aestdtc < sf7)|sf==\"\") ~ \"TREATMENT\",\r\n nchar(aestdtc)==7 & (aestdtc > sf7) & sf7!=\"\"~ \"FOLLOW-UP\",\r\n )\r\n \r\n )\r\n \r\n# Create AESEQ variable\r\nae05 <- ae04 %>%\r\n arrange(usubjid, aedecod, aestdtc) %>%\r\n group_by(usubjid) %>%\r\n mutate(aeseq = row_number()) %>%\r\n ungroup() %>%\r\n rename_all(toupper)\r\n \r\n# You can access ae06 as the final dataframe\r\nvarlist <- c(\r\n \"STUDYID\", \"DOMAIN\", \"USUBJID\", \"AESEQ\", \"AETERM\", \"AELLT\", \"AEDECOD\", \"AECAT\",\r\n \"AEBODSYS\", \"AESEV\", \"AESER\", \"AEACN\", \"AEACNOTH\", \"AEREL\", \"AEOUT\", \"AESCONG\",\r\n \"AESDISAB\", \"AESDTH\", \"AESHOSP\", \"AESLIFE\", \"AESMIE\", \"EPOCH\", \"AESTDTC\", \"AEENDTC\",\r\n \"AESTDY\", \"AEENDY\", \"PREFDOSE\", \"AETRTEM\"\r\n)\r\n \r\n# Create ae07 data frame with specified attributes and column labels\r\nae06 <- ae05 %>%\r\n select(all_of(varlist))\r\n \r\noutput <- ae06\r\n \r\n#==============================================================================;\r\n; ";
+  function fallbackCopy(value) {
+    var ta = document.createElement('textarea');
+    ta.value = value;
+    ta.setAttribute('readonly', 'readonly');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function mark(message) {
+    var label = btn.getAttribute('data-label') || btn.textContent || 'Copy R Program';
+    if (!btn.getAttribute('data-label')) btn.setAttribute('data-label', label);
+    btn.textContent = message;
+    window.setTimeout(function() { btn.textContent = label; }, 1300);
+  }
+  btn.addEventListener('click', function() {
+    var p = navigator.clipboard && window.isSecureContext
+      ? navigator.clipboard.writeText(text)
+      : new Promise(function(resolve, reject) { fallbackCopy(text) ? resolve() : reject(new Error('copy failed')); });
+    p.then(function() { mark('Copied'); }).catch(function() { mark('Copy Failed'); });
+  });
+})();
+</script><script>if (window.hljs) { hljs.highlightAll(); }</script><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script></div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(4).html" data-google-container-id="1.s64o2m59ijqm" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe src="./aframe(4).html" width="0" height="0" style="display: none;"></iframe></body></html>

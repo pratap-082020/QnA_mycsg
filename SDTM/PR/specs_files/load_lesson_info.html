@@ -1,0 +1,122 @@
+
+<!-- saved from url=(0065)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_PR_L101 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>In clinical trials, subjects would be the given the investigational drug or a matching control and we call these as 'study treatments' and relevant information for these medications is captured as part of EC/EX domains</li>
+<li>Any other medications taken prior or concurrent with the study or during the follow-up phase of study are reported in CM domain</li>
+<li>Like the concomitant medications, patients may undergo some procedures which may have diagnostic, preventive, therapeutic, or palliative effects</li>
+<li>Some example procedures:
+<ul>
+<li>CT Scan of body</li>
+<li>Biopsy</li>
+<li>Wisdom teeth extraction</li>
+<li>Eye examination</li>
+<li>Endoscopy</li>
+<li>Radiotherapy</li>
+<li>Echocardiogram</li>
+</ul>
+</li>
+<li>SDTM standard has the domain named "Procedures (PR)" to capture the occurrence of these procedures</li>
+<li>Any results coming out of these procedures should be captured in their own individual findings or findings about domains
+<ul>
+<li>Example, the occurrence of echocardiogram procedure is captured in PR and the resulting findings like left ventricular ejection fraction and right ventricular ejection fraction are to be reported in CV domain</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Procedure name</li>
+<li>Is the procedure prespecified?</li>
+<li>If prespecified
+<ul>
+<li>Performed</li>
+<li>Did not perform
+<ul>
+<li>Reason not performed</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Date or start date of the procedure</li>
+<li>Status of the procedure - ongoing or ended?
+<ul>
+<li>If ended, end date/time of the medication</li>
+</ul>
+</li>
+<li>Dose and dosing unit where applicable (e.g. radiotherapy intensity)</li>
+<li>Frequency of administration (once daily/twice daily etc.)</li>
+<li>Route of administration&nbsp;</li>
+<li>Location and laterality of the procedure (Hand/Leg - right/left)</li>
+<li>Indication for which the procedure is performed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

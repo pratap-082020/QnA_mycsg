@@ -1,0 +1,339 @@
+
+<!-- saved from url=(0073)https://mycsg.in/load_lesson_info.php?type=SASPROG&lesson=SDTM_SV_LCSG001 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script src="./f(5).txt"></script><script async="" src="./f(6).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head><body><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col">
+<style>
+.csg-subscribe-wrap{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin: -8px -8px 0 -8px;
+}
+.csg-subscribe-note{
+  margin: 0;
+  padding: 8px 14px;
+  border: 0;
+  border-top: 1px solid #d8e7fb;
+  border-bottom: 1px solid #d8e7fb;
+  border-radius: 0;
+  background: #eef5ff;
+  color: #244d7c;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.csg-subscribe-note a{
+  color: #0f5fc5;
+  font-weight: 700;
+  text-decoration: none;
+}
+.csg-subscribe-note a:hover{
+  text-decoration: underline;
+}
+</style>
+<div class="csg-subscribe-wrap">
+  <div class="csg-subscribe-note">
+    Thank you for your R subscription. Adding SAS can also help you practice the same lesson workflow with SAS input data. <a href="https://mycsg.in/purchase_options.php" target="_parent">Explore subscriptions</a>
+  </div>
+</div><div style="font-family: Courier New; font-size: 13pt">
+<span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Include&nbsp;the&nbsp;data&nbsp;file<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;root2=&amp;root.SDTM\SDTM_SV\SDTM_SV_LCSG001\SDTM_SV_LCSG001;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%include</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"&amp;root2._data.sas"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">options</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">validvarname</span><span style="color:#000000;background-color:#ffffff;">=upcase;<br></span>
+<span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Programming&nbsp;for&nbsp;the&nbsp;Task<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Combine&nbsp;input&nbsp;datasets,&nbsp;once&nbsp;for&nbsp;each&nbsp;date&nbsp;variable&nbsp;in&nbsp;the&nbsp;dataset<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*----------------------------------------------------------<br>Convert&nbsp;the&nbsp;date&nbsp;into&nbsp;ISO&nbsp;format<br>----------------------------------------------------------*/</span><span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dates01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;folder&nbsp;sdtmdomain&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">200</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;date&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">20</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;inputdataset&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">32</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ipadmin(</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(folder&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=study&nbsp;pt&nbsp;folder&nbsp;ipstdt_raw&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(ipstdt_raw=date))<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lab_chem(</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(folder&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=study&nbsp;pt&nbsp;folder&nbsp;lbdt_raw&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(lbdt_raw=date))<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lab_hema(</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(folder&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=study&nbsp;pt&nbsp;folder&nbsp;lbdt_raw&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(lbdt_raw=date))<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eq5d3l(</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(folder&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=study&nbsp;pt&nbsp;folder&nbsp;dt_raw&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(dt_raw=date))<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;physmeas(</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(folder&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=study&nbsp;pt&nbsp;folder&nbsp;pmdt_raw&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(pmdt_raw=date))<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vitals(</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(folder&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=study&nbsp;pt&nbsp;folder&nbsp;vsdt_raw&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(vsdt_raw=date))<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ecg(</span><span style="color:#0000ff;background-color:#ffffff;">where</span><span style="color:#000000;background-color:#ffffff;">=(folder&nbsp;ne&nbsp;</span><span style="color:#800080;background-color:#ffffff;">""</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">=study&nbsp;pt&nbsp;folder&nbsp;egdt_raw&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(egdt_raw=date))<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">indsname</span><span style="color:#000000;background-color:#ffffff;">=__x;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;inputdataset=upcase(scan(__x,</span><b><span style="color:#08726d;background-color:#ffffff;">2</span></b><span style="color:#000000;background-color:#ffffff;">));<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;inputdataset&nbsp;in&nbsp;(</span><span style="color:#800080;background-color:#ffffff;">"LAB_HEMA"</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"LAB_CHEM"</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sdtmdomain=</span><span style="color:#800080;background-color:#ffffff;">"LB"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;inputdataset&nbsp;in&nbsp;(</span><span style="color:#800080;background-color:#ffffff;">"EQ5D3L"</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sdtmdomain=</span><span style="color:#800080;background-color:#ffffff;">"QS"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;inputdataset&nbsp;in&nbsp;(</span><span style="color:#800080;background-color:#ffffff;">"PHYSMEAS"</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"VITALS"</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sdtmdomain=</span><span style="color:#800080;background-color:#ffffff;">"VS"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;inputdataset&nbsp;in&nbsp;(</span><span style="color:#800080;background-color:#ffffff;">"ECG"</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sdtmdomain=</span><span style="color:#800080;background-color:#ffffff;">"EG"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;inputdataset&nbsp;in&nbsp;(</span><span style="color:#800080;background-color:#ffffff;">"IPADMIN"</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sdtmdomain=</span><span style="color:#800080;background-color:#ffffff;">"EC,EX"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;&nbsp;&nbsp;dayn=input(scan(date,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><span style="color:#800080;background-color:#ffffff;">'/'</span><span style="color:#000000;background-color:#ffffff;">),??&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">best.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dayn&nbsp;ne&nbsp;</span><b><span style="color:#08726d;background-color:#ffffff;">.</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;day=</span><span style="color:#0000ff;background-color:#ffffff;">put</span><span style="color:#000000;background-color:#ffffff;">(dayn,</span><span style="color:#08726d;background-color:#ffffff;">z2.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;monthc=upcase(scan(date,</span><b><span style="color:#08726d;background-color:#ffffff;">2</span></b><span style="color:#000000;background-color:#ffffff;">,</span><span style="color:#800080;background-color:#ffffff;">'/'</span><span style="color:#000000;background-color:#ffffff;">));<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"JAN"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"01"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"FEB"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"02"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"MAR"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"03"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"APR"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"04"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"MAY"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"05"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"JUN"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"06"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"JUL"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"07"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"AUG"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"08"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"SEP"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"09"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"OCT"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"10"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"NOV"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"11"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;monthc=</span><span style="color:#800080;background-color:#ffffff;">"DEC"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;month=</span><span style="color:#800080;background-color:#ffffff;">"12"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;year=scan(date,</span><b><span style="color:#08726d;background-color:#ffffff;">3</span></b><span style="color:#000000;background-color:#ffffff;">,</span><span style="color:#800080;background-color:#ffffff;">'/'</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;isodtc=catx(</span><span style="color:#800080;background-color:#ffffff;">"-"</span><span style="color:#000000;background-color:#ffffff;">,year,month,day);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;the&nbsp;VISITNUM&nbsp;and&nbsp;VISIT&nbsp;variables<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dates02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dates01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;visit&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">40</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;folder=</span><span style="color:#800080;background-color:#ffffff;">"SCR"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visit=</span><span style="color:#800080;background-color:#ffffff;">"SCREENING"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visitnum=</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;index(upcase(folder),</span><span style="color:#800080;background-color:#ffffff;">"WEEK"</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visit=upcase(folder);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visitnum=</span><b><span style="color:#08726d;background-color:#ffffff;">100</span></b><span style="color:#000000;background-color:#ffffff;">+input(compress(folder,,</span><span style="color:#800080;background-color:#ffffff;">'kd'</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">best.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;substrn(upcase(folder),</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">2</span></b><span style="color:#000000;background-color:#ffffff;">)=</span><span style="color:#800080;background-color:#ffffff;">"FU"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visit=tranwrd(upcase(folder),</span><span style="color:#800080;background-color:#ffffff;">"FU"</span><span style="color:#000000;background-color:#ffffff;">,</span><span style="color:#800080;background-color:#ffffff;">"FOLLOW-UP&nbsp;"</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visitnum=</span><b><span style="color:#08726d;background-color:#ffffff;">200</span></b><span style="color:#000000;background-color:#ffffff;">+input(compress(folder,,</span><span style="color:#800080;background-color:#ffffff;">'kd'</span><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">best.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;substrn(folder,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">4</span></b><span style="color:#000000;background-color:#ffffff;">)=</span><span style="color:#800080;background-color:#ffffff;">"UNS_"</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visit=</span><span style="color:#800080;background-color:#ffffff;">"UNSCHEDULED"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visitnum=</span><b><span style="color:#08726d;background-color:#ffffff;">999</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Remap&nbsp;unscheduled&nbsp;visits&nbsp;based&nbsp;on&nbsp;previous&nbsp;scheduled&nbsp;visit<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=dates02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;study&nbsp;pt&nbsp;isodtc&nbsp;visitnum&nbsp;visit;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dates03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dates02(</span><span style="color:#0000ff;background-color:#ffffff;">rename</span><span style="color:#000000;background-color:#ffffff;">=(visitnum=orig_visitnum&nbsp;visit=orig_visit));<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;study&nbsp;pt&nbsp;isodtc&nbsp;orig_visitnum&nbsp;orig_visit;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;visit&nbsp;temp_visit&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">40</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">retain</span><span style="color:#000000;background-color:#ffffff;">&nbsp;temp_visitnum&nbsp;temp_visit;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;first.pt&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">call</span><span style="color:#000000;background-color:#ffffff;">&nbsp;missing(visitnum,visit);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;orig_visitnum&nbsp;=&nbsp;</span><b><span style="color:#08726d;background-color:#ffffff;">999</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;first.isodtc&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dec_counter+</span><b><span style="color:#08726d;background-color:#ffffff;">0.01</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visitnum=temp_visitnum+dec_counter;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visit=catx(</span><span style="color:#800080;background-color:#ffffff;">"&nbsp;"</span><span style="color:#000000;background-color:#ffffff;">,&nbsp;temp_visit,</span><span style="color:#800080;background-color:#ffffff;">"UNSCHEDULED"</span><span style="color:#000000;background-color:#ffffff;">,put(dec_counter*</span><b><span style="color:#08726d;background-color:#ffffff;">100</span></b><span style="color:#000000;background-color:#ffffff;">,</span><span style="color:#08726d;background-color:#ffffff;">z2.</span><span style="color:#000000;background-color:#ffffff;">));<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">else</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">do</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dec_counter=</span><b><span style="color:#08726d;background-color:#ffffff;">0</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temp_visitnum=orig_visitnum;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temp_visit=orig_visit;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visitnum=orig_visitnum;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visit=orig_visit;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">end</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Get&nbsp;the&nbsp;earliest&nbsp;and&nbsp;latest&nbsp;end&nbsp;dates&nbsp;in&nbsp;each&nbsp;visit,&nbsp;and&nbsp;create&nbsp;SVUPDES&nbsp;variable<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=dates03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;study&nbsp;pt&nbsp;visitnum&nbsp;visit&nbsp;isodtc;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;svstdtc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dates03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;study&nbsp;pt&nbsp;visitnum&nbsp;visit&nbsp;isodtc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;first.visit;<br>&nbsp;&nbsp;&nbsp;svstdtc=isodtc;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;svendtc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dates03;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;study&nbsp;pt&nbsp;visitnum&nbsp;visit&nbsp;isodtc;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svupdes&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">100</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">retain</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svupdes;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;svendtc=isodtc;<br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;first.visit&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svupdes=</span><span style="color:#800080;background-color:#ffffff;">""</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;index(svupdes,sdtmdomain)=</span><b><span style="color:#08726d;background-color:#ffffff;">0</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">and</span><span style="color:#000000;background-color:#ffffff;">&nbsp;index(visit,</span><span style="color:#800080;background-color:#ffffff;">"UNSCHE"</span><span style="color:#000000;background-color:#ffffff;">)&nbsp;gt&nbsp;</span><b><span style="color:#08726d;background-color:#ffffff;">0</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svupdes=catx(</span><span style="color:#800080;background-color:#ffffff;">","</span><span style="color:#000000;background-color:#ffffff;">,svupdes,sdtmdomain);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;index(visit,</span><span style="color:#800080;background-color:#ffffff;">"UNSCHE"</span><span style="color:#000000;background-color:#ffffff;">)=</span><b><span style="color:#08726d;background-color:#ffffff;">0</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svupdes=</span><span style="color:#800080;background-color:#ffffff;">""</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;last.visit;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;study&nbsp;pt&nbsp;visitnum&nbsp;visit&nbsp;svendtc&nbsp;svupdes;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Combine&nbsp;start&nbsp;and&nbsp;end&nbsp;dates&nbsp;into&nbsp;a&nbsp;single&nbsp;dataset<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dates04;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">merge</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svstdtc(</span><span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=a)&nbsp;svendtc(</span><span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=b);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;study&nbsp;pt&nbsp;visitnum&nbsp;visit;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;ID&nbsp;variables&nbsp;and&nbsp;study&nbsp;day&nbsp;variables<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;sv01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dates04;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">length</span><span style="color:#000000;background-color:#ffffff;">&nbsp;domain&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">2</span></b><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;studyid&nbsp;siteid&nbsp;usubjid&nbsp;subjid&nbsp;$</span><b><span style="color:#08726d;background-color:#ffffff;">20</span></b><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br>&nbsp;&nbsp;&nbsp;studyid=study;<br>&nbsp;&nbsp;&nbsp;domain=</span><span style="color:#800080;background-color:#ffffff;">"SV"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;subjid=pt;<br>&nbsp;&nbsp;&nbsp;siteid=substrn(pt,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">2</span></b><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;usubjid=catx(</span><span style="color:#800080;background-color:#ffffff;">"-"</span><span style="color:#000000;background-color:#ffffff;">,study,pt);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;svstdt=input(substrn(svstdtc,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">10</span></b><span style="color:#000000;background-color:#ffffff;">),??</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;svendt=input(substrn(svendtc,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">10</span></b><span style="color:#000000;background-color:#ffffff;">),??</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">format</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svstdt&nbsp;svendt&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date9.</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;dm01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;dm;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid&nbsp;rfstdt;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;rfstdt=input(substrn(rfstdtc,</span><b><span style="color:#08726d;background-color:#ffffff;">1</span></b><span style="color:#000000;background-color:#ffffff;">,</span><b><span style="color:#08726d;background-color:#ffffff;">10</span></b><span style="color:#000000;background-color:#ffffff;">),</span><span style="color:#08726d;background-color:#ffffff;">yymmdd10.</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">format</span><span style="color:#000000;background-color:#ffffff;">&nbsp;rfstdt&nbsp;</span><span style="color:#08726d;background-color:#ffffff;">date9.</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=dm01;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;sv02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">merge</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sv01(</span><span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=a)&nbsp;dm01(</span><span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=b);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;a&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">and</span><span style="color:#000000;background-color:#ffffff;">&nbsp;b;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;nmiss(svstdt,rfstdt)=</span><b><span style="color:#08726d;background-color:#ffffff;">0</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svstdy=svstdt-rfstdt+(svstdt&gt;=rfstdt);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">if</span><span style="color:#000000;background-color:#ffffff;">&nbsp;nmiss(svendt,rfstdt)=</span><b><span style="color:#08726d;background-color:#ffffff;">0</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">then</span><span style="color:#000000;background-color:#ffffff;">&nbsp;svendy=svendt-rfstdt+(svendt&gt;=rfstdt);<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Write&nbsp;attributes&nbsp;and&nbsp;keep&nbsp;only&nbsp;required&nbsp;variables&nbsp;and&nbsp;in&nbsp;the&nbsp;required&nbsp;order<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;varlist=STUDYID&nbsp;DOMAIN&nbsp;USUBJID&nbsp;VISITNUM&nbsp;VISIT&nbsp;SVSTDTC&nbsp;SVENDTC&nbsp;SVSTDY&nbsp;SVENDY&nbsp;SVUPDES;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">data</span></b><span style="color:#000000;background-color:#ffffff;">&nbsp;sv;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">attrib</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;STUDYID&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Study&nbsp;Identifier'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;DOMAIN&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Domain&nbsp;Abbreviation'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;USUBJID&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Unique&nbsp;Subject&nbsp;Identifier'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;VISITNUM&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Visit&nbsp;Number'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;VISIT&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Visit&nbsp;Name'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;SVSTDTC&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Start&nbsp;Date/Time&nbsp;of&nbsp;Visit'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;SVENDTC&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'End&nbsp;Date/Time&nbsp;of&nbsp;Visit'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;SVSTDY&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Study&nbsp;Day&nbsp;of&nbsp;Start&nbsp;of&nbsp;Visit'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;SVENDY&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Study&nbsp;Day&nbsp;of&nbsp;End&nbsp;of&nbsp;Visit'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;SVUPDES&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">'Description&nbsp;of&nbsp;Unplanned&nbsp;Visit'</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;&nbsp;&nbsp;;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">set</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sv02;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">keep</span><span style="color:#000000;background-color:#ffffff;">&nbsp;&amp;</span><span style="color:#08726d;background-color:#ffffff;">varlist.</span>;
+<span style="color:#000000;background-color:#ffffff;"><br></span><b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Save&nbsp;final&nbsp;copies&nbsp;of&nbsp;the&nbsp;datasets&nbsp;with&nbsp;dataset&nbsp;labels<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">options</span>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">validvarname</span><span style="color:#000000;background-color:#ffffff;">=v7;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">sort</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">data</span><span style="color:#000000;background-color:#ffffff;">=sv&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=osCSG001.SV(</span><span style="color:#0000ff;background-color:#ffffff;">label</span><span style="color:#000000;background-color:#ffffff;">=</span><span style="color:#800080;background-color:#ffffff;">"Subject&nbsp;Visits"</span><span style="color:#000000;background-color:#ffffff;">);<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">by</span><span style="color:#000000;background-color:#ffffff;">&nbsp;usubjid&nbsp;visitnum;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#1b7a1b;background-color:#ffffff;">/*=========================================================<br>Create&nbsp;xpt&nbsp;files<br>=========================================================*/</span><span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">%let</span><span style="color:#000000;background-color:#ffffff;">&nbsp;xptpath=</span><span style="color:#0000ff;background-color:#ffffff;">%sysfunc</span><span style="color:#000000;background-color:#ffffff;">(pathname(osCSG001))\xpt\;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">libname</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sv&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">xport</span>&nbsp;<span style="color:#800080;background-color:#ffffff;">"&amp;xptpath.\SV.xpt"</span>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><b><span style="color:#000080;background-color:#ffffff;">proc</span></b>&nbsp;<b><span style="color:#000080;background-color:#ffffff;">copy</span></b>&nbsp;<span style="color:#0000ff;background-color:#ffffff;">in</span><span style="color:#000000;background-color:#ffffff;">=osCSG001&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">out</span><span style="color:#000000;background-color:#ffffff;">=sv;<br></span>
+<span style="color:#000000;background-color:#ffffff;">&nbsp;&nbsp;&nbsp;</span><span style="color:#0000ff;background-color:#ffffff;">select</span><span style="color:#000000;background-color:#ffffff;">&nbsp;sv;<br></span>
+<b><span style="color:#000080;background-color:#ffffff;">run</span></b>;
+<span style="color:#000000;background-color:#ffffff;"><br>&nbsp;<br></span><span style="color:#0000ff;background-color:#ffffff;">libname</span><span style="color:#000000;background-color:#ffffff;">&nbsp;SV;<br></span>
+</div></div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(4).html" data-google-container-id="1.31x42gkgp8dp" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe src="./aframe(3).html" width="0" height="0" style="display: none;"></iframe></body></html>

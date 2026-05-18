@@ -1,0 +1,117 @@
+
+<!-- saved from url=(0065)https://mycsg.in/load_lesson_info.php?type=CD&lesson=SDTM_HO_L101 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    </head>
+    <body><p>&nbsp;</p>
+<table style="border-collapse: collapse; width: 84.0792%; border-width: 1px; margin-left: auto; margin-right: auto; height: 140px;" border="1"><colgroup><col style="width: 100%;"></colgroup>
+<tbody>
+<tr>
+<td style="text-align: center; background-color: rgb(191, 237, 210);">
+<h2>Background</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Most clinical trials are conducted on outpatient basis wherein the subjects visit the trial site (clinic/hospital) only at predetermined time points or on-need basis</li>
+<li>Subjects in such studies may have planned or unplanned hospitalization</li>
+<li>If required, such information related to hospitalization may be collected</li>
+<li>Some data points related to hospitalizations include:
+<ul>
+<li>Reason for admission</li>
+<li>Facility to which admission is made (ER/ICU/General ward etc)</li>
+<li>Date of admission and discharge etc.</li>
+</ul>
+</li>
+<li>In SDTM standard, we have a domain called "Healthcare Encounters (HO)" to collect data for inpatient and outpatient healthcare events (e.g., hospitalization, nursing home stay, rehabilitation facility stay, ambulatory surgery) etc.</li>
+<li>HO belongs to 'Events' class and has an expected record structure of 'One record per healthcare encounter per subject'.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="background-color: rgb(251, 238, 184);">
+<h2 style="text-align: center;">What type of information is typically collected or presented?</h2>
+</td>
+</tr>
+<tr>
+<td>
+<ul>
+<li>Term described by the subject for healthcare encounter</li>
+<li>&nbsp;Start date/time</li>
+<li>Status of the encounter- ongoing or ended?
+<ul>
+<li>If ended, end date/time</li>
+</ul>
+</li>
+<li>In cases there are prespecified encounters
+<ul>
+<li>Encounter occurred?
+<ul>
+<li>Yes</li>
+<li>No
+<ul>
+<li>Reason not occurred</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Duration of the encounter</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+</body></html>

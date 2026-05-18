@@ -1,0 +1,284 @@
+
+<!-- saved from url=(0070)https://mycsg.in/load_lesson_info.php?type=RTVDATA&lesson=SDTM_MH_L201 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./bootstrap.min.css">
+        <link rel="stylesheet" href="./all.min.css">
+        <link rel="stylesheet" type="text/css" href="./dataTables.dataTables.css">
+        <link rel="stylesheet" href="./default.min.css">
+
+        <script src="./f.txt"></script><script src="./jquery.min.js"></script>
+        <script src="./jquery-3.5.1.js"></script>
+        <script src="./dataTables.js"></script>
+        <script src="./dataTables.fixedHeader.min.js"></script>            
+        <script src="./highlight.min.js"></script>
+        <script src="./sas.min.js"></script>
+    <meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9nrunKdU5m96PSN1XsSGr3qOP0lvPFUB2AiAylCDlN5DTl17uDFkpQuHj1AFtgWLxpLaiBZuhrtb2WOu7ofHwEAAACKeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A93bovR+QVXNx2/38qDbmeYYf1wdte9EO37K9eMq3r+541qo0byhYU899BhPB7Cv9QqD7wIbR1B6OAc9kEfYCA4AAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A1S5fojrAunSDrFbD8OfGmFHdRFZymSM/1ss3G+NEttCLfHkXvlcF6LGLH8Mo5PakLO1sCASXU1/gQf6XGuTBgwAAACQeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head>
+    <body><style>
+/* --- csg_ads shared layout --- */
+/* App-shell: only .csg-center-col (and mobile interstitial) scrolls.
+   Containing document (including iframe documents) must not add its own scroll. */
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+.csg-adwrap {
+  --csg-ad-col-width: clamp(200px, 20vw, 320px);
+  --csg-center-max: none;
+  --csg-adwrap-bg: #e8ecf1;
+  --csg-center-padding: 20px 28px;
+  display: flex;
+  overflow: hidden;
+  background: var(--csg-adwrap-bg);
+}
+.csg-ad-col {
+  flex: 0 0 var(--csg-ad-col-width);
+  overflow: hidden;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.csg-ad-label {
+  font-size: 9px;
+  color: #b0b8c4;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  align-self: stretch;
+  text-align: center;
+  visibility: hidden;
+}
+.csg-ad-col.is-filled .csg-ad-label { visibility: visible; }
+.csg-center-col {
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
+  max-width: var(--csg-center-max);
+  overflow-y: auto;
+  padding: var(--csg-center-padding);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 0 40px rgba(0,0,0,0.16);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 991.98px) {
+  .csg-ad-col { display: none; }
+  .csg-center-col { padding: 16px 14px; box-shadow: none; }
+}
+/* --- csg_ads mobile interstitial --- */
+.csg-interstitial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.csg-interstitial-card {
+  width: 100%;
+  max-width: 380px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.csg-interstitial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.csg-interstitial-ad-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.csg-interstitial-skip {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+}
+.csg-interstitial-skip:not(:disabled) {
+  cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+</style><script async="" src="./f(1).txt" crossorigin="anonymous" data-checked-head="true"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.csg-ad-col .adsbygoogle').forEach(function(ins) {
+    var col = ins.closest('.csg-ad-col');
+    if (!col) return;
+    function check() {
+      var s = ins.getAttribute('data-ad-status');
+      if (s === 'filled')   { col.classList.add('is-filled');    return true; }
+      if (s === 'unfilled') { col.classList.remove('is-filled'); return true; }
+      // Fallback: some AdSense formats (related content, multiplex) do not
+      // set data-ad-status. Treat as filled if the <ins> has rendered content.
+      if (ins.offsetHeight > 20 || ins.querySelector('iframe')) {
+        col.classList.add('is-filled');
+        return true;
+      }
+      return false;
+    }
+    var obs = new MutationObserver(check);
+    obs.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'], childList: true });
+    check();
+    // Delayed fallbacks for slow-loading ad formats
+    setTimeout(check, 2000);
+    setTimeout(check, 5000);
+  });
+});
+</script><script>
+(function() {
+  function setH() {
+    var el = document.getElementById("csg-tab-wrap");
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh  = window.innerHeight || document.documentElement.clientHeight;
+    // Leave room for the fixed site footer (footer.php, id='pagefooter') when present.
+    // Absent on iframe documents — in that case footerH is 0.
+    var footer  = document.getElementById('pagefooter');
+    var footerH = footer ? footer.offsetHeight : 0;
+    el.style.height = Math.max(300, vh - top - footerH) + 'px';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setH);
+  } else {
+    setH();
+  }
+  window.addEventListener('load', setH);
+  window.addEventListener('resize', setH);
+  setTimeout(setH, 600);
+})();
+</script><div class="csg-adwrap" id="csg-tab-wrap" style="--csg-ad-col-width: clamp(140px, 14vw, 220px); --csg-center-padding: 12px 16px; height: 300px;"><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div><div class="csg-center-col">dm&lt;-tribble(<br>
+~studyid,~usubjid,~rfstdtc,<br>
+"MYCSG","MYCSG-1001","2015-08-24",<br>
+"MYCSG","MYCSG-1002","2015-07-12",<br>
+"MYCSG","MYCSG-1003","2015-08-02",<br>
+)<br>
+<br>
+rmh&lt;-tribble(<br>
+~subject,~foldername,~folderseq,~recordposition,~mhcat,~mhdat_raw,~mhspid,~mhterm,~mhstdat_raw,~mhongo,~mhendat_raw,<br>
+1001,"Screening",1,1,"General Medical History","19 AUG 2015",1,"HEADACHE","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,2,"General Medical History","19 AUG 2015",2,"DVT HEPATIC VEIN","UN FEB 2015","Yes","",<br>
+1001,"Screening",1,3,"General Medical History","19 AUG 2015",3,"DIABETES MELLITUS (TYPE 2)","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,4,"General Medical History","19 AUG 2015",4,"RIGHT-SIDED ABDOMINAL PAIN","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,5,"General Medical History","19 AUG 2015",5,"INTERMITTENT URINARY RETENTION","UN UNK 2015","No","24 AUG 2015",<br>
+1001,"Screening",1,6,"General Medical History","19 AUG 2015",6,"GASTROESOPHAGEAL REFLUX DISEASE","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,7,"General Medical History","19 AUG 2015",7,"SENSORY NEUROPATHY","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,8,"General Medical History","19 AUG 2015",8,"CONSTIPATION (OPIOID-INDUCED)","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,9,"General Medical History","19 AUG 2015",9,"FATIGUE","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,10,"General Medical History","19 AUG 2015",10,"NAUSEA","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,11,"General Medical History","19 AUG 2015",11,"ANOREXIA","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,12,"General Medical History","19 AUG 2015",12,"DIARRHEA","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,13,"General Medical History","19 AUG 2015",13,"LOW ANTERIOR RESECTION OF RECTUM","UN APR 2015","No","UN APR 2015",<br>
+1001,"Screening",1,14,"General Medical History","19 AUG 2015",14,"ABDOMINAL PERINEAL RESECTION","UN DEC 2015","No","UN DEC 2015",<br>
+1001,"Screening",1,15,"General Medical History","19 AUG 2015",15,"ILEOSTOMY","UN DEC 2015","No","UN DEC 2015",<br>
+1001,"Screening",1,16,"General Medical History","19 AUG 2015",16,"VOMITING","UN UNK 2015","Yes","",<br>
+1001,"Screening",1,17,"General Medical History","19 AUG 2015",17,"DVT PORTAL VEIN","UN FEB 2015","Yes","",<br>
+1002,"Screening",1,1,"General Medical History","02 JUL 2015",1,"HYPERTENSION","UN UNK 2015","Yes","",<br>
+1002,"Screening",1,2,"General Medical History","02 JUL 2015",2,"ASTHMA","UN UNK 2015","Yes","",<br>
+1002,"Screening",1,3,"General Medical History","02 JUL 2015",3,"ALCOHOLIC CIRRHOSIS","UN UNK 2015","Yes","",<br>
+1002,"Screening",1,4,"General Medical History","02 JUL 2015",4,"GASTRIC VARICES","UN OCT 2015","Yes","",<br>
+1002,"Screening",1,5,"General Medical History","02 JUL 2015",5,"ESOPHAGEAL VARICES LIGATION","17 OCT 2015","No","17 OCT 2015",<br>
+1002,"Screening",1,6,"General Medical History","02 JUL 2015",6,"NON-CARDIAC CHEST PAIN","06 JAN 2015","No","27 JAN 2015",<br>
+1002,"Screening",1,7,"General Medical History","02 JUL 2015",7,"LEFT NECK PAIN","UN SEP 2015","Yes","",<br>
+1002,"Screening",1,8,"General Medical History","02 JUL 2015",8,"BACK PAIN","UN UNK 2015","Yes","",<br>
+1002,"Screening",1,9,"General Medical History","02 JUL 2015",9,"LEFT SHOULDER NUMBNESS","UN OCT 2015","Yes","",<br>
+1002,"Screening",1,10,"General Medical History","02 JUL 2015",10,"SENSORY NEUROPATHY (BOTH UPPER &amp; LOWER EXTREMITIES)","UN SEP 2015","Yes","",<br>
+1002,"Screening",1,11,"General Medical History","02 JUL 2015",11,"ODYNOPHAGIA","UN SEP 2015","No","06 JAN 2015",<br>
+1002,"Screening",1,12,"General Medical History","02 JUL 2015",12,"SEASONAL ALLERGIES","UN UNK 2015","Yes","",<br>
+1002,"Screening",1,13,"General Medical History","02 JUL 2015",13,"DYSPHAGIA","UN SEP 2015","No","06 JAN 2015",<br>
+1002,"Screening",1,14,"General Medical History","02 JUL 2015",14,"CHRONIC KIDNEY DISEASE","UN UNK 2015","Yes","",<br>
+1002,"Screening",1,15,"General Medical History","02 JUL 2015",15,"HYPOTHYROIDISM","UN UNK 2015","Yes","",<br>
+1002,"Screening",1,16,"General Medical History","02 JUL 2015",16,"WEIGHT LOSS","UN UNK 2015","No","UN UNK 2015",<br>
+1002,"Screening",1,17,"General Medical History","02 JUL 2015",17,"BILATERAL EDEMA (LOWER LIMBS)","29 MAY 2015","Yes","",<br>
+1002,"Screening",1,18,"General Medical History","02 JUL 2015",18,"HYPOMAGNESEMIA","02 JUL 2015","Yes","",<br>
+1003,"Screening",1,1,"General Medical History","28 JUL 2015",1,"HYPERTENSION","UN UNK 2015","Yes","",<br>
+1003,"Screening",1,2,"General Medical History","28 JUL 2015",2,"HYPERCHOLESTEROLEMIA","08 MAY 2015","Yes","",<br>
+1003,"Screening",1,3,"General Medical History","28 JUL 2015",3,"BENIGN PROSTATIC HYPERPLASIA","UN UNK 2015","Yes","",<br>
+1003,"Screening",1,4,"General Medical History","28 JUL 2015",4,"LEFT NEPHRECTOMY","UN UNK 2015","No","UN UNK 2015",<br>
+1003,"Screening",1,5,"General Medical History","28 JUL 2015",5,"APPENDECTOMY","UN UNK 2015","No","UN UNK 2015",<br>
+1003,"Screening",1,6,"General Medical History","28 JUL 2015",6,"HYPERTHYROIDISM","08 NOV 2015","Yes","",<br>
+1003,"Screening",1,7,"General Medical History","28 JUL 2015",7,"CATARACTS (BOTH EYES)","UN UNK 2015","Yes","",<br>
+1003,"Screening",1,8,"General Medical History","28 JUL 2015",8,"RASH (MACULO-PAPULAR) -UPPER CHEST, NECK, NOSE &amp; CHIN","UN MAY 2015","Yes","",<br>
+1003,"Screening",1,9,"General Medical History","28 JUL 2015",9,"PRURITUS","UN MAY 2015","Yes","",<br>
+1003,"Screening",1,10,"General Medical History","28 JUL 2015",10,"COUGH","12 APR 2015","Yes","",<br>
+1003,"Screening",1,11,"General Medical History","28 JUL 2015",11,"GASTROESOPHAGEAL REFLUX DISEASE","UN APR 2015","Yes","",<br>
+1003,"Screening",1,12,"General Medical History","28 JUL 2015",12,"NAUSEA","UN JUL 2015","Yes","",<br>
+1003,"Screening",1,13,"General Medical History","28 JUL 2015",13,"DYSPNEA","UN JUL 2015","Yes","",<br>
+1003,"Screening",1,14,"General Medical History","28 JUL 2015",14,"FATIGUE","UN JUL 2015","Yes","",<br>
+1003,"Screening",1,15,"General Medical History","28 JUL 2015",15,"MYALGIA","UN JUL 2015","No","04 AUG 2015",<br>
+)<br>
+<br>
+rmhyn&lt;-tribble(<br>
+~subject,~foldername,~folderseq,~recordposition,~mhyn,<br>
+1001,"Screening",1,0,"Yes",<br>
+1002,"Screening",1,0,"Yes",<br>
+1003,"Screening",1,0,"Yes",<br>
+)<br>
+<br>
+rcxhist&lt;-tribble(<br>
+~subject,~foldername,~folderseq,~recordposition,~cxtumtyp,~dxdtc,~cxinstag,~cxspec,~cxrecdat_raw,~cxrcstag,~cxstago,~cxmet1,~cxmet2,~cxmet3,~cxmet4,~cxmet5,~cxmeto,~cxmetos,~cxmet6,~cxtumos,<br>
+1001,"Screening",1,0,"Other","02FEB2010:00:00:00.000","Stage IIIB","","28 MAR 2015","Stage IV","",0,0,0,0,1,0,"",0,"RECTAL CANCER",<br>
+1002,"Screening",1,0,"Head and neck","20SEP2014:00:00:00.000","Stage IVC","","","","",0,0,1,0,0,0,"",1,"",<br>
+1003,"Screening",1,0,"Non-small cell lung cancer (NSCLC)","10JUL2013:00:00:00.000","","","","Stage IV","",0,0,0,1,0,0,"",0,"",<br>
+)<br>
+<br>
+</div><div class="csg-ad-col">
+  <div class="csg-ad-label">Advertisement</div>
+  <ins class="adsbygoogle" style="display: block; width: 100%; min-height: 600px;" data-ad-client="ca-pub-7309667479757182" data-ad-slot="1745280409" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div></div><script>
+  var columnWidths = {"derivation":"30%"};
+  </script><script>
+$(document).ready(function() {
+    // Iterate over the th elements
+    $('th').each(function() {
+        var th = $(this); // Current th element
+        var dataName = th.data('name').toLowerCase(); // Get data-name attribute, converted to lowercase
+
+        // Check if the current th's data-name is in the columnWidths object
+        if (columnWidths.hasOwnProperty(dataName)) {
+            th.css('width', columnWidths[dataName]); // Set the width
+        }
+    });
+    </script><script>
+    $(document).ready(function() {
+        $("#sashtmltable").DataTable({ 
+            pageLength: 25,
+            fixedheader : true,
+            ordering: true
+        });
+    });
+    </script>
+<script>
+    $(document).ready(function() {
+        // Remove the table-striped class
+        $("#sashtmltable").removeClass("table-striped");
+
+        // Set the width of the table
+        $("#sashtmltable").css("width", "80%");
+
+        // Add borders to all cells
+        $("#sashtmltable, #sashtmltable th, #sashtmltable td").css("border", "1px solid black");
+    });
+</script>
+
+<!--  -->
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-ad-hi="true" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./ads(7).html" data-google-container-id="1.vytzxxryfvh9" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe src="./aframe(5).html" width="0" height="0" style="display: none;"></iframe></body></html>
