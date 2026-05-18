@@ -1,0 +1,199 @@
+/* Styles for top fixed navigation bar meant to be used on each page*/
+
+.fixed-top-navbar {
+  overflow: hidden;
+  background-color: #292934;
+  position: fixed;
+  top: 0;
+  height: 5%;
+  width: 100%;
+}
+
+.fixed-top-navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  /* font-size: 17px; */
+}
+
+.fixed-top-navbar a:hover {
+  background: black;
+  color: white;
+}
+
+/*Styles for side navigation bar meant to be used on each page*/
+
+.fixed-sidebar {
+    
+    margin-top: 21px;
+    padding: 0;
+    width: 10%;
+    background-color: #E7E9EB;
+    position: fixed;
+    height: 90%;
+    overflow: auto;
+  }
+  
+  .fixed-sidebar a {
+    display: block;
+    color: black;
+    padding: 5px;
+    text-decoration: none;
+    font-size: 75%;
+  }
+   
+  .fixed-sidebar a.active {
+    background-color: #00AC71;
+    color: white;
+  }
+  
+  .fixed-sidebar a:hover:not(.active) {
+    background-color: #CCCCCC;
+    color: black;
+  }
+ 
+  div.pg-content-after-top-sidebars {
+    margin-left: 10%;
+    margin-top: 2%;
+    padding: 1px 16px;
+    height: 100%;
+  }
+  
+  @media screen and (max-width: 700px) {
+    .fixed-sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .fixed-sidebar a {float: left;}
+    div.pg-content-after-top-sidebars {margin-left: 0;}
+  }
+  
+  @media screen and (max-width: 400px) {
+    .fixed-sidebar a {
+      text-align: center;
+      float: none;
+    }
+  }
+
+
+/* Selected menu item highlight */
+
+
+/*Simple table formatting with all borders*/
+
+.table-all-borders-plain table,td,tr{
+    border: 1px solid black;
+}
+
+/* Default area page table layout */
+
+#default-area-page-tables {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#default-area-page-tables td, #default-area-page-tables th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#default-area-page-tables tr:nth-child(even){background-color: #f2f2f2;}
+
+#default-area-page-tables tr:hover {background-color: #ddd;}
+
+#default-area-page-tables th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+}
+
+.sidebar-text-responsive{
+    font-size: calc(30% + 0.5vw + 0.5vh);
+}
+
+/* Scrollable table cell in crud */
+div.crud_td_cell_scrollable {
+  width: 100%;
+  height: 100px;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+/*=================================================================
+Styles for program flow
+===================================================================*/
+
+h1.lesson-program-flow{
+  font-size:14pt; 
+  color:black; 
+  background-color:lightyellow; 
+  display: inline-block;
+}
+
+h2.lesson-program-flow{
+  margin-left:50px; 
+  font-size:12pt; 
+  color:black;
+}
+
+h3.lesson-program-flow{
+  margin-left:100px; 
+  font-size:11pt; 
+  color:black;
+}
+
+h2.lesson-program-flow-copyright{
+  font-size:12pt; 
+  color:#5F5F5F; 
+  background-color:#e6f9ec; 
+  display: inline-block;
+}
+
+/*=================================================================
+Styles for program flow
+===================================================================*/
+
+p.html-program-zerosize1-comment{
+  font-size:0%;
+}
+
+h1.html-program{
+  text-align: left;
+  color: green;
+  font-size:16pt;
+}
+
+h2.html-program{
+  text-align: left;
+  color: green;
+  font-size:13pt;
+  margin: 5px;
+}
+
+h3.html-program{
+  text-align: left;
+  color: green;
+    font-size:13pt;
+font-style: italic
+}
+
+textarea.html-program-textarea{
+  font-family:"Courier New", Times, serif;  
+  font-size: 12pt; 
+  color: #0000ff;
+  background-color: #f5f5ef;
+  font-weight: bold;
+  
+  border-style: none; 
+  border-color: Transparent; 
+  overflow: auto;    
+  box-sizing: border-box; 
+}
