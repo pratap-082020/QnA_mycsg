@@ -1,0 +1,393 @@
+# Set main path
+main_path <- "chapter"
+
+# All folder names
+folders <- c(
+  "ADaM_C1001_L101",
+  "ADaM_C1001_L102",
+  "ADaM_C1001_L102a",
+  "ADaM_C1001_L103",
+  "ADaM_C1001_L103a",
+  "ADaM_C1001_L103b",
+  "ADaM_C1001_L104",
+  "ADaM_C1001_L105",
+  "ADaM_C1001_L106",
+  
+  "ADaM_C1002_L101",
+  "ADaM_C1002_L102",
+  "ADaM_C1002_L102a",
+  "ADaM_C1002_L103",
+  
+  "ADaM_C1003_L101",
+  "ADaM_C1003_L102",
+  "ADaM_C1003_L102a",
+  "ADaM_C1003_L103",
+  "ADaM_C1003_L103a",
+  "ADAM_C1003_L201F",
+  
+  "ADaM_C1004_L101",
+  "ADaM_C1004_L102",
+  "ADaM_C1004_L103",
+  "ADaM_C1004_L103a",
+  "ADaM_C1004_L103b",
+  "ADaM_C1004_L103c",
+  "ADaM_C1004_L111",
+  
+  "ADaM_C1005_L101",
+  "ADaM_C1005_L101a",
+  "ADaM_C1005_L101b",
+  "ADaM_C1005_L102",
+  "ADaM_C1005_L103",
+  
+  "ADaM_C1006_L101",
+  "ADaM_C1006_L101a",
+  "ADaM_C1006_L101b",
+  "ADaM_C1006_L102",
+  "ADaM_C1006_L102a",
+  "ADaM_C1006_L102b",
+  "ADaM_C1006_L102c",
+  "ADaM_C1006_L102d",
+  "ADaM_C1006_L105",
+  
+  "ADaM_C1007_L101",
+  "ADaM_C1007_L102",
+  
+  "ADaM_C1008_L101",
+  
+  "ADaM_C1009_L101",
+  "ADaM_C1009_L102",
+  "ADaM_C1009_L103",
+  "ADaM_C1009_L104",
+  "ADaM_C1009_L105",
+  "ADaM_C1009_L106",
+  
+  "ADaM_C1010_L101",
+  "ADaM_C1010_L102",
+  "ADaM_C1010_L103",
+  "ADaM_C1010_L103a",
+  "ADaM_C1010_L111",
+  "ADaM_C1010_L121",
+  "ADaM_C1010_L131",
+  "ADaM_C1010_L141",
+  "ADaM_C1010_L151",
+  
+  "ADaM_C1011_L101",
+  "ADaM_C1011_L101a",
+  "ADaM_C1011_L101b",
+  "ADaM_C1011_L101c",
+  "ADaM_C1011_L101d",
+  "ADaM_C1011_L201",
+  
+  "ADaM_C1012_L101",
+  "ADaM_C1012_L102",
+  
+  "ADaM_C1013_L101",
+  "ADaM_C1013_L102",
+  "ADaM_C1013_L103",
+  
+  "ADaM_C1016_L101",
+  
+  "ADaM_ADSL_L1101",
+  
+  "ADaM_ADAE_L1101",
+  
+  "ADaM_ADCM_L1101",
+  "ADaM_ADCM_LCMSUM01",
+  
+  "ADaM_ADEG_L1101",
+  
+  "ADaM_ADEXSUM_L1101",
+  
+  "ADaM_ADIS_LVAC01",
+  
+  "ADaM_ADPC_LOD101",
+  
+  "ADaM_ADQS_L1101",
+  "ADaM_ADQS_LEASI01",
+  
+  "ADaM_ADRS_L1101",
+  
+  "ADaM_ADVS_L1101",
+  
+  "ADaM_BDS_LADICE01"
+)
+
+# Create folders
+for(folder in folders){
+  
+  dir.create(
+    file.path(main_path, folder),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
+  
+}
+
+# Check created folders
+list.files(main_path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Install once
+# install.packages(c("httr"))
+
+library(httr)
+
+# Main folder
+main_path <- "chapter"
+
+# Lessons
+lessons <- c(
+  
+  "ADaM_C1001_L101",
+  "ADaM_C1001_L102",
+  "ADaM_C1001_L102a",
+  "ADaM_C1001_L103",
+  "ADaM_C1001_L103a",
+  "ADaM_C1001_L103b",
+  "ADaM_C1001_L104",
+  "ADaM_C1001_L105",
+  "ADaM_C1001_L106",
+  
+  "ADaM_C1002_L101",
+  "ADaM_C1002_L102",
+  "ADaM_C1002_L102a",
+  "ADaM_C1002_L103",
+  
+  "ADaM_C1003_L101",
+  "ADaM_C1003_L102",
+  "ADaM_C1003_L102a",
+  "ADaM_C1003_L103",
+  "ADaM_C1003_L103a",
+  "ADAM_C1003_L201F",
+  
+  "ADaM_C1004_L101",
+  "ADaM_C1004_L102",
+  "ADaM_C1004_L103",
+  "ADaM_C1004_L103a",
+  "ADaM_C1004_L103b",
+  "ADaM_C1004_L103c",
+  "ADaM_C1004_L111",
+  
+  "ADaM_C1005_L101",
+  "ADaM_C1005_L101a",
+  "ADaM_C1005_L101b",
+  "ADaM_C1005_L102",
+  "ADaM_C1005_L103",
+  
+  "ADaM_C1006_L101",
+  "ADaM_C1006_L101a",
+  "ADaM_C1006_L101b",
+  "ADaM_C1006_L102",
+  "ADaM_C1006_L102a",
+  "ADaM_C1006_L102b",
+  "ADaM_C1006_L102c",
+  "ADaM_C1006_L102d",
+  "ADaM_C1006_L105",
+  
+  "ADaM_C1007_L101",
+  "ADaM_C1007_L102",
+  
+  "ADaM_C1008_L101",
+  
+  "ADaM_C1009_L101",
+  "ADaM_C1009_L102",
+  "ADaM_C1009_L103",
+  "ADaM_C1009_L104",
+  "ADaM_C1009_L105",
+  "ADaM_C1009_L106",
+  
+  "ADaM_C1010_L101",
+  "ADaM_C1010_L102",
+  "ADaM_C1010_L103",
+  "ADaM_C1010_L103a",
+  "ADaM_C1010_L111",
+  "ADaM_C1010_L121",
+  "ADaM_C1010_L131",
+  "ADaM_C1010_L141",
+  "ADaM_C1010_L151",
+  
+  "ADaM_C1011_L101",
+  "ADaM_C1011_L101a",
+  "ADaM_C1011_L101b",
+  "ADaM_C1011_L101c",
+  "ADaM_C1011_L101d",
+  "ADaM_C1011_L201",
+  
+  "ADaM_C1012_L101",
+  "ADaM_C1012_L102",
+  
+  "ADaM_C1013_L101",
+  "ADaM_C1013_L102",
+  "ADaM_C1013_L103",
+  
+  "ADaM_C1016_L101",
+  
+  "ADaM_ADSL_L1101",
+  "ADaM_ADAE_L1101",
+  
+  "ADaM_ADCM_L1101",
+  "ADaM_ADCM_LCMSUM01",
+  
+  "ADaM_ADEG_L1101",
+  "ADaM_ADEXSUM_L1101",
+  "ADaM_ADIS_LVAC01",
+  "ADaM_ADPC_LOD101",
+  
+  "ADaM_ADQS_L1101",
+  "ADaM_ADQS_LEASI01",
+  
+  "ADaM_ADRS_L1101",
+  "ADaM_ADVS_L1101",
+  
+  "ADaM_BDS_LADICE01"
+)
+
+# Extract concept
+get_concept <- function(x){
+  
+  strsplit(x, "_")[[1]][2]
+  
+}
+
+# Create session
+session <- handle("https://mycsg.in")
+
+# LOGIN
+POST(
+  
+  url = "https://mycsg.in/login.php?next=%2Findex.php",
+  
+  handle = session,
+  
+  body = list(
+    username = "Ravi",
+    password = "Rochana@07"
+  ),
+  
+  encode = "form"
+  
+)
+
+# Download files
+for(lesson in lessons){
+  
+  concept <- get_concept(lesson)
+  
+  # Create folder
+  folder_path <- file.path(
+    main_path,
+    lesson
+  )
+  
+  dir.create(
+    folder_path,
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
+  
+  # FILE LINKS
+  r_program_url <- paste0(
+    "https://mycsg.in/lesson_download.php?lesson=",
+    lesson,
+    "&content=r_program&return=%2Fadam.php%3Farea%3Dadam%26concept%3D",
+    concept,
+    "%26lesson%3D",
+    lesson
+  )
+  
+  r_data_url <- paste0(
+    "https://mycsg.in/lesson_download.php?lesson=",
+    lesson,
+    "&content=r_data&return=%2Fadam.php%3Farea%3Dadam%26concept%3D",
+    concept,
+    "%26lesson%3D",
+    lesson
+  )
+  
+  # DOWNLOAD R PROGRAM FILE
+  try({
+    
+    GET(
+      url = r_program_url,
+      handle = session,
+      write_disk(
+        file.path(
+          folder_path,
+          "R_PROGRAM.zip"
+        ),
+        overwrite = TRUE
+      ),
+      progress()
+    )
+    
+    cat(
+      "Downloaded R_PROGRAM:",
+      lesson,
+      "\n"
+    )
+    
+  }, silent = TRUE)
+  
+  # DOWNLOAD R DATA FILE
+  try({
+    
+    GET(
+      url = r_data_url,
+      handle = session,
+      write_disk(
+        file.path(
+          folder_path,
+          "R_DATA.zip"
+        ),
+        overwrite = TRUE
+      ),
+      progress()
+    )
+    
+    cat(
+      "Downloaded R_DATA:",
+      lesson,
+      "\n"
+    )
+    
+  }, silent = TRUE)
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

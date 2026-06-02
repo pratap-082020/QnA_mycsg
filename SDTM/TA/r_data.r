@@ -1,0 +1,24 @@
+# ============================================================
+# Downloaded from myCSG lesson content
+# Lesson: SDTM_TA_LCSG801
+# Content Type: r_data
+# Downloaded By: Ravi
+# Email: ppm08641@gmail.com
+# ============================================================
+
+te<-tribble(
+~studyid,~domain,~etcd,~element,~testrl,~teenrl,~tedur,
+"CSG801","TE","SCRN","Screening","Informed consent","Screening assessments are complete; up to 4 Weeks after start of the element","P4W",
+"CSG801","TE","CSG300","CSG801 300 mg Q2W","First dose of CSG801, where dose is 300 mg","12 Weeks after start of the element","P12W",
+"CSG801","TE","CSG600","CSG801 600 mg Q2W","First dose of CSG801, where dose is 600 mg","12 Weeks after start of the element","P12W",
+"CSG801","TE","PBO","Placebo Q2W","First dose of placebo","12 Weeks after start of the element","P12W",
+"CSG801","TE","FU","Follow-up","One day after last dose of study drug","3 Weeks after start of the element","P3W",
+)
+
+
+
+# ============================================================
+# End of downloaded content
+# Downloaded By: Ravi
+# Email: ppm08641@gmail.com
+# ============================================================
