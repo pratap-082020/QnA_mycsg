@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCSQL_L105
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+PROC SQL - Part 05: CASE WHEN, COALESCE, and Calculated Columns
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Previous PROC SQL lessons covered SELECT, WHERE, ORDER BY (L101), table creation and joins basics (L102), subqueries (L103), and GROUP BY with HAVING (L104).</li>
+<li>This lesson covers three column-level SQL features: CASE WHEN for conditional column derivation, COALESCE for handling null values, and the CALCULATED keyword for referencing a derived column within the same SELECT or WHERE clause.</li>
+<li>These features allow complex conditional logic and null handling to be expressed directly in a SQL SELECT statement, often eliminating the need for a separate DATA step.</li>
+</ul>
+ 
+<h2>
+CASE WHEN - Conditional Column Derivation
+</h2>
+ 
+<ul>
+<li>CASE WHEN is the SQL equivalent of IF-THEN-ELSE logic in a DATA step. It evaluates conditions in order and returns the first matching result.</li>
+<li>Syntax: CASE WHEN condition1 THEN result1 WHEN condition2 THEN result2 ... ELSE default_result END</li>
+<li>The ELSE clause provides a default value when no WHEN condition matches. If ELSE is omitted and no condition matches, the result is NULL (missing).</li>
+<li>CASE WHEN can produce both numeric and character results, but all THEN and ELSE branches must return the same type.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="37">
+data work.subjects;
+    input subject $ age trta $ aval;
+    datalines;
+001 34 Drug_A 12.5
+002 28 Placebo  8.3
+003 45 Drug_A 18.1
+004 52 Drug_B  9.7
+005 61 Placebo  6.2
+006 38 Drug_B 15.4
+;
+run;
+ 
+proc sql;
+    create table work.classified as
+    select subject,
+           age,
+           trta,
+           aval,
+           /* Numeric CASE: age group */
+           case
+               when age < 40 then 1
+               when age < 55 then 2
+               else 3
+           end as age_group,
+           /* Character CASE: treatment label */
+           case trta
+               when 'Drug_A'  then 'Active A'
+               when 'Drug_B'  then 'Active B'
+               when 'Placebo' then 'Control'
+               else 'Unknown'
+           end as trt_label length=10,
+           /* CASE in a WHERE-like expression */
+           case when aval >= 10 then 'HIGH' else 'LOW' end as response_cat length=4
+    from work.subjects;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="45">
+data work.subjects;
+input subject $ age trta $ aval;
+datalines;
+ 
+NOTE: The data set WORK.SUBJECTS has 6 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc sql;
+create table work.classified as
+select subject,
+age,
+trta,
+aval,
+/* Numeric CASE: age group */
+case
+when age < 40 then 1
+when age < 55 then 2
+else 3
+end as age_group,
+/* Character CASE: treatment label */
+case trta
+when 'Drug_A'  then 'Active A'
+when 'Drug_B'  then 'Active B'
+when 'Placebo' then 'Control'
+else 'Unknown'
+end as trt_label length=10,
+/* CASE in a WHERE-like expression */
+case when aval >= 10 then 'HIGH' else 'LOW' end as response_cat length=4
+from work.subjects;
+NOTE: Table WORK.CLASSIFIED created, with 6 rows and 7 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first CASE uses searched form (WHEN condition THEN ...), which can evaluate any logical expression in each branch.</li>
+<li>The second CASE uses simple form (CASE column WHEN value THEN ...), which compares a single column against fixed values — more concise when testing equality only.</li>
+<li>LENGTH=10 and LENGTH=4 specify the character length of the new columns. Always specify length for character CASE results to prevent SAS from truncating values.</li>
+<li>Check WORK.CLASSIFIED: verify that age_group, trt_label, and response_cat are correct for each row.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L105_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+CASE WHEN with Aggregation
+</h2>
+ 
+<ul>
+<li>CASE WHEN can be nested inside aggregate functions to create conditional summaries — equivalent to a filtered count or sum.</li>
+<li>This pattern produces multiple summary values in a single GROUP BY query, replacing what would otherwise require multiple sub-queries or DATA step logic.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="13">
+proc sql;
+    create table work.summary as
+    select trta,
+           count(*)                                     as n_total,
+           sum(case when aval >= 10 then 1 else 0 end) as n_high_response,
+           mean(aval)                                   as mean_aval format=8.2,
+           mean(case when age < 40 then aval else . end) as mean_aval_young format=8.2
+    from work.subjects
+    group by trta
+    order by trta;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="20">
+proc sql;
+create table work.summary as
+select trta,
+count(*)                                     as n_total,
+sum(case when aval >= 10 then 1 else 0 end) as n_high_response,
+mean(aval)                                   as mean_aval format=8.2,
+mean(case when age < 40 then aval else . end) as mean_aval_young format=8.2
+from work.subjects
+group by trta
+order by trta;
+NOTE: Table WORK.SUMMARY created, with 3 rows and 5 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>SUM(CASE WHEN aval >= 10 THEN 1 ELSE 0 END) counts the number of rows where aval is 10 or above within each treatment group.</li>
+<li>MEAN(CASE WHEN age < 40 THEN aval ELSE . END) computes the mean of aval only for younger subjects — the ELSE . returns a missing value for older subjects, which MEAN ignores by default.</li>
+<li>Check WORK.SUMMARY — verify the counts and means against WORK.SUBJECTS for each treatment group.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L105_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+COALESCE - Returning the First Non-Null Value
+</h2>
+ 
+<ul>
+<li>COALESCE(expr1, expr2, ...) evaluates each expression in order and returns the first one that is not null (not missing).</li>
+<li>It is used to provide fallback values: if the primary source is missing, use an alternative.</li>
+<li>A common use in clinical data: a subject's recorded value may come from one of several columns depending on which collection method was used. COALESCE picks the first available non-missing value.</li>
+<li>All arguments must be of the same type (all numeric or all character).</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="28">
+data work.lab_results;
+    input subject $ primary_result secondary_result manual_entry;
+    datalines;
+001 12.5  .    .
+002  .    8.3  .
+003  .    .    9.1
+004 15.2  .   15.0
+005  .    .    .
+;
+run;
+ 
+proc sql;
+    create table work.resolved as
+    select subject,
+           primary_result,
+           secondary_result,
+           manual_entry,
+           coalesce(primary_result, secondary_result, manual_entry) as best_result,
+           case
+               when primary_result   is not missing then 'primary'
+               when secondary_result is not missing then 'secondary'
+               when manual_entry     is not missing then 'manual'
+               else 'none'
+           end as source length=9
+    from work.lab_results;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="37">
+data work.lab_results;
+input subject $ primary_result secondary_result manual_entry;
+datalines;
+ 
+NOTE: The data set WORK.LAB_RESULTS has 5 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc sql;
+create table work.resolved as
+select subject,
+primary_result,
+secondary_result,
+manual_entry,
+coalesce(primary_result, secondary_result, manual_entry) as best_result,
+case
+when primary_result   is not missing then 'primary'
+when secondary_result is not missing then 'secondary'
+when manual_entry     is not missing then 'manual'
+else 'none'
+end as source length=9
+from work.lab_results;
+NOTE: Table WORK.RESOLVED created, with 5 rows and 6 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>COALESCE picks the first non-missing value across the three result columns — the CASE column alongside it identifies which source provided the value.</li>
+<li>Subject 001: primary_result = 12.5, so best_result = 12.5 and source = primary.</li>
+<li>Subject 004: primary_result = 15.2 is non-missing, so it takes priority, even though manual_entry (15.0) also has a value.</li>
+<li>Subject 005: all three are missing, so best_result = missing and source = none.</li>
+<li>Inspect WORK.RESOLVED to confirm all rows match the expected logic.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L105_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+CALCULATED - Referencing a Derived Column
+</h2>
+ 
+<ul>
+<li>In standard SQL, you cannot reference an alias defined in the SELECT list within the same SELECT clause or in a WHERE clause — you have to repeat the entire expression.</li>
+<li>PROC SQL extends standard SQL with the CALCULATED keyword, which allows a column alias defined earlier in the SELECT list to be referenced by name in subsequent expressions or in a WHERE clause.</li>
+<li>This avoids repeating long expressions and makes the query easier to read and maintain.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="24">
+proc sql;
+    create table work.with_calc as
+    select subject,
+           aval,
+           age,
+           round(aval / age * 10, 0.01) as dose_rate,
+           case when calculated dose_rate > 0.3 then 'HIGH' else 'LOW' end as rate_flag length=4
+    from work.subjects;
+quit;
+ 
+*------------------------------------------------------------------------------;
+* Without CALCULATED you would need to repeat the expression ;
+*------------------------------------------------------------------------------;
+proc sql;
+    create table work.without_calc as
+    select subject,
+           aval,
+           age,
+           round(aval / age * 10, 0.01) as dose_rate,
+           case when round(aval / age * 10, 0.01) > 0.3 then 'HIGH' else 'LOW' end as rate_flag length=4
+    from work.subjects;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="38">
+proc sql;
+create table work.with_calc as
+select subject,
+aval,
+age,
+round(aval / age * 10, 0.01) as dose_rate,
+case when calculated dose_rate > 0.3 then 'HIGH' else 'LOW' end as rate_flag length=4
+from work.subjects;
+NOTE: Table WORK.WITH_CALC created, with 6 rows and 5 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Without CALCULATED you would need to repeat the expression ;
+*------------------------------------------------------------------------------;
+proc sql;
+create table work.without_calc as
+select subject,
+aval,
+age,
+round(aval / age * 10, 0.01) as dose_rate,
+case when round(aval / age * 10, 0.01) > 0.3 then 'HIGH' else 'LOW' end as rate_flag length=4
+from work.subjects;
+NOTE: Table WORK.WITHOUT_CALC created, with 6 rows and 5 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.07 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>In WORK.WITH_CALC, the rate_flag CASE expression uses CALCULATED dose_rate to refer to the already-defined column alias — the expression is written once.</li>
+<li>In WORK.WITHOUT_CALC, the full expression round(aval / age * 10, 0.01) is repeated inside the CASE — both produce identical output, but the first is cleaner.</li>
+<li>CALCULATED can also be used in the WHERE clause: WHERE calculated dose_rate > 0.3 filters rows based on the derived value without repeating the expression.</li>
+<li>Compare WORK.WITH_CALC and WORK.WITHOUT_CALC — they should be identical in content, confirming both approaches produce the same result.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L105_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>CASE WHEN evaluates conditions in order and returns the first matching result — the searched form handles any condition; the simple form tests a single column against fixed values.</li>
+<li>CASE WHEN inside aggregate functions (SUM, MEAN) enables conditional aggregation — equivalent to counting or averaging only rows that meet a condition.</li>
+<li>COALESCE returns the first non-null value from a list of expressions — the standard approach for resolving missing values from multiple fallback sources.</li>
+<li>CALCULATED lets you reference a column alias defined in the same SELECT list, avoiding repeated expressions and improving readability.</li>
+<li>Always specify LENGTH= for character columns derived from CASE expressions to prevent unexpected truncation.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

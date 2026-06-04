@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_COMMONLOGICS_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Common Logics - Part 02: LOCF, Visit Window Assignment, and Treatment Flags
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Part 01 covered shell row creation, pre/post-treatment filtering, merge-based filtering, and basic LAG/RETAIN comparisons.</li>
+<li>This lesson covers three further patterns that appear repeatedly in clinical programming: Last Observation Carried Forward (LOCF), visit window assignment, and baseline and post-baseline treatment flag derivation.</li>
+<li>All three patterns share the same core DATA step techniques — RETAIN, BY-group processing, and conditional logic — applied to clinically meaningful problems.</li>
+</ul>
+ 
+<h2>
+Last Observation Carried Forward (LOCF)
+</h2>
+ 
+<ul>
+<li>LOCF is an imputation method where missing values at a scheduled visit are replaced by the most recent preceding non-missing value for the same subject.</li>
+<li>It is commonly applied to efficacy endpoints in clinical trials when a subject misses a scheduled assessment — the assumption is that the value did not change between the last observed visit and the missed visit.</li>
+<li>The implementation uses RETAIN to carry the last non-missing value forward and a conditional check to decide whether to impute.</li>
+<li>LOCF should only be applied within a subject (not across subjects), so a BY subject statement with FIRST.subject reset is essential.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="37">
+data work.efficacy;
+    input subject $ visit result;
+    datalines;
+001 1 42
+001 2 .
+001 3 38
+001 4 .
+001 5 .
+002 1 55
+002 2 51
+002 3 .
+002 4 48
+;
+run;
+ 
+proc sort data=work.efficacy; by subject visit; run;
+ 
+data work.locf;
+    set work.efficacy;
+    by subject;
+ 
+    retain last_result;
+ 
+    if first.subject then last_result = .;
+ 
+    * Apply LOCF: use retained value when result is missing ;
+    if result = . then result_locf = last_result;
+    else do;
+        result_locf = result;
+        last_result = result;
+    end;
+ 
+    * Flag imputed observations ;
+    locf_flag = (result = . and result_locf ne .);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="57">
+data work.efficacy;
+input subject $ visit result;
+datalines;
+ 
+NOTE: The data set WORK.EFFICACY has 9 observations and 3 variables.
+NOTE: Compressing data set WORK.EFFICACY increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc sort data=work.efficacy; by subject visit; run;
+ 
+NOTE: There were 9 observations read from the data set WORK.EFFICACY.
+NOTE: The data set WORK.EFFICACY has 9 observations and 3 variables.
+NOTE: Compressing data set WORK.EFFICACY increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data work.locf;
+set work.efficacy;
+by subject;
+ 
+retain last_result;
+ 
+if first.subject then last_result = .;
+ 
+* Apply LOCF: use retained value when result is missing ;
+if result = . then result_locf = last_result;
+else do;
+result_locf = result;
+last_result = result;
+end;
+ 
+* Flag imputed observations ;
+locf_flag = (result = . and result_locf ne .);
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.EFFICACY.
+NOTE: The data set WORK.LOCF has 9 observations and 6 variables.
+NOTE: Compressing data set WORK.LOCF increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>RETAIN last_result keeps the most recent non-missing result across iterations within the same subject.</li>
+<li>first.subject resets last_result to missing at the start of each new subject, ensuring imputation never crosses subject boundaries.</li>
+<li>When result is missing: result_locf gets the retained previous value (if one exists).</li>
+<li>When result is present: result_locf gets the observed value and last_result is updated for future rows.</li>
+<li>locf_flag = 1 identifies which rows were imputed — always retain this indicator so downstream analyses can distinguish observed from imputed values.</li>
+<li>Check WORK.LOCF: subject 001 visit 2 should be imputed with 42, visits 4 and 5 with 38. Subject 002 visit 3 should be imputed with 51.</li>
+<li>Subject 001 visit 1's missing predecessor means LOCF cannot impute if the very first visit is missing — result_locf would remain missing in that case.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Visit Window Assignment
+</h2>
+ 
+<ul>
+<li>Clinical studies define planned visits (Week 2, Week 4, Week 8, etc.) with an allowable window around each target day — for example, Week 4 might accept any visit occurring on study day 22 through 35.</li>
+<li>Visit window assignment maps each actual visit's study day to its planned visit label based on these day ranges.</li>
+<li>The standard approach uses a reference dataset of planned visit windows and merges it with the actual visit data, or uses a format to perform the mapping.</li>
+<li>Observations outside all defined windows are typically assigned a "Unscheduled" or missing planned visit label.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="47">
+*------------------------------------------------------------------------------;
+* Define planned visit windows ;
+*------------------------------------------------------------------------------;
+data work.windows;
+    input visit_planned $10. day_low day_high;
+    datalines;
+Baseline   -7    1
+Week2      8    21
+Week4     22    35
+Week8     50    65
+Week12    78    91
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Actual visit observations with study day ;
+*------------------------------------------------------------------------------;
+data work.actual_visits;
+    input subject $ studyday result;
+    datalines;
+001  1   42
+001 14   38
+001 28   35
+001 56   31
+001 85   29
+002  0   55
+002 10   51
+002 40   48
+002 70   44
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Assign planned visit label using a SQL range join ;
+*------------------------------------------------------------------------------;
+proc sql;
+    create table work.assigned as
+    select a.subject, a.studyday, a.result,
+           b.visit_planned
+    from work.actual_visits as a
+    left join work.windows as b
+        on a.studyday >= b.day_low
+       and a.studyday <= b.day_high
+    order by a.subject, a.studyday;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="61">
+*------------------------------------------------------------------------------;
+* Define planned visit windows ;
+*------------------------------------------------------------------------------;
+data work.windows;
+input visit_planned $10. day_low day_high;
+datalines;
+ 
+NOTE: The data set WORK.WINDOWS has 5 observations and 3 variables.
+NOTE: Compressing data set WORK.WINDOWS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Actual visit observations with study day ;
+*------------------------------------------------------------------------------;
+data work.actual_visits;
+input subject $ studyday result;
+datalines;
+ 
+NOTE: The data set WORK.ACTUAL_VISITS has 9 observations and 3 variables.
+NOTE: Compressing data set WORK.ACTUAL_VISITS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Assign planned visit label using a SQL range join ;
+*------------------------------------------------------------------------------;
+proc sql;
+create table work.assigned as
+select a.subject, a.studyday, a.result,
+b.visit_planned
+from work.actual_visits as a
+left join work.windows as b
+on a.studyday >= b.day_low
+and a.studyday <= b.day_high
+order by a.subject, a.studyday;
+NOTE: The execution of this query involves performing one or more Cartesian product joins that can not be optimized.
+NOTE: Compressing data set WORK.ASSIGNED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.ASSIGNED created, with 9 rows and 4 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The SQL range join matches each actual visit's studyday against the day_low and day_high boundaries of each planned window.</li>
+<li>A LEFT JOIN retains all actual visits even if they fall outside all windows — those rows will have visit_planned = missing (unscheduled).</li>
+<li>Check WORK.ASSIGNED: subject 001 day 28 should map to Week4 (window 22-35), day 56 to Week8 (50-65), day 85 to Week12 (78-91).</li>
+<li>Subject 002 day 40 falls between Week2 (8-21) and Week4 (22-35) windows — it should have a missing visit_planned, flagging it as unscheduled.</li>
+<li>Verify observation count: WORK.ASSIGNED should have the same number of rows as WORK.ACTUAL_VISITS since all observations are retained by the LEFT JOIN.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L102_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Baseline and Post-Baseline Treatment Flags
+</h2>
+ 
+<ul>
+<li>In clinical analysis, baseline is the last measurement taken before the first dose of study treatment. Post-baseline measurements are all measurements taken after the first dose.</li>
+<li>A common derivation task is to flag each observation as baseline (ANL01FL or ABLFL in CDISC ADaM) or post-baseline, and to carry the baseline value forward to post-baseline rows for change-from-baseline calculations.</li>
+<li>The logic requires the first dose date (or study day 1 as the reference) and the observation's study day to determine position relative to treatment start.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="69">
+data work.obs_with_dose;
+    input subject $ studyday result;
+    datalines;
+001 -7  42
+001 -1  44
+001  1  45
+001 14  38
+001 28  35
+002 -3  55
+002  1  53
+002 14  51
+002 28  48
+;
+run;
+ 
+proc sort data=work.obs_with_dose; by subject studyday; run;
+ 
+data work.flagged;
+    set work.obs_with_dose;
+    by subject;
+ 
+    retain baseline_val;
+ 
+    if first.subject then do;
+        baseline_val = .;
+        baseline_set = 0;
+    end;
+ 
+    * Flag: baseline is last pre-dose row (studyday <= 0) ;
+    if studyday <= 0 then do;
+        pre_post = "PRE";
+        baseline_val = result;
+    end;
+    else do;
+        pre_post = "POST";
+        if baseline_set = 0 then baseline_set = 1;
+    end;
+ 
+    * Baseline flag: last pre-dose row per subject ;
+    * Carried value for CHG calculation ;
+    chg = result - baseline_val;
+    if pre_post = "PRE" then chg = .;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Flag the last pre-dose row as the analysis baseline ;
+*------------------------------------------------------------------------------;
+data work.with_ablfl;
+    set work.flagged;
+    by subject;
+    ablfl = "";
+run;
+ 
+proc sort data=work.with_ablfl; by subject descending studyday; run;
+ 
+data work.with_ablfl;
+    set work.with_ablfl;
+    by subject;
+    retain ablfl_done;
+    if first.subject then ablfl_done = 0;
+    if pre_post = "PRE" and ablfl_done = 0 then do;
+        ablfl = "Y";
+        ablfl_done = 1;
+    end;
+run;
+ 
+proc sort data=work.with_ablfl; by subject studyday; run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="129">
+data work.obs_with_dose;
+input subject $ studyday result;
+datalines;
+ 
+NOTE: The data set WORK.OBS_WITH_DOSE has 9 observations and 3 variables.
+NOTE: Compressing data set WORK.OBS_WITH_DOSE increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc sort data=work.obs_with_dose; by subject studyday; run;
+ 
+NOTE: There were 9 observations read from the data set WORK.OBS_WITH_DOSE.
+NOTE: The data set WORK.OBS_WITH_DOSE has 9 observations and 3 variables.
+NOTE: Compressing data set WORK.OBS_WITH_DOSE increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data work.flagged;
+set work.obs_with_dose;
+by subject;
+ 
+retain baseline_val;
+ 
+if first.subject then do;
+baseline_val = .;
+baseline_set = 0;
+end;
+ 
+* Flag: baseline is last pre-dose row (studyday <= 0) ;
+if studyday <= 0 then do;
+pre_post = "PRE";
+baseline_val = result;
+end;
+else do;
+pre_post = "POST";
+if baseline_set = 0 then baseline_set = 1;
+end;
+ 
+* Baseline flag: last pre-dose row per subject ;
+* Carried value for CHG calculation ;
+chg = result - baseline_val;
+if pre_post = "PRE" then chg = .;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.OBS_WITH_DOSE.
+NOTE: The data set WORK.FLAGGED has 9 observations and 7 variables.
+NOTE: Compressing data set WORK.FLAGGED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Flag the last pre-dose row as the analysis baseline ;
+*------------------------------------------------------------------------------;
+data work.with_ablfl;
+set work.flagged;
+by subject;
+ablfl = "";
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.FLAGGED.
+NOTE: The data set WORK.WITH_ABLFL has 9 observations and 8 variables.
+NOTE: Compressing data set WORK.WITH_ABLFL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc sort data=work.with_ablfl; by subject descending studyday; run;
+ 
+NOTE: There were 9 observations read from the data set WORK.WITH_ABLFL.
+NOTE: The data set WORK.WITH_ABLFL has 9 observations and 8 variables.
+NOTE: Compressing data set WORK.WITH_ABLFL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data work.with_ablfl;
+set work.with_ablfl;
+by subject;
+retain ablfl_done;
+if first.subject then ablfl_done = 0;
+if pre_post = "PRE" and ablfl_done = 0 then do;
+ablfl = "Y";
+ablfl_done = 1;
+end;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.WITH_ABLFL.
+NOTE: The data set WORK.WITH_ABLFL has 9 observations and 9 variables.
+NOTE: Compressing data set WORK.WITH_ABLFL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=work.with_ablfl; by subject studyday; run;
+ 
+NOTE: There were 9 observations read from the data set WORK.WITH_ABLFL.
+NOTE: The data set WORK.WITH_ABLFL has 9 observations and 9 variables.
+NOTE: Compressing data set WORK.WITH_ABLFL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first DATA step flags each row as PRE or POST based on studyday relative to day 1 (first dose assumed at day 1), and retains the running baseline_val for use in change calculations.</li>
+<li>CHG (change from baseline) = result - baseline_val is only computed for POST rows; it is set to missing for PRE rows as change from baseline is not meaningful before treatment.</li>
+<li>The second pass sorts descending by studyday within subject so that the first PRE row encountered per subject (when sorted descending) is actually the last pre-dose observation — this is the analysis baseline row that gets ABLFL = "Y".</li>
+<li>Check WORK.WITH_ABLFL: each subject should have exactly one row with ABLFL = "Y" (the last pre-dose row), and all POST rows should have a non-missing CHG value.</li>
+<li>Subject 001: the row with studyday = -1 should be ABLFL = Y with baseline_val = 44; post-dose rows should show CHG = result - 44.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L102_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>LOCF uses RETAIN to carry the last non-missing value forward within a subject — always reset the retained value at first.subject and flag imputed rows with an indicator variable.</li>
+<li>Visit window assignment is best done with a SQL range join against a window reference dataset — the LEFT JOIN ensures unscheduled visits (outside all windows) are retained with a missing planned visit label.</li>
+<li>Baseline flagging requires a two-pass approach: derive CHG in the first pass using a retained baseline value, then flag ABLFL on the last pre-dose row in a second pass using a descending sort.</li>
+<li>Always verify observation counts at each step to ensure no rows are lost during merges or BY-group processing.</li>
+<li>These patterns recur across most clinical datasets — mastering them builds a foundation for ADaM dataset derivations.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

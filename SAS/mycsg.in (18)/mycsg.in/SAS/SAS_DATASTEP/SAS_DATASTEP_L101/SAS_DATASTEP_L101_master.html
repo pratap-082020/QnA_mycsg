@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_DATASTEP_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of explicit
+</h1>
+<ol>
+<li>Stated clearly and in detail, leaving no room for confusion or doubt.</li>
+</ol>
+ 
+<h1>
+When does a SAS DATA step write an observation to the output dataset
+</h1>
+<ul>
+<li>A DATA step normally writes the contents of the Program Data Vector as an observation when SAS reaches a step boundary</li>
+<li>A `run` statement, a new `data` statement, or a `proc` statement can act as a step boundary</li>
+</ul>
+ 
+<h1>
+What does an explicit OUTPUT statement do
+</h1>
+ 
+<ul>
+<li>An `output` statement explicitly tells SAS to write the current contents of the PDV to one or more output datasets</li>
+<li>Once at least one explicit `output` statement is used, SAS no longer performs the normal implicit output at the end of the iteration</li>
+<li>This gives the programmer precise control over when and where observations are written</li>
+</ul>
+ 
+<h1>
+Different step boundary scenarios
+</h1>
+ 
+<h2>
+RUN statement as step boundary
+</h2>
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class01;
+   set sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data class01;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+PROC statement as step boundary for the DATA step
+</h2>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data class02;
+   set sashelp.class;
+ 
+proc sort data=class02;
+   by age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="28">
+data class02;
+set sashelp.class;
+ 
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS02 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+proc sort data=class02;
+by age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS02.
+NOTE: The data set WORK.CLASS02 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+DATA statement as step boundary for the first DATA step
+</h2>
+<ul>
+<li>The DATA statement that starts the second step also ends the first step</li>
+</ul>
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data class03;
+   set sashelp.class;
+ 
+data class04;
+   set sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="28">
+data class03;
+set sashelp.class;
+ 
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS03 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS03 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+data class04;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS04 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS04 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+What happens when a step boundary is not present
+</h2>
+ 
+<ul>
+<li>If a submitted step has no step boundary, SAS waits because the step is incomplete</li>
+<li>The same idea applies to incomplete PROC steps as well</li>
+</ul>
+ 
+<ul>
+<li>A DATA step without a step boundary</li>
+</ul>
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="4">
+data class05;
+   set sashelp.class;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="4">
+data class05;
+set sashelp.class;
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1001">Data Step Running Screenshot</button><div class="modal fade" id="imgModal1001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Data Step Running Screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_DATASTEP_L101_1001.png" alt="Data Step Running Screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<ul>
+<li>A PROC step without a step boundary</li>
+</ul>
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc sort data=class05;
+   by name;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS05 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS05 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+proc sort data=class05;
+by name;
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1002">Proc Step Running Screenshot</button><div class="modal fade" id="imgModal1002" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Proc Step Running Screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_DATASTEP_L101_1002.png" alt="Proc Step Running Screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+Replacing implicit output with an explicit OUTPUT statement
+</h1>
+ 
+<h2>
+Basics of the explicit OUTPUT statement
+</h2>
+<ul>
+<li>Implicit output happens automatically at the end of the DATA step iteration when no explicit output statement is present</li>
+<li>If we add `output;` explicitly, SAS writes the observation at that point in the code</li>
+<li>The following two DATA steps produce the same final rows even though one uses implicit output and the other uses explicit output</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data class_i;
+   set sashelp.class;
+   agemon=age*12;
+run;
+ 
+data class_e;
+   set sashelp.class;
+   agemon=age*12;
+   output;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="42">
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS05.
+NOTE: The data set WORK.CLASS05 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS05 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+data class_i;
+set sashelp.class;
+agemon=age*12;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_I has 19 observations and 6 variables.
+NOTE: Compressing data set WORK.CLASS_I increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class_e;
+set sashelp.class;
+agemon=age*12;
+output;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_E has 19 observations and 6 variables.
+NOTE: Compressing data set WORK.CLASS_E increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `class_i` and `class_e` and confirm that the datasets match</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Multiple explicit OUTPUT statements
+</h2>
+ 
+<ul>
+<li>Each time SAS encounters an `output` statement, it writes the current PDV contents as an observation</li>
+<li>If multiple output statements are executed during the same iteration, the same input observation can create multiple output rows</li>
+</ul>
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="18">
+data class;
+   set sashelp.class;
+run;
+ 
+data class01;
+   set sashelp.class;
+   output;
+   output;
+run;
+ 
+data class02;
+   set sashelp.class;
+   output;
+   output;
+   output;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="48">
+data class;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class01;
+set sashelp.class;
+output;
+output;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 38 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class02;
+set sashelp.class;
+output;
+output;
+output;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS02 has 57 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`class01` contains twice as many observations as `sashelp.class`</li>
+<li>`class02` contains three times as many observations as `sashelp.class`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Mention the name of the output dataset on the OUTPUT statement
+</h2>
+<ul>
+<li>The output dataset name can be listed explicitly on the `output` statement</li>
+<li>This becomes especially important when a single DATA step creates more than one output dataset</li>
+</ul>
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="15">
+data class01;
+   set sashelp.class;
+   output;
+run;
+ 
+data class02;
+   set sashelp.class;
+   output class02;
+run;
+ 
+data class03;
+   set sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="45">
+data class01;
+set sashelp.class;
+output;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class02;
+set sashelp.class;
+output class02;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS02 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class03;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS03 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS03 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>All three datasets contain the same rows in this example</li>
+<li>The difference is only in how the observation writing instruction is expressed</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create multiple datasets in a single DATA step
+</h2>
+ 
+<ul>
+<li>More than one dataset name can be listed on the DATA statement</li>
+<li>With implicit output, each observation is written to all output datasets listed on the DATA statement</li>
+<li>With explicit output, we can write to all or selected output datasets</li>
+</ul>
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="21">
+data copy1 copy2;
+   set sashelp.class;
+run;
+ 
+data copy11 copy12;
+   set sashelp.class;
+   output;
+run;
+ 
+data copy21 copy22;
+   set sashelp.class;
+   output copy21 copy22;
+run;
+ 
+data copy31 copy32;
+   set sashelp.class;
+   output copy31;
+   output copy32;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="73">
+data copy1 copy2;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.COPY1 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY1 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY2 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY2 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data copy11 copy12;
+set sashelp.class;
+output;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.COPY11 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY11 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY12 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY12 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data copy21 copy22;
+set sashelp.class;
+output copy21 copy22;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.COPY21 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY21 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY22 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY22 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data copy31 copy32;
+set sashelp.class;
+output copy31;
+output copy32;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.COPY31 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY31 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY32 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY32 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Examine the log and the output datasets to compare how many observations are written in each case</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h3>
+Test your understanding: how many observations will be present in each output dataset
+</h3>
+<ul>
+<li>The answer can be confirmed by checking the log and dataset views</li>
+<li>`sashelp.class` contains 19 observations</li>
+</ul>
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="18">
+data copy11 copy12 copy13;
+   set sashelp.class;
+   output copy11 copy12;
+   output copy13;
+run;
+ 
+data copy21 copy22 copy23;
+   set sashelp.class;
+   output copy21 copy22;
+run;
+ 
+data copy31 copy32 copy33;
+   set sashelp.class;
+   output copy31 copy32;
+   output;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="64">
+data copy11 copy12 copy13;
+set sashelp.class;
+output copy11 copy12;
+output copy13;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.COPY11 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY11 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY12 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY12 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY13 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY13 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data copy21 copy22 copy23;
+set sashelp.class;
+output copy21 copy22;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.COPY21 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY21 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY22 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY22 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY23 has 0 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data copy31 copy32 copy33;
+set sashelp.class;
+output copy31 copy32;
+output;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.COPY31 has 38 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY31 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY32 has 38 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY32 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.COPY33 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.COPY33 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Use the explicit OUTPUT statement to create data subsets
+</h1>
+ 
+<ul>
+<li>Conditional logic plus explicit output lets one DATA step split observations into multiple output datasets</li>
+<li>This is one of the most practical uses of the explicit OUTPUT statement</li>
+</ul>
+ 
+<textarea id="codeBlock11" class="codetextarea" spellcheck="false" cols="100" rows="28">
+data class;
+   set sashelp.class;
+run;
+ 
+data cars;
+   set sashelp.cars;
+run;
+ 
+data males females;
+   set sashelp.class;
+   if sex="F" then output females;
+   if sex="M" then output males;
+run;
+ 
+data preteen teen;
+   set sashelp.class;
+   if age lt 13 then output preteen;
+   else if 13 le age le 19 then output teen;
+run;
+ 
+data sedan sports others;
+   set sashelp.cars;
+   if upcase(type)="SEDAN" then output sedan;
+   else if upcase(type)="SPORTS" then output sports;
+   else output others;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock11" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal11">View Log</button><div class="modal fade" id="logModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="90">
+data class;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data cars;
+set sashelp.cars;
+run;
+ 
+NOTE: There were 428 observations read from the data set SASHELP.CARS.
+NOTE: The data set WORK.CARS has 428 observations and 15 variables.
+NOTE: Compressing data set WORK.CARS decreased size by 0.00 percent.
+Compressed is 2 pages; un-compressed would require 2 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data males females;
+set sashelp.class;
+if sex="F" then output females;
+if sex="M" then output males;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.MALES has 10 observations and 5 variables.
+NOTE: Compressing data set WORK.MALES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.FEMALES has 9 observations and 5 variables.
+NOTE: Compressing data set WORK.FEMALES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data preteen teen;
+set sashelp.class;
+if age lt 13 then output preteen;
+else if 13 le age le 19 then output teen;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.PRETEEN has 7 observations and 5 variables.
+NOTE: Compressing data set WORK.PRETEEN increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.TEEN has 12 observations and 5 variables.
+NOTE: Compressing data set WORK.TEEN increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data sedan sports others;
+set sashelp.cars;
+if upcase(type)="SEDAN" then output sedan;
+else if upcase(type)="SPORTS" then output sports;
+else output others;
+run;
+ 
+NOTE: There were 428 observations read from the data set SASHELP.CARS.
+NOTE: The data set WORK.SEDAN has 262 observations and 15 variables.
+NOTE: Compressing data set WORK.SEDAN increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.SPORTS has 49 observations and 15 variables.
+NOTE: Compressing data set WORK.SPORTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.OTHERS has 117 observations and 15 variables.
+NOTE: Compressing data set WORK.OTHERS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>One input dataset can be split into several targeted output datasets in a single pass</li>
+<li>Inspect the outputs and confirm that each observation went to the intended dataset</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Without an explicit output statement, SAS writes observations implicitly at the end of the iteration</li>
+<li>Once explicit output is used, the programmer controls when and where observations are written</li>
+<li>Explicit output is useful for duplication, routing, and subsetting of observations</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

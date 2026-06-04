@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_READRAW_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is delimited data
+</h1>
+ 
+<ul>
+<li>In the previous raw data lesson, we saw column input where each value is expected in a fixed set of columns</li>
+<li>Delimited data is different because values are separated by a delimiter, such as a comma, tab, pipe, or ampersand</li>
+<li>In this style, SAS reads from one delimiter to the next rather than from a fixed column position</li>
+</ul>
+ 
+<h1>
+How does SAS read delimited raw data
+</h1>
+ 
+<ul>
+<li>For delimited data, we commonly use list input</li>
+<li>On the `input` statement, we list the variable names in the order the values appear in the raw file</li>
+<li>On the `infile` statement, we describe the source of the raw data and specify the delimiter when needed</li>
+<li>Character variables must have a trailing dollar sign on the input statement</li>
+</ul>
+ 
+<h1>
+Read comma delimited data using list input
+</h1>
+ 
+<ul>
+<li>We create a dataset named `list01` from comma-separated in-stream data</li>
+<li>`dlm=','` tells SAS that the comma separates values</li>
+<li>The listed variable names on the `input` statement define the order in which values are read</li>
+<li>After running the code, inspect the dataset and verify that each raw value was assigned to the intended variable</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data list01;
+   infile datalines dlm=',';
+   input name $ sex $ age height weight;
+datalines;
+Alice,F,13,56.5,84
+John,M,16,72,150
+Jane,F,12,59.8,84.5
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data list01;
+infile datalines dlm=',';
+input name $ sex $ age height weight;
+datalines;
+ 
+NOTE: The data set WORK.LIST01 has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`list01` contains three observations read from comma-delimited data</li>
+<li>Notice that SAS did not need fixed column positions because the delimiter guided the read</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_READRAW_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Check the dataset attributes
+</h1>
+ 
+<ul>
+<li>`proc contents` helps us inspect variable names, types, lengths, and other metadata of the created dataset</li>
+<li>This is a good practice when learning input styles because it confirms whether SAS assigned attributes as expected</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc contents data=list01;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+proc contents data=list01;
+run;
+ 
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review the output and confirm which variables are character and which are numeric</li>
+<li>Pay particular attention to the lengths assigned to the character variables `name` and `sex`</li>
+</ul>
+ 
+<h1>
+Space is the default delimiter in simple list input
+</h1>
+ 
+<ul>
+<li>When `dlm=` is not specified, simple list input uses blank spaces as delimiters</li>
+<li>This works well when values are separated by one or more spaces and character values do not contain embedded blanks</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data list02;
+   infile datalines;
+   input name $ sex $ age height weight;
+datalines;
+Alice F 13 56.5 84
+John M 16 72 150
+Jane F 12 59.8 84.5
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data list02;
+infile datalines;
+input name $ sex $ age height weight;
+datalines;
+ 
+NOTE: The data set WORK.LIST02 has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.09 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`list02` should contain the same logical information as `list01` even though the delimiter is now a blank space</li>
+<li>This example shows why list input is convenient for clean delimited raw data</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_READRAW_L102_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Reading values longer than the default character length
+</h1>
+ 
+<ul>
+<li>With simple list input, SAS assigns a default length of 8 to character variables when no prior length has been defined</li>
+<li>If a character value is longer than 8 characters, it can be truncated unless we define a longer length before the `input` statement</li>
+<li>This is an important point to remember when reading names, descriptions, or codes longer than 8 characters</li>
+</ul>
+ 
+<h2>
+Example without defining a longer length
+</h2>
+ 
+<ul>
+<li>In this first example, the variable `city` is not given an explicit length before input</li>
+<li>Inspect the result carefully and observe whether long values fit fully</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data city_short;
+   infile datalines dlm=',';
+   input city $ score;
+datalines;
+Hyderabad,95
+Bengaluru,88
+Ahmedabad,91
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data city_short;
+infile datalines dlm=',';
+input city $ score;
+datalines;
+ 
+NOTE: The data set WORK.CITY_SHORT has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Example with an explicit longer length
+</h2>
+ 
+<ul>
+<li>Now, we define `city` with length 20 before reading the raw data</li>
+<li>This ensures that longer city names are preserved completely</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data city_long;
+   length city $20;
+   infile datalines dlm=',';
+   input city $ score;
+datalines;
+Hyderabad,95
+Bengaluru,88
+Ahmedabad,91
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data city_long;
+length city $20;
+infile datalines dlm=',';
+input city $ score;
+datalines;
+ 
+NOTE: The data set WORK.CITY_LONG has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare `city_short` and `city_long` and confirm how the defined length affects the stored character values</li>
+<li>This comparison reinforces why variable attributes should be considered before reading raw data</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_READRAW_L102_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Delimited data stores values separated by delimiters rather than fixed columns</li>
+<li>List input reads values in order and assigns them to the variables listed on the `input` statement</li>
+<li>The `dlm=` option identifies the delimiter when it is not a blank space</li>
+<li>Character variables require a trailing dollar sign on the input statement</li>
+<li>Define a longer character length before input when values may exceed the default length</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

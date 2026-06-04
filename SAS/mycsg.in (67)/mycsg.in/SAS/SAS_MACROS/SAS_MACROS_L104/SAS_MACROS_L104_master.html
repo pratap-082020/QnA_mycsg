@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MACROS_L104
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Macros - Part 04: %INCLUDE, Autocall Libraries, and Stored Compiled Macros
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Parts 01 to 03 covered macro definition and invocation, %DO loops, local and global scope, and macro quoting functions.</li>
+<li>This lesson covers three mechanisms for reusing macros across programs: the %INCLUDE statement for inserting external SAS code, autocall libraries for automatic macro resolution, and stored compiled macros for pre-compiled reuse.</li>
+<li>These mechanisms allow macro code to be written once, maintained centrally, and used across many programs — a critical requirement in any production programming environment.</li>
+</ul>
+ 
+<h2>
+%INCLUDE - Inserting External SAS Code
+</h2>
+ 
+<ul>
+<li>%INCLUDE reads an external SAS file and inserts its entire contents at the point of the %INCLUDE statement, as if you had typed that code directly into your program.</li>
+<li>This works for any SAS code — macros, data steps, proc steps, or any combination. The included file is compiled and executed as part of the calling program.</li>
+<li>%INCLUDE is the simplest code-sharing mechanism: no special library setup is needed, just a valid file path.</li>
+<li>The syntax is: %include "path\to\file.sas"; — the file path must be enclosed in double quotes.</li>
+<li>A FILENAME statement can assign a fileref to the path, making the %INCLUDE statement shorter and the path easy to change in one place.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="30">
+/* Syntax only — illustrates the pattern without requiring real files */
+ 
+/*
+--- Contents of C:\macros\my_utility.sas ---
+%macro flag_outliers(ds=, var=, threshold=3);
+    data &ds._flagged;
+        set &ds.;
+        z_score = (&var. - mean(&var.)) / std(&var.);
+        outlier_flag = (abs(z_score) > &threshold.);
+    run;
+%mend flag_outliers;
+*/
+ 
+/* Option 1: Full path in the %INCLUDE statement */
+/*
+%include "C:\macros\my_utility.sas";
+*/
+ 
+/* Option 2: Assign a fileref first, then use it */
+/*
+filename mymacros "C:\macros";
+%include mymacros(my_utility.sas);
+*/
+ 
+/* After either %INCLUDE the macro is compiled and ready to call */
+/*
+%flag_outliers(ds=work.results, var=aval, threshold=2.5);
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+/* Syntax only — illustrates the pattern without requiring real files */
+ 
+/*
+--- Contents of C:\macros\my_utility.sas ---
+%macro flag_outliers(ds=, var=, threshold=3);
+data &ds._flagged;
+set &ds.;
+z_score = (&var. - mean(&var.)) / std(&var.);
+outlier_flag = (abs(z_score) > &threshold.);
+run;
+%mend flag_outliers;
+*/
+ 
+/* Option 1: Full path in the %INCLUDE statement */
+/*
+%include "C:\macros\my_utility.sas";
+*/
+ 
+/* Option 2: Assign a fileref first, then use it */
+/*
+filename mymacros "C:\macros";
+%include mymacros(my_utility.sas);
+*/
+ 
+/* After either %INCLUDE the macro is compiled and ready to call */
+/*
+%flag_outliers(ds=work.results, var=aval, threshold=2.5);
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>%INCLUDE is straightforward, but has one limitation: the macro definition only exists in the current SAS session after the %INCLUDE runs. If another program also needs the macro, it must also run the same %INCLUDE.</li>
+<li>The FILENAME fileref form is preferred in production, because the path is defined once at the top of the program — changing the macro library location only requires updating the FILENAME statement.</li>
+<li>%INCLUDE is useful for shared utility code blocks, standard headers, and situational macro libraries that not every program needs.</li>
+</ul>
+ 
+<h2>
+Autocall Macro Libraries
+</h2>
+ 
+<ul>
+<li>An autocall library is a folder of SAS files where each file is named after a macro it contains (e.g., my_macro.sas contains %macro my_macro; ... %mend my_macro;).</li>
+<li>When SAS encounters a macro call it cannot resolve from compiled macros, it searches the autocall path for a file with the same name. If found, it automatically compiles and executes that macro.</li>
+<li>This automatic resolution means programs can call macros without any %INCLUDE statement — the macro is found and compiled on demand.</li>
+<li>The autocall path is set with the SASAUTOS= system option. Multiple folders can be listed separated by spaces or enclosed in a parenthesised list.</li>
+<li>SAS supplies many built-in autocall macros (stored in !SASROOT\sasautos) — your custom path is typically added to the front of this list.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="23">
+/* Syntax only — illustrates autocall configuration */
+ 
+/*
+File structure required:
+    C:\project\macros\check_obs.sas
+        -- contents: %macro check_obs(ds=); ... %mend check_obs;
+ 
+    C:\project\macros\summarise_by.sas
+        -- contents: %macro summarise_by(ds=, byvar=, avar=); ... %mend summarise_by;
+*/
+ 
+/* Add custom folder to autocall path (append to existing SAS default path) */
+/*
+options sasautos=("C:\project\macros" sasautos) mautosource;
+*/
+ 
+/* Now call the macro without any %INCLUDE - SAS resolves it automatically */
+/*
+%check_obs(ds=work.adsl);
+%summarise_by(ds=work.adlb, byvar=trta, avar=aval);
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="23">
+/* Syntax only — illustrates autocall configuration */
+ 
+/*
+File structure required:
+C:\project\macros\check_obs.sas
+-- contents: %macro check_obs(ds=); ... %mend check_obs;
+ 
+C:\project\macros\summarise_by.sas
+-- contents: %macro summarise_by(ds=, byvar=, avar=); ... %mend summarise_by;
+*/
+ 
+/* Add custom folder to autocall path (append to existing SAS default path) */
+/*
+options sasautos=("C:\project\macros" sasautos) mautosource;
+*/
+ 
+/* Now call the macro without any %INCLUDE - SAS resolves it automatically */
+/*
+%check_obs(ds=work.adsl);
+%summarise_by(ds=work.adlb, byvar=trta, avar=aval);
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>MAUTOSOURCE enables autocall resolution. NOMAUTOSOURCE disables it if needed.</li>
+<li>Each macro must live in its own file named exactly the same as the macro (lowercase is conventional, SAS is case-insensitive for the lookup).</li>
+<li>Autocall resolution happens at compile time, not run time — if the autocall folder is not accessible when the program compiles, the macro call will fail.</li>
+<li>The autocall approach is the standard for shared programming environments: macros are maintained in a central location, and all programs share the same compiled definitions without any %INCLUDE overhead.</li>
+</ul>
+ 
+<h2>
+Stored Compiled Macros
+</h2>
+ 
+<ul>
+<li>Stored compiled macros are macros that have been compiled once and saved to a SAS catalog on disk. Subsequent programs load the pre-compiled version directly — no source code compilation is needed at runtime.</li>
+<li>This is the fastest mechanism for reusing macros, because compilation (which can be expensive for complex macros) is done once at save time rather than on every program run.</li>
+<li>The macro source is compiled with OPTIONS MSTORED SASMSTORE=library; and stored using the STORE option on the %MACRO statement.</li>
+<li>To use stored macros, the consuming program sets the same MSTORED and SASMSTORE= options to point to the library containing the compiled catalog.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="28">
+/* Syntax only — illustrates stored macro compilation and use */
+ 
+/* Step 1: Create a permanent library to store compiled macros */
+/*
+libname maclib "C:\project\compiled_macros";
+options mstored sasmstore=maclib;
+*/
+ 
+/* Step 2: Compile and store a macro */
+/*
+%macro calc_chg(ds=, base_var=, post_var=) / store source des="Calculate change from baseline";
+    data &ds._chg;
+        set &ds.;
+        chg = &post_var. - &base_var.;
+        pchg = round(chg / &base_var. * 100, 0.01);
+    run;
+%mend calc_chg;
+*/
+ 
+/* Step 3: In any future program, point to the same library */
+/*
+libname maclib "C:\project\compiled_macros";
+options mstored sasmstore=maclib;
+ 
+%calc_chg(ds=work.adlb, base_var=base, post_var=aval);
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="28">
+/* Syntax only — illustrates stored macro compilation and use */
+ 
+/* Step 1: Create a permanent library to store compiled macros */
+/*
+libname maclib "C:\project\compiled_macros";
+options mstored sasmstore=maclib;
+*/
+ 
+/* Step 2: Compile and store a macro */
+/*
+%macro calc_chg(ds=, base_var=, post_var=) / store source des="Calculate change from baseline";
+data &ds._chg;
+set &ds.;
+chg = &post_var. - &base_var.;
+pchg = round(chg / &base_var. * 100, 0.01);
+run;
+%mend calc_chg;
+*/
+ 
+/* Step 3: In any future program, point to the same library */
+/*
+libname maclib "C:\project\compiled_macros";
+options mstored sasmstore=maclib;
+ 
+%calc_chg(ds=work.adlb, base_var=base, post_var=aval);
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The STORE option on %MACRO tells SAS to write the compiled macro to the catalog SASMACR in the library specified by SASMSTORE=.</li>
+<li>The SOURCE suboption preserves the source code inside the compiled catalog so it can be retrieved with %COPY later for documentation.</li>
+<li>DES= adds a short description to the catalog entry, visible with PROC CATALOG.</li>
+<li>Once stored, the consuming program does not need the source .sas file at all — only the compiled library. This is useful for distributing macros as compiled objects without exposing source code.</li>
+<li>Stored macros are specific to the SAS release version — recompile when upgrading SAS to avoid compatibility issues.</li>
+</ul>
+ 
+<h2>
+Choosing the Right Mechanism
+</h2>
+ 
+<ul>
+<li>Use %INCLUDE when: you need to include a block of general SAS code (not just macros), the code is only used in a few programs, or you need explicit control over when the code is compiled.</li>
+<li>Use autocall when: you have many shared macros, you want programs to call macros without %INCLUDE statements, and the macros are actively maintained (source available and updated regularly).</li>
+<li>Use stored compiled macros when: the macros are stable and infrequently changed, compilation overhead is a concern (large macros called many times), or you want to distribute compiled macros without sharing source code.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>%INCLUDE inserts and compiles an external SAS file at the point of the statement — the simplest sharing mechanism, but requires explicit inclusion in every program that needs the macro.</li>
+<li>Autocall libraries are folders of source files named after their macros; SAS resolves macro calls automatically by searching SASAUTOS= — set with OPTIONS SASAUTOS= MAUTOSOURCE.</li>
+<li>Stored compiled macros are pre-compiled macro objects saved to a SAS catalog — the fastest runtime mechanism, configured with OPTIONS MSTORED SASMSTORE= and the STORE option on %MACRO.</li>
+<li>Each mechanism has a different trade-off between setup effort, runtime speed, and source code visibility — choose based on the requirements of your environment.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

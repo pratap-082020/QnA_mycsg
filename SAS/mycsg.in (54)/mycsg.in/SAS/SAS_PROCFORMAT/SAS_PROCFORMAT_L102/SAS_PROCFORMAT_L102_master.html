@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCFORMAT_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Building formats from a dataset using CNTLIN
+</h1>
+ 
+<h2>
+Why CNTLIN is useful
+</h2>
+ 
+<ul>
+<li>The previous lesson showed how to write format values directly in a `proc format` VALUE statement</li>
+<li>When a format has many values, or when the values are stored in a dataset rather than being known in advance, typing each value individually is impractical</li>
+<li>The `CNTLIN=` option in PROC FORMAT reads format definitions from a specially structured dataset rather than from manually coded VALUE statements</li>
+<li>This allows formats to be built programmatically from lookup tables, controlled terminology datasets, or any other data source</li>
+<li>CNTLIN is widely used in clinical programming where dictionary-driven decode values are stored in reference datasets</li>
+</ul>
+ 
+<h2>
+The required structure of a CNTLIN dataset
+</h2>
+ 
+<ul>
+<li>A CNTLIN dataset must contain at minimum three specific variables: `FMTNAME`, `START`, and `LABEL`</li>
+<li>`FMTNAME` holds the name of the format being created — all rows with the same FMTNAME define one format</li>
+<li>`START` holds the raw value that the format maps from — this is the code or key that will appear in the data</li>
+<li>`LABEL` holds the decoded or display value that the format maps to</li>
+<li>An optional `TYPE` variable controls whether the format is for character variables (value `C`) or numeric variables (value `N`) — if omitted, SAS infers from whether `START` is character or numeric</li>
+<li>Optionally, `END` can be used for range formats where a range of raw values maps to a single label</li>
+</ul>
+ 
+<h2>
+Create a CNTLIN dataset and apply it as a format
+</h2>
+ 
+<ul>
+<li>We create a lookup dataset that maps two-letter sex codes to their full descriptions</li>
+<li>We then pass this dataset to PROC FORMAT via CNTLIN to register the format</li>
+<li>Finally we apply the format in a PROC PRINT to confirm it works</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="32">
+data sex_lookup;
+    length fmtname $32 start $1 label $50;
+    fmtname='SEXFMT';
+  	 type='C';
+    start='M'; label='Male';   output;
+    start='F'; label='Female'; output;
+    start='U'; label='Unknown'; output;
+run;
+ 
+proc format cntlin=sex_lookup;
+run;
+ 
+proc format cntlout=cntlout;
+run;
+ 
+data subjects;
+    input subject $ sex $;
+    datalines;
+001 M
+002 F
+003 M
+004 U
+005 F
+;
+run;
+ 
+proc print data=subjects;
+    format sex $SEXFMT.;
+    title "Subject list with sex decoded";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="63">
+data sex_lookup;
+length fmtname $32 start $1 label $50;
+fmtname='SEXFMT';
+  	 type='C';
+start='M'; label='Male';   output;
+start='F'; label='Female'; output;
+start='U'; label='Unknown'; output;
+run;
+ 
+NOTE: The data set WORK.SEX_LOOKUP has 3 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc format cntlin=sex_lookup;
+NOTE: Format $SEXFMT has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+NOTE: There were 3 observations read from the data set WORK.SEX_LOOKUP.
+ 
+ 
+proc format cntlout=cntlout;
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+NOTE: The data set WORK.CNTLOUT has 31 observations and 21 variables.
+ 
+ 
+data subjects;
+input subject $ sex $;
+datalines;
+ 
+NOTE: The data set WORK.SUBJECTS has 5 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc print data=subjects;
+format sex $SEXFMT.;
+title "Subject list with sex decoded";
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.SUBJECTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Setting `type='C'` in the CNTLIN dataset is important — it tells SAS this is a character format and the format name will be stored with a `$` prefix</li>
+<li>Character formats must be referenced with the `$` prefix in FORMAT statements, so the PROC PRINT uses `$SEXFMT.` not `SEXFMT.`</li>
+<li>The `proc format cntlout=cntlout;` step immediately after the CNTLIN load exports all currently registered formats back to a SAS dataset named `cntlout` — this is a quick way to verify exactly what was registered and inspect the FMTNAME, START, LABEL, and TYPE values</li>
+<li>No VALUE statement was needed because the format came entirely from the dataset</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Build a larger decode format from a reference dataset
+</h2>
+ 
+<ul>
+<li>In practice, CNTLIN is most valuable when the lookup dataset has many rows or is generated automatically</li>
+<li>Here we create a visit code lookup with ten entries to demonstrate how CNTLIN scales without requiring any additional PROC FORMAT coding</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="39">
+data visit_lookup;
+    length fmtname $32 start $10 label $50;
+    fmtname='VISITFMT';
+  	 type='C';
+    start='BL';    label='Baseline';       output;
+    start='SCR';   label='Screening';      output;
+    start='W1';    label='Week 1';         output;
+    start='W2';    label='Week 2';         output;
+    start='W4';    label='Week 4';         output;
+    start='W8';    label='Week 8';         output;
+    start='W12';   label='Week 12';        output;
+    start='W24';   label='Week 24';        output;
+    start='EOT';   label='End of Treatment'; output;
+    start='FU';    label='Follow-up';      output;
+run;
+ 
+proc format cntlin=visit_lookup;
+run;
+ 
+data visits;
+    input subject $ visit $;
+    datalines;
+001 BL
+001 W1
+001 W4
+002 SCR
+002 BL
+002 W8
+003 EOT
+003 FU
+;
+run;
+ 
+proc print data=visits;
+    format visit $VISITFMT.;
+    title "Visit records with decoded visit names";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="60">
+data visit_lookup;
+length fmtname $32 start $10 label $50;
+fmtname='VISITFMT';
+  	 type='C';
+start='BL';    label='Baseline';       output;
+start='SCR';   label='Screening';      output;
+start='W1';    label='Week 1';         output;
+start='W2';    label='Week 2';         output;
+start='W4';    label='Week 4';         output;
+start='W8';    label='Week 8';         output;
+start='W12';   label='Week 12';        output;
+start='W24';   label='Week 24';        output;
+start='EOT';   label='End of Treatment'; output;
+start='FU';    label='Follow-up';      output;
+run;
+ 
+NOTE: The data set WORK.VISIT_LOOKUP has 10 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc format cntlin=visit_lookup;
+NOTE: Format $VISITFMT has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+NOTE: There were 10 observations read from the data set WORK.VISIT_LOOKUP.
+ 
+ 
+data visits;
+input subject $ visit $;
+datalines;
+ 
+NOTE: The data set WORK.VISITS has 8 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+proc print data=visits;
+format visit $VISITFMT.;
+title "Visit records with decoded visit names";
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.VISITS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Adding a new visit to the decode table only requires adding one row to `visit_lookup` — no PROC FORMAT code needs editing</li>
+<li>Inspect the PROC PRINT output and confirm that all visit codes are decoded to their full descriptions</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L102_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Use FMTLIB to verify the registered formats
+</h2>
+ 
+<ul>
+<li>After creating formats with CNTLIN, you can use PROC FORMAT with the FMTLIB option to display all currently registered formats and confirm the values loaded correctly</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc format fmtlib;
+    select $SEXFMT $VISITFMT;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc format fmtlib;
+select $SEXFMT $VISITFMT;
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output lists every START-LABEL pair for each named format, confirming the CNTLIN load was successful</li>
+<li>This is a useful verification step in production programs before the formats are applied to analysis datasets</li>
+</ul>
+ 
+<h2>
+Build a CNTLIN dataset from an existing dataset using a DATA step
+</h2>
+ 
+<ul>
+<li>Rather than hard-coding rows in a DATA step, CNTLIN datasets are often generated programmatically from a source reference file</li>
+<li>In this example we derive a numeric age-group format from calculated ranges, showing how CNTLIN supports range-based formats using `START`, `END`, and the `HLO` variable</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="30">
+data agegrp_fmt;
+    length fmtname $32 label $30;
+    fmtname='AGEGRP';
+    type='N';
+   	 hlo='';
+    start=0;  end=17; label='Under 18';    output;
+    start=18; end=64; label='18 to 64';    output;
+    start=65; hlo='H'; label='65 and over'; output;
+run;
+ 
+proc format cntlin=agegrp_fmt;
+run;
+ 
+data patients;
+    input subject age;
+    datalines;
+1  15
+2  28
+3  45
+4  67
+5  72
+;
+run;
+ 
+proc print data=patients;
+    format age AGEGRP.;
+    title "Patients with age group format";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="54">
+data agegrp_fmt;
+length fmtname $32 label $30;
+fmtname='AGEGRP';
+type='N';
+  	 hlo='';
+start=0;  end=17; label='Under 18';    output;
+start=18; end=64; label='18 to 64';    output;
+start=65; hlo='H'; label='65 and over'; output;
+run;
+ 
+NOTE: The data set WORK.AGEGRP_FMT has 3 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc format cntlin=agegrp_fmt;
+NOTE: Format AGEGRP has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+NOTE: There were 3 observations read from the data set WORK.AGEGRP_FMT.
+ 
+ 
+data patients;
+input subject age;
+datalines;
+ 
+NOTE: The data set WORK.PATIENTS has 5 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+proc print data=patients;
+format age AGEGRP.;
+title "Patients with age group format";
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.PATIENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`type='N'` specifies a numeric format because `start` and `end` are numeric</li>
+<li>`hlo=''` is initialised at the top of the dataset so all rows carry the variable — then `hlo='H'` on the last row tells SAS the upper end of that range is open (extends to the highest possible numeric value)</li>
+<li>In CNTLIN datasets, `HLO` is the correct way to express open-ended ranges — the `end=.H` syntax used in VALUE statements does not apply here</li>
+<li>Inspect the PROC PRINT and confirm that each patient's age is grouped correctly</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L102_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>CNTLIN= in PROC FORMAT reads format definitions from a dataset instead of requiring coded VALUE statements</li>
+<li>The CNTLIN dataset must contain at minimum `FMTNAME`, `START`, and `LABEL` variables</li>
+<li>Add a `TYPE` variable with value `C` or `N` to explicitly declare character or numeric formats — especially important for numeric range formats</li>
+<li>Use `END` along with `START` to define range-based formats where a span of values maps to one label</li>
+<li>Use `HLO='O'` in a CNTLIN row to create an OTHER category (the equivalent of `other=` in a VALUE statement)</li>
+<li>CNTLIN is most valuable when format values are numerous, change frequently, or are derived from a data source such as a controlled terminology file</li>
+<li>Always verify CNTLIN-built formats with PROC FORMAT FMTLIB before applying them to analysis datasets</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

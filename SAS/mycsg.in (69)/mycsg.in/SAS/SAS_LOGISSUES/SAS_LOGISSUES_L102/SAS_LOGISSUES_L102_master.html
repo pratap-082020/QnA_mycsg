@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_LOGISSUES_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Log Issues - Part 02: _ERROR_ Variable, Format-Not-Found, and BY Sort Order
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>SAS generates several categories of log messages: NOTE, WARNING, and ERROR.</li>
+<li>Beyond messages printed to the log, SAS also maintains an automatic variable called _ERROR_ that records whether a data error occurred during the current iteration of the DATA step.</li>
+<li>This lesson covers three common and important log issues: detecting data errors programmatically using _ERROR_, diagnosing format-not-found warnings, and understanding the BY-not-sorted error.</li>
+<li>Being able to read and interpret these messages accurately is essential for debugging programs and producing reliable output.</li>
+</ul>
+ 
+<h2>
+The _ERROR_ Automatic Variable
+</h2>
+ 
+<ul>
+<li>_ERROR_ is an automatic variable that SAS creates in every DATA step.</li>
+<li>It is initialised to 0 at the start of each iteration (each row read from the input dataset).</li>
+<li>SAS sets _ERROR_ to 1 whenever a data error occurs during that iteration — for example, when a character value cannot be converted to a number, or when an invalid mathematical operation is attempted.</li>
+<li>_ERROR_ is not written to the output dataset by default, but it is available for conditional logic during the DATA step.</li>
+<li>You can use _ERROR_ to flag, count, or selectively output only rows that caused data errors, which is useful for quality checking.</li>
+</ul>
+ 
+<ul>
+<li>The following example reads a small dataset that contains a mix of valid and invalid numeric values stored as character.</li>
+<li>The INPUT function attempts to convert each character value to a number.</li>
+<li>When conversion fails, SAS sets _ERROR_ to 1 and writes a NOTE to the log.</li>
+<li>We use _ERROR_ to capture and output only the problem rows for inspection.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="22">
+data work.source;
+    input subject $ raw_value $;
+    datalines;
+001 42
+002 .
+003 abc
+004 17
+005 ??
+;
+run;
+ 
+data work.converted work.errors;
+    set work.source;
+    numeric_value = input(raw_value, ?? best12.);
+    if _error_ = 1 then do;
+        output work.errors;
+        _error_ = 0;
+    end;
+    else output work.converted;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+data work.source;
+input subject $ raw_value $;
+datalines;
+ 
+NOTE: The data set WORK.SOURCE has 5 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.converted work.errors;
+set work.source;
+numeric_value = input(raw_value, ?? best12.);
+if _error_ = 1 then do;
+output work.errors;
+_error_ = 0;
+end;
+else output work.converted;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.SOURCE.
+NOTE: The data set WORK.CONVERTED has 5 observations and 3 variables.
+NOTE: The data set WORK.ERRORS has 0 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The <code>?? best12.</code> informat suppresses the invalid data NOTE from the log — but _ERROR_ is still set to 1 internally when conversion fails, so the flag remains useful.</li>
+<li>Using a single question mark <code>? best12.</code> suppresses the NOTE but still sets _ERROR_; using <code>??</code> suppresses both the NOTE and the invalid data indicator in the log, but _ERROR_ is still set.</li>
+<li>Check WORK.ERRORS — it should contain subjects 003 and 005 whose raw_value could not be converted.</li>
+<li>Check WORK.CONVERTED — it should contain subjects 001, 002, and 004 where conversion succeeded (002 becomes a SAS missing numeric value, which is valid).</li>
+<li>Resetting _ERROR_ to 0 after routing the row prevents SAS from printing an extra NOTE at the end of the step about _ERROR_ being set.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Using _ERROR_ to Count Data Problems
+</h2>
+ 
+<ul>
+<li>A practical pattern is to use RETAIN and a counter variable to accumulate the total number of data errors across all rows, then report it at the end of the DATA step using a PUT statement.</li>
+<li>This lets you confirm at a glance whether any data quality issues were present without scanning the entire log.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="13">
+data work.checked;
+    retain error_count 0;
+    set work.source end=last_row;
+    numeric_value = input(raw_value, ?? best12.);
+    if _error_ = 1 then do;
+        error_count + 1;
+        _error_ = 0;
+    end;
+    if last_row then put "NOTE: Total conversion errors detected: " error_count;
+    drop error_count;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="22">
+data work.checked;
+retain error_count 0;
+set work.source end=last_row;
+numeric_value = input(raw_value, ?? best12.);
+if _error_ = 1 then do;
+error_count + 1;
+_error_ = 0;
+end;
+if last_row then put "NOTE: Total conversion errors detected: " error_count;
+drop error_count;
+run;
+ 
+NOTE: Total conversion errors detected: 0
+NOTE: There were 5 observations read from the data set WORK.SOURCE.
+NOTE: The data set WORK.CHECKED has 5 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>RETAIN error_count 0 initialises the counter to zero and prevents it from resetting between rows.</li>
+<li>The <code>end=last_row</code> dataset option sets the temporary variable last_row to 1 only on the final observation, allowing the summary PUT to execute exactly once.</li>
+<li>Check the SAS log after running this step — you should see a NOTE line reporting the total count of conversion errors.</li>
+</ul>
+ 
+<h2>
+Format-Not-Found Warning
+</h2>
+ 
+<ul>
+<li>A format-not-found warning occurs when a variable references a format (via FORMAT or ATTRIB statement, or stored in a dataset attribute) that SAS cannot locate in the format search path.</li>
+<li>The warning typically reads: WARNING: Format MYFMT was not found or could not be loaded.</li>
+<li>SAS will still continue processing, but the variable will display its raw unformatted value wherever the missing format would have been applied.</li>
+<li>The most common causes are: the format was created in a different SAS session, the FMTSEARCH= option does not include the library where the format lives, or the format name was misspelled.</li>
+</ul>
+ 
+<ul>
+<li>The following example intentionally references a format called $STATUSFMT that does not exist, to show the warning message and demonstrate the FMTSEARCH= option as the fix.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="33">
+*------------------------------------------------------------------------------;
+* Create a format in a named library ;
+*------------------------------------------------------------------------------;
+proc format library=work;
+    value $statusfmt
+        'A' = 'Active'
+        'D' = 'Discontinued'
+        'C' = 'Completed';
+run;
+ 
+*------------------------------------------------------------------------------;
+* Apply the format to a dataset ;
+*------------------------------------------------------------------------------;
+data work.subjects;
+    input subject $ status $;
+    format status $statusfmt.;
+    datalines;
+001 A
+002 D
+003 C
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* If WORK is not in the FMTSEARCH path, reading this dataset elsewhere ;
+* may trigger format-not-found. Add WORK explicitly to resolve. ;
+*------------------------------------------------------------------------------;
+options fmtsearch=(work);
+ 
+proc print data=work.subjects label;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="51">
+*------------------------------------------------------------------------------;
+* Create a format in a named library ;
+*------------------------------------------------------------------------------;
+proc format library=work;
+value $statusfmt
+'A' = 'Active'
+'D' = 'Discontinued'
+'C' = 'Completed';
+NOTE: Format $STATUSFMT has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Apply the format to a dataset ;
+*------------------------------------------------------------------------------;
+data work.subjects;
+input subject $ status $;
+format status $statusfmt.;
+datalines;
+ 
+NOTE: The data set WORK.SUBJECTS has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* If WORK is not in the FMTSEARCH path, reading this dataset elsewhere ;
+* may trigger format-not-found. Add WORK explicitly to resolve. ;
+*------------------------------------------------------------------------------;
+options fmtsearch=(work);
+ 
+proc print data=work.subjects label;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.SUBJECTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>PROC FORMAT with LIBRARY=WORK stores the format in the WORK library for this session.</li>
+<li>The FORMAT statement in the DATA step attaches $STATUSFMT to the status variable as a permanent attribute stored in the dataset header.</li>
+<li>When another program or session reads WORK.SUBJECTS, it searches the format libraries in the order specified by FMTSEARCH=. If WORK is not listed, the format is not found and SAS issues a WARNING.</li>
+<li>Adding OPTIONS FMTSEARCH=(WORK) or pointing to whatever library holds the format resolves the warning.</li>
+<li>If you want the data to print without the format at all, use FORMAT status; (no format name) to detach the format for the current PROC step.</li>
+</ul>
+ 
+<h2>
+BY Statement - Data Not Sorted Error
+</h2>
+ 
+<ul>
+<li>When you use a BY statement in a DATA step or PROC step, SAS requires that the data are already sorted in the order of the BY variables.</li>
+<li>If SAS encounters a row where the BY variable value is less than the previous row's value, it issues an ERROR: Data set WORK.xxx is not sorted in ascending sequence.</li>
+<li>This is a hard error — processing stops at that point, and the output dataset may be incomplete.</li>
+<li>The fix is always to run PROC SORT on the dataset before the step that uses the BY statement.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="38">
+*------------------------------------------------------------------------------;
+* Dataset that is NOT sorted - will cause a BY error ;
+*------------------------------------------------------------------------------;
+data work.unsorted;
+    input subject $ visit;
+    datalines;
+002 1
+001 1
+003 1
+001 2
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* This will error because BY requires sorted input ;
+*------------------------------------------------------------------------------;
+/*
+data work.will_fail;
+    set work.unsorted;
+    by subject;
+run;
+*/
+ 
+*------------------------------------------------------------------------------;
+* Correct approach: sort first ;
+*------------------------------------------------------------------------------;
+proc sort data=work.unsorted out=work.sorted;
+    by subject visit;
+run;
+ 
+data work.with_by;
+    set work.sorted;
+    by subject;
+    if first.subject then visit_count = 0;
+    visit_count + 1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="57">
+*------------------------------------------------------------------------------;
+* Dataset that is NOT sorted - will cause a BY error ;
+*------------------------------------------------------------------------------;
+data work.unsorted;
+input subject $ visit;
+datalines;
+ 
+NOTE: The data set WORK.UNSORTED has 4 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* This will error because BY requires sorted input ;
+*------------------------------------------------------------------------------;
+/*
+data work.will_fail;
+set work.unsorted;
+by subject;
+run;
+*/
+ 
+*------------------------------------------------------------------------------;
+* Correct approach: sort first ;
+*------------------------------------------------------------------------------;
+proc sort data=work.unsorted out=work.sorted;
+by subject visit;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.UNSORTED.
+NOTE: The data set WORK.SORTED has 4 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data work.with_by;
+set work.sorted;
+by subject;
+if first.subject then visit_count = 0;
+visit_count + 1;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SORTED.
+NOTE: The data set WORK.WITH_BY has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The intentionally failing DATA step is commented out so the lesson runs cleanly — uncomment it to see the BY error in the log for yourself.</li>
+<li>PROC SORT with OUT= creates a new sorted copy without modifying the original dataset, which is good practice when you want to preserve the original order.</li>
+<li>After sorting, the BY statement works correctly and FIRST.SUBJECT is available for BY-group logic.</li>
+<li>The visit_count variable increments within each subject group, confirming that the BY-group iteration is functioning as expected.</li>
+<li>Always sort immediately before the step that needs the BY — relying on a sort from earlier in the program can lead to subtle bugs if the data is modified between steps.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L102_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>_ERROR_ is set to 1 by SAS whenever a data error occurs on the current row — use it to flag and route problem rows rather than relying solely on log scanning.</li>
+<li>Reset _ERROR_ to 0 after handling the error to prevent extra log messages and keep the final _ERROR_ count meaningful.</li>
+<li>Format-not-found warnings occur when the format search path (FMTSEARCH=) does not include the library where the format was created — add that library to resolve it.</li>
+<li>BY-not-sorted is always a programming error — ensure the input dataset is sorted by the BY variables before any step that uses a BY statement.</li>
+<li>Reading these messages carefully and locating the exact observation or format name mentioned in the error message is the fastest path to a fix.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

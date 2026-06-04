@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCUNIVARIATE_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is PROC UNIVARIATE
+</h1>
+ 
+<ul>
+<li>PROC UNIVARIATE produces a detailed statistical summary of one or more numeric variables</li>
+<li>Compared to PROC MEANS, which focuses on basic summary statistics, PROC UNIVARIATE also reports percentiles, extreme values, tests for normality, and optionally produces histograms and probability plots</li>
+<li>It is especially useful for understanding the distribution of a variable — whether it is symmetric, skewed, or has extreme outliers</li>
+<li>In clinical programming, PROC UNIVARIATE is commonly used for verifying value ranges, identifying outliers, and assessing whether a continuous endpoint meets normality assumptions before statistical testing</li>
+</ul>
+ 
+<h1>
+Create sample data
+</h1>
+ 
+<ul>
+<li>The dataset `lab_results` contains simulated haemoglobin values for a small group of subjects</li>
+<li>A few values are intentionally set at the extremes to make the percentile and extreme-value output more informative</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="18">
+data lab_results;
+    infile datalines truncover;
+    input usubjid $ sex $ age hgb;
+datalines;
+1001 F 45 12.1
+1002 M 52 14.8
+1003 F 38 11.5
+1004 M 61 16.2
+1005 F 29 13.0
+1006 M 47 15.5
+1007 F 55  9.8
+1008 M 33 17.1
+1009 F 42 12.8
+1010 M 58 14.0
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data lab_results;
+infile datalines truncover;
+input usubjid $ sex $ age hgb;
+datalines;
+ 
+NOTE: The data set WORK.LAB_RESULTS has 10 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`hgb` is the haemoglobin value in g/dL — the dataset has ten subjects with a deliberate low value (9.8) and a high value (17.1) to exercise the extreme-values section of the output</li>
+<li>Inspect the dataset and note the range of values before running PROC UNIVARIATE</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCUNIVARIATE_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Basic PROC UNIVARIATE output
+</h1>
+ 
+<ul>
+<li>The default PROC UNIVARIATE output contains several panels for each variable</li>
+<li>The Moments panel shows the mean, standard deviation, variance, skewness, kurtosis, and sample size</li>
+<li>The Basic Statistical Measures panel shows mean, median, mode, standard deviation, variance, and range</li>
+<li>The Tests for Location panel tests whether the mean or median differs significantly from zero</li>
+<li>The Quantiles panel shows percentiles including the minimum, maximum, and quartiles</li>
+<li>The Extreme Observations panel lists the five smallest and five largest values with their observation numbers</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc univariate data=lab_results;
+    var hgb;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc univariate data=lab_results;
+var hgb;
+run;
+ 
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review the Quantiles section — the minimum should be 9.8 and the maximum 17.1</li>
+<li>The median (50th percentile) is the middle value when all ten are ranked — verify it is between 12.8 and 13.0</li>
+<li>The Extreme Observations section lists subject 1007 (9.8) as the lowest value and subject 1008 (17.1) as the highest — confirm this matches the source data</li>
+</ul>
+ 
+<h1>
+Adding an ID variable to extreme observations
+</h1>
+ 
+<ul>
+<li>By default, the Extreme Observations panel identifies rows by their observation number</li>
+<li>The `id` statement replaces the observation number with a chosen variable, making it much easier to trace extreme values back to specific subjects</li>
+<li>In clinical data, you would typically use the subject identifier variable as the ID</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="6">
+proc univariate data=lab_results;
+    var hgb;
+    id usubjid;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc univariate data=lab_results;
+var hgb;
+id usubjid;
+run;
+ 
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The Extreme Observations panel now shows `usubjid` values instead of row numbers</li>
+<li>Confirm that the five lowest and five highest values are identified by subject ID — this is far more useful than a row number when investigating outliers</li>
+</ul>
+ 
+<h1>
+Running PROC UNIVARIATE by group
+</h1>
+ 
+<ul>
+<li>A `by` statement produces a separate PROC UNIVARIATE output panel for each group</li>
+<li>The data must be sorted by the BY variable before the procedure runs</li>
+<li>This is useful when you need distribution summaries broken out by sex, treatment group, or visit</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc sort data=lab_results;
+    by sex;
+run;
+ 
+proc univariate data=lab_results;
+    var hgb;
+    id usubjid;
+    by sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+proc sort data=lab_results;
+by sex;
+run;
+ 
+NOTE: There were 10 observations read from the data set WORK.LAB_RESULTS.
+NOTE: The data set WORK.LAB_RESULTS has 10 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc univariate data=lab_results;
+var hgb;
+id usubjid;
+by sex;
+run;
+ 
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Two separate output sections are produced — one for female subjects and one for male subjects</li>
+<li>Compare the medians and ranges between the two groups — the female group includes subject 1007 with the low value of 9.8 which will pull the female minimum down</li>
+</ul>
+ 
+<h1>
+Saving key statistics to an output dataset
+</h1>
+ 
+<ul>
+<li>The `output` statement saves selected statistics from PROC UNIVARIATE into a new dataset</li>
+<li>Each statistic keyword is followed by `=` and the name to give that variable in the output dataset</li>
+<li>Commonly saved statistics include `mean=`, `median=`, `std=`, `min=`, `max=`, `q1=` (25th percentile), and `q3=` (75th percentile)</li>
+<li>Saving statistics to a dataset is essential when you need to use them programmatically — for example to flag values more than two standard deviations from the mean</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="14">
+proc univariate data=lab_results noprint;
+    var hgb;
+    output out=hgb_stats
+           mean   = hgb_mean
+           median = hgb_median
+           std    = hgb_std
+           min    = hgb_min
+           max    = hgb_max
+           q1     = hgb_q1
+           q3     = hgb_q3
+           n      = hgb_n;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="21">
+proc univariate data=lab_results noprint;
+var hgb;
+output out=hgb_stats
+mean   = hgb_mean
+median = hgb_median
+std    = hgb_std
+min    = hgb_min
+max    = hgb_max
+q1     = hgb_q1
+q3     = hgb_q3
+n      = hgb_n;
+run;
+ 
+NOTE: The data set WORK.HGB_STATS has 1 observations and 8 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `noprint` option suppresses the usual printed output — the statistics are written only to `hgb_stats`</li>
+<li>Inspect `hgb_stats` — it should contain a single row with one column per requested statistic</li>
+<li>Verify the mean, min, max, and n values against what you observed in the earlier full PROC UNIVARIATE output</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCUNIVARIATE_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Using saved statistics to flag outliers
+</h1>
+ 
+<ul>
+<li>Once statistics are in a dataset, they can be merged back to the source data to derive flags</li>
+<li>A common rule flags values more than two standard deviations above or below the mean as potential outliers</li>
+<li>The step below merges the summary statistics into the subject-level data using a cross-join pattern and then creates the flag</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data lab_flagged;
+    if _n_ = 1 then set hgb_stats;
+    set lab_results;
+    lower_limit = hgb_mean - 2 * hgb_std;
+    upper_limit = hgb_mean + 2 * hgb_std;
+    outlier_flag = (hgb lt lower_limit or hgb gt upper_limit);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data lab_flagged;
+if _n_ = 1 then set hgb_stats;
+set lab_results;
+lower_limit = hgb_mean - 2 * hgb_std;
+upper_limit = hgb_mean + 2 * hgb_std;
+outlier_flag = (hgb lt lower_limit or hgb gt upper_limit);
+run;
+ 
+NOTE: There were 1 observations read from the data set WORK.HGB_STATS.
+NOTE: There were 10 observations read from the data set WORK.LAB_RESULTS.
+NOTE: The data set WORK.LAB_FLAGGED has 10 observations and 15 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `if _n_ = 1 then set hgb_stats;` pattern reads the single-row statistics dataset once and retains its values across all subsequent rows — this is a standard SAS idiom for merging a summary row into detail data</li>
+<li>Inspect `lab_flagged` and check the `outlier_flag` column — subjects whose `hgb` falls outside the two-standard-deviation band should have `outlier_flag = 1`</li>
+<li>Also inspect `lower_limit` and `upper_limit` to confirm the band is calculated correctly</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCUNIVARIATE_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>PROC UNIVARIATE provides richer distributional detail than PROC MEANS — moments, quantiles, extreme values, and normality tests</li>
+<li>The `id` statement replaces observation numbers with a subject identifier in the Extreme Observations panel</li>
+<li>A `by` statement produces separate output panels per group — data must be pre-sorted</li>
+<li>The `output` statement saves named statistics to a dataset — use `noprint` to suppress the printed output when only the dataset is needed</li>
+<li>Saved statistics can be merged back to detail data using the `if _n_ = 1 then set` pattern to derive per-subject flags or derived values</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

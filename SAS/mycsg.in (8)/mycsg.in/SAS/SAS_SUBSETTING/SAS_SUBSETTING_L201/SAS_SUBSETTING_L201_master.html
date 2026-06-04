@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_SUBSETTING_L201
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of subset
+</h1>
+ 
+<ol>
+<li>A part of a larger group of related things.</li>
+</ol>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1001">Subset variables from a dataset</button><div class="modal fade" id="imgModal1001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Subset variables from a dataset</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_SUBSETTING_L201_1001.png" alt="Subset variables from a dataset" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+Where do we need to subset data in terms of variables
+</h1>
+ 
+<ul>
+<li>Earlier lessons focused on subsetting observations using `where` or `if` logic</li>
+<li>In this lesson, we focus on selecting only the required variables from an existing dataset</li>
+<li>Variable subsetting reduces clutter and creates output datasets tailored to the programming task</li>
+</ul>
+ 
+<h1>
+Create sample input datasets
+</h1>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data class;
+   set sashelp.class;
+run;
+ 
+data cars;
+   set sashelp.cars;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+data class;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data cars;
+set sashelp.cars;
+run;
+ 
+NOTE: There were 428 observations read from the data set SASHELP.CARS.
+NOTE: The data set WORK.CARS has 428 observations and 15 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`class` and `cars` will be used in the examples below</li>
+<li>Review the datasets and notice that they contain many more variables than may be needed for a particular task</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L201_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Subset variables using the KEEP statement
+</h1>
+ 
+<ul>
+<li>The `keep` statement lists the variables that should be written to the output dataset</li>
+<li>All other variables are excluded from the final output dataset</li>
+</ul>
+ 
+<h2>
+Create a dataset named age by keeping the variables Name and Age from class dataset
+</h2>
+ 
+<ul>
+<li>Notice in the log how many variables are written to the output dataset</li>
+<li>Only the listed variables appear in the dataset `age`</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data age;
+   set class;
+   keep name age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data age;
+set class;
+keep name age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.AGE has 19 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `age` and confirm that all other variables from `class` are absent</li>
+<li>This is one of the most direct ways to subset variables in a DATA step</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L201_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named height_weight by keeping the variables Name, Height, and Weight from class dataset
+</h2>
+ 
+<ul>
+<li>This is the same idea as the previous example, but with a different variable list</li>
+<li>Only `name`, `height`, and `weight` are stored in the output dataset</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data height_weight;
+   set class;
+   keep name height weight;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data height_weight;
+set class;
+keep name height weight;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.HEIGHT_WEIGHT has 19 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare `height_weight` with `class` and confirm that only the required variables remain</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L201_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Subset variables using the KEEP dataset option
+</h1>
+ 
+<ul>
+<li>The KEEP dataset option performs variable subsetting while the dataset is being read</li>
+<li>This can be more efficient because unnecessary variables are not even brought into the DATA step processing area</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data age_height;
+   set class(keep=name age height);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+data age_height;
+set class(keep=name age height);
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.AGE_HEIGHT has 19 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`age_height` contains only the variables listed in the KEEP dataset option</li>
+<li>Compare this approach with the KEEP statement, and note that both achieve a similar final dataset</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L201_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Subset variables by dropping unwanted variables
+</h1>
+ 
+<ul>
+<li>Sometimes it is easier to list the variables you do not want rather than the variables you want</li>
+<li>In that situation, the `drop` statement or DROP dataset option is useful</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data class_drop;
+   set class;
+   drop sex height weight;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data class_drop;
+set class;
+drop sex height weight;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.CLASS_DROP has 19 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`class_drop` contains all variables from `class` except the variables listed on the DROP statement</li>
+<li>This is especially convenient when only a small number of variables need to be removed</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L201_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Variable subsetting controls which columns are written to the output dataset</li>
+<li>Use `keep` when it is easier to list the variables to retain</li>
+<li>Use `drop` when it is easier to list the variables to remove</li>
+<li>Dataset options such as `keep=` can subset variables as the dataset is read</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

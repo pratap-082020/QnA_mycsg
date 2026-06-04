@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_GENERAL_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+General concepts in SAS
+</h1>
+ 
+<ul>
+<li>Before learning specific procedures it is useful to understand a few general rules that apply across the SAS language</li>
+<li>These rules affect how we write statements name datasets and variables and organise code into steps</li>
+<li>Strong understanding of these basics reduces syntax errors and makes later lessons easier to follow</li>
+</ul>
+ 
+<h1>
+Elements of the SAS language
+</h1>
+ 
+<ul>
+<li>The SAS language contains statements expressions functions CALL routines options formats and informats</li>
+<li>Statements tell SAS what action to perform such as creating a dataset sorting data or printing output</li>
+<li>Expressions combine values operators and functions to produce a result</li>
+<li>Formats control how values are displayed while informats control how raw values are read</li>
+</ul>
+ 
+<h1>
+Rules for SAS statements
+</h1>
+ 
+<ul>
+<li>SAS statements end with a semicolon and missing a semicolon is one of the most common beginner mistakes</li>
+<li>You can write SAS keywords in uppercase lowercase or mixed case because the language is generally not case sensitive for keywords</li>
+<li>A statement can begin in any column and can continue to the next line when needed</li>
+<li>You can place multiple short statements on one line although most programmers prefer one statement per line for readability</li>
+<li>You cannot split a word across two lines</li>
+</ul>
+ 
+<h2>
+Simple example showing SAS statements
+</h2>
+ 
+<ul>
+<li>We create a dataset named `class01` from `sashelp.class`</li>
+<li>Then we print the dataset using `proc print`</li>
+<li>Notice that every SAS statement ends with a semicolon</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data class01;
+   set sashelp.class(obs=5);
+run;
+ 
+proc print data=class01;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+data class01;
+set sashelp.class(obs=5);
+run;
+ 
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 5 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc print data=class01;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.CLASS01.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `data` and `set` statements work together to create a new dataset</li>
+<li>The `proc print` step displays the created observations in the output window</li>
+<li>Review the log and confirm that both the DATA step and PROC step completed without errors</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_GENERAL_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Rules for most SAS names
+</h1>
+ 
+<ul>
+<li>Most SAS names can contain 1 to 32 characters</li>
+<li>The first character must be a letter or underscore</li>
+<li>Subsequent characters can be letters numbers or underscores</li>
+<li>Blanks are not allowed in standard SAS names</li>
+<li>These rules apply to common items such as dataset names variable names and library references although some special cases exist in advanced usage</li>
+</ul>
+ 
+<h2>
+Examples of valid and invalid SAS names
+</h2>
+ 
+<ul>
+<li>Valid names include `age` `_temp` `class01` and `height_cm`</li>
+<li>Invalid standard names include `1age` `student name` and `total-cost` because they start incorrectly contain blanks or include unsupported characters</li>
+</ul>
+ 
+<h1>
+Dataset names
+</h1>
+ 
+<ul>
+<li>Dataset names follow the standard SAS naming rules</li>
+<li>A one level name such as `class01` creates a dataset in the default library usually `WORK`</li>
+<li>A two level name such as `sashelp.class` identifies both the library and the dataset name</li>
+</ul>
+ 
+<h2>
+Copy a dataset from SASHELP to WORK
+</h2>
+ 
+<ul>
+<li>`sashelp.class` is a two level name where `sashelp` is the library and `class` is the dataset name</li>
+<li>`class_copy` is a one level name and will be created in the `WORK` library</li>
+<li>This example helps distinguish between permanent style references and temporary work datasets</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class_copy;
+   set sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data class_copy;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_COPY has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS_COPY increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The new dataset `class_copy` now exists in the `WORK` library</li>
+<li>Inspect the output dataset and confirm that its rows match those from `sashelp.class`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_GENERAL_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Variable names
+</h1>
+ 
+<ul>
+<li>Variable names also follow the standard naming rules</li>
+<li>Variable names are generally not case sensitive in normal SAS usage so `Age` `AGE` and `age` all refer to the same variable</li>
+<li>Choosing meaningful variable names improves readability and maintenance</li>
+</ul>
+ 
+<h2>
+Create new variables with valid names
+</h2>
+ 
+<ul>
+<li>We create new variables named `bmi_proxy` and `age_group` to demonstrate valid variable naming</li>
+<li>These names start with letters and contain only letters underscores and numbers</li>
+<li>After running the code inspect the created variables in the output dataset</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data class_named;
+   set sashelp.class;
+   bmi_proxy = round((weight/(height*height))*703,.01);
+ 
+   if age le 12 then age_group="Younger";
+   else age_group="Older";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data class_named;
+set sashelp.class;
+bmi_proxy = round((weight/(height*height))*703,.01);
+ 
+if age le 12 then age_group="Younger";
+else age_group="Older";
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_NAMED has 19 observations and 7 variables.
+NOTE: Compressing data set WORK.CLASS_NAMED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output dataset contains the original variables plus the newly created variables</li>
+<li>This example reinforces both assignment statements and good variable naming practice</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_GENERAL_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Library names
+</h1>
+ 
+<ul>
+<li>A library is a collection of SAS files that is referenced by a short name called a libref</li>
+<li>Librefs typically follow standard SAS naming rules and are limited to 8 characters in many SAS environments</li>
+<li>Common examples include `WORK` for temporary files and `SASHELP` for sample data supplied by SAS</li>
+<li>Using a two level name such as `work.class01` makes the library reference explicit</li>
+</ul>
+ 
+<h2>
+Display the difference between one level and two level naming
+</h2>
+ 
+<ul>
+<li>This small example writes a dataset using an explicit library name</li>
+<li>The resulting dataset is still created in `WORK` but the reference makes the library visible in the code</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data work.class_explicit;
+   set sashelp.class(obs=3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data work.class_explicit;
+set sashelp.class(obs=3);
+run;
+ 
+NOTE: There were 3 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_EXPLICIT has 3 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS_EXPLICIT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare `class_explicit` with earlier one level datasets and note that the content idea is the same even though the reference is more explicit</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_GENERAL_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Format and informat names
+</h1>
+ 
+<ul>
+<li>Formats control how values are displayed while informats control how raw values are read into SAS variables</li>
+<li>For example, a numeric date value can be displayed with a date format even though the stored value is numeric</li>
+<li>Understanding this difference is important when reading raw data and presenting output</li>
+</ul>
+ 
+<h2>
+Simple format example
+</h2>
+ 
+<ul>
+<li>We create a date value and apply the `date9.` format so the displayed value is easier to read</li>
+<li>The stored value remains numeric even though the display changes</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data date_demo;
+   today_num = today();
+   format today_num date9.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data date_demo;
+today_num = today();
+format today_num date9.;
+run;
+ 
+NOTE: Compression was disabled for data set WORK.DATE_DEMO because compression overhead would increase the size of the data set.
+NOTE: The data set WORK.DATE_DEMO has 1 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The dataset stores a numeric date value in `today_num`</li>
+<li>The format changes how that value is shown when viewed or printed</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_GENERAL_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>SAS statements end with semicolons</li>
+<li>Dataset names variable names and many other SAS names follow standard naming rules</li>
+<li>One level names use the default library while two level names specify both library and member name</li>
+<li>Variable names are generally not case sensitive</li>
+<li>Formats and informats serve different purposes and are fundamental to data input and display</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

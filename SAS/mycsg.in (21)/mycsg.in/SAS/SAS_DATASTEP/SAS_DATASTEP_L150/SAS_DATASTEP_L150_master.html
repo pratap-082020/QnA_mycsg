@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_DATASTEP_L150
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What does RETAIN do in a DATA step
+</h1>
+ 
+<ul>
+<li>By default, SAS sets variables created in a DATA step to missing at the start of each new iteration unless they are read from a dataset or otherwise automatically retained</li>
+<li>The `retain` statement tells SAS to preserve the value of a variable from one iteration to the next</li>
+<li>This is especially useful for counters, running totals, and group-level calculations</li>
+</ul>
+ 
+<h2>
+Create input dataset
+</h2>
+ 
+<ul>
+<li>The dataset `scores` contains test-level scores for each subject</li>
+<li>We will sort this dataset by subject and then use retained variables inside BY group processing examples</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="16">
+data scores;
+    infile cards truncover;
+    input usubjid $ item score;
+cards;
+1001 1 93
+1001 2 80
+1001 3 80
+1002 1 90
+1002 2 95
+1002 3 97
+1003 1 100
+1003 3 98
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data scores;
+infile cards truncover;
+input usubjid $ item score;
+cards;
+ 
+NOTE: The data set WORK.SCORES has 8 observations and 3 variables.
+NOTE: Compressing data set WORK.SCORES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Each subject has one or more rows in the input dataset</li>
+<li>This structure is ideal for demonstrating retained counters and running statistics by subject</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L150_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Find the total number of records for each student
+</h2>
+ 
+<ul>
+<li>We sort by `usubjid` so BY group processing works correctly</li>
+<li>The retained variable `ntests` keeps its value across rows of the same subject</li>
+<li>When a new subject begins, `first.usubjid` resets the counter</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=scores;
+    by usubjid;
+run;
+ 
+data output;
+    set scores;
+    by usubjid;
+    retain ntests;
+    if first.usubjid then ntests=1;
+    else ntests=ntests+1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+proc sort data=scores;
+by usubjid;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES has 8 observations and 3 variables.
+NOTE: Compressing data set WORK.SCORES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data output;
+set scores;
+by usubjid;
+retain ntests;
+if first.usubjid then ntests=1;
+else ntests=ntests+1;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 8 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`ntests` shows a running count of rows within each subject</li>
+<li>Inspect the last row of each subject to identify the total number of records for that subject</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L150_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Find the running total score for each subject
+</h2>
+ 
+<ul>
+<li>The retained variable `total` carries forward the accumulated score value within each subject</li>
+<li>At the start of a new subject, the total is reset to the first score of that subject</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=scores;
+    by usubjid;
+run;
+ 
+data output;
+    set scores;
+    by usubjid;
+    retain total;
+    if first.usubjid then total=score;
+    else total=total+score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+proc sort data=scores;
+by usubjid;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data output;
+set scores;
+by usubjid;
+retain total;
+if first.usubjid then total=score;
+else total=total+score;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 8 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The variable `total` is a running cumulative score within each subject</li>
+<li>Check the last row for each subject to see the final total score</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L150_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Find the highest score for each subject
+</h2>
+ 
+<ul>
+<li>The retained variable `max_score` stores the highest value seen so far within the subject</li>
+<li>It is initialised on the first row of each subject, and updated only when a higher score is found</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=scores;
+    by usubjid;
+run;
+ 
+data output;
+    set scores;
+    by usubjid;
+    retain max_score;
+    if first.usubjid then max_score=score;
+    else if score gt max_score then max_score=score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+proc sort data=scores;
+by usubjid;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data output;
+set scores;
+by usubjid;
+retain max_score;
+if first.usubjid then max_score=score;
+else if score gt max_score then max_score=score;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 8 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`max_score` tracks the running maximum within each subject</li>
+<li>Look at the final row of each subject to confirm the highest score across that subject's tests</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L150_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Find the lowest score for each subject
+</h2>
+ 
+<ul>
+<li>The retained variable `min_score` works the same way, but keeps the smallest score seen so far</li>
+<li>This pattern is common for deriving minimum and maximum visit values within groups</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=scores;
+    by usubjid;
+run;
+ 
+data output;
+    set scores;
+    by usubjid;
+    retain min_score;
+    if first.usubjid then min_score=score;
+    else if score lt min_score then min_score=score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+proc sort data=scores;
+by usubjid;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data output;
+set scores;
+by usubjid;
+retain min_score;
+if first.usubjid then min_score=score;
+else if score lt min_score then min_score=score;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 8 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`min_score` tracks the running minimum within each subject</li>
+<li>Verify the final value on the last row of each subject against the subject's individual scores</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L150_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`retain` preserves a variable's value across DATA step iterations</li>
+<li>`retain` is often used together with `first.` and `last.` BY group indicators</li>
+<li>Retained variables are useful for counters, running totals, running maximums, and running minimums</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

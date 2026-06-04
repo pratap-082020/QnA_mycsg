@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_COMMONLOGICS_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is this lesson about
+</h1>
+ 
+<ul>
+<li>This lesson collects a few practical programming patterns that appear frequently in clinical SAS work</li>
+<li>The focus is not on one procedure but on reusable logic patterns, such as creating shell rows, identifying complete pre- and post-treatment records, and comparing current rows with previous rows</li>
+<li>These examples are intentionally small so the programming idea is easy to isolate and understand</li>
+</ul>
+ 
+<h1>
+Create dummy rows for shells or layout templates
+</h1>
+ 
+<p>
+In reporting work we often need rows to exist even before real result values are joined in. The following examples show different ways to create those shell rows.
+</p>
+ 
+<h2>
+Using explicit output statements
+</h2>
+ 
+<ul>
+<li>This is the most direct method when only a few rows are needed</li>
+<li>Each `output` writes one row with the manually assigned values</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data explicit01;
+   length label $100;
+   group=1; order=1; label="Male"; output;
+   group=1; order=2; label="Female"; output;
+   group=2; order=1; label="Hispanic or Latino"; output;
+   group=2; order=2; label="Not Hispanic or Latino"; output;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data explicit01;
+length label $100;
+group=1; order=1; label="Male"; output;
+group=1; order=2; label="Female"; output;
+group=2; order=1; label="Hispanic or Latino"; output;
+group=2; order=2; label="Not Hispanic or Latino"; output;
+run;
+ 
+NOTE: The data set WORK.EXPLICIT01 has 4 observations and 3 variables.
+NOTE: Compressing data set WORK.EXPLICIT01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The dataset contains one observation for each shell row we coded explicitly</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Using DATALINES
+</h2>
+ 
+<ul>
+<li>This is convenient when the shell values are easier to list, like a small text table</li>
+<li>The delimiter separates the values for each variable</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data datalines01;
+   infile datalines truncover dlm='|';
+   input group order label $100.;
+datalines;
+1|1|Male
+1|2|Female
+2|1|Hispanic or Latino
+2|2|Not Hispanic or Latino
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data datalines01;
+infile datalines truncover dlm='|';
+input group order label $100.;
+datalines;
+ 
+NOTE: The data set WORK.DATALINES01 has 4 observations and 3 variables.
+NOTE: Compressing data set WORK.DATALINES01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Using PROC FORMAT with a DO loop
+</h2>
+ 
+<ul>
+<li>This method is useful when coded values already map naturally to display text</li>
+<li>The format stores the mapping, and the loop generates the possible coded values</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="18">
+proc format;
+   value createdummy
+      101="Male"
+      102="Female"
+      201="Hispanic or Latino"
+      202="Not Hispanic or Latino"
+      other=" ";
+run;
+ 
+data format01;
+   length label $100;
+   do i=100 to 400;
+      label=put(i,createdummy.);
+      if label ne "" then output;
+   end;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="34">
+proc format;
+value createdummy
+101="Male"
+102="Female"
+201="Hispanic or Latino"
+202="Not Hispanic or Latino"
+other=" ";
+NOTE: Format CREATEDUMMY has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data format01;
+length label $100;
+do i=100 to 400;
+label=put(i,createdummy.);
+if label ne "" then output;
+end;
+run;
+ 
+NOTE: The data set WORK.FORMAT01 has 4 observations and 2 variables.
+NOTE: Compressing data set WORK.FORMAT01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Using PROC SQL
+</h2>
+ 
+<ul>
+<li>SQL can also create small shell datasets when the values are known in advance</li>
+<li>This style is useful when the surrounding workflow is already SQL-based</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc sql;
+   create table sqldummy01
+      (group num, order num, label char(100));
+   insert into sqldummy01
+      values(1,1,'Male')
+      values(1,2,'Female')
+      values(2,1,'Hispanic or Latino')
+      values(2,2,'Not Hispanic or Latino');
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+proc sql;
+create table sqldummy01
+(group num, order num, label char(100));
+NOTE: Table WORK.SQLDUMMY01 created, with 0 rows and 3 columns.
+insert into sqldummy01
+values(1,1,'Male')
+values(1,2,'Female')
+values(2,1,'Hispanic or Latino')
+values(2,2,'Not Hispanic or Latino');
+NOTE: 4 rows were inserted into WORK.SQLDUMMY01.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Using DO loops to generate patterned rows
+</h2>
+ 
+<ul>
+<li>Loops are especially useful when shell rows follow a repeated structure</li>
+<li>This is common for visits, treatment groups, and parameter-level shells</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="25">
+data loop01;
+   do avisitn=1,2,4,6;
+      do treatment=1 to 3;
+         output;
+      end;
+   end;
+run;
+ 
+data loop02;
+   do treatment="A","B";
+      do order=1 to 3;
+         output;
+      end;
+   end;
+run;
+ 
+data loop03;
+   do visit="WEEK 1","WEEK 2","WEEK 3";
+      do vstestcd="WEIGHT","HEIGHT","BMI";
+         output;
+      end;
+   end;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="50">
+data loop01;
+do avisitn=1,2,4,6;
+do treatment=1 to 3;
+output;
+end;
+end;
+run;
+ 
+NOTE: The data set WORK.LOOP01 has 12 observations and 2 variables.
+NOTE: Compressing data set WORK.LOOP01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data loop02;
+do treatment="A","B";
+do order=1 to 3;
+output;
+end;
+end;
+run;
+ 
+NOTE: Compression was disabled for data set WORK.LOOP02 because compression overhead would increase the size of the data set.
+NOTE: The data set WORK.LOOP02 has 6 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data loop03;
+do visit="WEEK 1","WEEK 2","WEEK 3";
+do vstestcd="WEIGHT","HEIGHT","BMI";
+output;
+end;
+end;
+run;
+ 
+NOTE: Compression was disabled for data set WORK.LOOP03 because compression overhead would increase the size of the data set.
+NOTE: The data set WORK.LOOP03 has 9 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect the three loop-based datasets and confirm how nested loops generate all combinations of the listed values</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Check whether a subject has both pretreatment and post-treatment non-missing results
+</h1>
+ 
+<h2>
+Create example data
+</h2>
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data adlb;
+   infile cards truncover;
+   input usubjid paramcd $ ady aval;
+cards;
+1001 GLUC -4 123
+1001 GLUC 1 120
+1001 GLUC 8 132
+1002 GLUC 2 154
+1002 GLUC 8 152
+1003 GLUC -5 180
+1003 GLUC -1 184
+1004 GLUC 1 101
+1004 GLUC 8 .
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data adlb;
+infile cards truncover;
+input usubjid paramcd $ ady aval;
+cards;
+ 
+NOTE: The data set WORK.ADLB has 9 observations and 4 variables.
+NOTE: Compressing data set WORK.ADLB increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The objective is to identify subject-parameter combinations that have at least one non-missing pretreatment result and at least one non-missing post-treatment result</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+Using PROC SQL with separate pre- and post-tables followed by an INNER JOIN
+</h2>
+ 
+<ul>
+<li>First create one dataset for non-missing pretreatment records and another for non-missing post-treatment records</li>
+<li>Then join them on subject and parameter</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="19">
+proc sql;
+   create table pre_trt01 as
+      select distinct usubjid,paramcd
+      from adlb
+      where ady le 1 and aval ne .;
+ 
+   create table post_trt01 as
+      select distinct usubjid,paramcd
+      from adlb
+      where ady gt 1 and aval ne .;
+ 
+   create table pre_n_post01 as
+      select a.usubjid,a.paramcd
+      from pre_trt01 as a
+      inner join post_trt01 as b
+      on a.usubjid=b.usubjid and a.paramcd=b.paramcd;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="36">
+proc sql;
+create table pre_trt01 as
+select distinct usubjid,paramcd
+from adlb
+where ady le 1 and aval ne .;
+NOTE: Compressing data set WORK.PRE_TRT01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.PRE_TRT01 created, with 3 rows and 2 columns.
+ 
+ 
+create table post_trt01 as
+select distinct usubjid,paramcd
+from adlb
+where ady gt 1 and aval ne .;
+NOTE: Compressing data set WORK.POST_TRT01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.POST_TRT01 created, with 2 rows and 2 columns.
+ 
+ 
+create table pre_n_post01 as
+select a.usubjid,a.paramcd
+from pre_trt01 as a
+inner join post_trt01 as b
+on a.usubjid=b.usubjid and a.paramcd=b.paramcd;
+NOTE: Compressing data set WORK.PRE_N_POST01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.PRE_N_POST01 created, with 1 rows and 2 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+Using PROC SQL with INTERSECT
+</h2>
+ 
+<ul>
+<li>This approach is shorter when the two sets have the same columns and only common rows are needed</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="14">
+proc sql;
+   create table pre_n_post02 as
+      select distinct usubjid,paramcd
+      from adlb
+      where ady le 1 and aval ne .
+ 
+      intersect corr
+ 
+      select distinct usubjid,paramcd
+      from adlb
+      where ady gt 1 and aval ne .;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="23">
+proc sql;
+create table pre_n_post02 as
+select distinct usubjid,paramcd
+from adlb
+where ady le 1 and aval ne .
+ 
+intersect corr
+ 
+select distinct usubjid,paramcd
+from adlb
+where ady gt 1 and aval ne .;
+NOTE: Compressing data set WORK.PRE_N_POST02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.PRE_N_POST02 created, with 1 rows and 2 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+Using PROC SQL with a subquery
+</h2>
+ 
+<ul>
+<li>The subquery method filters pretreatment rows to only those subject-parameter combinations that also exist post-treatment</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="12">
+proc sql;
+   create table pre_n_post03 as
+      select distinct usubjid,paramcd
+      from adlb
+      where cats(usubjid,paramcd) in
+         (select distinct cats(usubjid,paramcd)
+          from adlb
+          where ady gt 1 and aval ne .)
+      and ady le 1 and aval ne .;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="21">
+proc sql;
+create table pre_n_post03 as
+select distinct usubjid,paramcd
+from adlb
+where cats(usubjid,paramcd) in
+(select distinct cats(usubjid,paramcd)
+from adlb
+where ady gt 1 and aval ne .)
+and ady le 1 and aval ne .;
+NOTE: Compressing data set WORK.PRE_N_POST03 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.PRE_N_POST03 created, with 1 rows and 2 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h2>
+Select all records for subject-parameter combinations that satisfy the rule
+</h2>
+ 
+<ul>
+<li>Once the qualifying subject-parameter combinations are identified, we can join them back to the original dataset to keep all related rows</li>
+</ul>
+ 
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="9">
+proc sql;
+   create table all01 as
+      select a.*
+      from adlb as a
+      inner join pre_n_post03 as b
+      on a.usubjid=b.usubjid and a.paramcd=b.paramcd;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+proc sql;
+create table all01 as
+select a.*
+from adlb as a
+inner join pre_n_post03 as b
+on a.usubjid=b.usubjid and a.paramcd=b.paramcd;
+NOTE: Compressing data set WORK.ALL01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: Table WORK.ALL01 created, with 3 rows and 4 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.07 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal8">View Data</button><div class="modal fade" id="dataModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_08.html"></iframe></div></div></div></div>
+ 
+<h2>
+Using PROC SORT NODUPKEY and MERGE
+</h2>
+ 
+<ul>
+<li>This approach uses standard DATA step-style processing instead of SQL</li>
+<li>It is often useful when the surrounding program is already sort- and merge-based</li>
+</ul>
+ 
+<textarea id="codeBlock11" class="codetextarea" spellcheck="false" cols="100" rows="23">
+proc sort data=adlb out=pre_trt02(keep=usubjid paramcd) nodupkey;
+   by usubjid paramcd;
+   where aval ne . and ady le 1;
+run;
+ 
+proc sort data=adlb out=post_trt02(keep=usubjid paramcd) nodupkey;
+   by usubjid paramcd;
+   where aval ne . and ady gt 1;
+run;
+ 
+data pre_n_post04;
+   merge pre_trt02(in=a) post_trt02(in=b);
+   by usubjid paramcd;
+   if a and b;
+run;
+ 
+data all02;
+   merge adlb(in=a) pre_n_post04(in=b);
+   by usubjid paramcd;
+   if a and b;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock11" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal11">View Log</button><div class="modal fade" id="logModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="69">
+proc sort data=adlb out=pre_trt02(keep=usubjid paramcd) nodupkey;
+by usubjid paramcd;
+where aval ne . and ady le 1;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.ADLB.
+WHERE (aval not = .) and (ady<=1);
+NOTE: 2 observations with duplicate key values were deleted.
+NOTE: The data set WORK.PRE_TRT02 has 3 observations and 2 variables.
+NOTE: Compressing data set WORK.PRE_TRT02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.09 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=adlb out=post_trt02(keep=usubjid paramcd) nodupkey;
+by usubjid paramcd;
+where aval ne . and ady gt 1;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.ADLB.
+WHERE (aval not = .) and (ady>1);
+NOTE: 1 observations with duplicate key values were deleted.
+NOTE: The data set WORK.POST_TRT02 has 2 observations and 2 variables.
+NOTE: Compressing data set WORK.POST_TRT02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.17 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data pre_n_post04;
+merge pre_trt02(in=a) post_trt02(in=b);
+by usubjid paramcd;
+if a and b;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.PRE_TRT02.
+NOTE: There were 2 observations read from the data set WORK.POST_TRT02.
+NOTE: The data set WORK.PRE_N_POST04 has 1 observations and 2 variables.
+NOTE: Compressing data set WORK.PRE_N_POST04 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.03 seconds
+ 
+ 
+ 
+data all02;
+merge adlb(in=a) pre_n_post04(in=b);
+by usubjid paramcd;
+if a and b;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.ADLB.
+NOTE: There were 1 observations read from the data set WORK.PRE_N_POST04.
+NOTE: The data set WORK.ALL02 has 3 observations and 4 variables.
+NOTE: Compressing data set WORK.ALL02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal9">View Data</button><div class="modal fade" id="dataModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_09.html"></iframe></div></div></div></div>
+ 
+<h1>
+Carry a previous row value forward for comparison with the current row
+</h1>
+ 
+<h2>
+Check whether the current start date equals the previous end date
+</h2>
+ 
+<h3>
+Create sample data
+</h3>
+ 
+<textarea id="codeBlock12" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data se;
+   infile cards truncover;
+   length sestdtc seendtc $10;
+   input usubjid taetord etcd $ sestdtc $ seendtc $;
+cards;
+1001 1 SCR 2010-01-07 2010-01-10
+1001 2 PBO 2010-01-10 2010-01-30
+1001 3 FU  2010-02-01 2010-02-15
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock12" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal12">View Log</button><div class="modal fade" id="logModal12" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data se;
+infile cards truncover;
+length sestdtc seendtc $10;
+input usubjid taetord etcd $ sestdtc $ seendtc $;
+cards;
+ 
+NOTE: The data set WORK.SE has 3 observations and 5 variables.
+NOTE: Compressing data set WORK.SE increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h3>
+Using the LAG function
+</h3>
+ 
+<ul>
+<li>`lag` can bring the value from the previous execution of the function call</li>
+<li>It should be used carefully because it is queue-based, not simply row-based</li>
+<li>Reset logic is still needed at BY group boundaries</li>
+</ul>
+ 
+<textarea id="codeBlock13" class="codetextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=se out=se01;
+   by usubjid taetord;
+run;
+ 
+data se02;
+   set se01;
+   by usubjid taetord;
+   length prev_end $10;
+   if first.usubjid then call missing(prev_end);
+   prev_end=lag(seendtc);
+   if not first.usubjid and prev_end ne sestdtc then flag="Y";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock13" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal13">View Log</button><div class="modal fade" id="logModal13" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="34">
+proc sort data=se out=se01;
+by usubjid taetord;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.SE.
+NOTE: The data set WORK.SE01 has 3 observations and 5 variables.
+NOTE: Compressing data set WORK.SE01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data se02;
+set se01;
+by usubjid taetord;
+length prev_end $10;
+if first.usubjid then call missing(prev_end);
+prev_end=lag(seendtc);
+if not first.usubjid and prev_end ne sestdtc then flag="Y";
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.SE01.
+NOTE: The data set WORK.SE02 has 3 observations and 7 variables.
+NOTE: Compressing data set WORK.SE02 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal10">View Data</button><div class="modal fade" id="dataModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_010.html"></iframe></div></div></div></div>
+ 
+<h3>
+Using RETAIN instead of LAG
+</h3>
+ 
+<ul>
+<li>The retained variable method is often easier to reason about in clinical programming</li>
+<li>After checking the current row, the previous end date is updated for the next row</li>
+</ul>
+ 
+<textarea id="codeBlock14" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data se03;
+   set se01;
+   by usubjid taetord;
+   length prev_end $10;
+   retain prev_end;
+   if first.usubjid then call missing(prev_end);
+   if not first.usubjid and sestdtc ne prev_end then flag="Y";
+   output;
+   prev_end=seendtc;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock14" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal14">View Log</button><div class="modal fade" id="logModal14" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="22">
+data se03;
+set se01;
+by usubjid taetord;
+length prev_end $10;
+retain prev_end;
+if first.usubjid then call missing(prev_end);
+if not first.usubjid and sestdtc ne prev_end then flag="Y";
+output;
+prev_end=seendtc;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.SE01.
+NOTE: The data set WORK.SE03 has 3 observations and 7 variables.
+NOTE: Compressing data set WORK.SE03 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare `se02` and `se03` and decide which logic is easier for you to maintain and explain</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal11">View Data</button><div class="modal fade" id="dataModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_COMMONLOGICS_L101_filterable_data_011.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Common logic patterns often reappear across many projects, so it is worth learning them as reusable templates</li>
+<li>There are usually multiple ways to solve the same requirement in SAS, such as SQL versus sort and merge</li>
+<li>Choose the approach that is clearest, safest, and easiest to validate in your programming context</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

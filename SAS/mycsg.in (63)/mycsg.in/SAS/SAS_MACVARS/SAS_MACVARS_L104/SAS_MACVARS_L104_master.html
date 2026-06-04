@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MACVARS_L104
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Macro Variables - Part 04: Double Ampersand Indirect Referencing and %SYSFUNC
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Parts 01 to 03 covered %LET, CALL SYMPUTX, %GLOBAL/%LOCAL scope, and text manipulation functions %LENGTH, %SCAN, %INDEX.</li>
+<li>This lesson covers two advanced macro variable techniques: indirect referencing using double ampersands (&&) to construct variable names dynamically, and %SYSFUNC which bridges the gap between macro code and DATA step functions.</li>
+<li>Both techniques are essential for writing flexible, data-driven macro programs that adapt to varying inputs without hardcoded lists.</li>
+</ul>
+ 
+<h2>
+How SAS Resolves Ampersands
+</h2>
+ 
+<ul>
+<li>A single ampersand (&name) tells SAS to resolve the macro variable named name immediately.</li>
+<li>A double ampersand (&&name) tells SAS to resolve the two ampersands first into a single ampersand, then resolve the resulting &name in a second pass.</li>
+<li>This two-pass resolution allows you to build a macro variable name dynamically using another macro variable's value.</li>
+<li>The most common use of this pattern is &&var&i — where i is a loop counter. On each iteration, &i resolves to 1, 2, 3, etc., producing &var1, &var2, &var3, each of which is then resolved to its value.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="21">
+*------------------------------------------------------------------------------;
+* Define a set of indexed macro variables ;
+*------------------------------------------------------------------------------;
+%let var1 = USUBJID;
+%let var2 = TRTA;
+%let var3 = AVAL;
+%let var4 = CHG;
+%let varcount = 4;
+ 
+*------------------------------------------------------------------------------;
+* Resolve each indexed variable using &&var&i ;
+*------------------------------------------------------------------------------;
+%macro print_varlist;
+    %do i = 1 %to &varcount.;
+        %put Variable &i. is: &&var&i.;
+    %end;
+%mend print_varlist;
+ 
+%print_varlist;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+*------------------------------------------------------------------------------;
+* Define a set of indexed macro variables ;
+*------------------------------------------------------------------------------;
+%let var1 = USUBJID;
+%let var2 = TRTA;
+%let var3 = AVAL;
+%let var4 = CHG;
+%let varcount = 4;
+ 
+*------------------------------------------------------------------------------;
+* Resolve each indexed variable using &&var&i ;
+*------------------------------------------------------------------------------;
+%macro print_varlist;
+%do i = 1 %to &varcount.;
+%put Variable &i. is: &&var&i.;
+%end;
+%mend print_varlist;
+ 
+%print_varlist;
+Variable 1 is: USUBJID
+Variable 2 is: TRTA
+Variable 3 is: AVAL
+Variable 4 is: CHG
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>When i = 1: &&var&i resolves in two passes. Pass 1: && becomes & and &i becomes 1, giving &var1. Pass 2: &var1 resolves to USUBJID.</li>
+<li>When i = 2: &&var&i becomes &var2, which resolves to TRTA. And so on.</li>
+<li>Check the SAS log after running — you should see four lines, one per variable, showing the resolved name.</li>
+<li>This technique allows a macro to iterate through a dynamically defined list of variables without knowing the list contents at write time.</li>
+</ul>
+ 
+<h2>
+Building Dataset Names Dynamically with Indirect Referencing
+</h2>
+ 
+<ul>
+<li>The same double-ampersand pattern can be used to construct dataset names, libnames, or any string that should vary across iterations.</li>
+<li>This is commonly used in QC macros, reporting macros, or dataset-processing loops where the number of inputs varies by study.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="30">
+*------------------------------------------------------------------------------;
+* Create a series of small datasets to process ;
+*------------------------------------------------------------------------------;
+%let ds1 = adsl;
+%let ds2 = adlb;
+%let ds3 = adae;
+%let dscount = 3;
+ 
+data work.adsl; subject="001"; output; subject="002"; output; run;
+data work.adlb; subject="001"; param="ALT"; aval=12; output; run;
+data work.adae; subject="001"; aeterm="Nausea"; output; run;
+ 
+*------------------------------------------------------------------------------;
+* Print observation counts for each dataset ;
+*------------------------------------------------------------------------------;
+%macro count_all;
+    %do i = 1 %to &dscount.;
+        %let dsname = &&ds&i.;
+        %put NOTE: Processing dataset: work.&dsname.;
+        proc sql noprint;
+            select count(*) into :nobs trimmed
+            from work.&dsname.;
+        quit;
+        %put NOTE: work.&dsname. has &nobs. observation(s);
+    %end;
+%mend count_all;
+ 
+%count_all;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="72">
+*------------------------------------------------------------------------------;
+* Create a series of small datasets to process ;
+*------------------------------------------------------------------------------;
+%let ds1 = adsl;
+%let ds2 = adlb;
+%let ds3 = adae;
+%let dscount = 3;
+ 
+data work.adsl; subject="001"; output; subject="002"; output; run;
+ 
+NOTE: The data set WORK.ADSL has 2 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+data work.adlb; subject="001"; param="ALT"; aval=12; output; run;
+ 
+NOTE: The data set WORK.ADLB has 1 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+data work.adae; subject="001"; aeterm="Nausea"; output; run;
+ 
+NOTE: The data set WORK.ADAE has 1 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Print observation counts for each dataset ;
+*------------------------------------------------------------------------------;
+%macro count_all;
+%do i = 1 %to &dscount.;
+%let dsname = &&ds&i.;
+%put NOTE: Processing dataset: work.&dsname.;
+proc sql noprint;
+select count(*) into :nobs trimmed
+from work.&dsname.;
+quit;
+%put NOTE: work.&dsname. has &nobs. observation(s);
+%end;
+%mend count_all;
+ 
+%count_all;
+NOTE: Processing dataset: work.adsl
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+NOTE: work.adsl has 2 observation(s)
+NOTE: Processing dataset: work.adlb
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+NOTE: work.adlb has 1 observation(s)
+NOTE: Processing dataset: work.adae
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+NOTE: work.adae has 1 observation(s)
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>&&ds&i resolves to the value of ds1, ds2, or ds3 on each iteration, giving the dataset name (adsl, adlb, adae).</li>
+<li>PROC SQL with SELECT ... INTO :nobs captures the observation count into the macro variable nobs for each dataset in turn.</li>
+<li>The PUT statements write the dataset name and count to the log — verify that all three datasets are counted correctly.</li>
+<li>To add more datasets to process, simply define ds4, ds5, etc., and update dscount — no other code changes are needed.</li>
+</ul>
+ 
+<h2>
+%SYSFUNC - Calling DATA Step Functions in Macro Context
+</h2>
+ 
+<ul>
+<li>Macro code executes before the DATA step compiles. This means you cannot directly call DATA step functions (like TODAY(), STRIP(), CATS(), or EXIST()) inside macro code — they are not available at macro resolution time.</li>
+<li>%SYSFUNC(function(arguments)) bridges this gap by executing a DATA step function during macro compilation and returning the result as a text string.</li>
+<li>%SYSFUNC is used in macro %IF conditions, %LET assignments, and anywhere you need a DATA step function result available at macro execution time.</li>
+<li>An optional second argument to %SYSFUNC specifies a SAS format to apply to the result: %SYSFUNC(today(), date9.) returns the current date formatted as a date string.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="28">
+*------------------------------------------------------------------------------;
+* Get today's date as a formatted string for use in titles or filenames ;
+*------------------------------------------------------------------------------;
+%let today_str = %sysfunc(today(), date9.);
+%put NOTE: Today is &today_str.;
+ 
+*------------------------------------------------------------------------------;
+* Get the current year as a number ;
+*------------------------------------------------------------------------------;
+%let cur_year = %sysfunc(year(%sysfunc(today())));
+%put NOTE: Current year is &cur_year.;
+ 
+*------------------------------------------------------------------------------;
+* Check whether a dataset exists before processing ;
+*------------------------------------------------------------------------------;
+%macro safe_print(ds=);
+    %if %sysfunc(exist(&ds.)) %then %do;
+        proc print data=&ds. (obs=5); run;
+    %end;
+    %else %do;
+        %put WARNING: Dataset &ds. does not exist - skipping;
+    %end;
+%mend safe_print;
+ 
+%safe_print(ds=work.adsl);
+%safe_print(ds=work.nonexistent);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="38">
+*------------------------------------------------------------------------------;
+* Get today's date as a formatted string for use in titles or filenames ;
+*------------------------------------------------------------------------------;
+%let today_str = %sysfunc(today(), date9.);
+%put NOTE: Today is &today_str.;
+NOTE: Today is 02FEB2016
+ 
+*------------------------------------------------------------------------------;
+* Get the current year as a number ;
+*------------------------------------------------------------------------------;
+%let cur_year = %sysfunc(year(%sysfunc(today())));
+%put NOTE: Current year is &cur_year.;
+NOTE: Current year is 2016
+ 
+*------------------------------------------------------------------------------;
+* Check whether a dataset exists before processing ;
+*------------------------------------------------------------------------------;
+%macro safe_print(ds=);
+%if %sysfunc(exist(&ds.)) %then %do;
+proc print data=&ds. (obs=5); run;
+%end;
+%else %do;
+%put WARNING: Dataset &ds. does not exist - skipping;
+%end;
+%mend safe_print;
+ 
+%safe_print(ds=work.adsl);
+ 
+NOTE: There were 2 observations read from the data set WORK.ADSL.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+%safe_print(ds=work.nonexistent);
+WARNING: Dataset work.nonexistent does not exist - skipping
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>%SYSFUNC(today(), date9.) calls the DATA step TODAY() function and formats the result with DATE9 — producing a string like 05APR2026.</li>
+<li>Nested %SYSFUNC calls are allowed: %SYSFUNC(year(%SYSFUNC(today()))) extracts the year from the result of today().</li>
+<li>%SYSFUNC(exist(ds)) returns 1 if the dataset exists, and 0 if it does not. This is one of the most commonly used %SYSFUNC patterns for defensive macro programming.</li>
+<li>Check the SAS log for the NOTE lines showing today's date and year. Verify that the %safe_print macro prints the first 5 rows of WORK.ADSL and writes a WARNING for the nonexistent dataset.</li>
+</ul>
+ 
+<h2>
+%SYSFUNC with String Functions
+</h2>
+ 
+<ul>
+<li>%SYSFUNC also gives access to character DATA step functions like STRIP, COMPRESS, UPCASE, LOWCASE, SUBSTR, and CATS — useful when you need string manipulation beyond what %SCAN and %INDEX provide.</li>
+<li>Note that character function arguments in %SYSFUNC do not use quotes around string literals — the macro preprocessor handles the text before %SYSFUNC sees it.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="15">
+%let raw_name = %str(  Lab Results  );
+%let clean_name = %sysfunc(strip(&raw_name.));
+%let upper_name = %sysfunc(upcase(&clean_name.));
+%put NOTE: Cleaned name: [&clean_name.];
+%put NOTE: Upper name:   [&upper_name.];
+ 
+*------------------------------------------------------------------------------;
+* Build a dynamic dataset name from parts ;
+*------------------------------------------------------------------------------;
+%let prefix = work;
+%let suffix = adlb;
+%let full_name = %sysfunc(cats(&prefix., ., &suffix.));
+%put NOTE: Full dataset name: &full_name.;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+%let raw_name = %str(  Lab Results  );
+%let clean_name = %sysfunc(strip(&raw_name.));
+%let upper_name = %sysfunc(upcase(&clean_name.));
+%put NOTE: Cleaned name: [&clean_name.];
+NOTE: Cleaned name: [Lab Results]
+%put NOTE: Upper name:   [&upper_name.];
+NOTE: Upper name:   [LAB RESULTS]
+ 
+*------------------------------------------------------------------------------;
+* Build a dynamic dataset name from parts ;
+*------------------------------------------------------------------------------;
+%let prefix = work;
+%let suffix = adlb;
+%let full_name = %sysfunc(cats(&prefix., ., &suffix.));
+%put NOTE: Full dataset name: &full_name.;
+NOTE: Full dataset name: work.adlb
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>STRIP removes leading and trailing spaces — useful when macro variable values may have been generated with surrounding whitespace.</li>
+<li>UPCASE converts to uppercase — useful for standardising macro variable values before using them in comparisons or dataset names.</li>
+<li>CATS concatenates values without adding any separator, using the DATA step CATS function via %SYSFUNC — a reliable way to build compound names.</li>
+<li>Check the log output to confirm clean_name has no surrounding spaces, and upper_name is fully uppercase.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>Double ampersand (&&) triggers a two-pass resolution: the first pass reduces && to & and resolves any trailing macro variables; the second pass resolves the resulting macro variable reference.</li>
+<li>The &&var&i pattern is the standard way to iterate through a list of indexed macro variables in a %DO loop — each iteration resolves a different variable name.</li>
+<li>%SYSFUNC(function(args), format) executes a DATA step function during macro resolution and returns the formatted result as a text string.</li>
+<li>%SYSFUNC(exist(ds)) is the standard guard for checking dataset existence before processing — returns 1 if the dataset exists, 0 otherwise.</li>
+<li>%SYSFUNC also provides access to character functions like STRIP, UPCASE, and CATS for string manipulation that goes beyond the native macro string functions.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MACROS_L103
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Macro quoting in SAS - %STR, %NRSTR, and %QUOTE
+</h1>
+ 
+<h2>
+Why macro quoting is needed
+</h2>
+ 
+<ul>
+<li>The SAS macro processor scans text before it reaches the SAS compiler and interprets certain characters as macro triggers</li>
+<li>Characters such as semicolons, commas, parentheses, and the ampersand and percent signs all have special meaning to the macro processor</li>
+<li>When these characters appear inside a macro call or a `%let` statement, SAS may misinterpret them as the end of a parameter, the start of a macro call, or a macro variable reference</li>
+<li>Macro quoting functions tell SAS to treat these characters as plain text and not as triggers</li>
+<li>The three most commonly used quoting functions are `%str`, `%nrstr`, and `%quote`</li>
+</ul>
+ 
+<h2>
+%STR - quote a text string at compile time
+</h2>
+ 
+<ul>
+<li>`%str` is applied at macro compile time, before the macro is called</li>
+<li>It prevents the macro processor from interpreting special characters such as semicolons, commas, and parentheses as syntax</li>
+<li>`%str` does not mask ampersands or percent signs — those are still resolved normally</li>
+<li>The most common use is to include a semicolon or comma inside a `%let` value without ending the statement prematurely</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="5">
+%*  Without %str a semicolon inside %let would end the statement early  ;
+%let where_clause=%str(year=2023 and department='Sales');
+%put NOTE: where_clause resolves to: &where_clause;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="6">
+%*  Without %str a semicolon inside %let would end the statement early  ;
+%let where_clause=%str(year=2023 and department='Sales');
+%put NOTE: where_clause resolves to: &where_clause;
+NOTE: where_clause resolves to: year=2023 and department='Sales'
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `%put` should print: `where_clause resolves to: year=2023 and department='Sales'`</li>
+<li>Without `%str`, the single quotes around `Sales` would cause a macro error because unmatched quotes confuse the macro tokeniser</li>
+<li>The value stored in `where_clause` can now be used safely inside a WHERE statement</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data sales_2023;
+    set all_sales;
+    where &where_clause;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data sales_2023;
+set all_sales;
+ERROR: File WORK.ALL_SALES.DATA does not exist.
+where &where_clause;
+run;
+ 
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.SALES_2023 may be incomplete.  When this step was stopped there were 0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>SAS resolves `&where_clause` to the stored text, and the WHERE clause is syntactically correct</li>
+<li>Confirm that `sales_2023` contains only the 2023 Sales row</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MACROS_L103_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Use %STR to pass a comma-separated list as a single parameter
+</h2>
+ 
+<ul>
+<li>Commas inside macro call arguments are treated as parameter separators by default</li>
+<li>Wrapping the value in `%str` prevents the comma from being interpreted as a separator</li>
+<li>This allows you to pass a list of values as a single parameter</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="8">
+%macro show_vars(varlist);
+    %put NOTE: Variable list is: &varlist;
+%mend show_vars;
+ 
+%*  Without %str the comma would split this into two parameters  ;
+%show_vars(%str(year, amount, department));
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="9">
+%macro show_vars(varlist);
+%put NOTE: Variable list is: &varlist;
+%mend show_vars;
+ 
+%*  Without %str the comma would split this into two parameters  ;
+%show_vars(%str(year, amount, department));
+NOTE: Variable list is: year, amount, department
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The log should show the full three-variable list as a single value</li>
+<li>If you called `%show_vars(year, amount, department)` without `%str`, SAS would raise an error because the macro only has one parameter</li>
+</ul>
+ 
+<h2>
+%NRSTR - quote text including ampersands and percent signs
+</h2>
+ 
+<ul>
+<li>`%nrstr` works like `%str`, but also masks ampersands and percent signs</li>
+<li>This means macro variable references and macro calls inside `%nrstr` are not resolved — they are kept as literal text</li>
+<li>This is useful when you need to store text that contains an ampersand or a macro call as a plain string rather than resolving it</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="4">
+%let literal_ref=%nrstr(&report_date);
+%put NOTE: Stored value is: &literal_ref;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="5">
+%let literal_ref=%nrstr(&report_date);
+%put NOTE: Stored value is: &literal_ref;
+NOTE: Stored value is: &report_date
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `%put` prints the literal text `&report_date` rather than trying to resolve `report_date` as a macro variable</li>
+<li>Without `%nrstr`, SAS would attempt to resolve `&report_date` and produce a WARNING if that variable does not exist</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="5">
+%*  Practical use: storing a title that contains an ampersand literal  ;
+%let report_title=%nrstr(Study Results - Version 1 & 2);
+%put NOTE: Title is: &report_title;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="6">
+%*  Practical use: storing a title that contains an ampersand literal  ;
+%let report_title=%nrstr(Study Results - Version 1 & 2);
+%put NOTE: Title is: &report_title;
+NOTE: Title is: Study Results - Version 1 & 2
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The ampersand in `Version 1 & 2` is kept as a literal character rather than being interpreted as the start of a macro variable reference</li>
+<li>Use `%nrstr` whenever your stored text must contain a literal ampersand or percent sign</li>
+</ul>
+ 
+<h2>
+%QUOTE - quote a value at macro execution time
+</h2>
+ 
+<ul>
+<li>`%quote` is applied at macro execution time, rather than at compile time</li>
+<li>It is typically used inside a macro definition to quote a parameter value that was passed in at run time</li>
+<li>This is useful when the value passed to a parameter contains special characters that should not be interpreted</li>
+<li>`%quote` does resolve ampersands and percent signs — it only masks punctuation characters like semicolons and commas</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="9">
+%macro check_value(val);
+    %if %quote(&val)=Yes %then %put NOTE: Value is Yes;
+    %else %put NOTE: Value is not Yes;
+%mend check_value;
+ 
+%check_value(val=Yes);
+%check_value(val=No);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+%macro check_value(val);
+%if %quote(&val)=Yes %then %put NOTE: Value is Yes;
+%else %put NOTE: Value is not Yes;
+%mend check_value;
+ 
+%check_value(val=Yes);
+NOTE: Value is Yes
+%check_value(val=No);
+NOTE: Value is not Yes
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`%quote(&val)` ensures the resolved value of `val` is treated as a plain string before comparison</li>
+<li>This pattern is standard practice for `%if` conditions that compare a macro parameter to a literal value</li>
+<li>The log should show `Value is Yes` for the first call, and `Value is not Yes` for the second call</li>
+</ul>
+ 
+<h2>
+%QUOTE with a parameter containing special characters
+</h2>
+ 
+<ul>
+<li>When a macro parameter value contains a comma or parenthesis, `%quote` prevents SAS from misinterpreting them</li>
+<li>In the next example, a parameter contains a parenthesised range, which would normally confuse the macro parser</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="7">
+%macro describe_range(range);
+    %put NOTE: The range described is: %quote(&range);
+%mend describe_range;
+ 
+%describe_range(range=%str(values from 1 to 10 (inclusive)));
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="8">
+%macro describe_range(range);
+%put NOTE: The range described is: %quote(&range);
+%mend describe_range;
+ 
+%describe_range(range=%str(values from 1 to 10 (inclusive)));
+NOTE: The range described is: values from 1 to 10 (inclusive)
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The parentheses in `(inclusive)` are safely masked and do not cause a macro syntax error</li>
+<li>Note that `%str` was used in the macro call to pass the parentheses as part of the argument, and `%quote` inside the macro protects the resolved value further</li>
+</ul>
+ 
+<h2>
+Summary - when to use each quoting function
+</h2>
+ 
+<ul>
+<li>Use `%str` in `%let` statements and macro call arguments when the value contains semicolons, commas, unmatched quotes, or parentheses, but not ampersands or percent signs that should remain as literals</li>
+<li>Use `%nrstr` when the value also contains ampersands or percent signs that must be stored as literal characters rather than resolved</li>
+<li>Use `%quote` inside a macro definition to protect a parameter value at execution time, particularly in `%if` comparisons</li>
+<li>All three functions are transparent at the data level — they affect only how the macro processor tokenises text, not the content of datasets or output</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="13">
+data all_sales;
+    input year amount department $;
+    datalines;
+2022 1200 Marketing
+2022 1500 Sales
+2023 1800 Marketing
+2023 2100 Sales
+2024 2000 Marketing
+2024 2400 Sales
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data all_sales;
+input year amount department $;
+datalines;
+ 
+NOTE: The data set WORK.ALL_SALES has 6 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`%str` quotes special characters at compile time and is the right choice for most `%let` values that contain commas, semicolons, or unmatched quotes</li>
+<li>`%nrstr` additionally masks ampersands and percent signs, so they are not resolved — use it when you need a literal `&` or `%` in a stored string</li>
+<li>`%quote` quotes at execution time and is commonly used inside `%if` conditions to protect resolved parameter values from being misinterpreted</li>
+<li>Macro quoting never changes the actual content of the stored value — it only affects how the macro processor tokenises the text during scanning</li>
+<li>When in doubt, test with `%put` to confirm what value is actually stored in a macro variable</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

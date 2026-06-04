@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCSORT_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of 'duplicate'?
+</h1>
+<ol>
+<li>Exactly look like something else</li>
+<li>Having two corresponding or identical parts</li>
+</ol>
+ 
+<h1>
+When do we call a record a duplicate?
+</h1>
+ 
+<ul>
+<li>True duplicate record: Values of all variables are equal on an observation, is same as one or more other observations</li>
+<li>Duplicate based on the key variable: Values of a variable are equal on an observation when compared to one or more other observations</li>
+<li>Duplicate based on more than one key variable: Values of the key variables are equal on an observation when compared to one or more other observations</li>
+</ul>
+ 
+<ol>
+    Name      Sex   Age    Height    Weight
+<li>Alfred    M     14     69        112.5</li>
+<li>Alfred    M     14     69        112.5</li>
+<li>Carol     F     14     62.8      102.5 </li>
+<li>Carol     F     12     55        84 </li>
+<li>Carol     F     11     51        79 </li>
+<li>Jane      F     12     59.8      84.5</li>
+</ol>
+ 
+<ul>
+<li>In the above example, row 2 is considered a true duplicate as all the variables have same information as row 1</li>
+<li>In the above example, row 4 and row 5 are considered duplicates based on the key variable 'Name' as the value in the Name is 'Carol' is same as that on the row 3</li>
+<li>Duplicates based on key variable depend on the expected structure of the dataset. If we expect a dataset to have only one record with a particular name value but there exists
+more than one record with the same name value, the subsequent records with that name value will be called a duplicate with respect to the variable 'Name'</li>
+<li>If the expected record structure is one record per subject and there exists more than one record per subject in the dataset, we call that there is a duplicate record
+with subject as key variable</li>
+<li>In the above example, if the key variables are Name and Age, only row 2 will be called a duplicate (of row 1) and none of the records with Name value 'Carol' are considered
+duplicate as the values of the second variable(Age) differ on all three records</li>
+<li>In the above example, if the key variables are Name and Sex, row 2 will be considered as a duplicate (of row 1) as on both the records the values on the key variables are same.
+Similiarly, rows 4 and 5 are considered duplicates (of row 3) as the values on the key variables Name and sex are same on all 3 records of Carol</li>
+<li>In the above example, if the key variable is Sex alone, row 2 will be considered a duplicate(row 1) and rows 4,5,6 will be considered as duplicates of row 3</li>
+</ul>
+ 
+ 
+<h1>
+Where do we need to identify the duplicate records (and separate or delete them)?
+</h1>
+ 
+<ul>
+<li>Check if there is more than one blood sample collected on a particular date</li>
+<li>Check if there is more than one instance of a particular adverse event for a subject</li>
+<li>Check if there exists more than one record per subject when only record is expected per subject in a dataset</li>
+<li>Identify the unique values seen for a particular variable in a dataset irrespective of the values present in other variables</li>
+<li>Identify the unique value combinations for a group of variables in a dataset irrespective of the values present in other variables</li>
+</ul>
+ 
+ 
+<h1>
+Creating a sample dataset
+</h1>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="14">
+data class;
+   infile cards truncover;
+   input Name$      Sex$   Age    Height    Weight;
+   cards;
+Alfred    M     14     69        112.5
+Alfred    M     14     69        112.5
+Carol     F     14     62.8      102.5
+Carol     F     12     55        84
+Carol     F     11     51        79
+Jane      F     12     59.8      84.5
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data class;
+infile cards truncover;
+input Name$      Sex$   Age    Height    Weight;
+cards;
+ 
+NOTE: The data set WORK.CLASS has 6 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+ 
+<h1>
+Identifying if there is a duplicate record based on a key variable(s)
+</h1>
+ 
+ 
+ 
+<h2>
+Create a dataset named class_names by removing the duplicates based on Name variable
+</h2>
+ 
+<ul>
+<li>In this example, let us assume that we are expecting only one record per Name value</li>
+<li>We will use an option called 'nodupkey' to identify there is a duplicate record based on the key variable (Name)</li>
+<li>'Nodupkey' option has to be specified on the proc sort statement</li>
+<li>Name of the input dataset has to be specified in the data= option on proc sort statement</li>
+<li>Name of the output dataset has to be specified on the out= option on proc sort statement</li>
+<li>The list of key variables have to specified on the by statement</li>
+<li>When nodupkey option is used on proc sort statement, the first record within each unique value of the key variable
+will be written to the output dataset and subsequent records with that unique value will NOT be written to the output dataset.
+From the above data, as there are two records with a name value of Alfred, the first record with Name=Alfred will be written to
+the output dataset and subsequent records with Name=Alfred will not be written to the output dataset. Similarly, of the 3 records
+with Name=Carol, only the first record with Carol in name will be written to the output dataset</li>
+ 
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class out=class_names nodupkey;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=class out=class_names nodupkey;
+by name;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: 3 observations with duplicate key values were deleted.
+NOTE: The data set WORK.CLASS_NAMES has 3 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named class_names_age by removing the duplicates based on Name and Age variables
+</h2>
+ 
+<ul>
+<li>As we are interested in checking if there is a duplicate record based on Name and Age variable values,
+we need to provide Name and Age variables in the by statement</li>
+<li>The records get sorted first based on Name and Age value and the first record within a Name and Age combination will be written to the
+output dataset, subsequent records with the occurrences of that Name and Age combination will not be written to the output dataset</li>
+<li>As there are two records with Alfred in Name and 14 in Age variables, only the first instance of Alfred 14 will be written to output
+dataset. For Carol, as the records have 3 different values in Age variable, all 3 records in Name and Age combination become unique and are
+written to the output dataset.</li>
+</ul>
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class out=class_names_age nodupkey;
+   by name age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=class out=class_names_age nodupkey;
+by name age;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: 1 observations with duplicate key values were deleted.
+NOTE: The data set WORK.CLASS_NAMES_AGE has 5 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L102_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Capture the duplicate records getting deleted into another dataset
+</h1>
+ 
+<ul>
+<li>What if we are interested in seeing the records which are not being written to the output dataset when using nodupkey?
+We have an option called dupout= to specify a dataset name to hold the records which are not captured in output dataset</li>
+<li>The first record within a combination of the key variables get captured in the dataset listed in out= option, and subsequent
+occurrences of that combination will be written to the dataset specified in dupout=option </li>
+</ul>
+ 
+<h2>
+Create a dataset named class_names_dup to hold the duplicate records based on Name variable
+</h2>
+<ul>
+<li>The record with first instance of each name value will be written to the dataset specified in out= option and the records
+with subsequent occurrence of a name will be written to the dataset specified in dupout= option</li>
+<li>First record of Alfred and Carol will be written to class_names2 dataset and the next instances of Alfred and Carol will be written
+to class_names_dup dataset. As there is only one record with a name of Jane, it is considered as first instance and get written to class_names2
+and no record for Jane will be seen in class_names_dup as there is no 'duplicate' for Jane when Name is the key variable</li>
+</ul>
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class out=class_names2 dupout=class_names_dup nodupkey;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+proc sort data=class out=class_names2 dupout=class_names_dup nodupkey;
+by name;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: 3 observations with duplicate key values were deleted.
+NOTE: The data set WORK.CLASS_NAMES2 has 3 observations and 5 variables.
+NOTE: The data set WORK.CLASS_NAMES_DUP has 3 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L102_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<table>
+<th>
+Question
+</th>
+<th>
+Answer
+</th>
+<tr>
+<td>
+What would happen if out= option is not used when nodupkey is specified?
+</td>
+<td>
+Input dataset gets overwritten with the dataset containing the first instance records of each key variable combinations.
+</td>
+</tr>
+ 
+</table>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data class2;
+   set class;
+run;
+ 
+proc sort data=class2 dupout=class2_names_dup nodupkey;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="27">
+data class2;
+set class;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.CLASS2 has 6 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=class2 dupout=class2_names_dup nodupkey;
+by name;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS2.
+NOTE: 3 observations with duplicate key values were deleted.
+NOTE: The data set WORK.CLASS2_NAMES_DUP has 3 observations and 5 variables.
+NOTE: The data set WORK.CLASS2 has 3 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L102_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Identify and remove the records which are true duplicate records with nodupkey
+</h1>
+ 
+<h2>
+Create a dataset named class_noduplicates by removing the records with all variable values are same on more than one record
+</h2>
+ 
+<ul>
+<li>The key to this task is the usage of _all_ keyword which is used for referring all variables in a dataset</li>
+<li>When we use nodupkey and specify a list of variables in the by statement, SAS only checks if the values in the listed variables
+are same before deleting a record. So, instead of specifying a list of variables, we specify _all_ in the by statement so that SAS checks
+if all the variables have same values before deleting a record</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class out=class_noduplicates dupout=class_duplicates nodupkey;
+   by _all_;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+proc sort data=class out=class_noduplicates dupout=class_duplicates nodupkey;
+by _all_;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: 1 observations with duplicate key values were deleted.
+NOTE: The data set WORK.CLASS_NODUPLICATES has 5 observations and 5 variables.
+NOTE: The data set WORK.CLASS_DUPLICATES has 1 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.12 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L102_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+ 
+<h1>
+Removing duplicate records with NODUPREC option
+</h1>
+ 
+<ul>
+<li>NODUPREC option can be used to remove observations where every variable value on the current record is same as the previous observation</li>
+<li>NODUP option is synonymous with NODUPREC. That is, NODUP can be used in place of NODUPREC.</li>
+</ul>
+ 
+<h2>
+Create a dataset named class_noduplicates2 by removing the duplicate records with NODUPREC option
+</h2>
+ 
+<ul>
+<li>Alfred's record on row 2 has same values for all variables as that of the previous observation (row 1). So the record will not be written
+to the output dataset</li>
+</ul>
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class out=class_noduplicates2 noduprec;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=class out=class_noduplicates2 noduprec;
+by name;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: 1 duplicate observations were deleted.
+NOTE: The data set WORK.CLASS_NODUPLICATES2 has 5 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L102_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create an input dataset
+</h2>
+ 
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data classx;
+   infile cards truncover;
+   input Name$      Sex$   Age    Height    Weight;
+   cards;
+Alfred    M     14     69        112.5
+Alfred    M     14     69        112.5
+Alfred    M     14     69        110
+Alfred    M     14     69        110
+Alfred    M     14     69        112.5
+Carol     F     14     62.8      102.5
+Carol     F     12     55        84
+Carol     F     11     51        79
+Jane      F     12     59.8      84.5
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data classx;
+infile cards truncover;
+input Name$      Sex$   Age    Height    Weight;
+cards;
+ 
+NOTE: The data set WORK.CLASSX has 9 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Create a dataset named class_noduplicates3 using classx dataset by removing the duplicate records with NODUPREC option
+</h2>
+ 
+<ul>
+<li>By definition, while checking for duplicates with NODUPREC, proc sort will only check the previous observation to determine
+if the current record is a duplicate record (all variables have same values as previous observation)</li>
+<li>For row 2 of Alfred, as all variables have same values when compared to previous observation, SAS will not write row 2 to output dataset</li>
+<li>For row 3 of Alfred, as the Height variable has a different value when compared to previous observation(row 2), row 3 is not considered a duplicate
+and will be written to output dataset</li>
+<li>For row 4 of Alfred, as all variables have same values when compared to previous observation, SAS will not write row 4 to output dataset</li>
+<li>For row 5 of Alfred, as the Height variable has a different value when compared to previous observation(row 4), row 5 is not considered a duplicate
+and will be written to output dataset. However, when compared to row 1 and row 2, row 5 of Alfred is a duplicate record </li>
+ 
+</ul>
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=classx out=class_noduplicates3 noduprec;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=classx out=class_noduplicates3 noduprec;
+by name;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.CLASSX.
+NOTE: 2 duplicate observations were deleted.
+NOTE: The data set WORK.CLASS_NODUPLICATES3 has 7 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>To prevent the above issue, we need to make sure that observations with same values on all variables are sorted together</li>
+<li>We can use _all_ in the by statement so that the records with all variable values same are sorted next to each other</li>
+</ul>
+ 
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=classx out=class_noduplicates3_all_ noduprec;
+   by _all_;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=classx out=class_noduplicates3_all_ noduprec;
+by _all_;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.CLASSX.
+NOTE: 3 duplicate observations were deleted.
+NOTE: The data set WORK.CLASS_NODUPLICATES3_ALL_ has 6 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L102_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+</div></body>
+
+</html>
+
+

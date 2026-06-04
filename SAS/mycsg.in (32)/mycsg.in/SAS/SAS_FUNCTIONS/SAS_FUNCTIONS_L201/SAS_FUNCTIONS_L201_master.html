@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_FUNCTIONS_L201
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+<h1>
+Numeric functions to analyse variables in SAS
+</h1>
+ 
+<table>
+<th>
+Function
+</th>
+<th>
+Definition
+</th>
+<tr>
+<td>
+N
+</td>
+<td>
+Counts the number of non-missing numeric values in a list of variables.
+</td>
+</tr>
+<tr>
+<td>
+NMISS
+</td>
+<td>
+Counts the number of missing numeric values in a list of variables.
+</td>
+</tr>
+<tr>
+<td>
+SUM
+</td>
+<td>
+Returns the sum of non-missing numeric values in a list of variables.
+</td>
+</tr>
+<tr>
+<td>
+MEAN
+</td>
+<td>
+Returns the average of non-missing numeric values in a list of variables.
+</td>
+</tr>
+<tr>
+<td>
+MIN
+</td>
+<td>
+Returns the smallest non-missing numeric value in a list of variables.
+</td>
+</tr>
+<tr>
+<td>
+MAX
+</td>
+<td>
+Returns the largest non-missing numeric value in a list of variables.
+</td>
+</tr>
+</table>
+ 
+<h2>
+Create sample data
+</h2>
+ 
+<ul>
+<li>We create a dataset with three score variables</li>
+<li>Some values are intentionally missing, so the effect of functions such as `n` and `nmiss` can be seen clearly</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="13">
+data scores;
+   infile datalines truncover;
+   input score1 score2 score3;
+datalines;
+95 88 72
+. 70 80
+85 . .
+. . .
+50 60 70
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data scores;
+infile datalines truncover;
+input score1 score2 score3;
+datalines;
+ 
+NOTE: The data set WORK.SCORES has 5 observations and 3 variables.
+NOTE: Compressing data set WORK.SCORES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `scores` and note which rows contain complete values and which rows contain missing values</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Example of the N function
+</h2>
+ 
+<ul>
+<li>The `n` function counts how many listed variables have non-missing numeric values on the current observation</li>
+<li>This is useful when checking how much information is present on each row</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data scores01;
+    set scores;
+    answered = n(score1, score2, score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data scores01;
+set scores;
+answered = n(score1, score2, score3);
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES01 has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.SCORES01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review `answered` and confirm that rows with more available scores have larger counts</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Example of the NMISS function
+</h2>
+ 
+<ul>
+<li>The `nmiss` function counts how many listed variables are missing on the current observation</li>
+<li>This is the complement of the `n` count for the same variable list</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data scores01;
+    set scores;
+    notanswered = nmiss(score1, score2, score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data scores01;
+set scores;
+notanswered = nmiss(score1, score2, score3);
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES01 has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.SCORES01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.04 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare `notanswered` with `answered` and verify that their totals reflect the three score variables on each row</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Example of the SUM function
+</h2>
+ 
+<ul>
+<li>The `sum` function adds the non-missing values in the list of variables</li>
+<li>Missing values are ignored rather than causing the result to become missing</li>
+<li>If all listed values are missing, the result is missing</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data scores01;
+    set scores;
+    sumscores = sum(score1, score2, score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data scores01;
+set scores;
+sumscores = sum(score1, score2, score3);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1192577:17
+NOTE: There were 5 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES01 has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.SCORES01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `sumscores` and note how rows with partial missing data still get a total based on available values</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Example of the MEAN function
+</h2>
+ 
+<ul>
+<li>The `mean` function calculates the average of non-missing values only</li>
+<li>The denominator is the number of available values, not the total number of variables listed</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data scores01;
+    set scores;
+    meanscore = mean(score1, score2, score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data scores01;
+set scores;
+meanscore = mean(score1, score2, score3);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1200071:17
+NOTE: There were 5 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES01 has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.SCORES01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare `meanscore` across rows and observe how missing values are excluded from the average calculation</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+Example of the MIN function
+</h2>
+ 
+<ul>
+<li>The `min` function returns the smallest non-missing value from the list</li>
+<li>This is useful when finding the lowest score or earliest numeric measure across related variables</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data scores01;
+    set scores;
+    minscore = min(score1, score2, score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data scores01;
+set scores;
+minscore = min(score1, score2, score3);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1207565:16
+NOTE: There were 5 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES01 has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.SCORES01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `minscore` and confirm that it reflects the lowest available score on each observation</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+Example of the MAX function
+</h2>
+ 
+<ul>
+<li>The `max` function returns the largest non-missing value from the list</li>
+<li>This is useful when finding the highest score or greatest value across related variables</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data scores01;
+    set scores;
+    maxscore = max(score1, score2, score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data scores01;
+set scores;
+maxscore = max(score1, score2, score3);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1215059:16
+NOTE: There were 5 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES01 has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.SCORES01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `maxscore` and confirm that it reflects the highest available score on each observation</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h2>
+Compare several numeric functions together in one step
+</h2>
+ 
+<ul>
+<li>In practical programming, we often create multiple derived metrics from the same set of variables in one DATA step</li>
+<li>This final example brings the functions together so the learner can compare them side by side</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data scores_summary;
+    set scores;
+    answered    = n(score1, score2, score3);
+    notanswered = nmiss(score1, score2, score3);
+    sumscores   = sum(score1, score2, score3);
+    meanscore   = mean(score1, score2, score3);
+    minscore    = min(score1, score2, score3);
+    maxscore    = max(score1, score2, score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="24">
+data scores_summary;
+set scores;
+answered    = n(score1, score2, score3);
+notanswered = nmiss(score1, score2, score3);
+sumscores   = sum(score1, score2, score3);
+meanscore   = mean(score1, score2, score3);
+minscore    = min(score1, score2, score3);
+maxscore    = max(score1, score2, score3);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1222555:19   1 at 1222556:19   1 at 1222557:19   1 at 1222558:19
+NOTE: There were 5 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES_SUMMARY has 5 observations and 9 variables.
+NOTE: Compressing data set WORK.SCORES_SUMMARY increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review `scores_summary` and compare all derived variables on the same row</li>
+<li>This makes the role of each numeric function easier to understand in relation to the others</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal8">View Data</button><div class="modal fade" id="dataModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L201_filterable_data_08.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`n` and `nmiss` count available and missing numeric values</li>
+<li>`sum` and `mean` ignore missing values instead of failing immediately</li>
+<li>`min` and `max` return the smallest and largest non-missing values</li>
+<li>These functions are especially useful when multiple related numeric variables must be analysed within the same observation</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

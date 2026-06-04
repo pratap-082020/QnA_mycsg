@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PDV_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Program Data Vector - Part 02: RETAIN, DROP/KEEP, and Implicit vs Explicit OUTPUT
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Part 01 introduced the Program Data Vector (PDV) as SAS's internal working row — the area in memory where SAS builds each output observation during DATA step execution.</li>
+<li>This lesson goes deeper into three behaviours that directly affect the PDV: the RETAIN statement, the effect of DROP and KEEP on PDV variables, and the difference between implicit and explicit OUTPUT.</li>
+<li>Understanding these concepts is essential for writing correct accumulation logic, controlling which variables appear in output, and producing the right number of output rows.</li>
+</ul>
+ 
+<h2>
+RETAIN and its Effect on the PDV
+</h2>
+ 
+<ul>
+<li>By default, SAS resets all variables in the PDV to missing at the start of each new iteration (each new row read from the input).</li>
+<li>The RETAIN statement overrides this default: any variable listed in RETAIN keeps its value from the previous iteration instead of being reset.</li>
+<li>RETAIN is the mechanism behind running totals, row counters, carry-forward values, and any logic that needs memory of a previous row.</li>
+<li>Variables read directly from an input dataset via SET or MERGE are NOT reset to missing between iterations regardless of RETAIN — they are overwritten by the new incoming row. RETAIN applies to variables that are created by assignment statements in the DATA step.</li>
+</ul>
+ 
+<ul>
+<li>The following example demonstrates the difference between a variable with and without RETAIN when accumulating a running total.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="23">
+data work.sales;
+    input region $ amount;
+    datalines;
+East 100
+East 200
+East 150
+West 300
+West 250
+;
+run;
+ 
+data work.running_totals;
+    set work.sales;
+ 
+    * Without RETAIN: resets to missing each row ;
+    no_retain_total = sum(no_retain_total, amount);
+ 
+    * With RETAIN: carries forward previous value ;
+    retain running_total 0;
+    running_total + amount;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+data work.sales;
+input region $ amount;
+datalines;
+ 
+NOTE: The data set WORK.SALES has 5 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.running_totals;
+set work.sales;
+ 
+* Without RETAIN: resets to missing each row ;
+no_retain_total = sum(no_retain_total, amount);
+ 
+* With RETAIN: carries forward previous value ;
+retain running_total 0;
+running_total + amount;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.SALES.
+NOTE: The data set WORK.RUNNING_TOTALS has 5 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect WORK.RUNNING_TOTALS carefully.</li>
+<li>no_retain_total resets to missing at the start of each iteration, so SUM(missing, amount) simply returns amount itself — you see just the current row amount, not a running total.</li>
+<li>running_total correctly accumulates because RETAIN prevents the reset. RETAIN 0 also initialises the variable to zero on the very first iteration.</li>
+<li>The shorthand <code>variable + expression</code> (sum statement) is equivalent to <code>retain variable 0; variable = sum(variable, expression);</code> — it implicitly retains and initialises to zero.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PDV_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+DROP and KEEP - What Stays in the PDV vs What Goes to the Output Dataset
+</h2>
+ 
+<ul>
+<li>DROP and KEEP control which variables are written to the output dataset, but they do NOT remove a variable from the PDV during processing.</li>
+<li>A dropped variable is still present in the PDV and can still be used in assignment statements or conditional logic within the DATA step — it just will not appear in the output dataset.</li>
+<li>This distinction matters when you need an intermediate calculation variable that should not be in the final output.</li>
+<li>DROP= and KEEP= as dataset options on the SET statement work differently: they prevent SAS from even reading those variables into the PDV at all, which is more efficient for large datasets.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="19">
+data work.source;
+    input subject $ pre post;
+    datalines;
+001 10 14
+002  8 11
+003 12 12
+004  9 15
+;
+run;
+ 
+data work.result (drop=pre post);
+    set work.source;
+    * pre and post are in the PDV and used here ;
+    change    = post - pre;
+    pct_change = round((post - pre) / pre * 100, 0.1);
+    * pre and post are dropped from the output only ;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+data work.source;
+input subject $ pre post;
+datalines;
+ 
+NOTE: The data set WORK.SOURCE has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.result (drop=pre post);
+set work.source;
+* pre and post are in the PDV and used here ;
+change    = post - pre;
+pct_change = round((post - pre) / pre * 100, 0.1);
+* pre and post are dropped from the output only ;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SOURCE.
+NOTE: The data set WORK.RESULT has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Even though DROP=pre post is specified on the DATA statement, pre and post are still read into the PDV from the SET statement and are available for the change and pct_change calculations.</li>
+<li>Check WORK.RESULT — it should contain subject, change, and pct_change only. Pre and post are absent from the output because of the DROP= option.</li>
+<li>If you had written SET work.source (drop=pre post) instead, pre and post would never enter the PDV and the calculations would produce missing values — avoid that pattern when you still need the dropped variables for logic.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PDV_L102_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Implicit vs Explicit OUTPUT
+</h2>
+ 
+<ul>
+<li>Implicit OUTPUT: by default SAS writes the current state of the PDV to the output dataset at the bottom of the DATA step, once per iteration. This happens automatically without any OUTPUT statement.</li>
+<li>Explicit OUTPUT: when you add an OUTPUT statement anywhere in the DATA step, SAS writes the PDV to the output dataset at that exact point. Importantly, the implicit output at the bottom of the step is then suppressed — SAS will only output when it encounters an explicit OUTPUT statement.</li>
+<li>Explicit OUTPUT is used when you want to produce more than one output row per input row, or when you want to conditionally output rows, or when routing rows to multiple output datasets.</li>
+</ul>
+ 
+<ul>
+<li>The following example shows producing multiple output rows from a single input row using explicit OUTPUT inside a DO loop.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data work.template;
+    input subject $ start_day end_day;
+    datalines;
+001  1 5
+002  3 6
+;
+run;
+ 
+data work.expanded;
+    set work.template;
+    do day = start_day to end_day;
+        output;
+    end;
+    drop start_day end_day;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+data work.template;
+input subject $ start_day end_day;
+datalines;
+ 
+NOTE: The data set WORK.TEMPLATE has 2 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.expanded;
+set work.template;
+do day = start_day to end_day;
+output;
+end;
+drop start_day end_day;
+run;
+ 
+NOTE: There were 2 observations read from the data set WORK.TEMPLATE.
+NOTE: The data set WORK.EXPANDED has 9 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Without the OUTPUT statement inside the DO loop, SAS would output one row per input observation after the loop finishes — and day would hold the last value from the loop.</li>
+<li>With the explicit OUTPUT inside the DO loop, SAS writes one row for every value of day, expanding each input row into multiple output rows.</li>
+<li>Check WORK.EXPANDED — subject 001 should produce 5 rows (days 1 through 5), and subject 002 should produce 4 rows (days 3 through 6).</li>
+<li>The DROP statement removes start_day and end_day from the output since they are no longer needed once the expansion is done.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PDV_L102_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Combining RETAIN and Explicit OUTPUT - a Practical Pattern
+</h2>
+ 
+<ul>
+<li>A common pattern in clinical programming combines RETAIN, explicit OUTPUT, and a DO loop to produce a dataset of planned visit windows from a subject-level start and end date.</li>
+<li>This demonstrates all three PDV concepts working together.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="19">
+data work.subjects;
+    input subject $ start end;
+    datalines;
+001 1 10
+002 5 12
+;
+run;
+ 
+data work.visit_rows;
+    set work.subjects;
+    retain subject;
+    do visitnum = 1 to (end - start + 1);
+        studyday = start + visitnum - 1;
+        output;
+    end;
+    drop start end;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="32">
+data work.subjects;
+input subject $ start end;
+datalines;
+ 
+NOTE: The data set WORK.SUBJECTS has 2 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.visit_rows;
+set work.subjects;
+retain subject;
+do visitnum = 1 to (end - start + 1);
+studyday = start + visitnum - 1;
+output;
+end;
+drop start end;
+run;
+ 
+NOTE: There were 2 observations read from the data set WORK.SUBJECTS.
+NOTE: The data set WORK.VISIT_ROWS has 18 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>RETAIN subject ensures subject carries into every row of the DO loop output, though in this case, SET already handles that — RETAIN is shown here for clarity.</li>
+<li>Each iteration of the DO loop assigns a new studyday value before calling OUTPUT, so each output row has a unique studyday.</li>
+<li>Check WORK.VISIT_ROWS — each subject should have one row per study day within their observation window.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PDV_L102_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>RETAIN prevents SAS from resetting a variable to missing at the start of each DATA step iteration — use it for running totals, counters, and carry-forward values.</li>
+<li>Variables created by the sum statement (variable + expression) are implicitly retained and initialised to zero.</li>
+<li>DROP and KEEP on the DATA statement control output, not PDV presence — dropped variables are still available for calculations during the step.</li>
+<li>DROP= and KEEP= on the SET statement prevent variables from entering the PDV at all — efficient but means those variables cannot be used in calculations.</li>
+<li>Explicit OUTPUT suppresses the automatic end-of-step output and writes the PDV at the exact point of the OUTPUT statement — essential for expanding rows or conditional routing.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

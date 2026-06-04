@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_INTRO_L106
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Introduction to SAS - Part 06: Variable Labels, Dataset Labels, and Display Formats
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>SAS stores variable names in a compact, code-friendly form — typically short uppercase names such as SUBJ, TRTP, or AVAL.</li>
+<li>These short names are efficient for programming but are not always easy to read in reports and output.</li>
+<li>SAS allows you to attach a label to any variable or dataset. The label is a longer, descriptive piece of text that SAS displays in output instead of the raw name.</li>
+<li>Similarly, a format tells SAS how to display the value of a variable — for example showing 1 as Male and 2 as Female, or displaying a date number as 01JAN2024.</li>
+<li>Labels and formats are stored as metadata inside the dataset. They travel with the data and are applied automatically whenever the dataset is used in a PROC step that supports them.</li>
+<li>This lesson covers how to assign variable labels, dataset labels, and display formats, and how to confirm they have been stored correctly.</li>
+</ul>
+ 
+<h2>
+Variable Labels
+</h2>
+ 
+<ul>
+<li>A variable label is a text string of up to 256 characters that describes what a variable contains.</li>
+<li>Labels are assigned using the LABEL statement inside a DATA step or inside PROC steps that support it such as PROC DATASETS.</li>
+<li>Once assigned, the label is stored permanently in the dataset descriptor and will appear in PROC PRINT, PROC MEANS, PROC FREQ, PROC REPORT, and other output-producing procedures.</li>
+<li>The variable name itself does not change — the label is purely a display attribute.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="19">
+*------------------------------------------------------------------------------;
+* Create a small dataset and assign variable labels in the DATA step ;
+*------------------------------------------------------------------------------;
+data work.subjects;
+    input subj $ age sex $ trt $;
+    label
+        subj = "Subject Identifier"
+        age  = "Age at Screening (years)"
+        sex  = "Sex"
+        trt  = "Treatment Group";
+    datalines;
+001 34 M A
+002 28 F B
+003 45 M A
+004 52 F B
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="24">
+*------------------------------------------------------------------------------;
+* Create a small dataset and assign variable labels in the DATA step ;
+*------------------------------------------------------------------------------;
+data work.subjects;
+input subj $ age sex $ trt $;
+label
+subj = "Subject Identifier"
+age  = "Age at Screening (years)"
+sex  = "Sex"
+trt  = "Treatment Group";
+datalines;
+ 
+NOTE: The data set WORK.SUBJECTS has 4 observations and 4 variables.
+NOTE: Compressing data set WORK.SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The LABEL statement lists each variable name followed by an equals sign and the label text in quotes.</li>
+<li>Multiple variables can be labelled in a single LABEL statement — each assignment is separated by a space or new line.</li>
+<li>Labels are saved into the dataset as part of its descriptor. You do not need to re-assign them every time you use the dataset.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L106_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Confirming Labels with PROC CONTENTS OUT=
+</h2>
+ 
+<ul>
+<li>PROC CONTENTS describes the structure of a dataset — variable names, types, lengths, formats, and labels.</li>
+<li>The OUT= option saves that descriptor information to a SAS dataset instead of only printing it to the output tab.</li>
+<li>Saving to a dataset lets us inspect the label and format columns directly in a data view, which is more convenient than reading the output tab.</li>
+<li>Key columns in the OUT= dataset: NAME (variable name), LABEL (assigned label text), FORMAT (assigned format), TYPE (1=numeric, 2=character), LENGTH.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="8">
+*------------------------------------------------------------------------------;
+* Capture the dataset descriptor to a dataset using OUT= ;
+* NOPRINT suppresses the output tab listing since we will view the dataset ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects noprint;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+*------------------------------------------------------------------------------;
+* Capture the dataset descriptor to a dataset using OUT= ;
+* NOPRINT suppresses the output tab listing since we will view the dataset ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects noprint;
+run;
+ 
+NOTE: The data set WORK.CONTENTS_SUBJECTS has 4 observations and 41 variables.
+NOTE: Compressing data set WORK.CONTENTS_SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>NOPRINT tells SAS not to write to the output tab — the descriptor information goes only to the OUT= dataset.</li>
+<li>Inspect CONTENTS_SUBJECTS in the data view below and locate the LABEL column — confirm that each variable shows the label text assigned in the DATA step.</li>
+<li>The NAME column holds the variable name and the LABEL column holds the descriptive text. A blank LABEL means no label has been assigned for that variable.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L106_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Dataset Labels
+</h2>
+ 
+<ul>
+<li>As well as labelling individual variables, you can attach a label to the dataset itself.</li>
+<li>A dataset label is assigned using the LABEL= dataset option in the DATA statement.</li>
+<li>The dataset label is stored in the descriptor and is visible in PROC DATASETS library listings, making it easy to identify a file's purpose when browsing a library with many datasets.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="14">
+*------------------------------------------------------------------------------;
+* Assign a dataset label using the LABEL= dataset option ;
+*------------------------------------------------------------------------------;
+data work.subjects (label="Screening Subjects - All Enrolled");
+    set work.subjects;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Capture the updated descriptor to confirm the dataset label was stored ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects2 noprint;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+*------------------------------------------------------------------------------;
+* Assign a dataset label using the LABEL= dataset option ;
+*------------------------------------------------------------------------------;
+data work.subjects (label="Screening Subjects - All Enrolled");
+set work.subjects;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: The data set WORK.SUBJECTS has 4 observations and 4 variables.
+NOTE: Compressing data set WORK.SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Capture the updated descriptor to confirm the dataset label was stored ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects2 noprint;
+run;
+ 
+NOTE: The data set WORK.CONTENTS_SUBJECTS2 has 4 observations and 41 variables.
+NOTE: Compressing data set WORK.CONTENTS_SUBJECTS2 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The LABEL= option appears in parentheses immediately after the dataset name — this is a dataset option, distinct from the variable LABEL statement.</li>
+<li>In the CONTENTS_SUBJECTS2 data view below look for the MEMLABEL column — this holds the dataset-level label text.</li>
+<li>Variable-level labels are in the LABEL column as before; the dataset label is stored separately in MEMLABEL.</li>
+<li>Dataset labels are especially useful in permanent libraries where many datasets are stored and readers need to understand each file's purpose at a glance.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L106_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Assigning Labels with PROC DATASETS
+</h2>
+ 
+<ul>
+<li>You do not always need to re-run a DATA step to add or change labels. PROC DATASETS can modify the descriptor of an existing dataset without reading or rewriting the data.</li>
+<li>This is much faster for large datasets because no observations are processed — only the metadata is updated.</li>
+<li>Use the MODIFY statement followed by a LABEL statement inside PROC DATASETS to assign or change variable labels.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="15">
+*------------------------------------------------------------------------------;
+* Update a variable label without re-running the DATA step ;
+*------------------------------------------------------------------------------;
+proc datasets library=work nolist;
+    modify subjects;
+        label age = "Age at Baseline (years)";
+quit;
+ 
+*------------------------------------------------------------------------------;
+* Confirm the label change was stored ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects3 noprint;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+*------------------------------------------------------------------------------;
+* Update a variable label without re-running the DATA step ;
+*------------------------------------------------------------------------------;
+proc datasets library=work nolist;
+modify subjects;
+label age = "Age at Baseline (years)";
+quit;
+ 
+NOTE: MODIFY was successful for WORK.SUBJECTS.DATA.
+NOTE: PROCEDURE DATASETS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Confirm the label change was stored ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects3 noprint;
+run;
+ 
+NOTE: The data set WORK.CONTENTS_SUBJECTS3 has 4 observations and 41 variables.
+NOTE: Compressing data set WORK.CONTENTS_SUBJECTS3 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>MODIFY subjects tells PROC DATASETS which dataset to update — no observations are read or written, only the descriptor changes.</li>
+<li>The LABEL statement inside PROC DATASETS works exactly as in a DATA step — variable name equals label text.</li>
+<li>Inspect CONTENTS_SUBJECTS3 below and confirm that the LABEL column for AGE now reads Age at Baseline (years) rather than the original text.</li>
+<li>This approach is the preferred way to correct a label on a large permanent dataset without the overhead of a full DATA step pass.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L106_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Display Formats
+</h2>
+ 
+<ul>
+<li>A format tells SAS how to display a variable's value in output. The stored value is unchanged — only the displayed representation changes.</li>
+<li>SAS has many built-in formats. Common examples include DATE9. for displaying date values as 01JAN2024, DOLLAR12.2 for currency, and $UPCASE. for uppercase character display.</li>
+<li>Formats are assigned using the FORMAT statement inside a DATA step, or via PROC DATASETS without rewriting data.</li>
+<li>Once assigned, the format name is stored in the dataset descriptor. We can confirm it using PROC CONTENTS OUT= and inspecting the FORMAT column.</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="25">
+*------------------------------------------------------------------------------;
+* Create a dataset with a date variable and assign a display format ;
+*------------------------------------------------------------------------------;
+data work.visits;
+    input subj $ visitdt :date9. visitnum;
+    format visitdt date9.;
+    label
+        subj     = "Subject Identifier"
+        visitdt  = "Visit Date"
+        visitnum = "Visit Number";
+    datalines;
+001 01JAN2024 1
+001 15JAN2024 2
+002 03JAN2024 1
+002 17JAN2024 2
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Confirm the format name is stored in the descriptor ;
+*------------------------------------------------------------------------------;
+proc contents data=work.visits out=work.contents_visits noprint;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="39">
+*------------------------------------------------------------------------------;
+* Create a dataset with a date variable and assign a display format ;
+*------------------------------------------------------------------------------;
+data work.visits;
+input subj $ visitdt :date9. visitnum;
+format visitdt date9.;
+label
+subj     = "Subject Identifier"
+visitdt  = "Visit Date"
+visitnum = "Visit Number";
+datalines;
+ 
+NOTE: The data set WORK.VISITS has 4 observations and 3 variables.
+NOTE: Compressing data set WORK.VISITS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Confirm the format name is stored in the descriptor ;
+*------------------------------------------------------------------------------;
+proc contents data=work.visits out=work.contents_visits noprint;
+run;
+ 
+NOTE: The data set WORK.CONTENTS_VISITS has 3 observations and 41 variables.
+NOTE: Compressing data set WORK.CONTENTS_VISITS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The FORMAT statement assigns the DATE9. format to VISITDT. Without this format the date would display as a raw integer — the number of days since 01JAN1960.</li>
+<li>The INFORMAT :DATE9. in the INPUT statement tells SAS how to read the raw text into a date value. The FORMAT statement controls how that value is displayed.</li>
+<li>Inspect CONTENTS_VISITS below and locate the FORMAT column — it should show DATE9 next to VISITDT, confirming the format was stored in the descriptor.</li>
+<li>Inspect the VISITS data view — the VISITDT column will display as a formatted date because the format is attached to the variable.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L106_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+Assigning Formats with PROC DATASETS
+</h2>
+ 
+<ul>
+<li>Just like labels, formats can be added or changed on an existing dataset using PROC DATASETS without rewriting the data.</li>
+<li>Use the FORMAT statement inside a MODIFY block to assign a format. To remove a format write FORMAT varname; with no format name — SAS clears the stored format.</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="15">
+*------------------------------------------------------------------------------;
+* Assign a format to an existing variable using PROC DATASETS ;
+*------------------------------------------------------------------------------;
+proc datasets library=work nolist;
+    modify subjects;
+        format sex $upcase.;
+quit;
+ 
+*------------------------------------------------------------------------------;
+* Confirm the format name is now stored in the descriptor ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects4 noprint;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+*------------------------------------------------------------------------------;
+* Assign a format to an existing variable using PROC DATASETS ;
+*------------------------------------------------------------------------------;
+proc datasets library=work nolist;
+modify subjects;
+format sex $upcase.;
+quit;
+ 
+NOTE: MODIFY was successful for WORK.SUBJECTS.DATA.
+NOTE: PROCEDURE DATASETS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Confirm the format name is now stored in the descriptor ;
+*------------------------------------------------------------------------------;
+proc contents data=work.subjects out=work.contents_subjects4 noprint;
+run;
+ 
+NOTE: The data set WORK.CONTENTS_SUBJECTS4 has 4 observations and 41 variables.
+NOTE: Compressing data set WORK.CONTENTS_SUBJECTS4 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The FORMAT statement inside MODIFY works the same way as in a DATA step — variable name followed by the format name.</li>
+<li>Inspect CONTENTS_SUBJECTS4 below and confirm the FORMAT column for SEX now shows $UPCASE, confirming the format was attached without a DATA step rewrite.</li>
+<li>To remove a format entirely use FORMAT sex; with no format name in the MODIFY block. The FORMAT column will be blank in PROC CONTENTS after that.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L106_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+The ATTRIB Statement
+</h2>
+ 
+<ul>
+<li>The ATTRIB statement is a convenient way to assign a label, format, informat, and length for a variable all in one place.</li>
+<li>Using ATTRIB keeps variable attribute definitions together and avoids having separate LABEL, FORMAT, and LENGTH statements scattered through the DATA step.</li>
+<li>Each variable gets its own ATTRIB clause and any attributes not specified are left unchanged or take their default values.</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="25">
+*------------------------------------------------------------------------------;
+* Use ATTRIB to assign label, format, and length together ;
+*------------------------------------------------------------------------------;
+data work.summary;
+    attrib
+        subj    length=$3   label="Subject Identifier"
+        age     length=8    label="Age at Screening (years)"
+        aval    length=8    label="Analysis Value"          format=8.1
+        trtp    length=$20  label="Planned Treatment"
+        adtc    length=$10  label="Analysis Date (ISO)";
+    input subj $ age aval trtp $ adtc $;
+    datalines;
+001 34 102.5 DrugA 2024-01-01
+002 28  98.0 PlacB 2024-01-03
+003 45 115.3 DrugA 2024-01-02
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Confirm that all labels and formats were stored from the ATTRIB statement ;
+*------------------------------------------------------------------------------;
+proc contents data=work.summary out=work.contents_summary noprint;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="40">
+*------------------------------------------------------------------------------;
+* Use ATTRIB to assign label, format, and length together ;
+*------------------------------------------------------------------------------;
+data work.summary;
+attrib
+subj    length=$3   label="Subject Identifier"
+age     length=8    label="Age at Screening (years)"
+aval    length=8    label="Analysis Value"          format=8.1
+trtp    length=$20  label="Planned Treatment"
+adtc    length=$10  label="Analysis Date (ISO)";
+input subj $ age aval trtp $ adtc $;
+datalines;
+ 
+NOTE: The data set WORK.SUMMARY has 3 observations and 5 variables.
+NOTE: Compressing data set WORK.SUMMARY increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Confirm that all labels and formats were stored from the ATTRIB statement ;
+*------------------------------------------------------------------------------;
+proc contents data=work.summary out=work.contents_summary noprint;
+run;
+ 
+NOTE: The data set WORK.CONTENTS_SUMMARY has 5 observations and 41 variables.
+NOTE: Compressing data set WORK.CONTENTS_SUMMARY increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Each ATTRIB clause names the variable followed by one or more attribute keywords: LENGTH=, LABEL=, FORMAT=, INFORMAT=.</li>
+<li>All attributes for a variable are grouped on one line making the data structure easy to read and maintain.</li>
+<li>The ATTRIB statement is especially common in clinical programming where datasets have many variables each requiring a label, length, and sometimes a format.</li>
+<li>Inspect CONTENTS_SUMMARY below — the LABEL column should show the assigned text and the FORMAT column should show 8.1 for AVAL. All other variables should have blank FORMAT since none was specified.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L106_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>Variable labels are descriptive text attached to a variable using the LABEL statement. They are stored in the dataset descriptor and appear as column headings in output procedures.</li>
+<li>Dataset labels are assigned using the LABEL= dataset option and identify the dataset's purpose in library listings.</li>
+<li>Formats control how values are displayed — the stored value is never changed, only the displayed representation.</li>
+<li>PROC CONTENTS with OUT= saves the dataset descriptor to a dataset, allowing the NAME, LABEL, FORMAT, TYPE, and LENGTH columns to be inspected directly without relying on the output tab.</li>
+<li>Both labels and formats can be assigned in a DATA step or updated on an existing dataset using PROC DATASETS without rewriting any observations.</li>
+<li>The ATTRIB statement assigns label, format, informat, and length for a variable in a single clause — useful for keeping variable definitions organised in one place.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

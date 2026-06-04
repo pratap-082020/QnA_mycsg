@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCIMPORT_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+PROC IMPORT - Part 02: DATAROW=, NAMEROW=, GUESSINGROWS=, and Mixed-Type Columns
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Part 01 covered the basic use of PROC IMPORT for reading delimited files and Excel workbooks, including DBMS=, DELIMITER=, SHEET=, GETNAMES=, and REPLACE.</li>
+<li>This lesson covers four more advanced topics: controlling which row SAS reads variable names from (NAMEROW=), which row data starts from (DATAROW=), how many rows SAS examines when guessing variable types (GUESSINGROWS=), and what to do when a column contains a mix of numeric and character values.</li>
+<li>These options are essential when working with real-world files that do not follow the simple header-on-row-1, data-from-row-2 pattern.</li>
+</ul>
+ 
+<h2>
+DATAROW= and NAMEROW=
+</h2>
+ 
+<ul>
+<li>By default, PROC IMPORT assumes variable names are on row 1 and data begins on row 2 of a file.</li>
+<li>NAMEROW= specifies which row of the file contains the variable names. This is useful when the file has a title or metadata rows above the header.</li>
+<li>DATAROW= specifies which row data values begin. This must be greater than or equal to NAMEROW=. Any rows between the header and DATAROW= are skipped.</li>
+<li>NAMEROW= and DATAROW= are supported for Excel imports (DBMS=XLSX or DBMS=XLS). For delimited text files, the equivalent is handled differently — use a DATA step with FIRSTOBS= or skip rows using the INFILE statement.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="26">
+*------------------------------------------------------------------------------;
+* Syntax illustration - requires an actual Excel file to run ;
+* Adjust the file path to match your environment ;
+*------------------------------------------------------------------------------;
+ 
+/*
+proc import
+    datafile="C:\data\study_results.xlsx"
+    out=work.results
+    dbms=xlsx
+    replace;
+    sheet="Data";
+    getnames=yes;
+    namerow=3;
+    datarow=5;
+run;
+*/
+ 
+*------------------------------------------------------------------------------;
+* This tells PROC IMPORT: ;
+*    - Row 3 of the Excel sheet contains the column headers ;
+*    - Rows 1 and 2 are titles or metadata to ignore ;
+*    - Data values start at row 5 (rows 3-4 are header/blank) ;
+*------------------------------------------------------------------------------;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="26">
+*------------------------------------------------------------------------------;
+* Syntax illustration - requires an actual Excel file to run ;
+* Adjust the file path to match your environment ;
+*------------------------------------------------------------------------------;
+ 
+/*
+proc import
+datafile="C:\data\study_results.xlsx"
+out=work.results
+dbms=xlsx
+replace;
+sheet="Data";
+getnames=yes;
+namerow=3;
+datarow=5;
+run;
+*/
+ 
+*------------------------------------------------------------------------------;
+* This tells PROC IMPORT: ;
+*    - Row 3 of the Excel sheet contains the column headers ;
+*    - Rows 1 and 2 are titles or metadata to ignore ;
+*    - Data values start at row 5 (rows 3-4 are header/blank) ;
+*------------------------------------------------------------------------------;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>This is a syntax-only block — run it after substituting a real file path.</li>
+<li>A common scenario: a sponsor-provided Excel file has two title rows, then a merged header row, then a blank row, then data. NAMEROW=3 and DATAROW=5 handles this exactly.</li>
+<li>If NAMEROW and DATAROW are the same, SAS uses that single row as both the header and the start of data — which would result in the header row being read as a data observation. Always set DATAROW to the first actual data row.</li>
+</ul>
+ 
+<h2>
+GUESSINGROWS= - Controlling Type Detection
+</h2>
+ 
+<ul>
+<li>When PROC IMPORT reads a delimited file or Excel workbook, it scans a number of rows to determine whether each column is numeric or character.</li>
+<li>By default, it scans the first 20 rows (for delimited files) or a small number of rows for Excel. If the first 20 rows all contain numeric values in a column, PROC IMPORT declares that column numeric — even if later rows contain character values.</li>
+<li>GUESSINGROWS= controls how many rows PROC IMPORT examines before deciding the type. Setting it to MAX tells SAS to scan the entire file.</li>
+<li>Using GUESSINGROWS=MAX is slower on large files but eliminates the risk of misclassifying a column that has mixed values or has character values only in later rows.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="14">
+* Syntax illustration ;
+ 
+/*
+proc import
+    datafile="C:\data\lab_results.csv"
+    out=work.labs
+    dbms=csv
+    replace;
+    getnames=yes;
+    guessingrows=max;
+run;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+* Syntax illustration ;
+ 
+/*
+proc import
+datafile="C:\data\lab_results.csv"
+out=work.labs
+dbms=csv
+replace;
+getnames=yes;
+guessingrows=max;
+run;
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Use GUESSINGROWS=MAX as the safe default for any file where you are not completely certain that the first few rows are representative of the entire column's content.</li>
+<li>For very large files (millions of rows), consider setting GUESSINGROWS= to a large but finite number (e.g., 10000) rather than MAX, to balance accuracy against import time.</li>
+<li>Always run PROC CONTENTS on the imported dataset to verify the type and length of each variable before proceeding with analysis.</li>
+</ul>
+ 
+<h2>
+The Mixed-Type Column Problem
+</h2>
+ 
+<ul>
+<li>The most common PROC IMPORT pitfall is a column that should be character but gets imported as numeric — or vice versa — because of the guessing logic.</li>
+<li>A typical scenario in clinical data: a result column that is mostly numeric (e.g., 12.5, 8.3) but occasionally contains a character string (e.g., "LLOQ", "BQL", ">1000"). PROC IMPORT may guess numeric and then silently lose the character values, converting them to missing.</li>
+<li>The solution is to force the column type using a LENGTH or ATTRIB statement in a subsequent DATA step, or to use an IMPORT statement that reads everything as character and then convert selectively.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="32">
+*------------------------------------------------------------------------------;
+* Step 1: Import with GUESSINGROWS=MAX to get the best guess ;
+* (Using inline data to simulate what PROC IMPORT would produce) ;
+*------------------------------------------------------------------------------;
+ 
+data work.raw_import;
+    input subject $ result_char $15.;
+    datalines;
+001 12.5
+002 8.3
+003 LLOQ
+004 15.2
+005 BQL
+006 10.1
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Step 2: Create a clean version with both forms of result ;
+*------------------------------------------------------------------------------;
+data work.clean;
+    set work.raw_import;
+    * Keep original character result ;
+    result_c = result_char;
+    * Convert to numeric where possible - missing otherwise ;
+    result_n = input(result_char, ?? best12.);
+    * Flag special values ;
+    if result_n = . and result_char not in ("" ".") then special_flag = "Y";
+    else special_flag = "N";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="41">
+*------------------------------------------------------------------------------;
+* Step 1: Import with GUESSINGROWS=MAX to get the best guess ;
+* (Using inline data to simulate what PROC IMPORT would produce) ;
+*------------------------------------------------------------------------------;
+ 
+data work.raw_import;
+input subject $ result_char $15.;
+datalines;
+ 
+NOTE: The data set WORK.RAW_IMPORT has 6 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Step 2: Create a clean version with both forms of result ;
+*------------------------------------------------------------------------------;
+data work.clean;
+set work.raw_import;
+* Keep original character result ;
+result_c = result_char;
+* Convert to numeric where possible - missing otherwise ;
+result_n = input(result_char, ?? best12.);
+* Flag special values ;
+if result_n = . and result_char not in ("" ".") then special_flag = "Y";
+else special_flag = "N";
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.RAW_IMPORT.
+NOTE: The data set WORK.CLEAN has 6 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The ?? modifier on the INPUT function suppresses the invalid data NOTE and sets result_n to missing when conversion fails — this is the correct approach for columns with a mix of numbers and special character codes.</li>
+<li>RESULT_C preserves the original character value for any row that has a special code; RESULT_N contains the numeric value for rows where conversion succeeded.</li>
+<li>SPECIAL_FLAG makes it easy to separate rows with special values from rows with ordinary numeric results downstream.</li>
+<li>Inspect WORK.CLEAN to verify that LLOQ and BQL rows have result_n = missing and special_flag = Y, while numeric rows have a populated result_n.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCIMPORT_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Verifying an Import with PROC CONTENTS
+</h2>
+ 
+<ul>
+<li>After every PROC IMPORT run, verify the imported structure immediately using PROC CONTENTS before doing any further processing.</li>
+<li>Key things to check: variable types (numeric vs character), variable lengths, and observation count.</li>
+<li>A variable you expected to be character but PROC IMPORT made numeric will silently lose all non-numeric values — catching this early prevents downstream analysis errors.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc contents data=work.clean varnum;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+proc contents data=work.clean varnum;
+run;
+ 
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The VARNUM option lists variables in their order of creation rather than alphabetically, which matches the column order in the source file — easier to compare against the original.</li>
+<li>Look for the Type column in the output: 1 = numeric, 2 = character. Confirm this matches your expectations for each column.</li>
+<li>Look for the Length column: character columns default to the longest value found during guessing. A very short length (e.g., 8) may truncate longer values — increase it in a subsequent DATA step if needed.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>NAMEROW= specifies which row holds the variable names when the file has title or metadata rows above the header.</li>
+<li>DATAROW= specifies where data values begin — must be equal to or greater than NAMEROW=.</li>
+<li>GUESSINGROWS=MAX forces SAS to scan the entire file before deciding variable types — use this whenever column content is not uniform in the first few rows.</li>
+<li>Mixed-type columns (numbers plus special character codes) are the most common PROC IMPORT problem — import as character or use GUESSINGROWS=MAX, then convert selectively with INPUT and the ?? modifier.</li>
+<li>Always run PROC CONTENTS after importing to verify that types and lengths match expectations before proceeding with any analysis.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

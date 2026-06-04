@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MERGING_L103
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+One-to-many merges in SAS
+</h1>
+ 
+<h2>
+What is a one-to-many merge
+</h2>
+ 
+<ul>
+<li>Previous lessons covered one-to-one merging where each BY key value appears exactly once in both datasets</li>
+<li>In a one-to-many merge, one dataset has exactly one row per BY key value and the other dataset has multiple rows for the same key</li>
+<li>The typical real-world example is a header dataset that holds one record per subject and a detail dataset that holds multiple records per subject, such as visits, events, or measurements</li>
+<li>SAS handles this automatically in the MERGE statement, but the behaviour of variable values across repeated rows deserves careful attention</li>
+</ul>
+ 
+<h2>
+Create sample datasets
+</h2>
+ 
+<ul>
+<li>We create a subjects dataset with one row per subject holding demographic information</li>
+<li>We also create a visits dataset with multiple rows per subject representing repeated assessments</li>
+<li>Both datasets share the key variable `subject` and will be sorted before merging</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="26">
+data subjects;
+    input subject $ age sex $;
+    datalines;
+001 28 M
+002 35 F
+003 22 F
+004 41 M
+;
+run;
+ 
+data visits;
+    input subject $ visit $ result;
+    datalines;
+001 VISIT1 10
+001 VISIT2 12
+001 VISIT3 15
+002 VISIT1  8
+002 VISIT2 11
+003 VISIT1  9
+003 VISIT2 13
+003 VISIT3 14
+003 VISIT4 16
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="27">
+data subjects;
+input subject $ age sex $;
+datalines;
+ 
+NOTE: The data set WORK.SUBJECTS has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data visits;
+input subject $ visit $ result;
+datalines;
+ 
+NOTE: The data set WORK.VISITS has 9 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.04 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`subjects` has 4 rows — one per subject including subject 004 who has no visits</li>
+<li>`visits` has 9 rows — subjects 001 and 003 have three and four visits respectively, subject 002 has two, and subject 004 has none</li>
+<li>Inspect both datasets before merging to understand what the expected output should look like</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L103_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Sort both datasets before merging
+</h2>
+ 
+<ul>
+<li>Like all BY-variable merges, a one-to-many merge requires both datasets to be sorted by the BY variable(s)</li>
+<li>SAS does not sort automatically and will issue an error if the data is not in order</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc sort data=subjects; by subject; run;
+proc sort data=visits;   by subject; run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="20">
+proc sort data=subjects; by subject; run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: The data set WORK.SUBJECTS has 4 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.04 seconds
+cpu time            0.00 seconds
+ 
+ 
+proc sort data=visits;   by subject; run;
+ 
+NOTE: There were 9 observations read from the data set WORK.VISITS.
+NOTE: The data set WORK.VISITS has 9 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.07 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Perform the one-to-many merge
+</h1>
+ 
+<h2>
+Basic merge - combine subjects with visits
+</h2>
+ 
+<ul>
+<li>In a one-to-many merge, SAS reads one row from the single-row dataset and holds it in the PDV while it processes all matching rows from the many-row dataset</li>
+<li>The variables from the single-row dataset (`age`, `sex`) carry forward to every matching visit row automatically</li>
+<li>This is why merging a header onto a detail file is so convenient — you do not need to explicitly retain the header values</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data subjects_with_visits;
+    merge subjects(in=in_s) visits(in=in_v);
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data subjects_with_visits;
+merge subjects(in=in_s) visits(in=in_v);
+by subject;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: There were 9 observations read from the data set WORK.VISITS.
+NOTE: The data set WORK.SUBJECTS_WITH_VISITS has 10 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `subjects_with_visits` and confirm that each visit row now carries the `age` and `sex` values from the corresponding subject</li>
+<li>Subject 004, who appears in `subjects` but has no visits, should appear as one row in the output with missing values for `visit` and `result`</li>
+<li>This happens because SAS outputs one row per observation in the more-frequent dataset, and for subjects with no visits it outputs one row from the subjects side with the visit variables blank</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L103_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Keep only rows that exist in both datasets
+</h2>
+ 
+<ul>
+<li>If you want only subjects who have at least one visit, use the `IN=` flags to filter the output</li>
+<li>Subjects with no visits are excluded by requiring `in_v=1`</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="7">
+data matched_only;
+    merge subjects(in=in_s) visits(in=in_v);
+    by subject;
+    if in_s and in_v;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data matched_only;
+merge subjects(in=in_s) visits(in=in_v);
+by subject;
+if in_s and in_v;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: There were 9 observations read from the data set WORK.VISITS.
+NOTE: The data set WORK.MATCHED_ONLY has 9 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Subject 004 should now be absent from `matched_only` because that subject has no visits in the visits dataset</li>
+<li>Confirm the row count: 9 rows matching the 9 rows in `visits`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L103_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+What happens when both datasets have repeated BY key values
+</h1>
+ 
+<h2>
+Sequential pairing - not a cartesian product
+</h2>
+ 
+<ul>
+<li>When both input datasets contain more than one row for the same BY key value, SAS does not produce a cartesian product</li>
+<li>Instead, SAS pairs rows one by one within the group: the first row from each dataset, then the second row from each, and so on</li>
+<li>When one dataset runs out of rows for a key, the last-seen variable values from that dataset are retained for the remaining pairings</li>
+<li>The number of output rows for a BY group equals the maximum number of rows that group has in either input dataset</li>
+<li>SAS issues the WARNING: `MERGE statement has more than one data set with repeats of BY values` when this situation is detected</li>
+<li>The result is not a cartesian join explosion, but it is almost always wrong because retained variable values silently carry over into rows where they do not belong</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="28">
+data events_a;
+    input subject $ event_a $;
+    datalines;
+001 EVA1
+001 EVA2
+002 EVA1
+;
+run;
+ 
+data events_b;
+    input subject $ event_b $;
+    datalines;
+001 EVB1
+001 EVB2
+001 EVB3
+002 EVB1
+;
+run;
+ 
+proc sort data=events_a; by subject; run;
+proc sort data=events_b; by subject; run;
+ 
+data many_to_many_demo;
+    merge events_a events_b;
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="61">
+data events_a;
+input subject $ event_a $;
+datalines;
+ 
+NOTE: The data set WORK.EVENTS_A has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+data events_b;
+input subject $ event_b $;
+datalines;
+ 
+NOTE: The data set WORK.EVENTS_B has 4 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+proc sort data=events_a; by subject; run;
+ 
+NOTE: There were 3 observations read from the data set WORK.EVENTS_A.
+NOTE: The data set WORK.EVENTS_A has 3 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+proc sort data=events_b; by subject; run;
+ 
+NOTE: There were 4 observations read from the data set WORK.EVENTS_B.
+NOTE: The data set WORK.EVENTS_B has 4 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data many_to_many_demo;
+merge events_a events_b;
+by subject;
+run;
+ 
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 3 observations read from the data set WORK.EVENTS_A.
+NOTE: There were 4 observations read from the data set WORK.EVENTS_B.
+NOTE: The data set WORK.MANY_TO_MANY_DEMO has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Run this code and check the SAS log for the MERGE warning about repeated BY values</li>
+<li>Inspect `many_to_many_demo` — for subject 001, SAS produces 3 rows, which is the maximum of 2 (from `events_a`) and 3 (from `events_b`)</li>
+<li>The pairing is: EVA1 with EVB1, EVA2 with EVB2, then EVA2 retained with EVB3 because `events_a` has no third row for subject 001</li>
+<li>Subject 002 produces 1 row because both datasets have exactly one row for it</li>
+<li>Total output rows: 4 — but the EVA2 value appearing twice in subject 001 is not intentional data and is a silent error</li>
+<li>This is the core danger: wrong values appear without any error, only a WARNING in the log</li>
+<li>When a true many-to-many relationship exists and all combinations are required, use PROC SQL with an explicit join on the key variable instead of DATA step MERGE</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L103_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Safe approach - verify one-to-many assumption before merging
+</h2>
+ 
+<ul>
+<li>Before performing a one-to-many merge, it is good practice to verify that the header dataset truly has one row per BY key</li>
+<li>PROC SORT with the `NODUPKEY` option can enforce uniqueness on the header side and will delete duplicate keys if any exist, printing a note to the log</li>
+<li>An even safer approach is to check for duplicates first using PROC FREQ or a DATA step before merging</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=subjects nodupkey;
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=subjects nodupkey;
+by subject;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set WORK.SUBJECTS has 4 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>If duplicates are found, SAS prints a note stating how many observations were deleted</li>
+<li>If no duplicates exist, the step runs silently and the data is unchanged</li>
+<li>After confirming the header is unique, proceed with the one-to-many merge with confidence</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>A one-to-many merge combines a unique-key header dataset with a detail dataset that has multiple rows per key</li>
+<li>Sort both datasets by the BY variable before merging</li>
+<li>SAS automatically carries header variable values across all matching detail rows, so you do not need RETAIN for this purpose</li>
+<li>Subjects in the header but absent from the detail file produce one output row with missing values for detail variables unless filtered with IN= flags</li>
+<li>If both datasets have repeated BY values, SAS pairs rows sequentially and retains the last value from the shorter side — this is not a cartesian product but produces wrong data silently; use PROC SQL for true many-to-many relationships</li>
+<li>Use `proc sort nodupkey` or a pre-merge uniqueness check to confirm the one-to-many assumption before production runs</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

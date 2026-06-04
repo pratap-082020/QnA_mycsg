@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MERGING_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of merge
+</h1>
+<ol>
+<li>Combine to form a single entity.</li>
+</ol>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1001">Merging data to pull variables from a dataset</button><div class="modal fade" id="imgModal1001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Merging data to pull variables from a dataset</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_MERGING_L101_1001.png" alt="Merging data to pull variables from a dataset" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+Common scenarios where merging is required
+</h1>
+ 
+<ul>
+<li>Presenting height and weight of students on a single observation when height and weight are stored in different datasets</li>
+<li>Presenting height, weight, and sex of students on a single observation when those values are stored in three different datasets</li>
+<li>Presenting treatment start date beside adverse event start date to check whether the event happened after treatment started</li>
+<li>Joining subject-level information with visit-level or event-level information based on a common key</li>
+</ul>
+ 
+<h1>
+What does the MERGE statement do in a DATA step
+</h1>
+ 
+<ul>
+<li>The `merge` statement combines observations from two or more datasets into one output observation</li>
+<li>When a `by` statement is used, SAS performs a match merge based on the common BY variables</li>
+<li>For match merging, the input datasets must be sorted by the same BY variables before the merge step runs</li>
+</ul>
+ 
+<h1>
+What is match merging in SAS
+</h1>
+ 
+<ul>
+<li>Match merging means combining rows from multiple datasets based on the values of one or more common variables</li>
+<li>The common variables are listed in the `by` statement</li>
+<li>Observations with the same BY value are aligned into one output observation</li>
+</ul>
+ 
+<h1>
+Create sample datasets
+</h1>
+ 
+<ul>
+<li>We split `sashelp.class` into separate datasets so that each dataset contains a different variable of interest</li>
+<li>This makes the effect of the merge easy to understand because each input dataset contributes one piece of information</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data height(keep=name height)
+     weight(keep=name weight)
+     sex(keep=name sex)
+     age(keep=name age);
+   set sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data height(keep=name height)
+weight(keep=name weight)
+sex(keep=name sex)
+age(keep=name age);
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.HEIGHT has 19 observations and 2 variables.
+NOTE: The data set WORK.WEIGHT has 19 observations and 2 variables.
+NOTE: The data set WORK.SEX has 19 observations and 2 variables.
+NOTE: The data set WORK.AGE has 19 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Each dataset now contains `name` plus one additional variable</li>
+<li>`name` will act as the common key in the examples below</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+One to one match merging
+</h1>
+ 
+<h2>
+Create a dataset named heightweight by merging height and weight datasets based on name
+</h2>
+ 
+<ul>
+<li>Before match merging, we sort each input dataset by the common variable `name`</li>
+<li>The `merge` statement lists the datasets to be joined</li>
+<li>The `by name;` statement tells SAS how to align observations across the input datasets</li>
+<li>The output dataset `heightweight` should contain one row per student with both `height` and `weight`</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="14">
+proc sort data=height;
+   by name;
+run;
+ 
+proc sort data=weight;
+   by name;
+run;
+ 
+data heightweight;
+   merge height weight;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="39">
+proc sort data=height;
+by name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.HEIGHT.
+NOTE: The data set WORK.HEIGHT has 19 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=weight;
+by name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.WEIGHT.
+NOTE: The data set WORK.WEIGHT has 19 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data heightweight;
+merge height weight;
+by name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.HEIGHT.
+NOTE: There were 19 observations read from the data set WORK.WEIGHT.
+NOTE: The data set WORK.HEIGHTWEIGHT has 19 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `heightweight` and confirm that the values of height and weight for the same student now appear on one row</li>
+<li>This is the basic match merge pattern used throughout SAS programming</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named hws by merging height, weight, and sex datasets based on name
+</h2>
+ 
+<ul>
+<li>The same pattern can be extended to more than two input datasets</li>
+<li>Each input dataset must still be sorted by the same BY variable</li>
+<li>The output dataset now combines three different pieces of information for each student</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="18">
+proc sort data=height;
+   by name;
+run;
+ 
+proc sort data=weight;
+   by name;
+run;
+ 
+proc sort data=sex;
+   by name;
+run;
+ 
+data hws;
+   merge height weight sex;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="50">
+proc sort data=height;
+by name;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=weight;
+by name;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=sex;
+by name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.SEX.
+NOTE: The data set WORK.SEX has 19 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data hws;
+merge height weight sex;
+by name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.HEIGHT.
+NOTE: There were 19 observations read from the data set WORK.WEIGHT.
+NOTE: There were 19 observations read from the data set WORK.SEX.
+NOTE: The data set WORK.HWS has 19 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review `hws` and confirm that height, weight, and sex now appear together for each student</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named ahws by merging age, height, weight, and sex datasets based on name
+</h2>
+ 
+<ul>
+<li>This example adds a fourth dataset to the same match merge pattern</li>
+<li>The result is a combined dataset with one row per student and four merged variables</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="22">
+proc sort data=age;
+   by name;
+run;
+ 
+proc sort data=height;
+   by name;
+run;
+ 
+proc sort data=weight;
+   by name;
+run;
+ 
+proc sort data=sex;
+   by name;
+run;
+ 
+data ahws;
+   merge age height weight sex;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="62">
+proc sort data=age;
+by name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.AGE.
+NOTE: The data set WORK.AGE has 19 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=height;
+by name;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=weight;
+by name;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=sex;
+by name;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data ahws;
+merge age height weight sex;
+by name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.AGE.
+NOTE: There were 19 observations read from the data set WORK.HEIGHT.
+NOTE: There were 19 observations read from the data set WORK.WEIGHT.
+NOTE: There were 19 observations read from the data set WORK.SEX.
+NOTE: The data set WORK.AHWS has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `ahws` and confirm that each student has age, height, weight, and sex on the same observation</li>
+<li>Notice how match merge lets multiple narrow datasets be assembled into one wider dataset</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Important point to remember about sorting before merging
+</h1>
+ 
+<ul>
+<li>For a BY merge, SAS expects all input datasets to be sorted by the same BY variables</li>
+<li>If the datasets are not sorted correctly, SAS can stop with an error or produce incorrect alignment</li>
+<li>A safe habit is to sort every input dataset immediately before the merge when teaching or debugging code</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>The `merge` statement joins observations from multiple datasets</li>
+<li>A match merge uses one or more common BY variables to align rows</li>
+<li>All input datasets should be sorted by the same BY variables before the merge</li>
+<li>The output dataset contains variables contributed by all merged datasets</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

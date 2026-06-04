@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_APPENDING_L104
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Pre-requisite
+</h1>
+ 
+<ul>
+<li>This lesson covers behaviour of the SET statement when appending datasets that have different variables or different variable attributes</li>
+<li>For an introduction to appending using the SET statement with same-attribute datasets, refer to lesson SAS_APPENDING_L101</li>
+</ul>
+ 
+<h1>
+What happens when appending datasets with different variables?
+</h1>
+ 
+<ul>
+<li>When the input datasets on the SET statement have different variables, SAS includes all variables from all datasets in the output dataset</li>
+<li>For observations from a dataset that does not contain a particular variable, SAS assigns a missing value for that variable</li>
+<li>This behaviour is governed by the Program Data Vector (PDV) which is initialised with all variables found across all input datasets</li>
+</ul>
+ 
+<h1>
+Appending datasets with different variables
+</h1>
+ 
+<h2>
+Create example datasets with different variables
+</h2>
+ 
+<ul>
+<li>We create two datasets from sashelp.class, each retaining a different subset of variables</li>
+<li>class_age keeps NAME and AGE only, while class_sex keeps NAME and SEX only</li>
+<li>Both datasets share the NAME variable but differ in their remaining variable — this is the scenario we want to demonstrate for appending datasets with different variables</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data class_age;
+   set sashelp.class(keep=name age);
+run;
+ 
+data class_sex;
+   set sashelp.class(keep=name sex);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="28">
+data class_age;
+set sashelp.class(keep=name age);
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_AGE has 19 observations and 2 variables.
+NOTE: Compressing data set WORK.CLASS_AGE increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class_sex;
+set sashelp.class(keep=name sex);
+run;
+ 
+NOTE: Compression was disabled for data set WORK.CLASS_SEX because compression overhead would increase the size of the data set.
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_SEX has 19 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>class_age contains NAME and AGE only</li>
+<li>class_sex contains NAME and SEX only</li>
+<li>When appended, the output dataset will contain NAME, AGE, and SEX</li>
+<li>Observations from class_age will have missing values for SEX</li>
+<li>Observations from class_sex will have missing values for AGE</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class_combined;
+   set class_age class_sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data class_combined;
+set class_age class_sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS_AGE.
+NOTE: There were 19 observations read from the data set WORK.CLASS_SEX.
+NOTE: The data set WORK.CLASS_COMBINED has 38 observations and 3 variables.
+NOTE: Compressing data set WORK.CLASS_COMBINED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L104_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Variable length differences when appending using SET
+</h1>
+ 
+<ul>
+<li>When the same variable exists in multiple input datasets but with different lengths, SAS uses the length defined in the PDV</li>
+<li>The PDV takes the length from the first dataset in the SET statement that defines that variable</li>
+<li>If a subsequent dataset has a longer length for the same variable, values may be truncated to the length established by the first dataset</li>
+<li>SAS will issue a warning in the log when truncation occurs</li>
+</ul>
+ 
+<h2>
+Appending when the first dataset has a shorter variable length
+</h2>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="10">
+data short_name;
+   length name $5;
+   set sashelp.class(obs=5 keep=name age);
+run;
+ 
+data long_name;
+   set sashelp.class(keep=name age);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+data short_name;
+length name $5;
+set sashelp.class(obs=5 keep=name age);
+run;
+ 
+WARNING: Multiple lengths were specified for the variable NAME by input data set(s). This can cause truncation of data.
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.SHORT_NAME has 5 observations and 2 variables.
+NOTE: Compressing data set WORK.SHORT_NAME increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data long_name;
+set sashelp.class(keep=name age);
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.LONG_NAME has 19 observations and 2 variables.
+NOTE: Compressing data set WORK.LONG_NAME increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>short_name has NAME with length 5</li>
+<li>long_name has NAME with default length 8</li>
+<li>Since short_name is listed first on the SET statement, the PDV sets NAME length to 5</li>
+<li>Observations from long_name will have NAME values truncated to 5 characters</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data combined_truncated;
+   set short_name long_name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data combined_truncated;
+set short_name long_name;
+run;
+ 
+WARNING: Multiple lengths were specified for the variable NAME by input data set(s). This can cause truncation of data.
+NOTE: There were 5 observations read from the data set WORK.SHORT_NAME.
+NOTE: There were 19 observations read from the data set WORK.LONG_NAME.
+NOTE: The data set WORK.COMBINED_TRUNCATED has 24 observations and 2 variables.
+NOTE: Compressing data set WORK.COMBINED_TRUNCATED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L104_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Appending when the first dataset has a longer variable length
+</h2>
+ 
+<ul>
+<li>When the first dataset has the longer length, no truncation occurs because the PDV length is sufficient for all values</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data combined_no_truncation;
+   set long_name short_name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data combined_no_truncation;
+set long_name short_name;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.LONG_NAME.
+NOTE: There were 5 observations read from the data set WORK.SHORT_NAME.
+NOTE: The data set WORK.COMBINED_NO_TRUNCATION has 24 observations and 2 variables.
+NOTE: Compressing data set WORK.COMBINED_NO_TRUNCATION increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L104_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Controlling variable length using a LENGTH statement before SET
+</h1>
+ 
+<ul>
+<li>The recommended approach to avoid truncation is to explicitly define variable lengths using a LENGTH statement before the SET statement</li>
+<li>The LENGTH statement establishes the variable in the PDV with the specified length before SAS reads any input dataset</li>
+<li>This overrides the length that would otherwise be taken from the first dataset</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data combined_controlled;
+   length name $8;
+   set short_name long_name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data combined_controlled;
+length name $8;
+set short_name long_name;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.SHORT_NAME.
+NOTE: There were 19 observations read from the data set WORK.LONG_NAME.
+NOTE: The data set WORK.COMBINED_CONTROLLED has 24 observations and 2 variables.
+NOTE: Compressing data set WORK.COMBINED_CONTROLLED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L104_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Variable type conflicts when appending using SET
+</h1>
+ 
+<ul>
+<li>When the same variable exists in multiple input datasets but with different types (numeric vs character), SAS produces an error and stops processing</li>
+<li>Unlike length differences, type conflicts cannot be resolved with a LENGTH statement</li>
+<li>The variable must be renamed or converted in one of the input datasets before appending</li>
+</ul>
+ 
+<h2>
+Resolving a type conflict using RENAME and conversion
+</h2>
+ 
+<ul>
+<li>Creating two datasets where AGE is numeric in one and character in the other</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data age_numeric;
+   set sashelp.class(obs=5 keep=name age);
+run;
+ 
+data age_character;
+   set sashelp.class(obs=5 keep=name age);
+   age_char=put(age,2.);
+   drop age;
+   rename age_char=age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+data age_numeric;
+set sashelp.class(obs=5 keep=name age);
+run;
+ 
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.AGE_NUMERIC has 5 observations and 2 variables.
+NOTE: Compressing data set WORK.AGE_NUMERIC increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data age_character;
+set sashelp.class(obs=5 keep=name age);
+age_char=put(age,2.);
+drop age;
+rename age_char=age;
+run;
+ 
+NOTE: Compression was disabled for data set WORK.AGE_CHARACTER because compression overhead would increase the size of the data set.
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.AGE_CHARACTER has 5 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>To resolve the conflict, convert the character AGE back to numeric before appending</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data age_character_fixed;
+   set age_character;
+   age_num=input(age,2.);
+   drop age;
+   rename age_num=age;
+run;
+ 
+data combined_type_resolved;
+   set age_numeric age_character_fixed;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+data age_character_fixed;
+set age_character;
+age_num=input(age,2.);
+drop age;
+rename age_num=age;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.AGE_CHARACTER.
+NOTE: The data set WORK.AGE_CHARACTER_FIXED has 5 observations and 2 variables.
+NOTE: Compressing data set WORK.AGE_CHARACTER_FIXED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data combined_type_resolved;
+set age_numeric age_character_fixed;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.AGE_NUMERIC.
+NOTE: There were 5 observations read from the data set WORK.AGE_CHARACTER_FIXED.
+NOTE: The data set WORK.COMBINED_TYPE_RESOLVED has 10 observations and 2 variables.
+NOTE: Compressing data set WORK.COMBINED_TYPE_RESOLVED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L104_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+</div></body>
+
+</html>
+
+

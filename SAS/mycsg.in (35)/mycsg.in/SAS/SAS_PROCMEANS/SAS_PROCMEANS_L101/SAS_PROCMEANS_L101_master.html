@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCMEANS_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Create an input dataset
+</h1>
+ 
+<ul>
+<li>We copy `sashelp.class` into a WORK dataset named `class01`</li>
+<li>This dataset will be used to demonstrate default and custom summary statistics with PROC MEANS</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class01;
+   set sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+data class01;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `class01` and note that the numeric variables include `age`, `height`, and `weight`</li>
+<li>These numeric variables are the default analysis candidates for PROC MEANS</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Obtaining descriptive statistics into an output dataset
+</h1>
+ 
+<table>
+<th>
+Question
+</th>
+<th>
+Answer
+</th>
+<tr>
+<td>
+How do we specify the input dataset for PROC MEANS?
+</td>
+<td>
+Use the `data=` option on the PROC MEANS statement.
+</td>
+</tr>
+<tr>
+<td>
+What happens if we do not provide the data= option?
+</td>
+<td>
+The most recently created dataset in the current SAS session is used.
+</td>
+</tr>
+<tr>
+<td>
+How do we specify the variables for which statistics are requested?
+</td>
+<td>
+Use the `var` statement.
+</td>
+</tr>
+<tr>
+<td>
+What happens if we do not provide a VAR statement?
+</td>
+<td>
+SAS produces descriptive statistics for all numeric variables in the input dataset.
+</td>
+</tr>
+<tr>
+<td>
+How do we specify the output dataset name?
+</td>
+<td>
+Use the `output` statement with the `out=` option.
+</td>
+</tr>
+<tr>
+<td>
+What happens if we do not provide the output statement?
+</td>
+<td>
+No output dataset is created, but summary statistics are still shown in the output window.
+</td>
+</tr>
+</table>
+ 
+<h2>
+Create a dataset named stats01 to store the default descriptive statistics of all numeric variables of class01
+</h2>
+ 
+<ul>
+<li>We specify the input dataset with `data=class01`</li>
+<li>We specify the output dataset with `output out=stats01;`</li>
+<li>Because no `var` statement is used, PROC MEANS analyses all numeric variables</li>
+<li>The output dataset contains automatic variables such as `_TYPE_`, `_FREQ_`, and `_STAT_`</li>
+<li>By default, PROC MEANS produces rows for N, Mean, Std Dev, Minimum, and Maximum</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc means data=class01;
+   output out=stats01;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc means data=class01;
+output out=stats01;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS01 has 5 observations and 6 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `stats01` and confirm that each row corresponds to one default statistic</li>
+<li>`_STAT_` identifies the statistic represented on that row</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats02 to store the default statistics of height only
+</h2>
+ 
+<ul>
+<li>The `var` statement restricts the analysis to the variable `height`</li>
+<li>The output dataset contains `height` along with the automatic variables</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="6">
+proc means data=class01;
+   var height;
+   output out=stats02;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc means data=class01;
+var height;
+output out=stats02;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS02 has 5 observations and 4 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats03 to store the default statistics of height and weight
+</h2>
+ 
+<ul>
+<li>Multiple analysis variables are listed on the same `var` statement separated by spaces</li>
+<li>The output dataset contains one column for each requested analysis variable</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="6">
+proc means data=class01;
+   var height weight;
+   output out=stats03;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc means data=class01;
+var height weight;
+output out=stats03;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS03 has 5 observations and 5 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats04 to store N, Mean, and Median of height
+</h2>
+ 
+<ul>
+<li>Specific statistics are requested in the `output` statement</li>
+<li>Each statistic keyword is followed by an equal sign and the name of the output variable that should store the result</li>
+<li>When statistics are named explicitly, the `_STAT_` variable is no longer needed</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+proc means data=class01;
+   var height;
+   output out=stats04 n=height_n mean=height_mean median=height_median;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc means data=class01;
+var height;
+output out=stats04 n=height_n mean=height_mean median=height_median;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS04 has 1 observations and 5 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats05 to store N, Mean, and Median of height and weight
+</h2>
+ 
+<ul>
+<li>When more than one analysis variable is listed, the output variable names after each statistic keyword are assigned in the same order</li>
+<li>So `height_n` stores N for height and `weight_n` stores N for weight</li>
+<li>The same ordering rule applies to the mean and median output variables</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="9">
+proc means data=class01;
+   var height weight;
+   output out=stats05
+      n=height_n weight_n
+      mean=height_mean weight_mean
+      median=height_median weight_median;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+proc means data=class01;
+var height weight;
+output out=stats05
+n=height_n weight_n
+mean=height_mean weight_mean
+median=height_median weight_median;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS05 has 1 observations and 8 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats06 to store N, Mean, and Median of age, height, and weight
+</h2>
+ 
+<ul>
+<li>This example shows that the output variable names do not have to match the input variable names</li>
+<li>What matters is the position of each output variable name after the statistic keyword</li>
+<li>The first name corresponds to `age`, the second to `height`, and the third to `weight`</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="9">
+proc means data=class01;
+   var age height weight;
+   output out=stats06
+      n=nage nheight nweight
+      mean=meanage a101 meanweight
+      median=medianage medianheight x101;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+proc means data=class01;
+var age height weight;
+output out=stats06
+n=nage nheight nweight
+mean=meanage a101 meanweight
+median=medianage medianheight x101;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS06 has 1 observations and 11 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>In this example `a101` stores the mean of height because height is the second variable on the VAR statement</li>
+<li>`x101` stores the median of weight because weight is the third variable on the VAR statement</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats07 using the AUTONAME option
+</h2>
+ 
+<ul>
+<li>If the number of variables is large, manually naming every output variable can be tedious</li>
+<li>The `autoname` option tells SAS to generate output variable names automatically</li>
+<li>SAS combines the analysis variable name and statistic name to create descriptive output names</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="10">
+proc means data=class01;
+   var age height weight;
+   output out=stats07
+      mean=
+      median=
+      n=
+      / autoname;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+proc means data=class01;
+var age height weight;
+output out=stats07
+mean=
+median=
+n=
+/ autoname;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS07 has 1 observations and 11 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.04 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal8">View Data</button><div class="modal fade" id="dataModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_08.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats08 to store N, Mean, and Std of height within each age group
+</h2>
+ 
+<ul>
+<li>When statistics are needed within groups, we use BY group processing</li>
+<li>To use a BY statement, the input dataset must first be sorted by the same BY variable</li>
+<li>The output dataset will contain one row per BY group when statistics are explicitly named</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc sort data=class01 out=class01_sort;
+   by age;
+run;
+ 
+proc means data=class01_sort;
+   by age;
+   var height;
+   output out=stats08 n=height_n mean=height_mean std=height_std;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="27">
+proc sort data=class01 out=class01_sort;
+by age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS01_SORT has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc means data=class01_sort;
+by age;
+var height;
+output out=stats08 n=height_n mean=height_mean std=height_std;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01_SORT.
+NOTE: The data set WORK.STATS08 has 6 observations and 6 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `stats08` and confirm that each age value has its own summary row</li>
+<li>The variable `age` is carried into the output dataset because it is the BY variable</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal9">View Data</button><div class="modal fade" id="dataModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_09.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named stats09 to store N, Mean, and Std of height within each sex group using CLASS
+</h2>
+ 
+<ul>
+<li>The `class` statement provides grouped summaries without requiring the data to be presorted</li>
+<li>Unlike BY processing, CLASS can also produce overall summary rows together with class-level rows</li>
+<li>In the output dataset, `_TYPE_` helps identify the summary level represented by each row</li>
+</ul>
+ 
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="7">
+proc means data=class01;
+   class sex;
+   var height;
+   output out=stats09 n=height_n mean=height_mean std=height_std;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+proc means data=class01;
+class sex;
+var height;
+output out=stats09 n=height_n mean=height_mean std=height_std;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.STATS09 has 3 observations and 6 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.03 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review `stats09` and compare it with `stats08` to understand the difference between BY and CLASS processing</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal10">View Data</button><div class="modal fade" id="dataModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCMEANS_L101_filterable_data_010.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`proc means` calculates descriptive statistics for numeric variables</li>
+<li>The `var` statement controls which numeric variables are analysed</li>
+<li>The `output` statement creates a SAS dataset containing the results</li>
+<li>`autoname` is useful when many output statistic variables must be created</li>
+<li>BY and CLASS both support grouped statistics, but they behave differently</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

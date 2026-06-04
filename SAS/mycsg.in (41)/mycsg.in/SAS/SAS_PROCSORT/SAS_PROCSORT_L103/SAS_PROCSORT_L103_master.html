@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCSORT_L103
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of unique
+</h1>
+ 
+<ol>
+<li>Being the only one of its kind or different from all others.</li>
+</ol>
+ 
+<h1>
+What do we call a unique record in a dataset
+</h1>
+ 
+<ul>
+<li>A record is unique when at least one value makes it different from every other observation in the dataset</li>
+<li>When specific variables are treated as key variables, we judge uniqueness only on the combination of those key variables</li>
+<li>So a record can be unique under one key definition and non-unique under another key definition</li>
+</ul>
+ 
+<h1>
+Create a sample dataset
+</h1>
+ 
+<ul>
+<li>This dataset contains exact duplicates for Alfred and multiple records for Carol with different ages</li>
+<li>That mix lets us study uniqueness using different BY variable combinations</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="14">
+data class;
+   infile cards truncover;
+   input name $ sex $ age height weight;
+   cards;
+Alfred    M     14     69        112.5
+Alfred    M     14     69        112.5
+Carol     F     14     62.8      102.5
+Carol     F     12     55        84
+Carol     F     11     51        79
+Jane      F     12     59.8      84.5
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data class;
+infile cards truncover;
+input name $ sex $ age height weight;
+cards;
+ 
+NOTE: The data set WORK.CLASS has 6 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>If all variables are considered together, only the two Alfred rows are non-unique exact duplicates</li>
+<li>If `name` alone is considered as the key, then Alfred and Carol are non-unique because their names repeat</li>
+<li>If `name` and `age` are considered together, then only Alfred remains non-unique in this example</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L103_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Where do we need to identify non-unique records
+</h1>
+ 
+<ul>
+<li>We may need to review duplicate subject records, duplicate event records, or repeated lab records within a defined key</li>
+<li>Separating unique and non-unique observations helps with data cleaning and issue investigation</li>
+<li>`proc sort` provides a convenient way to split these records into separate datasets</li>
+</ul>
+ 
+<h1>
+Separate unique and non-unique records based on key variables
+</h1>
+ 
+<ul>
+<li>The `nouniquekeys` option sends non-unique observations to the dataset specified by `out=`</li>
+<li>The `uniqueout=` option stores observations whose BY value combination occurs only once</li>
+<li>The BY statement defines the key used to judge uniqueness</li>
+</ul>
+ 
+<h2>
+Create a dataset named class_nouniq_names to hold records with non-unique names
+</h2>
+ 
+<ul>
+<li>Using `by name;` means uniqueness is checked only on the value of `name`</li>
+<li>Jane appears only once and therefore goes to `class_uniq_names`</li>
+<li>Alfred and Carol appear more than once and therefore go to `class_nouniq_names`</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class out=class_nouniq_names uniqueout=class_uniq_names nouniquekeys;
+   by name;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+proc sort data=class out=class_nouniq_names uniqueout=class_uniq_names nouniquekeys;
+by name;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: 1 observations with unique key values were deleted.
+NOTE: The data set WORK.CLASS_NOUNIQ_NAMES has 5 observations and 5 variables.
+NOTE: The data set WORK.CLASS_UNIQ_NAMES has 1 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L103_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named class_nouniq_name_age to hold records with non-unique name and age combinations
+</h2>
+ 
+<ul>
+<li>Using `by name age;` changes the uniqueness rule</li>
+<li>Carol now has unique rows because each age value differs within the name Carol</li>
+<li>Only the Alfred rows remain non-unique because both `name` and `age` match exactly</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class out=class_nouniq_name_age uniqueout=class_uniq_name_age nouniquekeys;
+   by name age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+proc sort data=class out=class_nouniq_name_age uniqueout=class_uniq_name_age nouniquekeys;
+by name age;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.CLASS.
+NOTE: 4 observations with unique key values were deleted.
+NOTE: The data set WORK.CLASS_NOUNIQ_NAME_AGE has 2 observations and 5 variables.
+NOTE: The data set WORK.CLASS_UNIQ_NAME_AGE has 4 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L103_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Uniqueness depends on the BY variables used as the key</li>
+<li>`nouniquekeys` helps separate non-unique observations from unique observations</li>
+<li>`uniqueout=` stores records that occur only once for the specified BY key</li>
+<li>This technique is very useful in duplicate record review and data cleaning workflows</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

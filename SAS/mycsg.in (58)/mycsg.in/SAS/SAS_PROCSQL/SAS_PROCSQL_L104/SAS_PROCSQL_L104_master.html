@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCSQL_L104
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+GROUP BY with aggregate functions and HAVING in PROC SQL
+</h1>
+ 
+<h2>
+What does GROUP BY do
+</h2>
+ 
+<ul>
+<li>Previous PROC SQL lessons covered SELECT, WHERE, ORDER BY, joining datasets, and subqueries</li>
+<li>`GROUP BY` groups rows that share the same value in one or more columns and reduces each group to a single summary row</li>
+<li>Aggregate functions such as `COUNT`, `SUM`, `MEAN`, `MIN`, and `MAX` compute one value per group</li>
+<li>Every column in the SELECT list must either appear in the GROUP BY clause or be wrapped in an aggregate function</li>
+<li>The HAVING clause filters the grouped results in the same way WHERE filters individual rows — but HAVING operates after aggregation</li>
+</ul>
+ 
+<h2>
+Create sample data
+</h2>
+ 
+<ul>
+<li>We create a sales transactions dataset with multiple rows per department and per region</li>
+<li>This data will be used to demonstrate counts, sums, averages, and HAVING filters across different groupings</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data transactions;
+    input dept $ region $ amount units;
+    datalines;
+Marketing East  1200 10
+Marketing East  1500 12
+Marketing West   900  8
+Marketing West  1100 10
+Sales     East  2000 20
+Sales     East  1800 18
+Sales     West  2200 22
+Sales     West  1600 16
+Support   East   500  5
+Support   West   450  4
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data transactions;
+input dept $ region $ amount units;
+datalines;
+ 
+NOTE: The data set WORK.TRANSACTIONS has 10 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Confirm that `transactions` has 10 rows: 4 for Marketing, 4 for Sales, and 2 for Support</li>
+<li>Each row represents a transaction with a department, region, amount, and number of units</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L104_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Basic GROUP BY - count and sum per group
+</h1>
+ 
+<h2>
+Count rows per department
+</h2>
+ 
+<ul>
+<li>`COUNT(*)` counts all rows in each group regardless of missing values</li>
+<li>The result has one row per distinct department value</li>
+<li>The column alias after `as` gives the computed column a readable name in the output</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="9">
+proc sql;
+    create table dept_counts as
+    select dept,
+           count(*) as n_transactions
+    from transactions
+    group by dept;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+proc sql;
+create table dept_counts as
+select dept,
+count(*) as n_transactions
+from transactions
+group by dept;
+NOTE: Table WORK.DEPT_COUNTS created, with 3 rows and 2 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`dept_counts` should have 3 rows: Marketing with 4, Sales with 4, Support with 2</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L104_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Sum and average amount per department
+</h2>
+ 
+<ul>
+<li>Multiple aggregate functions can appear in the same SELECT statement</li>
+<li>Here we compute the total amount, average amount, and total units for each department in a single query</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="12">
+proc sql;
+    create table dept_summary as
+    select dept,
+           count(*)       as n_transactions,
+           sum(amount)    as total_amount,
+           mean(amount)   as avg_amount,
+           sum(units)     as total_units
+    from transactions
+    group by dept;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+proc sql;
+create table dept_summary as
+select dept,
+count(*)       as n_transactions,
+sum(amount)    as total_amount,
+mean(amount)   as avg_amount,
+sum(units)     as total_units
+from transactions
+group by dept;
+NOTE: Table WORK.DEPT_SUMMARY created, with 3 rows and 5 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review `dept_summary` and confirm the totals match your mental arithmetic against the raw data</li>
+<li>Marketing should have total amount 4700, Sales 7600, Support 950</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L104_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Group by multiple columns - department and region
+</h2>
+ 
+<ul>
+<li>Listing multiple columns in GROUP BY creates one output row for each unique combination of those columns</li>
+<li>With two grouping columns (dept and region) we expect up to 6 combinations from the sample data</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc sql;
+    create table dept_region_summary as
+    select dept,
+           region,
+           count(*)    as n_transactions,
+           sum(amount) as total_amount
+    from transactions
+    group by dept, region;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+proc sql;
+create table dept_region_summary as
+select dept,
+region,
+count(*)    as n_transactions,
+sum(amount) as total_amount
+from transactions
+group by dept, region;
+NOTE: Table WORK.DEPT_REGION_SUMMARY created, with 6 rows and 4 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `dept_region_summary` and verify it has 6 rows: one for each department-region combination</li>
+<li>The total for Marketing East should be 2700, Marketing West 2000, and so on</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L104_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+HAVING - filter groups after aggregation
+</h1>
+ 
+<h2>
+Why WHERE cannot be used to filter group totals
+</h2>
+ 
+<ul>
+<li>WHERE filters individual rows before any grouping occurs</li>
+<li>This means WHERE cannot reference aggregated values such as `sum(amount)` because those values do not exist yet at the WHERE stage</li>
+<li>HAVING is applied after GROUP BY and can reference any aggregate expression</li>
+<li>Think of WHERE as a row-level filter and HAVING as a group-level filter</li>
+</ul>
+ 
+<h2>
+Use HAVING to keep only departments above a total threshold
+</h2>
+ 
+<ul>
+<li>In this example, we want only departments where the total amount exceeds 4000</li>
+<li>This cannot be done with WHERE because the total amount is only known after aggregation</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="10">
+proc sql;
+    create table high_value_depts as
+    select dept,
+           sum(amount) as total_amount
+    from transactions
+    group by dept
+    having sum(amount) gt 4000;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+proc sql;
+create table high_value_depts as
+select dept,
+sum(amount) as total_amount
+from transactions
+group by dept
+having sum(amount) gt 4000;
+NOTE: Table WORK.HIGH_VALUE_DEPTS created, with 2 rows and 2 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`high_value_depts` should contain only Marketing (4700) and Sales (7600) — Support (950) is excluded</li>
+<li>The HAVING condition references `sum(amount)` directly, not the alias `total_amount` — SAS requires the aggregate expression itself in HAVING</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L104_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+Combine WHERE and HAVING in the same query
+</h2>
+ 
+<ul>
+<li>WHERE and HAVING can be used together — WHERE filters rows before grouping, and HAVING filters groups after aggregation</li>
+<li>In this example, we exclude the Support department entirely using WHERE and then further filter groups by transaction count using HAVING</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="12">
+proc sql;
+    create table east_dept_counts as
+    select dept,
+           region,
+           count(*) as n_transactions
+    from transactions
+    where region='East'
+    group by dept, region
+    having count(*) ge 2;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+proc sql;
+create table east_dept_counts as
+select dept,
+region,
+count(*) as n_transactions
+from transactions
+where region='East'
+group by dept, region
+having count(*) ge 2;
+NOTE: Table WORK.EAST_DEPT_COUNTS created, with 2 rows and 3 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>WHERE first keeps only East rows (5 rows remain)</li>
+<li>GROUP BY then groups those 5 rows by department and region</li>
+<li>HAVING then keeps only groups with 2 or more transactions</li>
+<li>Inspect the result and confirm Support East (which has only 1 East row) is excluded</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L104_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+MIN and MAX within groups
+</h2>
+ 
+<ul>
+<li>`MIN` and `MAX` compute the smallest and largest values within each group</li>
+<li>This is useful for finding the lowest and highest transaction values per department without sorting the raw data</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc sql;
+    create table dept_range as
+    select dept,
+           min(amount) as min_amount,
+           max(amount) as max_amount,
+           max(amount) - min(amount) as amount_range
+    from transactions
+    group by dept;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+proc sql;
+create table dept_range as
+select dept,
+min(amount) as min_amount,
+max(amount) as max_amount,
+max(amount) - min(amount) as amount_range
+from transactions
+group by dept;
+NOTE: Table WORK.DEPT_RANGE created, with 3 rows and 4 columns.
+ 
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `amount_range` column is a derived column computed from two aggregate expressions</li>
+<li>Verify that for Marketing, the range is 600 (1500 minus 900), and for Sales the range is 600 (2200 minus 1600)</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSQL_L104_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`GROUP BY` reduces each group of rows to a single summary row — every SELECT column must either be in GROUP BY or wrapped in an aggregate function</li>
+<li>Common aggregate functions: `COUNT(*)` counts rows, `SUM` totals values, `MEAN` averages values, `MIN` and `MAX` find extremes</li>
+<li>HAVING filters groups after aggregation using aggregate expressions — it is the group-level equivalent of WHERE</li>
+<li>WHERE and HAVING can appear in the same query: WHERE filters before grouping, HAVING filters after</li>
+<li>In PROC SQL, HAVING must reference the aggregate expression itself such as `sum(amount)` rather than the column alias such as `total_amount`</li>
+<li>Use `create table` with GROUP BY queries to save summary results as SAS datasets for further use</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

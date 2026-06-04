@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCIMPORT_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of import
+</h1>
+ 
+<ul>
+<li>Import means bringing data from an external source into SAS so that the data can be processed, analysed, and reported</li>
+</ul>
+ 
+<h1>
+Why do we need a procedure for import
+</h1>
+ 
+<ul>
+<li>Data is often collected and stored outside SAS in text files, spreadsheets, databases, and other applications</li>
+<li>SAS procedures and DATA steps work most effectively on SAS datasets</li>
+<li>`proc import` helps convert external files into SAS datasets that can then be used in SAS programs</li>
+</ul>
+ 
+<h1>
+What does PROC IMPORT do
+</h1>
+ 
+<ul>
+<li>The IMPORT procedure reads data from an external file and writes it into a SAS dataset</li>
+<li>SAS can infer metadata such as variable names, types, and lengths depending on the file type and options used</li>
+</ul>
+ 
+<h1>
+What kinds of files can be imported using PROC IMPORT
+</h1>
+ 
+<ul>
+<li>Delimited text files such as CSV or other separator-based files can be imported with `dbms=dlm` or other DBMS options</li>
+<li>Excel workbooks can also be imported when the SAS environment supports that access path</li>
+<li>The exact file types available depend on the SAS installation and licensed components</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal5001">Delimited file example, ampersand as delimiter</button><div class="modal fade" id="imgModal5001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Delimited file example, ampersand as delimiter</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCIMPORT_L101_5001.png" alt="Delimited file example, ampersand as delimiter" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+What information do we need to provide to PROC IMPORT
+</h1>
+ 
+<ul>
+<li>The full path and filename of the source file</li>
+<li>The name of the SAS output dataset</li>
+<li>The file type or DBMS option</li>
+<li>Whether the first row contains column headings</li>
+<li>The delimiter when importing a delimited file</li>
+<li>Optional control over the starting row or worksheet name depending on the source type</li>
+</ul>
+ 
+<h2>
+Import data from an ampersand-delimited text file into a dataset named delimited
+</h2>
+ 
+<ul>
+<li>`datafile=` points to the external text file</li>
+<li>`dbms=dlm` tells SAS that the source is a delimited text file</li>
+<li>`delimiter='&'` specifies the character that separates each field</li>
+<li>`getnames=yes` tells SAS to use the first row of the file as variable names</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="18">
+/*
+content of delimited file
+Region&State&Month&Expenses&Revenue
+Southern&GA&JAN2001&2000&8000
+Southern&GA&FEB2001&1200&6000
+Southern&FL&FEB2001&8500&11000
+Northern&NY&FEB2001&3000&4000
+Northern&NY&MAR2001&6000&5000
+Southern&FL&MAR2001&9800&13500
+Northern&MA&MAR2001&1500&1000
+*/
+ 
+proc import datafile="&root2._5001.txt" out=delimited dbms=dlm replace;
+    delimiter='&';
+    getnames=yes;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="78">
+/*
+content of delimited file
+Region&State&Month&Expenses&Revenue
+Southern&GA&JAN2001&2000&8000
+Southern&GA&FEB2001&1200&6000
+Southern&FL&FEB2001&8500&11000
+Northern&NY&FEB2001&3000&4000
+Northern&NY&MAR2001&6000&5000
+Southern&FL&MAR2001&9800&13500
+Northern&MA&MAR2001&1500&1000
+*/
+ 
+proc import datafile="&root2._5001.txt" out=delimited dbms=dlm replace;
+delimiter='&';
+getnames=yes;
+run;
+ 
+2034745   /**********************************************************************
+2034746   *   PRODUCT:   SAS
+2034747   *   VERSION:   9.4
+2034748   *   CREATOR:   External File Interface
+2034749   *   DATE:      02FEB16
+2034750   *   DESC:      Generated SAS Datastep Code
+2034751   *   TEMPLATE SOURCE:  (None Specified.)
+2034752   ***********************************************************************/
+2034753      data WORK.DELIMITED    ;
+2034754      %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+2034755      infile 'D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_PROCIMPORT\SAS_PROCIMPORT_L101\SAS_PROCIMPORT_L101_5001.txt' delimiter = '&'
+2034755! MISSOVER DSD lrecl=32767 firstobs=2 ;
+2034756         informat Region $8. ;
+2034757         informat State $2. ;
+2034758         informat Month MONYY7. ;
+2034759         informat Expenses best32. ;
+2034760         informat Revenue best32. ;
+2034761         format Region $8. ;
+2034762         format State $2. ;
+2034763         format Month MONYY7. ;
+2034764         format Expenses best12. ;
+2034765         format Revenue best12. ;
+2034766      input
+2034767                  Region $
+2034768                  State $
+2034769                  Month
+2034770                  Expenses
+2034771                  Revenue
+2034772      ;
+2034773      if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+2034774      run;
+ 
+NOTE: The infile 'D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_PROCIMPORT\SAS_PROCIMPORT_L101\SAS_PROCIMPORT_L101_5001.txt' is:
+Filename=D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_PROCIMPORT\SAS_PROCIMPORT_L101\SAS_PROCIMPORT_L101_5001.txt,
+RECFM=V,LRECL=32767,File Size (bytes)=254,
+Last Modified=02 February 2025 16:31:25,
+Create Time=02 February 2025 16:31:25
+ 
+NOTE: 7 records were read from the infile
+'D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_PROCIMPORT\SAS_PROCIMPORT_L101\SAS_PROCIMPORT_L101_5001.txt'.
+The minimum record length was 29.
+The maximum record length was 30.
+NOTE: The data set WORK.DELIMITED has 7 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+7 rows created in WORK.DELIMITED from D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_PROCIMPORT\SAS_PROCIMPORT_L101\SAS_PROCIMPORT_L101_5001.txt.
+ 
+ 
+ 
+NOTE: WORK.DELIMITED data set was successfully created.
+NOTE: The data set WORK.DELIMITED has 7 observations and 5 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+real time           0.28 seconds
+cpu time            0.12 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output dataset `delimited` should contain the rows and columns from the text file</li>
+<li>Inspect the imported dataset and confirm that the first line became variable names rather than a data row</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCIMPORT_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Import data from Excel files
+</h1>
+ 
+<h2>
+Import the data from the males sheet of mydata workbook into a dataset named males
+</h2>
+ 
+<ul>
+<li>Here the `sheet=` option identifies which worksheet to read from the workbook</li>
+<li>The imported data is written to a SAS dataset named `males`</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc import datafile="&root2._mydata.xlsx" out=males replace;
+    sheet="males";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc import datafile="&root2._mydata.xlsx" out=males replace;
+sheet="males";
+run;
+ 
+NOTE: WORK.MALES data set was successfully created.
+NOTE: The data set WORK.MALES has 10 observations and 5 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+real time           0.17 seconds
+cpu time            0.13 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCIMPORT_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Import the data from the females sheet of mydata workbook into a dataset named females
+</h2>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc import datafile="&root2._mydata.xlsx" out=females replace;
+    sheet="females";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc import datafile="&root2._mydata.xlsx" out=females replace;
+sheet="females";
+run;
+ 
+NOTE: WORK.FEMALES data set was successfully created.
+NOTE: The data set WORK.FEMALES has 9 observations and 5 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+real time           0.10 seconds
+cpu time            0.07 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCIMPORT_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Import the data from the class sheet of mydata workbook into a dataset named class
+</h2>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc import datafile="&root2._mydata.xlsx" out=class replace;
+    sheet="class";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc import datafile="&root2._mydata.xlsx" out=class replace;
+sheet="class";
+run;
+ 
+NOTE: WORK.CLASS data set was successfully created.
+NOTE: The data set WORK.CLASS has 19 observations and 5 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+real time           0.12 seconds
+cpu time            0.04 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCIMPORT_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`proc import` creates SAS datasets from external files</li>
+<li>Use `dbms=` to describe the source type</li>
+<li>Use `delimiter=` and `getnames=` for delimited text imports when needed</li>
+<li>Use `sheet=` when importing from an Excel workbook</li>
+<li>Always review the imported dataset to confirm that variable names, types, and values were interpreted correctly</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

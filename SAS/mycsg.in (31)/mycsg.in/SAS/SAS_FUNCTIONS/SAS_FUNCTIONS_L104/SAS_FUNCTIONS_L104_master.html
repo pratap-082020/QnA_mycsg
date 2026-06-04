@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_FUNCTIONS_L104
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+SAS Functions - Part 04: Numeric Math Functions
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Earlier lessons covered character functions (L101, L102), type conversion functions INPUT and PUT (L103), and cross-variable aggregation functions N/NMISS/SUM/MEAN/MIN/MAX (L201).</li>
+<li>This lesson covers the core numeric math functions: ROUND, INT, FLOOR, CEIL, MOD, and ABS.</li>
+<li>These functions are used constantly for rounding results, extracting integer parts, finding remainders, and working with absolute differences — all common in data step calculations and reporting.</li>
+</ul>
+ 
+<h2>
+ROUND - Rounding to a Specified Unit
+</h2>
+ 
+<ul>
+<li>ROUND(value, unit) rounds the value to the nearest multiple of unit.</li>
+<li>The unit argument controls the precision: ROUND(x, 1) rounds to the nearest whole number, ROUND(x, 0.1) rounds to one decimal place, ROUND(x, 10) rounds to the nearest ten.</li>
+<li>ROUND follows standard rounding rules: values exactly halfway between two multiples round away from zero (e.g., ROUND(2.5, 1) = 3).</li>
+<li>ROUND is the correct function for display rounding in clinical analysis — always specify the unit explicitly rather than relying on format truncation alone.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="21">
+data work.rounding;
+    input raw_value;
+    datalines;
+12.345
+12.355
+99.9
+100.5
+-7.65
+0.005
+;
+run;
+ 
+data work.rounded;
+    set work.rounding;
+    round_1dp  = round(raw_value, 0.1);
+    round_2dp  = round(raw_value, 0.01);
+    round_int  = round(raw_value, 1);
+    round_10   = round(raw_value, 10);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+data work.rounding;
+input raw_value;
+datalines;
+ 
+NOTE: Compression was disabled for data set WORK.ROUNDING because compression overhead would increase the size of the data set.
+NOTE: The data set WORK.ROUNDING has 6 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.rounded;
+set work.rounding;
+round_1dp  = round(raw_value, 0.1);
+round_2dp  = round(raw_value, 0.01);
+round_int  = round(raw_value, 1);
+round_10   = round(raw_value, 10);
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.ROUNDING.
+NOTE: The data set WORK.ROUNDED has 6 observations and 5 variables.
+NOTE: Compressing data set WORK.ROUNDED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Check WORK.ROUNDED carefully — floating-point arithmetic can occasionally produce unexpected results at the boundary (e.g., 12.345 may round to 12.34 rather than 12.35 due to binary representation).</li>
+<li>round_int and ROUND(x, 1) produce the same result as standard rounding to the nearest integer.</li>
+<li>round_10 rounds to the nearest ten: 99.9 rounds to 100, 12.3 rounds to 10.</li>
+<li>For negative values: -7.65 rounded to 0.1 gives -7.7 (rounding away from zero).</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L104_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+INT - Integer Truncation Toward Zero
+</h2>
+ 
+<ul>
+<li>INT(value) returns the integer portion of a number by truncating toward zero — it does not round, it simply drops the fractional part.</li>
+<li>For positive numbers, INT(x) is the same as FLOOR(x). For negative numbers, the difference matters: INT(-2.7) = -2, FLOOR(-2.7) = -3.</li>
+<li>INT is commonly used when you need to count how many complete units fit into a value — for example, converting a total number of days into complete weeks: INT(days / 7).</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="19">
+data work.int_demo;
+    input value;
+    datalines;
+7.9
+7.1
+-7.9
+-7.1
+0.99
+;
+run;
+ 
+data work.int_result;
+    set work.int_demo;
+    int_val   = int(value);
+    floor_val = floor(value);
+    ceil_val  = ceil(value);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="32">
+data work.int_demo;
+input value;
+datalines;
+ 
+NOTE: Compression was disabled for data set WORK.INT_DEMO because compression overhead would increase the size of the data set.
+NOTE: The data set WORK.INT_DEMO has 5 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.int_result;
+set work.int_demo;
+int_val   = int(value);
+floor_val = floor(value);
+ceil_val  = ceil(value);
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.INT_DEMO.
+NOTE: The data set WORK.INT_RESULT has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.INT_RESULT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Confirm the difference between INT and FLOOR for negative values: INT(-7.9) = -7, FLOOR(-7.9) = -8.</li>
+<li>CEIL (ceiling) is the opposite of FLOOR: it rounds up to the nearest integer away from zero in the positive direction.</li>
+<li>FLOOR and CEIL are equivalent to rounding down and up respectively for positive numbers. For negative numbers, both shift away from zero in opposite directions.</li>
+<li>Inspect WORK.INT_RESULT to confirm all three functions behave as described for both positive and negative inputs.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L104_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+FLOOR and CEIL in Practice
+</h2>
+ 
+<ul>
+<li>FLOOR(value) returns the largest integer less than or equal to value — effectively always rounding down.</li>
+<li>CEIL(value) returns the smallest integer greater than or equal to value — effectively always rounding up.</li>
+<li>FLOOR is used when you want the complete lower unit (e.g., completed months of treatment). CEIL is used when you want to ensure at least one unit (e.g., minimum number of pages needed).</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="21">
+data work.practical;
+    input subject $ days_on_study;
+    datalines;
+001  27
+002  28
+003  29
+004  30
+005  45
+006  60
+;
+run;
+ 
+data work.weeks;
+    set work.practical;
+    * Complete weeks completed (floor) ;
+    complete_weeks = floor(days_on_study / 7);
+    * Weeks required to cover the full period (ceil) ;
+    weeks_needed   = ceil(days_on_study / 7);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="34">
+data work.practical;
+input subject $ days_on_study;
+datalines;
+ 
+NOTE: The data set WORK.PRACTICAL has 6 observations and 2 variables.
+NOTE: Compressing data set WORK.PRACTICAL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.weeks;
+set work.practical;
+* Complete weeks completed (floor) ;
+complete_weeks = floor(days_on_study / 7);
+* Weeks required to cover the full period (ceil) ;
+weeks_needed   = ceil(days_on_study / 7);
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.PRACTICAL.
+NOTE: The data set WORK.WEEKS has 6 observations and 4 variables.
+NOTE: Compressing data set WORK.WEEKS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Subject with 27 days: FLOOR(27/7) = FLOOR(3.857) = 3 complete weeks; CEIL(27/7) = CEIL(3.857) = 4 weeks needed to cover the period.</li>
+<li>Subject with 28 days: exactly 4 weeks — FLOOR and CEIL both return 4.</li>
+<li>FLOOR and CEIL return the same value whenever the input is already an exact integer multiple of the divisor.</li>
+<li>Inspect WORK.WEEKS to verify the complete_weeks and weeks_needed columns for each subject.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L104_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+MOD - Remainder After Division
+</h2>
+ 
+<ul>
+<li>MOD(dividend, divisor) returns the remainder after dividing dividend by divisor.</li>
+<li>The result has the same sign as the dividend (not the divisor). MOD(10, 3) = 1, MOD(-10, 3) = -1.</li>
+<li>MOD is used to test divisibility (MOD(n, 2) = 0 means n is even), to cycle through repeating sequences (e.g., alternating group assignment), and to extract time components from raw minute counts.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="22">
+data work.mod_demo;
+    input total_minutes;
+    datalines;
+135
+90
+67
+200
+360
+;
+run;
+ 
+data work.mod_result;
+    set work.mod_demo;
+    * Split total minutes into hours and remaining minutes ;
+    hours   = int(total_minutes / 60);
+    minutes = mod(total_minutes, 60);
+ 
+    * Test for even/odd ;
+    is_even = (mod(total_minutes, 2) = 0);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="35">
+data work.mod_demo;
+input total_minutes;
+datalines;
+ 
+NOTE: Compression was disabled for data set WORK.MOD_DEMO because compression overhead would increase the size of the data set.
+NOTE: The data set WORK.MOD_DEMO has 5 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.mod_result;
+set work.mod_demo;
+* Split total minutes into hours and remaining minutes ;
+hours   = int(total_minutes / 60);
+minutes = mod(total_minutes, 60);
+ 
+* Test for even/odd ;
+is_even = (mod(total_minutes, 2) = 0);
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.MOD_DEMO.
+NOTE: The data set WORK.MOD_RESULT has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.MOD_RESULT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>135 total minutes: INT(135/60) = 2 hours, MOD(135, 60) = 15 minutes. Verify: 2 * 60 + 15 = 135.</li>
+<li>360 total minutes: 6 hours exactly, MOD(360, 60) = 0 minutes remaining.</li>
+<li>is_even = 1 when total_minutes is divisible by 2 (no remainder), 0 otherwise.</li>
+<li>This INT + MOD pattern is the standard way to decompose a total into units and sub-units without using datetime functions.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L104_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+ABS - Absolute Value
+</h2>
+ 
+<ul>
+<li>ABS(value) returns the absolute (non-negative) value of a number. Negative values become positive; positive values and zero are unchanged.</li>
+<li>ABS is used when the magnitude of a difference matters but not its direction — for example, when computing the absolute difference between two measurements to find the larger of two deviations.</li>
+<li>ABS is also useful in tolerance comparisons: if abs(a - b) is less than a threshold, a and b are considered equal.</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="19">
+data work.abs_demo;
+    input subject $ expected actual;
+    datalines;
+001 100  98
+002 100 103
+003 100  95
+004 100 100
+005 100 107
+;
+run;
+ 
+data work.abs_result;
+    set work.abs_demo;
+    raw_diff     = actual - expected;
+    abs_diff     = abs(actual - expected);
+    within_5pct  = (abs_diff / expected <= 0.05);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+data work.abs_demo;
+input subject $ expected actual;
+datalines;
+ 
+NOTE: The data set WORK.ABS_DEMO has 5 observations and 3 variables.
+NOTE: Compressing data set WORK.ABS_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.abs_result;
+set work.abs_demo;
+raw_diff     = actual - expected;
+abs_diff     = abs(actual - expected);
+within_5pct  = (abs_diff / expected <= 0.05);
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.ABS_DEMO.
+NOTE: The data set WORK.ABS_RESULT has 5 observations and 6 variables.
+NOTE: Compressing data set WORK.ABS_RESULT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>raw_diff can be positive or negative depending on direction; abs_diff is always non-negative.</li>
+<li>within_5pct flags rows where the absolute difference is within 5% of the expected value: abs(actual - expected) / expected <= 0.05.</li>
+<li>Subject 002 has actual = 103, raw_diff = +3, abs_diff = 3, within_5pct = 1 (3/100 = 0.03, which is within 5%).</li>
+<li>Subject 005 has actual = 107, abs_diff = 7, within_5pct = 0 (7/100 = 0.07, which exceeds 5%).</li>
+<li>Inspect WORK.ABS_RESULT to confirm all flags are correct.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L104_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>ROUND(value, unit) rounds to the nearest multiple of unit — always specify the unit explicitly (e.g., 0.1 for one decimal place).</li>
+<li>INT truncates toward zero, dropping the fractional part without rounding — use it when counting complete units.</li>
+<li>FLOOR rounds down to the largest integer at or below the value; CEIL rounds up to the smallest integer at or above the value. They differ for negative numbers.</li>
+<li>MOD(dividend, divisor) returns the remainder — use it to test divisibility, cycle through patterns, or decompose totals into units and sub-units.</li>
+<li>ABS returns the magnitude of a value regardless of sign — use it when direction does not matter but size does, such as in tolerance checks and deviation calculations.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

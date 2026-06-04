@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCPRINT_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is PROC PRINT
+</h1>
+ 
+<ul>
+<li>PROC PRINT is the simplest way to display the contents of a SAS dataset as a formatted table in the output window</li>
+<li>By default, it prints every variable and every observation, with an automatically generated observation number column on the left</li>
+<li>Despite its simplicity, PROC PRINT has several useful options for controlling which variables to show, filtering rows, grouping output, adding totals, and applying labels</li>
+<li>It is widely used for quick data inspection during development and for simple formatted listings in reports</li>
+</ul>
+ 
+<h1>
+Create sample data
+</h1>
+ 
+<ul>
+<li>The dataset `students` contains demographic and score information for a small group of students across two classes</li>
+<li>It will be used throughout this lesson to demonstrate PROC PRINT options progressively</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="21">
+data students;
+    infile datalines truncover;
+    input name $12. class $ sex $ age score;
+    label name  = 'Student Name'
+          class = 'Class Group'
+          sex   = 'Sex'
+          age   = 'Age (Years)'
+          score = 'Test Score';
+datalines;
+Alice       A F 14 88
+Brian       A M 15 76
+Carol       B F 13 92
+David       B M 14 81
+Emma        A F 14 95
+Frank       B M 15 70
+Grace       A F 13 89
+Henry       B M 14 78
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="20">
+data students;
+infile datalines truncover;
+input name $12. class $ sex $ age score;
+label name  = 'Student Name'
+class = 'Class Group'
+sex   = 'Sex'
+age   = 'Age (Years)'
+score = 'Test Score';
+datalines;
+ 
+NOTE: The data set WORK.STUDENTS has 8 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `label` statement assigns descriptive labels to each variable — these will be used in later examples when `label` is requested in PROC PRINT</li>
+<li>Inspect the dataset and confirm eight rows with the five variables before proceeding</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCPRINT_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Basic PROC PRINT - print all variables and observations
+</h1>
+ 
+<ul>
+<li>The minimal PROC PRINT statement requires only the `data=` option</li>
+<li>By default, SAS adds an `Obs` column on the left showing the row number, prints every variable, and shows every observation</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc print data=students;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc print data=students;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.STUDENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output shows all eight rows and all five variables with the auto-generated `Obs` column</li>
+<li>The column headings show variable names, not labels, because the `label` option has not been requested yet</li>
+</ul>
+ 
+<h1>
+NOOBS - suppress the observation number column
+</h1>
+ 
+<ul>
+<li>The `noobs` option removes the automatic `Obs` column from the output</li>
+<li>This is useful when the row number adds no meaning to the output or when you want cleaner report-style output</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc print data=students noobs;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc print data=students noobs;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.STUDENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare with the previous output — the `Obs` column is gone and the table starts directly with the first data variable</li>
+</ul>
+ 
+<h1>
+VAR - select which variables to print
+</h1>
+ 
+<ul>
+<li>The `var` statement lists the variables to include in the output, in the order they should appear</li>
+<li>Variables not listed are excluded from the printed output even though they remain in the dataset</li>
+<li>This is useful when a dataset has many columns but only a few are relevant for a particular listing</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc print data=students noobs;
+    var name age score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc print data=students noobs;
+var name age score;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.STUDENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Only `name`, `age`, and `score` appear — `class` and `sex` are excluded from this print</li>
+<li>The variable order in the output matches the order listed in the `var` statement, not the order in the dataset</li>
+</ul>
+ 
+<h1>
+WHERE - filter which observations to print
+</h1>
+ 
+<ul>
+<li>The `where` statement applies a filter before printing — only rows satisfying the condition are shown</li>
+<li>This is equivalent to subsetting in a DATA step but does not create a new dataset — it only affects what is printed</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+proc print data=students noobs;
+    var name class sex age score;
+    where score ge 85;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+proc print data=students noobs;
+var name class sex age score;
+where score ge 85;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.STUDENTS.
+WHERE score>=85;
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Only students with a score of 85 or higher should appear — confirm that Brian (76), David (81), Frank (70), and Henry (78) are excluded</li>
+<li>Four students (Alice 88, Carol 92, Emma 95, Grace 89) should remain</li>
+</ul>
+ 
+<h1>
+LABEL - display variable labels instead of names
+</h1>
+ 
+<ul>
+<li>The `label` option tells PROC PRINT to use the variable labels as column headings instead of the variable names</li>
+<li>Labels were defined in the dataset using the `label` statement when the data was created</li>
+<li>This makes output much more readable for end users who may not know the technical variable names</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc print data=students noobs label;
+    var name class sex age score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc print data=students noobs label;
+var name class sex age score;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.STUDENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The column headings now show descriptive text such as `Student Name`, `Class Group`, and `Test Score` instead of the short variable names</li>
+<li>The underlying variable names are unchanged — only the display heading is affected</li>
+</ul>
+ 
+<h1>
+BY - group output by a variable
+</h1>
+ 
+<ul>
+<li>The `by` statement groups the printed output by the values of the specified variable</li>
+<li>The data must be sorted by the BY variable before running PROC PRINT, just as with a DATA step BY statement</li>
+<li>A separator line and the BY variable value are printed before each group, making the grouping visible in the output</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="10">
+proc sort data=students;
+    by class;
+run;
+ 
+proc print data=students noobs label;
+    var name sex age score;
+    by class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+proc sort data=students;
+by class;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.STUDENTS.
+NOTE: The data set WORK.STUDENTS has 8 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc print data=students noobs label;
+var name sex age score;
+by class;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.STUDENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output is split into two sections — one for Class A and one for Class B — with a header line showing the group value above each section</li>
+<li>Confirm that the four Class A students and four Class B students are in the correct groups</li>
+</ul>
+ 
+<h1>
+SUM - add column totals
+</h1>
+ 
+<ul>
+<li>The `sum` statement lists numeric variables for which a grand total should be printed at the bottom of the output</li>
+<li>When used with a `by` statement, subtotals are also printed at the end of each group</li>
+<li>This is a fast way to add totals to a listing without creating a separate summary dataset</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc sort data=students;
+    by class;
+run;
+ 
+proc print data=students noobs label;
+    var name sex age score;
+    by class;
+    sum score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+proc sort data=students;
+by class;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc print data=students noobs label;
+var name sex age score;
+by class;
+sum score;
+run;
+ 
+NOTE: There were 8 observations read from the data set WORK.STUDENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>A subtotal row for `score` appears at the bottom of each class group, and a grand total row appears at the very end of the output</li>
+<li>Manually add the scores for each class and verify that the subtotals are correct: Class A should be 88+76+95+89=348, Class B should be 92+81+70+78=321</li>
+</ul>
+ 
+<h1>
+OBS= - limit the number of rows printed
+</h1>
+ 
+<ul>
+<li>The `obs=` dataset option limits how many rows are read from the input dataset</li>
+<li>This is useful during development when you want to quickly check the layout or format of a report without printing the full dataset</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc print data=students(obs=3) noobs label;
+    var name class score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc print data=students(obs=3) noobs label;
+var name class score;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.STUDENTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Only the first three rows of `students` are printed — useful as a quick check of column headings and formats before running against a full dataset</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`proc print data=dsn;` prints all variables and observations with an auto Obs column</li>
+<li>`noobs` removes the Obs column for cleaner report output</li>
+<li>`var` selects and orders the columns to display</li>
+<li>`where` filters rows without modifying the source dataset</li>
+<li>`label` uses variable labels as column headings instead of variable names</li>
+<li>`by` groups output — the data must be pre-sorted by the BY variable</li>
+<li>`sum` adds subtotals and grand totals for listed numeric variables</li>
+<li>`obs=` on the dataset option limits how many rows are read — useful for development</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

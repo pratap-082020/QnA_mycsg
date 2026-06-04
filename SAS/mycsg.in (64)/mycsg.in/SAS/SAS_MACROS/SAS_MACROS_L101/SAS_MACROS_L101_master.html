@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MACROS_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is a SAS macro
+</h1>
+ 
+<ul>
+<li>A SAS macro is a named block of reusable code defined with `%macro` and ended with `%mend`</li>
+<li>Once defined, the macro is invoked by writing its name preceded by a percent sign — for example `%mymacro;`</li>
+<li>When SAS encounters a macro call, it replaces it with the code inside the macro definition before the program is compiled and run</li>
+<li>Macros reduce repetition: instead of writing the same block of code multiple times, you write it once inside a macro and call it wherever it is needed</li>
+<li>Macros can also accept parameters, making them adaptable to different inputs each time they are called</li>
+<li>The macro language is a separate layer that runs before SAS code — it generates SAS statements rather than running them directly</li>
+</ul>
+ 
+<h2>
+Macro variables versus macros
+</h2>
+ 
+<ul>
+<li>A macro variable (covered in the macro variables lessons) stores a single text value and is referenced with `&name`</li>
+<li>A macro (this lesson) is a named block of code — it can contain DATA steps, PROC steps, logic, and macro variables all together</li>
+<li>Think of a macro variable as a text substitution, and a macro as a reusable subroutine</li>
+</ul>
+ 
+<h1>
+Basic macro syntax
+</h1>
+ 
+<ul>
+<li>The definition starts with `%macro macroname;` and ends with `%mend macroname;`</li>
+<li>Everything between those two lines is the macro body — the SAS code that will be inserted when the macro is called</li>
+<li>The macro name in `%mend` is optional, but recommended because it makes long programs easier to read</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="10">
+/*
+%macro macroname;
+    * SAS code goes here;
+%mend macroname;
+ 
+* Call the macro;
+%macroname;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+/*
+%macro macroname;
+* SAS code goes here;
+%mend macroname;
+ 
+* Call the macro;
+%macroname;
+*/
+</textarea></div></div></div></div>
+ 
+<h1>
+A macro with no parameters
+</h1>
+ 
+<ul>
+<li>The simplest macro runs the same fixed code every time it is called</li>
+<li>This is useful for setup steps such as setting options, printing a standard header dataset, or running a recurring quality check</li>
+<li>The macro below prints the current date and a short message to the log each time it is called</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="12">
+%macro print_today;
+    data _null_;
+        today = today();
+        format today date9.;
+        put 'Today is: ' today date9.;
+    run;
+%mend print_today;
+ 
+%print_today;
+%print_today;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="26">
+%macro print_today;
+data _null_;
+today = today();
+format today date9.;
+put 'Today is: ' today date9.;
+run;
+%mend print_today;
+ 
+%print_today;
+ 
+Today is: 02FEB2016
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+%print_today;
+ 
+Today is: 02FEB2016
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The macro is defined once, but called twice — check the SAS log and confirm that the date message appears twice</li>
+<li>The two calls produce identical output because there are no parameters — the same code runs each time</li>
+</ul>
+ 
+<h1>
+A macro with parameters
+</h1>
+ 
+<ul>
+<li>Parameters make a macro flexible — they are named placeholders in the macro definition that receive values when the macro is called</li>
+<li>Parameters are listed inside parentheses after the macro name in the `%macro` line, separated by commas</li>
+<li>Inside the macro body, parameters are referenced as macro variables using the `&name` syntax</li>
+<li>At the call site, values are passed inside parentheses matching the parameter names</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="9">
+%macro print_obs(dsn=, n=5);
+    proc print data=&dsn.(obs=&n.) noobs;
+    run;
+%mend print_obs;
+ 
+%print_obs(dsn=sashelp.class, n=3);
+%print_obs(dsn=sashelp.cars,  n=5);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="23">
+%macro print_obs(dsn=, n=5);
+proc print data=&dsn.(obs=&n.) noobs;
+run;
+%mend print_obs;
+ 
+%print_obs(dsn=sashelp.class, n=3);
+ 
+NOTE: There were 3 observations read from the data set SASHELP.CLASS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+%print_obs(dsn=sashelp.cars,  n=5);
+ 
+NOTE: There were 5 observations read from the data set SASHELP.CARS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first call prints 3 observations from SASHELP.CLASS, and the second prints 5 from SASHELP.CARS</li>
+<li>The same macro definition handles both because the dataset name and row count are passed as parameters</li>
+<li>The `=` syntax in the parameter list sets default values — `n=5` means that if `n` is not passed, 5 is used automatically</li>
+</ul>
+ 
+<h1>
+Default parameter values
+</h1>
+ 
+<ul>
+<li>When a default is specified in the macro definition, the caller does not need to provide that parameter</li>
+<li>If the caller omits a parameter that has no default, it resolves to an empty string, which may cause syntax errors — so always provide sensible defaults or document which parameters are required</li>
+<li>The example below shows a call that omits `n` and therefore uses the default value of 5</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="3">
+%print_obs(dsn=sashelp.class);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+%print_obs(dsn=sashelp.class);
+ 
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>This call produces 5 rows from SASHELP.CLASS because `n` was not supplied and the default of 5 was used</li>
+<li>Compare the output with the earlier call that passed `n=3` to confirm the difference</li>
+</ul>
+ 
+<h1>
+A practical macro - summarise a variable in any dataset
+</h1>
+ 
+<ul>
+<li>The macro below uses PROC MEANS to summarise a chosen numeric variable from any dataset</li>
+<li>Three parameters control the behaviour: the dataset name, the variable to summarise, and the output dataset name</li>
+<li>This is a common pattern in real programs, where the same summary logic is needed for multiple variables or domains</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="11">
+%macro summarise(dsn=, var=, out=summary);
+    proc means data=&dsn. noprint;
+        var &var.;
+        output out=&out. mean= std= min= max= n= / autoname;
+    run;
+%mend summarise;
+ 
+%summarise(dsn=sashelp.class, var=height, out=height_summary);
+%summarise(dsn=sashelp.class, var=weight, out=weight_summary);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="27">
+%macro summarise(dsn=, var=, out=summary);
+proc means data=&dsn. noprint;
+var &var.;
+output out=&out. mean= std= min= max= n= / autoname;
+run;
+%mend summarise;
+ 
+%summarise(dsn=sashelp.class, var=height, out=height_summary);
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.HEIGHT_SUMMARY has 1 observations and 7 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+%summarise(dsn=sashelp.class, var=weight, out=weight_summary);
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.WEIGHT_SUMMARY has 1 observations and 7 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Two summary datasets are created from two macro calls with different `var` and `out` values</li>
+<li>Inspect `height_summary` and `weight_summary` and confirm that the statistics match expectations for the SASHELP.CLASS data</li>
+<li>Notice how the macro call is much shorter than writing two separate PROC MEANS steps with different variable names</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MACROS_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Conditional logic inside a macro using %IF %THEN %ELSE
+</h1>
+ 
+<ul>
+<li>Macros can contain `%if` / `%then` / `%else` statements that evaluate conditions at macro execution time</li>
+<li>These are macro-level statements and run before any SAS DATA step or PROC step is executed</li>
+<li>A common use is to choose between two different code paths based on a parameter value</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="19">
+%macro describe(dsn=, method=print);
+    %if &method. = print %then %do;
+        proc print data=&dsn.(obs=5) noobs;
+        run;
+    %end;
+    %else %if &method. = contents %then %do;
+        proc contents data=&dsn.;
+        run;
+    %end;
+    %else %do;
+        %put WARNING: Unknown method value &method.  Use print or contents;
+    %end;
+%mend describe;
+ 
+%describe(dsn=sashelp.class, method=print);
+%describe(dsn=sashelp.class, method=contents);
+%describe(dsn=sashelp.class, method=invalid);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+%macro describe(dsn=, method=print);
+%if &method. = print %then %do;
+proc print data=&dsn.(obs=5) noobs;
+run;
+%end;
+%else %if &method. = contents %then %do;
+proc contents data=&dsn.;
+run;
+%end;
+%else %do;
+%put WARNING: Unknown method value &method.  Use print or contents;
+%end;
+%mend describe;
+ 
+%describe(dsn=sashelp.class, method=print);
+ 
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+%describe(dsn=sashelp.class, method=contents);
+ 
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+%describe(dsn=sashelp.class, method=invalid);
+WARNING: Unknown method value invalid  Use print or contents
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first call runs PROC PRINT, the second runs PROC CONTENTS, and the third triggers the `%else` warning branch</li>
+<li>Check the SAS log — the third call should produce a WARNING message written by `%put`, but no SAS procedure output</li>
+<li>`%put` writes text directly to the SAS log and is very useful for debugging macro behaviour</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Define macros with `%macro name;` and end with `%mend name;` — call them with `%name;`</li>
+<li>Parameters are listed in parentheses after the macro name and referenced inside the body as `&name`</li>
+<li>Default values in the parameter list make parameters optional at the call site</li>
+<li>Use `%if` / `%then` / `%else` / `%do` / `%end` for conditional macro logic — these run at macro execution time, before SAS compiles the generated code</li>
+<li>`%put` writes messages to the SAS log and is the primary macro debugging tool</li>
+<li>Macros do not return values — they generate SAS code that is then executed by SAS</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

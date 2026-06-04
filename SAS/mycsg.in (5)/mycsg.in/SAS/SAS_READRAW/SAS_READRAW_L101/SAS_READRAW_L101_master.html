@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_READRAW_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What do we mean by reading raw data
+</h1>
+<ul>
+<li>SAS procedures expect data in the form of SAS datasets</li>
+<li>However, data is often collected first in text files, spreadsheets, or other external sources</li>
+<li>Those original text-based sources are often called raw data files</li>
+<li>Converting raw data into a SAS dataset is called reading raw data</li>
+</ul>
+ 
+<h1>
+What do we mean by data arranged in columns
+</h1>
+<ul>
+<li>Each distinct piece of information collected for an observation is called a variable</li>
+<li>The complete collection of values for one entity is called an observation</li>
+<li>In column-aligned raw data, each variable is assigned a fixed set of character positions on every line</li>
+<li>For example, columns 1 to 11 may hold a name, while column 12 may hold sex and columns 13 to 15 may hold age</li>
+<li>Even if one value is shorter than the space reserved for it, the next variable still begins in its fixed column position</li>
+</ul>
+ 
+<h1>
+Types of variables in SAS
+</h1>
+ 
+<ul>
+<li>SAS datasets store data in rows and columns where rows are observations and columns are variables</li>
+<li>SAS variables are either numeric or character</li>
+<li>Numeric variables store numbers that can participate in arithmetic operations</li>
+<li>Character variables store text including letters symbols and digit strings that should be treated as text</li>
+</ul>
+ 
+<h1>
+How do we read raw data arranged in columns into a SAS dataset
+</h1>
+ 
+<ul>
+<li>A DATA step is used to create the SAS dataset</li>
+<li>The DATA statement gives the name of the dataset to create</li>
+<li>The INFILE statement identifies the external raw data file</li>
+<li>The INPUT statement describes variable names types and column positions</li>
+<li>A character variable name must be followed by a dollar sign in the INPUT statement</li>
+</ul>
+ 
+<h1>
+Read raw data from an external file
+</h1>
+ 
+<ul>
+<li>A dataset named `students` is created from an external text file</li>
+<li>Five data components are read from fixed column positions</li>
+<li>`name` and `sex` are character variables so they use a trailing dollar sign</li>
+<li>`age` `height` and `weight` are numeric variables</li>
+<li>Each line of raw data becomes one observation in the SAS dataset</li>
+</ul>
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="10">
+data students;
+   infile "D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_READRAW\SAS_READRAW_L101\SAS_READRAW_L101_data1.txt";
+   input Name $ 1-11
+         Sex  $ 12
+         Age    13-15
+         Height 17-20
+         Weight 23-27;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="26">
+data students;
+infile "D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_READRAW\SAS_READRAW_L101\SAS_READRAW_L101_data1.txt";
+input Name $ 1-11
+Sex  $ 12
+Age    13-15
+Height 17-20
+Weight 23-27;
+run;
+ 
+NOTE: The infile "D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_READRAW\SAS_READRAW_L101\SAS_READRAW_L101_data1.txt" is:
+Filename=D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_READRAW\SAS_READRAW_L101\SAS_READRAW_L101_data1.txt,
+RECFM=V,LRECL=32767,File Size (bytes)=90,
+Last Modified=02 February 2025 16:31:28,
+Create Time=02 February 2025 16:31:28
+ 
+NOTE: 3 records were read from the infile "D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_READRAW\SAS_READRAW_L101\SAS_READRAW_L101_data1.txt".
+The minimum record length was 28.
+The maximum record length was 29.
+NOTE: The data set WORK.STUDENTS has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `students` and confirm that each raw line was converted into one row of structured SAS data</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1001">Raw data file screenshot</button><div class="modal fade" id="imgModal1001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Raw data file screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_READRAW_L101_1001.png" alt="Raw data file screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_READRAW_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Read in-stream raw data
+</h1>
+<ul>
+<li>Raw data does not always need to come from an external file</li>
+<li>When raw data lines are written directly inside the SAS program we call it in-stream data</li>
+<li>In this case the `datalines` statement marks the start of the raw data lines</li>
+<li>The same INPUT column specification can be used for in-stream data as well</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="14">
+data students01;
+   input Name $ 1-11
+         Sex  $ 12
+         Age    13-15
+         Height 17-20
+         Weight 23-27;
+   datalines;
+Alice      F13  56.5  84
+John Smith M16  72    150
+Jane       F12  59.8  84.5
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data students01;
+input Name $ 1-11
+Sex  $ 12
+Age    13-15
+Height 17-20
+Weight 23-27;
+datalines;
+ 
+NOTE: The data set WORK.STUDENTS01 has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The dataset `students01` should contain the same logical variables as `students`</li>
+<li>This example shows that column input works both for external raw files and in-stream raw data</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_READRAW_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Understand the attributes of a SAS dataset
+</h1>
+ 
+<ul>
+<li>After creating a dataset we often need to inspect its attributes</li>
+<li>Important dataset level details include dataset name number of observations number of variables and creation metadata</li>
+<li>Important variable level details include variable name type and length</li>
+<li>`proc contents` is used to review these attributes</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc contents data=students01;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+proc contents data=students01;
+run;
+ 
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.03 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1002">Dataset attributes screenshot</button><div class="modal fade" id="imgModal1002" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset attributes screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_READRAW_L101_1002.png" alt="Dataset attributes screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1003">Variable attributes screenshot</button><div class="modal fade" id="imgModal1003" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Variable attributes screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_READRAW_L101_1003.png" alt="Variable attributes screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<ul>
+<li>From the variable attributes you can see the name type and length of each variable</li>
+<li>The `name` variable was read from columns 1 to 11 so SAS assigned it a length of 11 bytes</li>
+<li>The `sex` variable was read from one column so SAS assigned it a length of 1 byte</li>
+<li>Numeric variables usually have a default storage length of 8 bytes unless otherwise specified</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Reading raw data means converting external text based data into a SAS dataset</li>
+<li>Column input is used when each variable occupies fixed columns on every row</li>
+<li>Character variables require a dollar sign on the INPUT statement</li>
+<li>The same column input logic can be used for external files and in-stream data</li>
+<li>`proc contents` helps verify that the dataset and variable attributes were created as expected</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCSORT_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+ 
+<h1>
+What is the word meaning of 'sort'?
+</h1>
+ 
+<ol>
+<li>arrange systematically in groups; separate according to type.</li>
+<li>the arrangement of data in a prescribed sequence.</li>
+</ol>
+ 
+<h1>
+Common Scenarios where ordering (sorting of observations in a dataset) is required:
+</h1>
+ 
+<ul>
+<li>Display the student with top score as the first row in the dataset</li>
+<li>Display the student with lowest height as the first row in the dataset/Order the student records based on height</li>
+<li>Display the student with highest weight as the first row in the dataset/Order the student records based on descending weight</li>
+<li>Order the student records based on their first name</li>
+<li>Order the student records based on their first name, if there exists more than one student with same first name use their last names to break the ties</li>
+<li>Order the student records such that all female records appear before male student records</li>
+<li>Order the demographics dataset such that the subject with earliest informed consent signed date comes first</li>
+<li>Order the exposure dataset such that the earliest exposure record appears first within a subject</li>
+<li>Order the lab test results based on time of sample collection and test category</li>
+<li>Order the adverse events such that the most commonly occurred event appears on top</li>
+</ul>
+ 
+ 
+<h1>
+What does 'proc sort' do?
+</h1>
+<ul>
+<li>The sort procedure orders SAS data set observations by the values of one or more character or numeric variables</li>
+</ul>
+ 
+<h1>
+Create some example datasets
+</h1>
+ 
+<ul>
+<li> Create a dataset named 'class01' in work library as a copy of sashelp.class dataset</li>
+<li> Create a dataset named 'classes01' by appending sashelp.class twice, and create a variable named class
+and assign a value of 'Class 1' for first instance of records and 'Class 2' for the second instance of records </li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="13">
+data class01;
+   set sashelp.class;
+run;
+ 
+data classes01;
+   set sashelp.class(in=a) sashelp.class(in=b);
+   length class $10;
+   if a then class="Class 1";
+   if b then class="Class 2";
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+data class01;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data classes01;
+set sashelp.class(in=a) sashelp.class(in=b);
+length class $10;
+if a then class="Class 1";
+if b then class="Class 2";
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASSES01 has 38 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Sorting a dataset based on the values of a single variable in ascending sequence and creating a new dataset
+</h1>
+ 
+<table>
+<th>
+Question
+</th>
+<th>
+Answer
+</th>
+ 
+<tr>
+<td>
+How do we specify the name of input dataset to be used by proc sort?
+</td>
+<td>
+We need to specify the name of the input dataset using data= option on the proc sort statement
+</td>
+</tr>
+ 
+<tr>
+<td>
+What happens if we do not provide data= option?
+</td>
+<td>
+The last created dataset in the current SAS session is used as input for proc sort
+</td>
+</tr>
+ 
+<tr>
+<td>
+How do we specify the name of the output dataset in which the sorted observations are to be stored?
+</td>
+<td>
+We need to specify the name of the output dataset using out=option on the proc sort statement
+</td>
+</tr>
+ 
+<tr>
+<td>
+What happens if we do not provide out= option?
+</td>
+<td>
+Input dataset gets overwritten with the sorted dataset
+</td>
+</tr>
+ 
+<tr>
+<td>
+How do we instruct SAS to sort the observations based on particular variables?
+</td>
+<td>
+We need to specify the names of the sorting variables in the by statement
+</td>
+</tr>
+ 
+<tr>
+<td>
+What happens if we do not provide by variables or a by statement?
+</td>
+<td>
+Returns an Error as by statement is a mandatory statment in proc sort
+</td>
+</tr>
+ 
+<tr>
+<td>
+What is the default sort order for a variable?
+</td>
+<td>
+By default SAS sorts observations based on the ascending values of the variables listed
+</td>
+</tr>
+ 
+</table>
+ 
+ 
+<h2>
+Create a dataset named class_sort_asc_age by sorting the observations of class01 dataset based on ascending values in age variable
+</h2>
+ 
+<ul>
+<li>Specify class01 as input dataset using data= option</li>
+<li>Specify class_sort_asc_age as output dataset using out=option</li>
+<li>Specify the age variable on the by statement</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class01 out=class_sort_asc_age;
+   by age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=class01 out=class_sort_asc_age;
+by age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SORT_ASC_AGE has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named class_sort_asc_height by sorting the observations of class01 dataset based on ascending values in height variable
+</h2>
+<ul>
+<li>Specify class01 as input dataset using data= option</li>
+<li>Specify class_sort_asc_height as output dataset using out=option</li>
+<li>Specify the height variable on the by statement</li>
+</ul>
+ 
+<table>
+<th>
+Question
+</th>
+<th>
+Answer
+</th>
+ 
+<tr>
+<td>
+Which observation appears first when there is more than one record with the same value in the specified by variable?
+</td>
+<td>
+When there is more than one observation in the input dataset with the same value in the specified by variables, the observation
+which appears first in the input dataset with that value will appear first in the output dataset
+</td>
+</tr>
+ 
+</table>
+ 
+<ul>
+<li>Notice Janet and Jeffrey's records in the output dataset to see the above scenario</li>
+<li>Notice Mary and William's records in the output dataset to see the above scenario</li>
+</ul>
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class01 out=class_sort_asc_height;
+   by height;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=class01 out=class_sort_asc_height;
+by height;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SORT_ASC_HEIGHT has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Sorting a dataset based on the values of a single variable in descending sequence and creating a new dataset
+</h1>
+ 
+<table>
+<th>
+Question
+</th>
+<th>
+Answer
+</th>
+<tr>
+<td>
+How do you instruct SAS to sort the observations based on the descending values of a variable?
+</td>
+<td>
+We need to specify the keyword 'descending' before the name of the variable for which we want to sort based on descending values
+</td>
+</tr>
+ 
+</table>
+ 
+ 
+<h2>
+Create a dataset named class_sort_dsc_age by sorting the observations of class01 dataset based on descending values in age variable
+</h2>
+ 
+<ul>
+<li>Specify class01 as input dataset using data= option</li>
+<li>Specify class_sort_dsc_age as output dataset using out=option</li>
+<li>Specify the age variable on the by statement</li>
+<li>Specify the keyword descending before the name of the variable (age) </li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class01 out=class_sort_dsc_age;
+   by descending age;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=class01 out=class_sort_dsc_age;
+by descending age;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SORT_DSC_AGE has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named class_sort_dsc_height by sorting the observations of class01 dataset based on descending values in height variable
+</h2>
+ 
+<ul>
+<li>Specify class01 as input dataset using data= option</li>
+<li>Specify class_sort_dsc_height as output dataset using out=option</li>
+<li>Specify the height variable on the by statement</li>
+<li>Specify the keyword descending before the name of the variable (height) </li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class01 out=class_sort_dsc_height;
+   by descending height;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=class01 out=class_sort_dsc_height;
+by descending height;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SORT_DSC_HEIGHT has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Sorting a dataset based on multiple variables and creating a new dataset
+</h1>
+ 
+<ul>
+<li>We need to specify the list of sorting variables separated by space on the by statement</li>
+</ul>
+ 
+<h2>
+Create a dataset named class_sort_age_sex by sorting the observations of class01 dataset based on ascending values in age and sex variables
+</h2>
+ 
+<ul>
+<li>Records with same age get grouped together first such that lowest age value records come on top</li>
+<li>If there exists more than one record in a age group, the records with lowest value in sex appear on top</li>
+<li>If there exists more than one record in a age and sex group, the records get sorted based on their order in the input dataset</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class01 out=class_sort_age_sex;
+   by age sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=class01 out=class_sort_age_sex;
+by age sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SORT_AGE_SEX has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named classes_sort_class_age_sex by sorting the observations of classes01 dataset based on ascending values in class, age, and sex variables
+</h2>
+ 
+ 
+<ul>
+<li>Records with same value in class variable get grouped together first such that lowest class value records come on top</li>
+<li>If there exists more than one record in a class group, the records with lowest value in age appear on top</li>
+<li>If there exists more than one record in a class and age group, then the records with lowest value in sex variable appear on top</li>
+<li>If there exists more than one record in a class, age, and sex group, the records get sorted based on their order in the input dataset</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=classes01 out=class_sort_class_age_sex;
+   by class age sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=classes01 out=class_sort_class_age_sex;
+by class age sex;
+run;
+ 
+NOTE: There were 38 observations read from the data set WORK.CLASSES01.
+NOTE: The data set WORK.CLASS_SORT_CLASS_AGE_SEX has 38 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h1>
+Create a dataset named classes_sort_name_class by sorting the observations of classes01 dataset based on ascending values in name and class variables
+</h1>
+ 
+<ul>
+<li>Records with same value in name variable get grouped together first such that lowest name value records come to top</li>
+<li>If there exists more than one record with same name value, then the record with lowest value in class variable comes to top</li>
+<li>If there exists more than one record in name and class combination, the records get sorted based on their appearance in the input dataset</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=classes01 out=classes_sort_name_class;
+   by name class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=classes01 out=classes_sort_name_class;
+by name class;
+run;
+ 
+NOTE: There were 38 observations read from the data set WORK.CLASSES01.
+NOTE: The data set WORK.CLASSES_SORT_NAME_CLASS has 38 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal8">View Data</button><div class="modal fade" id="dataModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_08.html"></iframe></div></div></div></div>
+ 
+ 
+<h2>
+Create a dataset named class_sort_aage_dheight by sorting class01 dataset based on ascending age and descending height
+</h2>
+ 
+<ul>
+<li>Records with same age value gets grouped together first such that the records with lowest age appear on top</li>
+<li>If there exists more than one record with same age value, the record with highest age value comes to top</li>
+<li>If there exists more than one record with same values in age and height variable, those records appear in the output dataset in the same order as in input dataset</li>
+<li>Notice in the code below that the keyword 'descending' is used only before height variable, and no keyword is used before age variable</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class01 out=class_sort_aage_dheight;
+   by age descending height;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=class01 out=class_sort_aage_dheight;
+by age descending height;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SORT_AAGE_DHEIGHT has 19 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal9">View Data</button><div class="modal fade" id="dataModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_09.html"></iframe></div></div></div></div>
+ 
+ 
+ 
+<h2>
+Create a dataset named class_sort_dage_dheight by sorting classes01 dataset based on descending age and descending height
+</h2>
+ 
+<ul>
+<li>Records with same age value gets grouped together first such that the records with highest age appear on top</li>
+<li>If there exists more than one record with same age value, the record with highest age value comes to top</li>
+<li>If there exists more than one record with same values in age and height variable, those records appear in the output dataset in the same order as in input dataset</li>
+<li>Notice in the code below that the keyword 'descending' is used before height variable and also used before age variable</li>
+</ul>
+ 
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=classes01 out=class_sort_dage_dheight;
+   by descending age descending height;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=classes01 out=class_sort_dage_dheight;
+by descending age descending height;
+run;
+ 
+NOTE: There were 38 observations read from the data set WORK.CLASSES01.
+NOTE: The data set WORK.CLASS_SORT_DAGE_DHEIGHT has 38 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal10">View Data</button><div class="modal fade" id="dataModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_010.html"></iframe></div></div></div></div>
+ 
+ 
+<h2>
+Create a dataset named class_sort_dage_aheight by sorting classes01 dataset based on descending age and ascending height
+</h2>
+ 
+<ul>
+<li>Records with same age value gets grouped together first such that the records with highest age appear on top</li>
+<li>If there exists more than one record with same age value, the record with lowest age value comes to top</li>
+<li>If there exists more than one record with same values in age and height variable, those records appear in the output dataset in the same order as in input dataset</li>
+<li>Notice in the code below that the keyword 'descending' is used before age variable and no keyword is used before height variable</li>
+</ul>
+ 
+<textarea id="codeBlock11" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=classes01 out=class_sort_dage_aheight;
+   by descending age height;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock11" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal11">View Log</button><div class="modal fade" id="logModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=classes01 out=class_sort_dage_aheight;
+by descending age height;
+run;
+ 
+NOTE: There were 38 observations read from the data set WORK.CLASSES01.
+NOTE: The data set WORK.CLASS_SORT_DAGE_AHEIGHT has 38 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal11">View Data</button><div class="modal fade" id="dataModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCSORT_L101_filterable_data_011.html"></iframe></div></div></div></div>
+ 
+</div></body>
+
+</html>
+
+

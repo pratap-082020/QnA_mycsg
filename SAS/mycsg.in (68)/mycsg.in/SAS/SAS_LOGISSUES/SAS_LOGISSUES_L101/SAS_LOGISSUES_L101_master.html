@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_LOGISSUES_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Why log review matters in SAS
+</h1>
+ 
+<ul>
+<li>The SAS log reports errors warnings and important notes produced during execution</li>
+<li>Many programs appear to run successfully while still producing incorrect results because of overlooked log messages</li>
+<li>This lesson shows common log issues and the coding situations that create them</li>
+</ul>
+ 
+<h1>
+Variable is uninitialised
+</h1>
+ 
+<h2>
+Create input data
+</h2>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="13">
+data input;
+    infile cards truncover;
+    input studyid $ subject $ age dob : date9.;
+    format dob date9.;
+cards;
+MYCSG 1001 72 1jan1947
+MYCSG 1002 69 2jan1950
+MYCSG 1003 .  .
+MYCSG 1004 40 1apr1983
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data input;
+infile cards truncover;
+input studyid $ subject $ age dob : date9.;
+format dob date9.;
+cards;
+ 
+NOTE: The data set WORK.INPUT has 4 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Name a variable on LENGTH but never assign a value to it
+</h2>
+ 
+<ul>
+<li>Declaring a variable does not automatically create values for it on output rows</li>
+<li>If the variable is never assigned SAS can note that it is uninitialised</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data output;
+    set input;
+    length usubjid $10;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data output;
+set input;
+length usubjid $10;
+run;
+ 
+NOTE: Variable USUBJID is uninitialized.
+NOTE: There were 4 observations read from the data set WORK.INPUT.
+NOTE: The data set WORK.OUTPUT has 4 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Type the wrong variable name in an expression
+</h2>
+ 
+<ul>
+<li>Spelling mistakes in variable names are a common source of uninitialised variable messages</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data output;
+    set input;
+    if age ne . then agemon=aeg*12;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data output;
+set input;
+if age ne . then agemon=aeg*12;
+run;
+ 
+NOTE: Variable AEG is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+3 at 1397155:32
+NOTE: There were 4 observations read from the data set WORK.INPUT.
+NOTE: The data set WORK.OUTPUT has 4 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Specify a variable on RETAIN but do not create it meaningfully
+</h2>
+ 
+<ul>
+<li>A retained variable still needs logic that gives it useful values</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data output;
+    set input;
+    retain subjcount;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data output;
+set input;
+retain subjcount;
+run;
+ 
+NOTE: Variable SUBJCOUNT is uninitialized.
+NOTE: There were 4 observations read from the data set WORK.INPUT.
+NOTE: The data set WORK.OUTPUT has 4 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Missing values were generated as a result of performing an operation on missing values
+</h1>
+ 
+<h2>
+Perform arithmetic on a variable that contains missing values
+</h2>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data output;
+    set input;
+    agemon=age*12;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data output;
+set input;
+agemon=age*12;
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1412133:15
+NOTE: There were 4 observations read from the data set WORK.INPUT.
+NOTE: The data set WORK.OUTPUT has 4 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Use a non-existing variable in an expression
+</h2>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data output;
+    set input;
+    agemon=aeg*12; * correct expression - agemon=age*12;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data output;
+set input;
+agemon=aeg*12; * correct expression - agemon=age*12;
+run;
+ 
+NOTE: Variable AEG is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+4 at 1419618:15
+NOTE: There were 4 observations read from the data set WORK.INPUT.
+NOTE: The data set WORK.OUTPUT has 4 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+Apply functions to values that may be missing
+</h2>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="7">
+data output;
+    set input;
+    month=month(dob);
+    year=year(dob);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data output;
+set input;
+month=month(dob);
+year=year(dob);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1427103:11   1 at 1427104:10
+NOTE: There were 4 observations read from the data set WORK.INPUT.
+NOTE: The data set WORK.OUTPUT has 4 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+Round a variable that is missing on some rows
+</h2>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="16">
+data bmi;
+    infile cards truncover;
+    input usubjid bmi;
+cards;
+1001 23.6789
+1002 .
+1003 35.1983
+;
+run;
+ 
+data output;
+    set bmi;
+    aval=round(bmi,0.01);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+data bmi;
+infile cards truncover;
+input usubjid bmi;
+cards;
+ 
+NOTE: The data set WORK.BMI has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data output;
+set bmi;
+aval=round(bmi,0.01);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1434599:10
+NOTE: There were 3 observations read from the data set WORK.BMI.
+NOTE: The data set WORK.OUTPUT has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h2>
+All variables passed to some numeric functions are missing
+</h2>
+ 
+<ul>
+<li>This example helps compare how functions behave when some or all values are missing</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="22">
+data scores;
+    infile cards truncover;
+    input usubjid $ visit $ score1 score2 score3;
+cards;
+1001 Week1 10 20 30
+1001 Week2 9 20 29
+1001 Week3 . . 25
+1001 Week4 . . .
+1001 Week5 10 15 .
+1001 Week6 10 20 30
+;
+run;
+ 
+data output;
+    set scores;
+    nresp=n(score1,score2,score3);
+    missresp=nmiss(score1,score2,score3);
+    sumscore=sum(score1,score2,score3);
+    avgscore=mean(score1,score2,score3);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="34">
+data scores;
+infile cards truncover;
+input usubjid $ visit $ score1 score2 score3;
+cards;
+ 
+NOTE: The data set WORK.SCORES has 6 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data output;
+set scores;
+nresp=n(score1,score2,score3);
+missresp=nmiss(score1,score2,score3);
+sumscore=sum(score1,score2,score3);
+avgscore=mean(score1,score2,score3);
+run;
+ 
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1442103:14   1 at 1442104:14
+NOTE: There were 6 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 6 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal8">View Data</button><div class="modal fade" id="dataModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_08.html"></iframe></div></div></div></div>
+ 
+<h1>
+Character values were converted to numeric values
+</h1>
+ 
+<h2>
+Create input data
+</h2>
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data age;
+    infile cards truncover;
+    input subject $ age $;
+cards;
+1001 72
+1002 69
+1003 45
+1004
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data age;
+infile cards truncover;
+input subject $ age $;
+cards;
+ 
+NOTE: The data set WORK.AGE has 4 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Use a character variable where SAS expects a numeric expression
+</h2>
+ 
+<textarea id="codeBlock11" class="codetextarea" spellcheck="false" cols="100" rows="9">
+proc contents data=age out=cont01;
+run;
+ 
+data output;
+    set age;
+    agemon=age*12;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock11" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal11">View Log</button><div class="modal fade" id="logModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="29">
+proc contents data=age out=cont01;
+run;
+ 
+NOTE: The data set WORK.CONT01 has 2 observations and 41 variables.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data output;
+set age;
+agemon=age*12;
+run;
+ 
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+1449612:12
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1449612:15
+NOTE: There were 4 observations read from the data set WORK.AGE.
+NOTE: The data set WORK.OUTPUT has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal9">View Data</button><div class="modal fade" id="dataModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_09.html"></iframe></div></div></div></div>
+ 
+<h1>
+Numeric values were converted to character values
+</h1>
+ 
+<h2>
+Create input data
+</h2>
+<textarea id="codeBlock12" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data age1;
+    infile cards truncover;
+    input subject $ age;
+cards;
+1001 72
+1002 69
+1003 45
+1004 .
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock12" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal12">View Log</button><div class="modal fade" id="logModal12" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data age1;
+infile cards truncover;
+input subject $ age;
+cards;
+ 
+NOTE: The data set WORK.AGE1 has 4 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Use a numeric variable where SAS expects character processing
+</h2>
+ 
+<textarea id="codeBlock13" class="codetextarea" spellcheck="false" cols="100" rows="9">
+proc contents data=age1 out=cont01;
+run;
+ 
+data output;
+    set age1;
+    agec=strip(age)||" Years";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock13" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal13">View Log</button><div class="modal fade" id="logModal13" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="26">
+proc contents data=age1 out=cont01;
+run;
+ 
+NOTE: The data set WORK.CONT01 has 2 observations and 41 variables.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data output;
+set age1;
+agec=strip(age)||" Years";
+run;
+ 
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+1457120:16
+NOTE: There were 4 observations read from the data set WORK.AGE1.
+NOTE: The data set WORK.OUTPUT has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal10">View Data</button><div class="modal fade" id="dataModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_010.html"></iframe></div></div></div></div>
+ 
+<h1>
+Variable in DROP KEEP or RENAME list has never been referenced
+</h1>
+ 
+<h2>
+Warning example in a KEEP statement
+</h2>
+ 
+<textarea id="codeBlock14" class="codetextarea" spellcheck="false" cols="100" rows="10">
+data class;
+    set sashelp.class;
+run;
+ 
+data class2;
+    set class;
+    keep nmae age sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock14" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal14">View Log</button><div class="modal fade" id="logModal14" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="27">
+data class;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class2;
+set class;
+keep nmae age sex;
+run;
+ 
+WARNING: The variable NMAE in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.CLASS2 has 19 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal11">View Data</button><div class="modal fade" id="dataModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_011.html"></iframe></div></div></div></div>
+ 
+<h2>
+Error example in a dataset option KEEP list
+</h2>
+ 
+<textarea id="codeBlock15" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class2;
+    set class(keep=nmae sex age);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock15" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal15">View Log</button><div class="modal fade" id="logModal15" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data class2;
+set class(keep=nmae sex age);
+ERROR: The variable NMAE in the DROP, KEEP, or RENAME list has never been referenced.
+run;
+ 
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.CLASS2 may be incomplete.  When this step was stopped there were 0 observations and 0 variables.
+WARNING: Data set WORK.CLASS2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Division by zero detected
+</h1>
+ 
+<h2>
+Create input data
+</h2>
+ 
+<textarea id="codeBlock16" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data scoring;
+    infile cards truncover;
+    input usubjid $ paramcd $ aval base;
+cards;
+1001 SMWT01 100 90
+1002 SMWT01 49 50
+1003 SMWT01 68 0
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock16" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal16">View Log</button><div class="modal fade" id="logModal16" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data scoring;
+infile cards truncover;
+input usubjid $ paramcd $ aval base;
+cards;
+ 
+NOTE: The data set WORK.SCORING has 3 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Percent change calculation with a denominator of zero
+</h2>
+ 
+<textarea id="codeBlock17" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data scoring2;
+    set scoring;
+    pchg=(aval-base)/base*100;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock17" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal17">View Log</button><div class="modal fade" id="logModal17" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data scoring2;
+set scoring;
+pchg=(aval-base)/base*100;
+run;
+ 
+NOTE: Division by zero detected at line 1472128 column 21.
+USUBJID=1003 PARAMCD=SMWT01 AVAL=68 BASE=0 PCHG=. _ERROR_=1 _N_=3
+NOTE: Mathematical operations could not be performed at the following places. The results of the operations have been set to missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1472128:21
+NOTE: There were 3 observations read from the data set WORK.SCORING.
+NOTE: The data set WORK.SCORING2 has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal12">View Data</button><div class="modal fade" id="dataModal12" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_012.html"></iframe></div></div></div></div>
+ 
+<h1>
+Invalid argument to function INPUT
+</h1>
+ 
+<h2>
+Create input data
+</h2>
+<textarea id="codeBlock18" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data age1;
+    infile cards truncover;
+    input subject $ agec $;
+cards;
+1001 72
+1002 69
+1003 45
+1004 NA
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock18" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal18">View Log</button><div class="modal fade" id="logModal18" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data age1;
+infile cards truncover;
+input subject $ agec $;
+cards;
+ 
+NOTE: The data set WORK.AGE1 has 4 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Convert text to numeric when some values are not valid numbers
+</h2>
+ 
+<textarea id="codeBlock19" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data age2;
+    set age1;
+    age=input(agec,best.);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock19" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal19">View Log</button><div class="modal fade" id="logModal19" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data age2;
+set age1;
+age=input(agec,best.);
+run;
+ 
+NOTE: Invalid argument to function INPUT at line 1479633 column 9.
+SUBJECT=1004 AGEC=NA AGE=. _ERROR_=1 _N_=4
+NOTE: Mathematical operations could not be performed at the following places. The results of the operations have been set to missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+1 at 1479633:9
+NOTE: There were 4 observations read from the data set WORK.AGE1.
+NOTE: The data set WORK.AGE2 has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal13">View Data</button><div class="modal fade" id="dataModal13" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_013.html"></iframe></div></div></div></div>
+ 
+<h1>
+File DATA does not exist
+</h1>
+ 
+<h2>
+Refer to a non-existing dataset on SET
+</h2>
+ 
+<textarea id="codeBlock20" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class;
+    set sashelp.calss; * correct - sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock20" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal20">View Log</button><div class="modal fade" id="logModal20" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data class;
+set sashelp.calss; * correct - sashelp.class;
+ERROR: File SASHELP.CALSS.DATA does not exist.
+run;
+ 
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.CLASS may be incomplete.  When this step was stopped there were 0 observations and 0 variables.
+WARNING: Data set WORK.CLASS was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h2>
+Refer to a non-existing dataset in a procedure
+</h2>
+ 
+<textarea id="codeBlock21" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc print data=sashelp.calss;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock21" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal21">View Log</button><div class="modal fade" id="logModal21" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc print data=sashelp.calss;
+ERROR: File SASHELP.CALSS.DATA does not exist.
+run;
+ 
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+BY variables are not properly sorted on data set
+</h1>
+ 
+<ul>
+<li>BY processing requires the dataset to be sorted by the same BY variables first</li>
+</ul>
+ 
+<textarea id="codeBlock22" class="codetextarea" spellcheck="false" cols="100" rows="10">
+data class;
+    set sashelp.class;
+run;
+ 
+data class01;
+    set class;
+    by sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock22" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal22">View Log</button><div class="modal fade" id="logModal22" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+ 
+ 
+data class;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class01;
+set class;
+by sex;
+run;
+ 
+ERROR: BY variables are not properly sorted on data set WORK.CLASS.
+NAME=Alfred SEX=M AGE=14 HEIGHT=69 WEIGHT=112.5 FIRST.SEX=1 LAST.SEX=1 _ERROR_=1 _N_=1
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 2 observations read from the data set WORK.CLASS.
+WARNING: The data set WORK.CLASS01 may be incomplete.  When this step was stopped there were 0 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+MERGE statement has more than one data set with repeats of BY values
+</h1>
+ 
+<ul>
+<li>This message usually indicates a many to many merge situation</li>
+<li>Such merges need extra care because the resulting row structure may not be what the programmer intended</li>
+</ul>
+ 
+<textarea id="codeBlock23" class="codetextarea" spellcheck="false" cols="100" rows="30">
+data height;
+    infile cards truncover;
+    input subject $ visitnum height;
+cards;
+1001 1 170
+1001 2 171
+1002 1 165
+;
+run;
+ 
+data weight;
+    infile cards truncover;
+    input subject $ visitnum weight;
+cards;
+1001 1 70
+1001 2 71
+1001 3 72
+1002 1 68
+;
+run;
+ 
+proc sort data=height; by subject; run;
+proc sort data=weight; by subject; run;
+ 
+data merged;
+    merge height weight;
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock23" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal23">View Log</button><div class="modal fade" id="logModal23" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="63">
+data height;
+infile cards truncover;
+input subject $ visitnum height;
+cards;
+ 
+NOTE: The data set WORK.HEIGHT has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+data weight;
+infile cards truncover;
+input subject $ visitnum weight;
+cards;
+ 
+NOTE: The data set WORK.WEIGHT has 4 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc sort data=height; by subject; run;
+ 
+NOTE: There were 3 observations read from the data set WORK.HEIGHT.
+NOTE: The data set WORK.HEIGHT has 3 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+proc sort data=weight; by subject; run;
+ 
+NOTE: There were 4 observations read from the data set WORK.WEIGHT.
+NOTE: The data set WORK.WEIGHT has 4 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data merged;
+merge height weight;
+by subject;
+run;
+ 
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 3 observations read from the data set WORK.HEIGHT.
+NOTE: There were 4 observations read from the data set WORK.WEIGHT.
+NOTE: The data set WORK.MERGED has 4 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal14">View Data</button><div class="modal fade" id="dataModal14" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_LOGISSUES_L101_filterable_data_014.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>The SAS log is a primary validation tool, not just a place to look when code fails completely</li>
+<li>Warnings and notes about type conversion, missing values, sorting, and uninitialised variables can all signal real data problems</li>
+<li>Review the code and the resulting datasets together when investigating a log issue</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

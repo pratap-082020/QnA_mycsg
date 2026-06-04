@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCFORMAT_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+ 
+*==========================================================;
+*topics to add;
+ 
+*usage of a permanent library to store formats;
+*usage of fmtsearch option;
+*usage of nofmterr option;
+*picture format;
+*real time scenarios;
+*==========================================================;
+ 
+ 
+ 
+<h1>
+reading input datasets
+</h1>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class01;
+	set sashelp.class;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+data class01;
+	set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+ 
+<h1>
+proc format with defaults
+</h1>
+ 
+<ul>
+<li>formats catalog gets created if it doesn't already exist in work library </li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc format;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+proc format;
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+ 
+<h1>
+Create a user defined format for a character variable
+</h1>
+ 
+<ul>
+<li>F should appear as Female</li>
+<li>M should appear as Male when the format is applied</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="12">
+proc format;
+	value $sex
+	'F'='Female'
+	'M'='Male';
+run;
+ 
+data class02;
+	set class01;
+	format sex $sex.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="28">
+proc format;
+	
+1928720!+ value $sex
+	'F'='Female'
+	'M'='Male';
+NOTE: Format $SEX has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class02;
+	set class01;
+	format sex $sex.;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS02 has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+ 
+ 
+<h1>
+Create a format for a numeric variable
+</h1>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="17">
+ 
+proc format;
+	value teenage
+	13='Teen'
+	14='Teen'
+	15='Teen'
+	16-19='Teen'
+	low - <13='Pre-teen';
+run;
+ 
+data class03;
+	set class01;
+	format age teenage.;
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+ 
+proc format;
+	
+1928740!+ value teenage
+	13='Teen'
+	14='Teen'
+	15='Teen'
+	16-19='Teen'
+	low - <13='Pre-teen';
+NOTE: Format TEENAGE has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class03;
+	set class01;
+	format age teenage.;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS03 has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+create an informat for a character variable to read info as character variable
+</h1>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="14">
+proc format;
+	invalue $informat_sex
+	'M'='Male'
+	'F'='Female'
+	;
+run;
+ 
+data class04;
+	set class01;
+	sex_long=input(sex,$informat_sex.);
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+proc format;
+	
+1928761!+ invalue $informat_sex
+	'M'='Male'
+	'F'='Female'
+	;
+NOTE: Informat $INFORMAT_SEX has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class04;
+	set class01;
+	sex_long=input(sex,$informat_sex.);
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS04 has 19 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Create a informat for a character variable to read info as numeric variable
+</h1>
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="13">
+ 
+proc format;
+	invalue informat_num_sex
+	'M'=1
+	'F'=2;
+run;
+ 
+data class05;
+	set class01;
+	sex_num=input(sex,informat_num_sex.);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="29">
+ 
+proc format;
+	
+1936254!+ invalue informat_num_sex
+	'M'=1
+	'F'=2;
+NOTE: Informat INFORMAT_NUM_SEX has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data class05;
+	set class01;
+	sex_num=input(sex,informat_num_sex.);
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS05 has 19 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Create a dataset from existing formats
+</h1>
+ 
+<ul>
+<li>library= specifies the library location of formats catalog</li>
+<li>by default all the formats and informats present catalog will be exported</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc format cntlout=formats library=work;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc format cntlout=formats library=work;
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+NOTE: The data set WORK.FORMATS has 24 observations and 21 variables.
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+ 
+<h1>
+Selecting specific formats or informats to export
+</h1>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc format cntlout=formats02 library=work;
+	select $sex @$informat_sex @informat_num_sex teenage;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc format cntlout=formats02 library=work;
+	
+1951233!+ select $sex @$informat_sex @informat_num_sex teenage;
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+NOTE: The data set WORK.FORMATS02 has 11 observations and 21 variables.
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+ 
+<h1>
+Display the list (and details) of formats and informats available in a specified catalog
+</h1>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc format library=work fmtlib;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+proc format library=work fmtlib;
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+ 
+ 
+<h1>
+Picture format for percentages
+</h1>
+ 
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="9">
+proc format;
+	picture prct (default=7)
+	0='9.9)' (prefix="(")
+	0<-<100= '09.9)' (prefix="(")
+	100='0999)' (prefix="(");
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+proc format;
+	
+1958729!+ picture prct (default=7)
+	0='9.9)' (prefix="(")
+	0<-<100= '09.9)' (prefix="(")
+	100='0999)' (prefix="(");
+NOTE: Format PRCT has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Nine prints zero and zero prints nothing</li>
+</ul>
+ 
+<textarea id="codeBlock11" class="codetextarea" spellcheck="false" cols="100" rows="19">
+ 
+data test;
+	percent=0; output;
+	percent=1.1; output;
+	percent=10.9; output;
+	percent=50; output;
+	percent=99.9; output;
+	percent=100; output;
+run;
+ 
+data test2;
+	set test;
+	length char1 char2 $10;
+	char1=put(percent,prct.);
+	char2="("||put(percent,5.1)||")"; *(  0.0) vs (0.0);
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock11" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal11">View Log</button><div class="modal fade" id="logModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="34">
+ 
+data test;
+	percent=0; output;
+	percent=1.1; output;
+	percent=10.9; output;
+	percent=50; output;
+	percent=99.9; output;
+	percent=100; output;
+run;
+ 
+NOTE: The data set WORK.TEST has 6 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data test2;
+	set test;
+	length char1 char2 $10;
+	char1=put(percent,prct.);
+	char2="("||put(percent,5.1)||")"; *(  0.0) vs (0.0);
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.TEST.
+NOTE: The data set WORK.TEST2 has 6 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+ 
+<textarea id="codeBlock12" class="codetextarea" spellcheck="false" cols="100" rows="17">
+ 
+ods listing;
+proc report data=test2;
+run;
+ 
+proc format;
+	picture phone(default=13)
+	low-high='999)999-9999' (prefix="(");
+run;
+ 
+data phone;
+	phone=1234567890;
+	char=put(phone,phone.);
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock12" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal12">View Log</button><div class="modal fade" id="logModal12" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="39">
+ 
+ods listing;
+proc report data=test2;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.TEST2.
+NOTE: PROCEDURE REPORT used (Total process time):
+real time           0.15 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc format;
+	
+1966243!+ picture phone(default=13)
+	low-high='999)999-9999' (prefix="(");
+NOTE: Format PHONE has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data phone;
+	phone=1234567890;
+	char=put(phone,phone.);
+run;
+ 
+NOTE: The data set WORK.PHONE has 1 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCFORMAT_L101_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+ 
+ 
+</div></body>
+
+</html>
+
+

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_DATASTEP_L201
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+How SAS stores dates
+</h1>
+ 
+<ul>
+<li>SAS stores dates as ordinary numeric values — specifically the number of days elapsed since 01 January 1960</li>
+<li>The date 01 January 1960 itself is stored as 0, dates before it are negative, and dates after it are positive</li>
+<li>Because a SAS date is just a number you can add, subtract, and compare dates using ordinary arithmetic</li>
+<li>A date has no inherent display format — the same numeric value looks like a plain integer until you attach a date format</li>
+<li>Understanding this storage model is the foundation for all date work in SAS</li>
+</ul>
+ 
+<h2>
+Demonstrate the underlying numeric value
+</h2>
+ 
+<ul>
+<li>The DATA step below assigns a known date and prints it twice: once as a raw number and once with a DATE9. format applied</li>
+<li>Both variables hold exactly the same value — only the display changes when a format is attached</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="7">
+data dates_demo;
+    date_raw   = '01JAN2020'D;
+    date_fmt   = '01JAN2020'D;
+    format date_fmt date9.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data dates_demo;
+date_raw   = '01JAN2020'D;
+date_fmt   = '01JAN2020'D;
+format date_fmt date9.;
+run;
+ 
+NOTE: The data set WORK.DATES_DEMO has 1 observations and 2 variables.
+NOTE: Compressing data set WORK.DATES_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect the output dataset — `date_raw` will display as a large integer (21915) and `date_fmt` will show as 01JAN2020</li>
+<li>Count manually: 2020 minus 1960 is 60 years, which is approximately 21915 days, confirming the storage model</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Date literals
+</h1>
+ 
+<ul>
+<li>A date literal is the most direct way to write a fixed date in SAS code</li>
+<li>The syntax is a date string in single quotes followed by the letter D: `'ddMONyyyy'D`</li>
+<li>The month must be the three-letter English abbreviation in any mix of upper and lower case</li>
+<li>SAS converts the literal to the corresponding numeric day-count at compile time</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="7">
+/*
+date1 = '01JAN2020'D;   * 01 January 2020;
+date2 = '15mar2023'D;   * 15 March 2023  - lowercase month is also valid;
+date3 = '31DEC1999'D;   * 31 December 1999;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="7">
+/*
+date1 = '01JAN2020'D;   * 01 January 2020;
+date2 = '15mar2023'D;   * 15 March 2023  - lowercase month is also valid;
+date3 = '31DEC1999'D;   * 31 December 1999;
+*/
+</textarea></div></div></div></div>
+ 
+<h1>
+Common date informats - reading dates into SAS
+</h1>
+ 
+<ul>
+<li>An informat tells SAS how to interpret a character string and convert it to the internal numeric date value</li>
+<li>The most common date informats are listed below — the width in the informat name matches the expected character width of the source string</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="10">
+/*
+DATE9.     reads  '01JAN2020'  (ddMONyyyy, 9 characters)
+DATE7.     reads  '01JAN20'    (ddMONyy,   7 characters)
+YYMMDD10.  reads  '2020-01-01' (yyyy-mm-dd, 10 characters with separator)
+YYMMDD8.   reads  '20200101'   (yyyymmdd,   8 characters no separator)
+DDMMYY10.  reads  '01/01/2020' (dd/mm/yyyy, 10 characters with separator)
+MMDDYY10.  reads  '01/15/2020' (mm/dd/yyyy, 10 characters with separator)
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+/*
+DATE9.     reads  '01JAN2020'  (ddMONyyyy, 9 characters)
+DATE7.     reads  '01JAN20'    (ddMONyy,   7 characters)
+YYMMDD10.  reads  '2020-01-01' (yyyy-mm-dd, 10 characters with separator)
+YYMMDD8.   reads  '20200101'   (yyyymmdd,   8 characters no separator)
+DDMMYY10.  reads  '01/01/2020' (dd/mm/yyyy, 10 characters with separator)
+MMDDYY10.  reads  '01/15/2020' (mm/dd/yyyy, 10 characters with separator)
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Use the informat that matches the exact format of the incoming data — width and separator must align</li>
+<li>If the source data is already numeric (a SAS date stored as a number) no informat is needed</li>
+</ul>
+ 
+<h2>
+Reading dates from character variables using INPUT
+</h2>
+ 
+<ul>
+<li>The `input()` function converts a character value to numeric using a named informat</li>
+<li>The resulting variable is a SAS date and can be formatted and used in date arithmetic</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="18">
+data subjects;
+    infile cards truncover;
+    input usubjid $ rfstdtc $10.;
+cards;
+1001 2023-01-15
+1002 2023-02-20
+1003 2023-03-05
+1004 2023-04-10
+;
+run;
+ 
+data subjects;
+    set subjects;
+    rfstdt = input(rfstdtc, yymmdd10.);
+    format rfstdt date9.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+data subjects;
+infile cards truncover;
+input usubjid $ rfstdtc $10.;
+cards;
+ 
+NOTE: The data set WORK.SUBJECTS has 4 observations and 2 variables.
+NOTE: Compressing data set WORK.SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data subjects;
+set subjects;
+rfstdt = input(rfstdtc, yymmdd10.);
+format rfstdt date9.;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: The data set WORK.SUBJECTS has 4 observations and 3 variables.
+NOTE: Compressing data set WORK.SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The variable `rfstdtc` is a character string in YYYY-MM-DD format, typical of ISO 8601 dates used in clinical data standards</li>
+<li>The `input()` call with `yymmdd10.` converts the string to a SAS date number and stores it in `rfstdt`</li>
+<li>The `format` statement attaches DATE9. so the value displays in a readable form — the underlying number is unchanged</li>
+<li>Verify the output: `rfstdt` should show dates like 15JAN2023 beside the original character string</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Common date formats - displaying SAS dates
+</h1>
+ 
+<ul>
+<li>A format controls how a SAS date number is displayed — it does not change the stored value</li>
+<li>Multiple formats can be applied to the same variable for different outputs</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="14">
+/*
+DATE9.     displays  01JAN2020
+DATE7.     displays  01JAN20
+YYMMDD10.  displays  2020-01-01
+YYMMDD8.   displays  20200101
+DDMMYY10.  displays  01/01/2020
+MMDDYY10.  displays  01/15/2020
+WORDDATE.  displays  January 1, 2020
+WEEKDATE.  displays  Wednesday, January 1, 2020
+MONNAME.   displays  January
+YEAR4.     displays  2020
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+/*
+DATE9.     displays  01JAN2020
+DATE7.     displays  01JAN20
+YYMMDD10.  displays  2020-01-01
+YYMMDD8.   displays  20200101
+DDMMYY10.  displays  01/01/2020
+MMDDYY10.  displays  01/15/2020
+WORDDATE.  displays  January 1, 2020
+WEEKDATE.  displays  Wednesday, January 1, 2020
+MONNAME.   displays  January
+YEAR4.     displays  2020
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The format to use depends on the output destination — DATE9. is common in SAS reports, YYMMDD10. is standard for ISO-compliant outputs</li>
+<li>Always attach a format before printing or exporting dates to make them human-readable</li>
+</ul>
+ 
+<h2>
+Applying different formats to the same date value
+</h2>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data formats_demo;
+    dt = '15MAR2023'D;
+ 
+    dt_date9   = dt;  format dt_date9   date9.;
+    dt_yymmdd  = dt;  format dt_yymmdd  yymmdd10.;
+    dt_ddmmyy  = dt;  format dt_ddmmyy  ddmmyy10.;
+    dt_word    = dt;  format dt_word    worddate.;
+    dt_year    = dt;  format dt_year    year4.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="20">
+data formats_demo;
+dt = '15MAR2023'D;
+ 
+dt_date9   = dt;  format dt_date9   date9.;
+dt_yymmdd  = dt;  format dt_yymmdd  yymmdd10.;
+dt_ddmmyy  = dt;  format dt_ddmmyy  ddmmyy10.;
+dt_word    = dt;  format dt_word    worddate.;
+dt_year    = dt;  format dt_year    year4.;
+run;
+ 
+NOTE: The data set WORK.FORMATS_DEMO has 1 observations and 6 variables.
+NOTE: Compressing data set WORK.FORMATS_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>All five variables hold the same numeric value — the output dataset will show different display strings side by side</li>
+<li>Confirm that each column shows the expected date representation for 15 March 2023</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Core date functions
+</h1>
+ 
+<h2>
+TODAY() and DATE() - get the current date
+</h2>
+ 
+<ul>
+<li>`today()` returns today's date as a SAS date number — it takes no arguments</li>
+<li>`date()` is an alias for `today()` and behaves identically</li>
+<li>Both functions are commonly used to calculate elapsed time or flag records relative to the current date</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="7">
+data current_date;
+    today_val = today();
+    date_val  = date();
+    format today_val date_val date9.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data current_date;
+today_val = today();
+date_val  = date();
+format today_val date_val date9.;
+run;
+ 
+NOTE: The data set WORK.CURRENT_DATE has 1 observations and 2 variables.
+NOTE: Compressing data set WORK.CURRENT_DATE increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Both `today_val` and `date_val` should show the same date when you run this step</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+MDY() - construct a date from year, month, and day components
+</h2>
+ 
+<ul>
+<li>`mdy(month, day, year)` returns the SAS date for the given calendar components</li>
+<li>The argument order is month first, then day, then year — note this is not the same as the display order of most date formats</li>
+<li>`mdy` is useful when the input data has separate numeric year, month, and day columns that need to be combined into a single date variable</li>
+</ul>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data mdy_demo;
+    infile cards;
+    input usubjid $ birth_year birth_month birth_day;
+cards;
+1001 1985 4 22
+1002 1990 11 3
+1003 1978 7 15
+;
+run;
+ 
+data mdy_demo;
+    set mdy_demo;
+    brthdtc = mdy(birth_month, birth_day, birth_year);
+    format brthdtc date9.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+data mdy_demo;
+infile cards;
+input usubjid $ birth_year birth_month birth_day;
+cards;
+ 
+NOTE: The data set WORK.MDY_DEMO has 3 observations and 4 variables.
+NOTE: Compressing data set WORK.MDY_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data mdy_demo;
+set mdy_demo;
+brthdtc = mdy(birth_month, birth_day, birth_year);
+format brthdtc date9.;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.MDY_DEMO.
+NOTE: The data set WORK.MDY_DEMO has 3 observations and 5 variables.
+NOTE: Compressing data set WORK.MDY_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The three numeric components are combined into the single SAS date `brthdtc`</li>
+<li>Verify that the displayed dates match the year, month, and day columns in the input</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+YEAR(), MONTH(), DAY() - extract components from a date
+</h2>
+ 
+<ul>
+<li>`year(date)` returns the four-digit year as a number</li>
+<li>`month(date)` returns the month number 1 through 12</li>
+<li>`day(date)` returns the day of the month 1 through 31</li>
+<li>These functions are useful when you need to compare or group records by a specific date component</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data subjects;
+    set subjects;
+    rfst_year  = year(rfstdt);
+    rfst_month = month(rfstdt);
+    rfst_day   = day(rfstdt);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data subjects;
+set subjects;
+rfst_year  = year(rfstdt);
+rfst_month = month(rfstdt);
+rfst_day   = day(rfstdt);
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: The data set WORK.SUBJECTS has 4 observations and 6 variables.
+NOTE: Compressing data set WORK.SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The three new columns extract the year, month number, and day from `rfstdt` which was derived earlier</li>
+<li>Confirm that the extracted values match the visual date displayed in `rfstdt`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h1>
+Date arithmetic
+</h1>
+ 
+<h2>
+Difference in days between two dates
+</h2>
+ 
+<ul>
+<li>Because SAS dates are integers you can subtract one from another to get the number of days between them</li>
+<li>The result is simply the numeric difference — no special function is required for day-level differences</li>
+<li>A common clinical use is calculating the number of days a subject has been on study</li>
+</ul>
+ 
+<textarea id="codeBlock10" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data subjects;
+    set subjects;
+    cutoff_dt  = '30JUN2023'D;
+    days_on_study = cutoff_dt - rfstdt;
+    format cutoff_dt date9.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock10" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal10">View Log</button><div class="modal fade" id="logModal10" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data subjects;
+set subjects;
+cutoff_dt  = '30JUN2023'D;
+days_on_study = cutoff_dt - rfstdt;
+format cutoff_dt date9.;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: The data set WORK.SUBJECTS has 4 observations and 8 variables.
+NOTE: Compressing data set WORK.SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`days_on_study` is the integer number of days from `rfstdt` to the cutoff date</li>
+<li>Verify the values by mentally counting the approximate months between the start dates and 30 June 2023</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h2>
+Adding and subtracting a fixed number of days
+</h2>
+ 
+<ul>
+<li>To shift a date forward or backward by a known number of days, simply add or subtract that integer</li>
+<li>For example, adding 7 gives the date one week later; subtracting 30 gives the date approximately one month earlier</li>
+<li>This works directly because SAS dates are stored as day counts</li>
+</ul>
+ 
+<textarea id="codeBlock11" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data subjects;
+    set subjects;
+    visit1_due  = rfstdt + 7;    * one week after start date;
+    screening_dt = rfstdt - 14;  * two weeks before start date;
+    format visit1_due screening_dt date9.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock11" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal11">View Log</button><div class="modal fade" id="logModal11" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data subjects;
+set subjects;
+visit1_due  = rfstdt + 7;    * one week after start date;
+screening_dt = rfstdt - 14;  * two weeks before start date;
+format visit1_due screening_dt date9.;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.SUBJECTS.
+NOTE: The data set WORK.SUBJECTS has 4 observations and 10 variables.
+NOTE: Compressing data set WORK.SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `visit1_due` — it should be exactly 7 days after `rfstdt` for every subject</li>
+<li>Inspect `screening_dt` — it should be exactly 14 days before `rfstdt`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal8">View Data</button><div class="modal fade" id="dataModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L201_filterable_data_08.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>SAS dates are stored as integers counting days since 01 January 1960 — they are plain numbers not text</li>
+<li>Attach an informat when reading character date strings into SAS and a format when displaying or exporting dates</li>
+<li>The most common informats are DATE9. YYMMDD10. DDMMYY10. and MMDDYY10. — choose the one that matches your source data layout</li>
+<li>`today()` returns the current date, `mdy()` builds a date from components, and `year()` `month()` `day()` extract components</li>
+<li>Day-level differences and offsets use plain subtraction and addition because dates are integers</li>
+<li>Part 02 of this topic covers interval functions `intck()` and `intnx()` for month-level and year-level date calculations</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

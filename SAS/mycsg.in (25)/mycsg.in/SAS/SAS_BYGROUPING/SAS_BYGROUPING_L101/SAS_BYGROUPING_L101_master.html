@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_BYGROUPING_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is BY group processing in SAS
+</h1>
+ 
+<ul>
+<li>BY group processing means SAS processes observations in groups formed by one or more variables listed on a BY statement</li>
+<li>Each unique value or unique combination of BY variable values becomes one group</li>
+<li>This technique is used in procedures as well as in DATA step programming</li>
+<li>It is useful when the same logic must be repeated separately for each group, such as each sex, each treatment, each site, or each subject</li>
+<li>A very important rule is that the input dataset must usually be sorted by the same BY variables before BY group processing is attempted</li>
+</ul>
+ 
+<h1>
+Create example datasets for learning BY group processing
+</h1>
+ 
+<ul>
+<li>We start by copying `sashelp.class` into a simple working dataset named `class01`</li>
+<li>We then create a second dataset named `class_detail` that adds two grouping variables named `age_group` and `height_band`</li>
+<li>These extra variables help us demonstrate single-variable grouping and multiple-variable grouping in later examples</li>
+<li>After running the code, confirm that `class01` and `class_detail` contain the same 19 students with the added derived variables in `class_detail`</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="16">
+data class01;
+   set sashelp.class;
+run;
+ 
+data class_detail;
+   set class01;
+   length age_group $12 height_band $12;
+ 
+   if age le 12 then age_group="Age 11 to 12";
+   else age_group="Age 13 to 16";
+ 
+   if height lt 60 then height_band="Below 60";
+   else height_band="60 and above";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="36">
+data class01;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS01 has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS01 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data class_detail;
+set class01;
+length age_group $12 height_band $12;
+ 
+if age le 12 then age_group="Age 11 to 12";
+else age_group="Age 13 to 16";
+ 
+if height lt 60 then height_band="Below 60";
+else height_band="60 and above";
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_DETAIL has 19 observations and 7 variables.
+NOTE: Compressing data set WORK.CLASS_DETAIL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`class01` gives us the original student records from `sashelp.class`</li>
+<li>`class_detail` gives us two extra character variables that can be used for grouping</li>
+<li>Inspect the output datasets and verify that the values of `age_group` and `height_band` are populated for every observation</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Why sorting is usually required before a BY statement
+</h1>
+ 
+<ul>
+<li>SAS expects observations that belong to the same BY group to be adjacent to each other</li>
+<li>Sorting arranges the observations in that required order</li>
+<li>If the dataset is not sorted in the same order as the BY variables, SAS can stop with an error in many procedures and DATA steps</li>
+<li>The safest habit is to sort the dataset first, and then use the BY statement with the exact same variables in the exact same order</li>
+</ul>
+ 
+<h2>
+Example of the required sort step before BY group processing
+</h2>
+ 
+<ul>
+<li>`proc sort` reads `class01` and writes a sorted output dataset named `class_sex_sort`</li>
+<li>The `by sex;` statement tells SAS to arrange all female records together and all male records together</li>
+<li>After the sort finishes, confirm in the output dataset that all observations for one sex appear together as one block</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc sort data=class01 out=class_sex_sort;
+   by sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+proc sort data=class01 out=class_sex_sort;
+by sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS01.
+NOTE: The data set WORK.CLASS_SEX_SORT has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS_SEX_SORT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`class_sex_sort` is now ready for BY group processing by `sex`</li>
+<li>Notice that the grouping variable used in the sort step is the same grouping variable that will be used in the next procedure</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Syntax only example of an incorrect approach
+</h2>
+ 
+<ul>
+<li>The following block is intentionally kept as syntax only and is not executed</li>
+<li>It shows the type of code that can fail when a BY statement is used on data that was not first sorted by the BY variable</li>
+<li>Keep this pattern in mind as a warning, not as a working program</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="8">
+/*
+proc means data=class01;
+   by sex;
+   var height weight;
+run;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="8">
+/*
+proc means data=class01;
+by sex;
+var height weight;
+run;
+*/
+</textarea></div></div></div></div>
+ 
+<h1>
+Use BY group processing in a procedure
+</h1>
+ 
+<ul>
+<li>Here we use `proc means` on the sorted dataset `class_sex_sort`</li>
+<li>The `by sex;` statement tells SAS to produce separate statistics for each value of `sex`</li>
+<li>`var height weight;` requests descriptive statistics for the numeric variables `height` and `weight` within each group</li>
+<li>When you review the results window, you should see one section for females and another section for males</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="6">
+proc means data=class_sex_sort n min max mean;
+   by sex;
+   var height weight;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc means data=class_sex_sort n min max mean;
+by sex;
+var height weight;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS_SEX_SORT.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The calculations are no longer for the full dataset as one unit</li>
+<li>Instead, SAS repeats the same summary calculation once for each BY group</li>
+<li>Confirm that the observation counts for males and females together match the total observation count in `class01`</li>
+</ul>
+ 
+<h1>
+Use multiple variables on the BY statement
+</h1>
+ 
+<ul>
+<li>BY group processing can be based on more than one variable</li>
+<li>In that case, the data must be sorted by all BY variables in the same sequence</li>
+<li>Each distinct combination of the listed variables becomes a separate group</li>
+<li>In this example, we group first by `sex` and then by `age_group`</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="10">
+proc sort data=class_detail out=class_multi_sort;
+   by sex age_group;
+run;
+ 
+proc print data=class_multi_sort;
+   by sex age_group;
+   var name age height weight;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="27">
+proc sort data=class_detail out=class_multi_sort;
+by sex age_group;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS_DETAIL.
+NOTE: The data set WORK.CLASS_MULTI_SORT has 19 observations and 7 variables.
+NOTE: Compressing data set WORK.CLASS_MULTI_SORT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc print data=class_multi_sort;
+by sex age_group;
+var name age height weight;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS_MULTI_SORT.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The sorted dataset `class_multi_sort` is arranged first by `sex`, and then within each sex by `age_group`</li>
+<li>The printed output appears in separate blocks for each unique combination, such as female plus age 11 to 12 or male plus age 13 to 16</li>
+<li>Inspect the sorted dataset and confirm that records belonging to the same pair of values are adjacent to each other</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Understand FIRST and LAST temporary variables in a DATA step
+</h1>
+ 
+<ul>
+<li>When a sorted dataset is read with a BY statement in a DATA step, SAS automatically creates temporary indicators named `FIRST.variable` and `LAST.variable`</li>
+<li>`FIRST.variable` becomes 1 for the first observation in each BY group</li>
+<li>`LAST.variable` becomes 1 for the last observation in each BY group</li>
+<li>These temporary variables are not stored in the output dataset unless we copy their values into real variables</li>
+<li>This feature is one of the most useful parts of BY group processing because it allows us to reset counters, start totals, and write one final record per group</li>
+</ul>
+ 
+<h2>
+Create an output dataset that stores the FIRST and LAST flags
+</h2>
+ 
+<ul>
+<li>We read the already sorted dataset `class_sex_sort`</li>
+<li>`by sex;` tells SAS to identify the beginning and ending observation for each sex group</li>
+<li>We copy `first.sex` and `last.sex` into permanent numeric variables so they can be inspected in the output dataset</li>
+<li>After running the code, review the first and last observation within each sex and confirm that the flags are set to 1 only on those boundary rows</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data class_with_flags;
+   set class_sex_sort;
+   by sex;
+ 
+   first_sex=first.sex;
+   last_sex=last.sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data class_with_flags;
+set class_sex_sort;
+by sex;
+ 
+first_sex=first.sex;
+last_sex=last.sex;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS_SEX_SORT.
+NOTE: The data set WORK.CLASS_WITH_FLAGS has 19 observations and 7 variables.
+NOTE: Compressing data set WORK.CLASS_WITH_FLAGS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`class_with_flags` makes the temporary BY group boundaries visible as regular variables</li>
+<li>For each value of `sex`, one observation should have `first_sex=1` and one observation should have `last_sex=1`</li>
+<li>If a group contains only one observation, then both indicators would be 1 on the same row</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Build a group level summary in a DATA step using RETAIN and LAST
+</h1>
+ 
+<ul>
+<li>This example shows a very common BY group pattern in DATA step programming</li>
+<li>We retain a counter across observations within the same group</li>
+<li>We reset that counter when a new sex group starts by checking `first.sex`</li>
+<li>We increase the counter for each observation in the group</li>
+<li>We output only the final row of each group by checking `last.sex`, so that one summary record is written per group</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="14">
+data sex_counts;
+   set class_sex_sort;
+   by sex;
+   retain student_count;
+ 
+   if first.sex then student_count=0;
+   student_count+1;
+ 
+   if last.sex then output;
+ 
+   keep sex student_count;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="23">
+data sex_counts;
+set class_sex_sort;
+by sex;
+retain student_count;
+ 
+if first.sex then student_count=0;
+student_count+1;
+ 
+if last.sex then output;
+ 
+keep sex student_count;
+run;
+ 
+NOTE: Compression was disabled for data set WORK.SEX_COUNTS because compression overhead would increase the size of the data set.
+NOTE: There were 19 observations read from the data set WORK.CLASS_SEX_SORT.
+NOTE: The data set WORK.SEX_COUNTS has 2 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`sex_counts` contains one record for females and one record for males</li>
+<li>The value of `student_count` shows how many observations belonged to each BY group</li>
+<li>Verify that the counts in `sex_counts` match what you see when you inspect `class_sex_sort` and the earlier `proc means` output</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Sort the dataset before BY group processing unless you are working with data that is already guaranteed to be in the correct BY order</li>
+<li>The variables listed in the BY statement must match the sort order</li>
+<li>Procedures use BY groups to repeat the same analysis separately for each group</li>
+<li>DATA steps use BY groups together with `FIRST.` and `LAST.` variables to control row-level logic inside each group</li>
+<li>When more than one variable is used in the BY statement, each unique combination of values forms a separate group</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

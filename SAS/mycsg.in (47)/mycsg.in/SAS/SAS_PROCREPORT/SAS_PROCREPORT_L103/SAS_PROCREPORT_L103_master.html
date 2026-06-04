@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCREPORT_L103
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+COMPUTE blocks in PROC REPORT - derived columns and conditional formatting
+</h1>
+ 
+<h2>
+What is a COMPUTE block
+</h2>
+ 
+<ul>
+<li>Previous PROC REPORT lessons covered basic reports, grouping, BREAK, RBREAK, and a basic COMPUTE AFTER label</li>
+<li>A COMPUTE block is a section of code inside PROC REPORT that calculates new values or applies conditional logic row by row as the report is built</li>
+<li>COMPUTE blocks can create entirely new derived columns, modify existing column values, and apply conditional highlighting or text changes</li>
+<li>They are written between `compute column_name;` and `endcomp;` and use a limited subset of DATA step assignment and IF-THEN logic</li>
+<li>COMPUTE blocks are the primary mechanism for custom calculations inside PROC REPORT without preprocessing the data separately</li>
+</ul>
+ 
+<h2>
+Create sample data
+</h2>
+ 
+<ul>
+<li>We create a sales performance dataset with actual and target figures per department and region</li>
+<li>This data will be used to demonstrate a derived ratio column and conditional text based on whether the target was met</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="16">
+data sales;
+    input dept $ region $ actual target;
+    datalines;
+Marketing East  1200 1000
+Marketing West   900 1100
+Marketing North 1400 1200
+Sales     East  2000 1800
+Sales     West  1600 2000
+Sales     North 2200 1900
+Support   East   500  450
+Support   West   420  500
+Support   North  550  500
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data sales;
+input dept $ region $ actual target;
+datalines;
+ 
+NOTE: The data set WORK.SALES has 9 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Confirm that `sales` has 9 rows — three regions per department</li>
+<li>Some actual values exceed their target and some fall short — this asymmetry will make the conditional logic meaningful</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCREPORT_L103_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Creating a derived column with a COMPUTE block
+</h1>
+ 
+<h2>
+Define a COMPUTED column and calculate a percentage
+</h2>
+ 
+<ul>
+<li>To create a derived column in PROC REPORT, you first declare the column with `define colname / computed`</li>
+<li>A COMPUTE block then calculates the value for each row using other column names</li>
+<li>Inside a COMPUTE block, columns with a statistic role such as `sum` must be referenced with the statistic as a suffix — for example `actual.sum` and `target.sum`, not just `actual` or `target`</li>
+<li>The derived column exists only in the report — no new variable is added to the input dataset</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="16">
+proc report data=sales nowd;
+    column dept region actual target pct_target;
+ 
+    define dept       / group  'Department';
+    define region     / group  'Region';
+    define actual     / sum    'Actual Sales';
+    define target     / sum    'Target';
+    define pct_target / computed format=percent8.1 'Pct of Target';
+ 
+    compute pct_target;
+        if target.sum ne 0 then pct_target = actual.sum / target.sum;
+        else pct_target = .;
+    endcomp;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="23">
+proc report data=sales nowd;
+column dept region actual target pct_target;
+ 
+define dept       / group  'Department';
+define region     / group  'Region';
+define actual     / sum    'Actual Sales';
+define target     / sum    'Target';
+define pct_target / computed format=percent8.1 'Pct of Target';
+ 
+compute pct_target;
+if target.sum ne 0 then pct_target = actual.sum / target.sum;
+else pct_target = .;
+endcomp;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SALES.
+NOTE: PROCEDURE REPORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `pct_target` column shows each row's actual as a percentage of its target</li>
+<li>Note that `actual.sum` and `target.sum` inside the COMPUTE block refer to the aggregated column values as computed by the report — the `.sum` suffix is required because these columns are defined with the `sum` statistic role</li>
+<li>When the report includes grouping and summary rows, the COMPUTE block runs for every row including group totals — the percentage at the group total row uses the summed actual and summed target values</li>
+</ul>
+ 
+<h1>
+Conditional logic inside a COMPUTE block
+</h1>
+ 
+<h2>
+Flag rows based on whether actual met the target
+</h2>
+ 
+<ul>
+<li>A COMPUTE block can use `IF-THEN-ELSE` to assign different text or values based on conditions</li>
+<li>One common pattern is creating a status label that describes whether the target was met</li>
+<li>The derived column must be declared with the correct type — for character results, add `character length=n` on the COMPUTE statement itself, not the DEFINE statement</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="16">
+proc report data=sales nowd;
+    column dept region actual target status;
+ 
+    define dept   / group  'Department';
+    define region / group  'Region';
+    define actual / sum    'Actual Sales';
+    define target / sum    'Target';
+    define status / computed 'Status'  ;
+ 
+    compute status/character length=15;
+        if actual.sum ge target.sum then status='Met Target';
+        else                     status='Below Target';
+    endcomp;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="23">
+proc report data=sales nowd;
+column dept region actual target status;
+ 
+define dept   / group  'Department';
+define region / group  'Region';
+define actual / sum    'Actual Sales';
+define target / sum    'Target';
+define status / computed 'Status'  ;
+ 
+compute status/character length=15;
+if actual.sum ge target.sum then status='Met Target';
+else                     status='Below Target';
+endcomp;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SALES.
+NOTE: PROCEDURE REPORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Each row now shows either `Met Target` or `Below Target` based on the comparison of actual and target for that row</li>
+<li>Verify that Marketing West shows `Below Target` because its actual (900) is below its target (1100)</li>
+<li>The `character length=15` is specified on the COMPUTE statement (`compute status / character length=15;`) — the DEFINE statement only needs `/ computed` and the column label; placing the length specification on the COMPUTE statement is what tells SAS the column is character and how wide to make it</li>
+</ul>
+ 
+<h2>
+Combine derived percentage and conditional status in one report
+</h2>
+ 
+<ul>
+<li>Multiple COMPUTE blocks can appear in the same PROC REPORT step</li>
+<li>Each block is independent and applies to its own defined column</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="22">
+proc report data=sales nowd;
+    column dept region actual target pct_target status;
+ 
+    define dept       / group  'Department';
+    define region     / group  'Region';
+    define actual     / sum    'Actual Sales';
+    define target     / sum    'Target';
+    define pct_target / computed format=percent8.1 'Pct of Target';
+    define status     / computed 'Status' ;
+ 
+    compute pct_target;
+        if target.sum ne 0 then pct_target = actual.sum / target.sum;
+        else pct_target = .;
+    endcomp;
+ 
+    compute status/character length=15;
+        if actual.sum ge target.sum then status='Met Target';
+        else                     status='Below Target';
+    endcomp;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="29">
+proc report data=sales nowd;
+column dept region actual target pct_target status;
+ 
+define dept       / group  'Department';
+define region     / group  'Region';
+define actual     / sum    'Actual Sales';
+define target     / sum    'Target';
+define pct_target / computed format=percent8.1 'Pct of Target';
+define status     / computed 'Status' ;
+ 
+compute pct_target;
+if target.sum ne 0 then pct_target = actual.sum / target.sum;
+else pct_target = .;
+endcomp;
+ 
+compute status/character length=15;
+if actual.sum ge target.sum then status='Met Target';
+else                     status='Below Target';
+endcomp;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SALES.
+NOTE: PROCEDURE REPORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The report now shows four data columns: actual, target, percentage, and status — all derived or computed in PROC REPORT without modifying the input dataset</li>
+<li>Review every row and confirm that the status aligns correctly with whether actual is above or below target</li>
+</ul>
+ 
+<h1>
+Using COMPUTE with BREAK and RBREAK
+</h1>
+ 
+<h2>
+Add a derived column that also appears on group total rows
+</h2>
+ 
+<ul>
+<li>When BREAK or RBREAK is used, the COMPUTE block runs for the summary line as well, using the aggregated column values</li>
+<li>The percentage at the department total row will correctly use the summed actual and summed target, giving a meaningful overall percentage</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="19">
+proc report data=sales nowd;
+    column dept region actual target pct_target;
+ 
+    define dept       / group  'Department';
+    define region     / group  'Region';
+    define actual     / sum    'Actual Sales';
+    define target     / sum    'Target';
+    define pct_target / computed format=percent8.1 'Pct of Target';
+ 
+    compute pct_target;
+        if target.sum ne 0 then pct_target = actual.sum / target.sum;
+        else pct_target = .;
+    endcomp;
+ 
+    break after dept / summarize;
+    rbreak after / summarize;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="26">
+proc report data=sales nowd;
+column dept region actual target pct_target;
+ 
+define dept       / group  'Department';
+define region     / group  'Region';
+define actual     / sum    'Actual Sales';
+define target     / sum    'Target';
+define pct_target / computed format=percent8.1 'Pct of Target';
+ 
+compute pct_target;
+if target.sum ne 0 then pct_target = actual.sum / target.sum;
+else pct_target = .;
+endcomp;
+ 
+break after dept / summarize;
+rbreak after / summarize;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SALES.
+NOTE: PROCEDURE REPORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The department-level subtotal rows and the grand total row each show a percentage computed from the summed actual and target values</li>
+<li>This means the subtotal percentage is not an average of the individual row percentages but rather the correct aggregate ratio — the behaviour most reports require</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Declare a derived column with `define colname / computed` in PROC REPORT — this tells the procedure to expect a COMPUTE block that supplies the column's values</li>
+<li>For character computed columns, add `character length=n` to the COMPUTE statement (`compute colname / character length=n;`) — the DEFINE statement only needs `/ computed`</li>
+<li>Inside a COMPUTE block, columns with a statistic role must be referenced with the statistic suffix — for example `actual.sum` and `target.sum` for columns defined as `sum`; using the bare name without the suffix will not reference the correct value</li>
+<li>COMPUTE blocks run for every output row including BREAK and RBREAK summary lines — percentages and other derived values will use summed values at those rows</li>
+<li>Multiple COMPUTE blocks can coexist in a single PROC REPORT step — one block per computed column</li>
+<li>COMPUTE block logic is limited to assignment statements and IF-THEN-ELSE — complex DATA step operations such as RETAIN are not supported</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_APPENDING_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of 'Appending'?
+</h1>
+ 
+<ol>
+<li>attach</li>
+<li>add (something) to the end of a written document.</li>
+</ol>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1001">Appending or Concatenating SAS datasets</button><div class="modal fade" id="imgModal1001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Appending or Concatenating SAS datasets</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_APPENDING_L101_1001.png" alt="Appending or Concatenating SAS datasets" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+Common scenarios where appending (of datasets) is required in SAS?
+</h1>
+ 
+<ul>
+<li>Combine the records of students of different classes when a separate dataset is present for each class</li>
+<li>Combine the records of male and female students when male and female records are present in different datasets</li>
+<li>Combine the records of screen failures and treated subjects when they are present in different datasets</li>
+<li>Combine the records of inclusion criteria and exclusion criteria not met by subjects when they are present in different datasets</li>
+<li>Combine the prior medications data and concomitant medications data of subjects when they are present in different datasets</li>
+<li>Combine all the input datasets available to check the latest available date for a subject across all datasets</li>
+</ul>
+ 
+<h1>
+What does the SET statement of SAS data step do?
+</h1>
+ 
+<ul>
+<li>By definition, the SET statement is used for reading observations from one or more datasets</li>
+<li>When only one dataset name is provided on the SET statement, it reads all observations from that dataset and creates a new output dataset</li>
+<li>The SET statement can also read observations from more than one dataset in a single data step</li>
+<li>We use this ability to append observations from one dataset to another by listing multiple dataset names on the SET statement</li>
+<li>Dataset names on the SET statement are separated by a space</li>
+<li>SAS reads all observations from the first input dataset and then moves to the next dataset in order - so the output dataset contains observations from the first dataset followed by observations from subsequent datasets</li>
+</ul>
+ 
+<h1>
+Create some example datasets
+</h1>
+ 
+<ul>
+<li>We will use sashelp.class (a built-in SAS dataset with student records) and sashelp.cars (a built-in SAS dataset with car records) to create smaller example datasets for this lesson</li>
+<li>The data step below uses multiple OUTPUT statements to write observations to different datasets in a single pass through the input data</li>
+<li>Each IF condition checks a variable value and routes the observation to the appropriate output dataset</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="20">
+data males females;
+   set sashelp.class;
+   if sex="M" then output males;
+   if sex="F" then output females;
+run;
+ 
+data preteen teen;
+   set sashelp.class;
+   if age lt 13 then output preteen;
+   if age ge 13 then output teen;
+run;
+ 
+data sedan sports othercars;
+   set sashelp.cars;
+   if type="Sedan" then output sedan;
+   else if type="Sports" then output sports;
+   else output othercars;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="62">
+data males females;
+set sashelp.class;
+if sex="M" then output males;
+if sex="F" then output females;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.MALES has 10 observations and 5 variables.
+NOTE: Compressing data set WORK.MALES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.FEMALES has 9 observations and 5 variables.
+NOTE: Compressing data set WORK.FEMALES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data preteen teen;
+set sashelp.class;
+if age lt 13 then output preteen;
+if age ge 13 then output teen;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.PRETEEN has 7 observations and 5 variables.
+NOTE: Compressing data set WORK.PRETEEN increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.TEEN has 12 observations and 5 variables.
+NOTE: Compressing data set WORK.TEEN increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+data sedan sports othercars;
+set sashelp.cars;
+if type="Sedan" then output sedan;
+else if type="Sports" then output sports;
+else output othercars;
+run;
+ 
+NOTE: There were 428 observations read from the data set SASHELP.CARS.
+NOTE: The data set WORK.SEDAN has 262 observations and 15 variables.
+NOTE: Compressing data set WORK.SEDAN increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.SPORTS has 49 observations and 15 variables.
+NOTE: Compressing data set WORK.SPORTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.OTHERCARS has 117 observations and 15 variables.
+NOTE: Compressing data set WORK.OTHERCARS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>After running the above code, we have 6 smaller datasets - males, females, preteen, teen, sedan, sports, and othercars</li>
+<li>males contains only the records where sex is M, females contains only the records where sex is F</li>
+<li>preteen contains students aged below 13, teen contains students aged 13 and above</li>
+<li>sedan, sports, and othercars contain car records split by the type variable from sashelp.cars</li>
+<li>Notice that the car types not matching sedan or sports are routed to othercars using the ELSE OUTPUT statement</li>
+</ul>
+ 
+<h1>
+Combining input datasets having same attributes using SET statement
+</h1>
+ 
+<ul>
+<li>When appending datasets using the SET statement, SAS includes all variables and observations from each input dataset in the output dataset</li>
+<li>Since we are appending datasets that were created from the same source (sashelp.class or sashelp.cars), they share identical variable names, types, and lengths - this is the simplest appending scenario</li>
+</ul>
+ 
+<h2>
+Create a dataset named m_and_f by appending males and females datasets using SET statement
+</h2>
+ 
+<ul>
+<li>On the DATA statement, we specify m_and_f as the name of the output dataset that will hold the combined observations</li>
+<li>On the SET statement, we list males first and females second - this determines the order of observations in the output dataset</li>
+<li>SAS reads all 10 observations from males into the output first, then reads all 9 observations from females</li>
+<li>The result is a dataset with 19 observations - 10 male records followed by 9 female records</li>
+<li>View the datasets below and confirm that m_and_f has all records from both males and females, in that order</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data m_and_f;
+   set males females;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data m_and_f;
+set males females;
+run;
+ 
+NOTE: There were 10 observations read from the data set WORK.MALES.
+NOTE: There were 9 observations read from the data set WORK.FEMALES.
+NOTE: The data set WORK.M_AND_F has 19 observations and 5 variables.
+NOTE: Compressing data set WORK.M_AND_F increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named cars1 by appending sedan and sports datasets using SET statement
+</h2>
+ 
+<ul>
+<li>Here we apply the same principle to the cars data - sedan is listed first on the SET statement so its observations appear first in cars1</li>
+<li>sports observations are appended after all sedan observations</li>
+<li>Notice that othercars is intentionally excluded from this step - cars1 will only contain sedan and sports records</li>
+<li>Confirm in the data view that cars1 observation count equals the sum of sedan and sports observation counts</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data cars1;
+   set sedan sports;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data cars1;
+set sedan sports;
+run;
+ 
+NOTE: There were 262 observations read from the data set WORK.SEDAN.
+NOTE: There were 49 observations read from the data set WORK.SPORTS.
+NOTE: The data set WORK.CARS1 has 311 observations and 15 variables.
+NOTE: Compressing data set WORK.CARS1 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named allcars by appending cars1 and othercars datasets using SET statement
+</h2>
+ 
+<ul>
+<li>In this step we append cars1 (which already contains sedan and sports records) with othercars</li>
+<li>Notice that othercars is listed first on the SET statement this time - so othercars observations will appear first in allcars followed by cars1 observations</li>
+<li>This demonstrates that the order of dataset names on the SET statement directly controls the order of observations in the output</li>
+<li>cars1 was created in the previous step and already holds the combined sedan and sports records</li>
+<li>Confirm in the data view that allcars observation count equals othercars plus cars1</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data allcars;
+   set othercars cars1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data allcars;
+set othercars cars1;
+run;
+ 
+NOTE: There were 117 observations read from the data set WORK.OTHERCARS.
+NOTE: There were 311 observations read from the data set WORK.CARS1.
+NOTE: The data set WORK.ALLCARS has 428 observations and 15 variables.
+NOTE: Compressing data set WORK.ALLCARS decreased size by 0.00 percent.
+Compressed is 2 pages; un-compressed would require 2 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named allcars2 by appending sedan, sports, and othercars datasets using SET statement
+</h2>
+ 
+<ul>
+<li>The input datasets sedan, sports, and othercars are recreated fresh here to reset them to their original state before the next example</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data sedan sports othercars;
+   set sashelp.cars;
+   if type="Sedan" then output sedan;
+   else if type="Sports" then output sports;
+   else output othercars;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="24">
+data sedan sports othercars;
+set sashelp.cars;
+if type="Sedan" then output sedan;
+else if type="Sports" then output sports;
+else output othercars;
+run;
+ 
+NOTE: There were 428 observations read from the data set SASHELP.CARS.
+NOTE: The data set WORK.SEDAN has 262 observations and 15 variables.
+NOTE: Compressing data set WORK.SEDAN increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.SPORTS has 49 observations and 15 variables.
+NOTE: Compressing data set WORK.SPORTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.OTHERCARS has 117 observations and 15 variables.
+NOTE: Compressing data set WORK.OTHERCARS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The SET statement is not limited to two input datasets - you can list as many dataset names as needed, each separated by a space</li>
+<li>Here we append all three datasets - sedan, sports, and allcars - in a single SET statement</li>
+<li>SAS reads sedan first, then sports, then allcars - notice that allcars itself contains othercars and cars1 records from the previous step</li>
+<li>So allcars2 ends up with sedan records first, followed by sports records, followed by all records from allcars (othercars then cars1)</li>
+<li>Compare the observation counts in the data view to confirm that allcars2 contains all expected records</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data allcars2;
+   set sedan sports allcars;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data allcars2;
+set sedan sports allcars;
+run;
+ 
+NOTE: There were 262 observations read from the data set WORK.SEDAN.
+NOTE: There were 49 observations read from the data set WORK.SPORTS.
+NOTE: There were 428 observations read from the data set WORK.ALLCARS.
+NOTE: The data set WORK.ALLCARS2 has 739 observations and 15 variables.
+NOTE: Compressing data set WORK.ALLCARS2 increased size by 50.00 percent.
+Compressed is 3 pages; un-compressed would require 2 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_APPENDING_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+</div></body>
+
+</html>
+
+

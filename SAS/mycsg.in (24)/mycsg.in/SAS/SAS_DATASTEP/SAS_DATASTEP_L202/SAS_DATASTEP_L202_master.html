@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_DATASTEP_L202
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Data Step - Dates Part 02: DATETIME Values, DATEPART, TIMEPART, and Datetime Arithmetic
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Part 01 (SAS_DATASTEP_L201) covered SAS date values: integers representing the number of days since 01-JAN-1960, date literals, informats, date component functions, and day arithmetic.</li>
+ 
+<li>This lesson introduces the related but distinct concept of datetime values in SAS, which store both a date and a time of day in a single numeric value.</li>
+<li>Datetime values are stored as the number of seconds elapsed since midnight on 01-JAN-1960. They are used when you need to record or calculate the exact time of an event, not just the date.</li>
+<li>Typical use cases in clinical data: adverse event start and stop datetime, sample collection datetime, ECG or vital sign recording time.</li>
+</ul>
+ 
+<h2>
+SAS Datetime Values and Literals
+</h2>
+ 
+<ul>
+<li>A SAS datetime value is a numeric variable that counts seconds from midnight 01-JAN-1960 (not days).</li>
+<li>The relationship between a date value and a datetime value is: datetime = date_value * 86400 + seconds_since_midnight.</li>
+<li>Datetime literals in SAS code use single quotes with the suffix DT: '01JAN2024:08:30:00'dt</li>
+<li>The format of the datetime literal is: 'DDMONYYYY:HH:MM:SS'dt — note the colon separating date and time portions.</li>
+<li>To display a datetime value in a readable form, apply a DATETIME format (e.g., DATETIME20.) or a DATE9./TIME8. format after extracting the date or time portion.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="13">
+data work.datetime_demo;
+    * Datetime literal ;
+    dt1 = '15MAR2024:09:30:00'dt;
+    dt2 = '15MAR2024:14:45:30'dt;
+    dt3 = '16MAR2024:07:15:00'dt;
+ 
+    * Display formats ;
+    format dt1 dt2 dt3 datetime20.;
+run;
+ 
+proc print data=work.datetime_demo; run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="29">
+data work.datetime_demo;
+* Datetime literal ;
+dt1 = '15MAR2024:09:30:00'dt;
+dt2 = '15MAR2024:14:45:30'dt;
+dt3 = '16MAR2024:07:15:00'dt;
+ 
+* Display formats ;
+format dt1 dt2 dt3 datetime20.;
+run;
+ 
+NOTE: The data set WORK.DATETIME_DEMO has 1 observations and 3 variables.
+NOTE: Compressing data set WORK.DATETIME_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc print data=work.datetime_demo; run;
+ 
+NOTE: There were 1 observations read from the data set WORK.DATETIME_DEMO.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>DATETIME20. formats the numeric datetime value as a readable date-time string (e.g., 15MAR2024:09:30:00).</li>
+<li>Inspect WORK.DATETIME_DEMO to confirm the three datetime values display correctly.</li>
+<li>The raw numeric value of dt1 will be a very large integer (seconds since 01-JAN-1960) — the format makes it human-readable.</li>
+<li>Always apply a DATETIME format when displaying datetime variables; without a format the raw second count is meaningless to a reader.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L202_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Reading Datetime Values with Informats
+</h2>
+ 
+<ul>
+<li>When reading datetime strings from raw data or character variables, use a datetime informat to convert them to SAS datetime values.</li>
+<li>Common datetime informats: DATETIME20. for 'DDMONyyyy:HH:MM:SS' strings, YMDDTTM. for ISO 8601 format strings like '2024-03-15T09:30:00'.</li>
+<li>The INPUT function with a datetime informat converts a character datetime string to a SAS numeric datetime value.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="16">
+data work.events;
+    input subject $ event_dtc $20.;
+    datalines;
+001 15MAR2024:09:30:00
+002 22APR2024:14:00:00
+003 01MAY2024:08:15:30
+;
+run;
+ 
+data work.events_parsed;
+    set work.events;
+    event_dt = input(event_dtc, datetime20.);
+    format event_dt datetime20.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="32">
+data work.events;
+input subject $ event_dtc $20.;
+datalines;
+ 
+NOTE: The data set WORK.EVENTS has 3 observations and 2 variables.
+NOTE: Compressing data set WORK.EVENTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+data work.events_parsed;
+set work.events;
+event_dt = input(event_dtc, datetime20.);
+format event_dt datetime20.;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.EVENTS.
+NOTE: The data set WORK.EVENTS_PARSED has 3 observations and 3 variables.
+NOTE: Compressing data set WORK.EVENTS_PARSED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>event_dtc is read as character ($20.) because the raw data is a text string.</li>
+<li>INPUT with DATETIME20. converts the character string to a SAS datetime value stored in event_dt.</li>
+<li>Confirm WORK.EVENTS_PARSED shows event_dt as a formatted datetime, not a raw number — if it shows a large integer the FORMAT statement may be missing.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L202_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+DATEPART() and TIMEPART() Functions
+</h2>
+ 
+<ul>
+<li>A SAS datetime value encodes both date and time. Two functions extract each component separately.</li>
+<li>DATEPART(datetime) returns the SAS date value (integer days) corresponding to the date portion of the datetime. Apply a DATE format to display it.</li>
+<li>TIMEPART(datetime) returns the SAS time value (seconds since midnight) corresponding to the time portion of the datetime. Apply a TIME format to display it.</li>
+<li>Once extracted, the date portion is a normal SAS date value and can be used with all date functions (YEAR, MONTH, DAY, INTCK, INTNX, etc.).</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data work.extracted;
+    set work.events_parsed;
+    event_date = datepart(event_dt);
+    event_time = timepart(event_dt);
+    event_year = year(event_date);
+    event_hour = hour(event_time);
+ 
+    format event_date date9.
+           event_time time8.;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="22">
+data work.extracted;
+set work.events_parsed;
+event_date = datepart(event_dt);
+event_time = timepart(event_dt);
+event_year = year(event_date);
+event_hour = hour(event_time);
+ 
+format event_date date9.
+event_time time8.;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.EVENTS_PARSED.
+NOTE: The data set WORK.EXTRACTED has 3 observations and 7 variables.
+NOTE: Compressing data set WORK.EXTRACTED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>event_date is a SAS date value — apply DATE9. to display it as 15MAR2024.</li>
+<li>event_time is a SAS time value (seconds since midnight) — apply TIME8. to display it as HH:MM:SS.</li>
+<li>YEAR(event_date) extracts the 4-digit year; HOUR(event_time) extracts the hour of day as an integer.</li>
+<li>Check WORK.EXTRACTED to confirm all four derived variables have the expected values for each event row.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L202_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Datetime Arithmetic
+</h2>
+ 
+<ul>
+<li>Because datetime values are stored in seconds, datetime arithmetic is performed in seconds — unlike date arithmetic which is in days.</li>
+<li>To find elapsed time between two datetime values: elapsed_seconds = end_dt - start_dt.</li>
+<li>Divide by 3600 to convert to hours, by 60 to convert to minutes, or by 86400 to convert to days.</li>
+<li>This is essential for calculating duration of adverse events, time to first response, or time from dose to sample collection.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="27">
+data work.durations;
+    input subject $ start_dtc $20. end_dtc $20.;
+    datalines;
+001 15MAR2024:09:30:00 15MAR2024:14:45:00
+002 22APR2024:08:00:00 23APR2024:08:00:00
+003 01MAY2024:07:15:00 03MAY2024:19:30:00
+;
+run;
+ 
+data work.elapsed;
+    set work.durations;
+    start_dt = input(start_dtc, datetime20.);
+    end_dt   = input(end_dtc,   datetime20.);
+ 
+    elapsed_sec  = end_dt - start_dt;
+    elapsed_min  = elapsed_sec / 60;
+    elapsed_hr   = elapsed_sec / 3600;
+    elapsed_days = elapsed_sec / 86400;
+ 
+    format start_dt end_dt datetime20.
+           elapsed_hr 8.2
+           elapsed_days 8.3;
+ 
+    drop start_dtc end_dtc;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="58">
+data work.durations;
+input subject $ start_dtc $20. end_dtc $20.;
+datalines;
+ 
+NOTE: The data set WORK.DURATIONS has 3 observations and 3 variables.
+NOTE: Compressing data set WORK.DURATIONS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.elapsed;
+set work.durations;
+start_dt = input(start_dtc, datetime20.);
+end_dt   = input(end_dtc,   datetime20.);
+ 
+elapsed_sec  = end_dt - start_dt;
+elapsed_min  = elapsed_sec / 60;
+elapsed_hr   = elapsed_sec / 3600;
+elapsed_days = elapsed_sec / 86400;
+ 
+format start_dt end_dt datetime20.
+elapsed_hr 8.2
+elapsed_days 8.3;
+ 
+drop start_dtc end_dtc;
+run;
+ 
+NOTE: Invalid argument to function INPUT at line 988850 column 16.
+SUBJECT=001 START_DTC=15MAR2024:09:30:00 1 END_DTC=5MAR2024:14:45:00 START_DT=. END_DT=05MAR2024:14:45:00 ELAPSED_SEC=. ELAPSED_MIN=. ELAPSED_HR=.
+ELAPSED_DAYS=. _ERROR_=1 _N_=1
+NOTE: Invalid argument to function INPUT at line 988850 column 16.
+SUBJECT=002 START_DTC=22APR2024:08:00:00 2 END_DTC=3APR2024:08:00:00 START_DT=. END_DT=03APR2024:08:00:00 ELAPSED_SEC=. ELAPSED_MIN=. ELAPSED_HR=.
+ELAPSED_DAYS=. _ERROR_=1 _N_=2
+NOTE: Invalid argument to function INPUT at line 988850 column 16.
+SUBJECT=003 START_DTC=01MAY2024:07:15:00 0 END_DTC=3MAY2024:19:30:00 START_DT=. END_DT=03MAY2024:19:30:00 ELAPSED_SEC=. ELAPSED_MIN=. ELAPSED_HR=.
+ELAPSED_DAYS=. _ERROR_=1 _N_=3
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+3 at 988853:27   3 at 988854:32   3 at 988855:32   3 at 988856:32
+NOTE: Mathematical operations could not be performed at the following places. The results of the operations have been set to missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+3 at 988850:16
+NOTE: There were 3 observations read from the data set WORK.DURATIONS.
+NOTE: The data set WORK.ELAPSED has 3 observations and 7 variables.
+NOTE: Compressing data set WORK.ELAPSED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Both start_dtc and end_dtc are character strings — INPUT with DATETIME20. converts each to a SAS datetime value.</li>
+<li>The arithmetic is straightforward because both values are in the same unit (seconds).</li>
+<li>Subject 001: start to end is 5 hours 15 minutes = 18900 seconds = 5.25 hours.</li>
+<li>Subject 002: exactly 24 hours = 86400 seconds = 1 day.</li>
+<li>Subject 003: 2 days 12 hours 15 minutes — verify elapsed_days is approximately 2.51.</li>
+<li>Inspect WORK.ELAPSED and confirm the elapsed values match expected calculations.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L202_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Converting Between Date and Datetime
+</h2>
+ 
+<ul>
+<li>Sometimes you need to convert a SAS date value to a datetime value — for example to compare a date against a datetime in a merge or WHERE condition.</li>
+<li>Multiply a date value by 86400 to produce the midnight datetime for that date: datetime_at_midnight = date_value * 86400.</li>
+<li>Conversely, DATEPART() extracts the date from a datetime as shown above.</li>
+<li>Never compare a date value directly to a datetime value without conversion — they use different scales (days vs seconds) and the comparison will produce incorrect results.</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="14">
+data work.conversion_demo;
+    date_val     = '15MAR2024'd;
+    dt_midnight  = date_val * 86400;
+    dt_noon      = dt_midnight + (12 * 3600);
+    back_to_date = datepart(dt_noon);
+ 
+    format date_val date9.
+           dt_midnight dt_noon datetime20.
+           back_to_date date9.;
+run;
+ 
+proc print data=work.conversion_demo; run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+data work.conversion_demo;
+date_val     = '15MAR2024'd;
+dt_midnight  = date_val * 86400;
+dt_noon      = dt_midnight + (12 * 3600);
+back_to_date = datepart(dt_noon);
+ 
+format date_val date9.
+dt_midnight dt_noon datetime20.
+back_to_date date9.;
+run;
+ 
+NOTE: The data set WORK.CONVERSION_DEMO has 1 observations and 4 variables.
+NOTE: Compressing data set WORK.CONVERSION_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc print data=work.conversion_demo; run;
+ 
+NOTE: There were 1 observations read from the data set WORK.CONVERSION_DEMO.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>DT_MIDNIGHT is the datetime value for 15MAR2024 at 00:00:00.</li>
+<li>Adding 12 * 3600 = 43200 seconds gives the datetime for 15MAR2024 at 12:00:00 (noon).</li>
+<li>DATEPART(dt_noon) recovers the original date value — confirm it equals date_val.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>SAS datetime values are seconds since midnight 01-JAN-1960 — distinct from date values which are days since the same epoch.</li>
+<li>Datetime literals use single quotes with the DT suffix: '15MAR2024:09:30:00'dt.</li>
+<li>DATEPART() and TIMEPART() split a datetime into its date and time components respectively — apply DATE and TIME formats to display them correctly.</li>
+<li>Datetime arithmetic is in seconds: divide by 3600 for hours, 86400 for days to convert to meaningful units.</li>
+<li>To convert a SAS date to a datetime, multiply by 86400 to get the midnight datetime for that date.</li>
+<li>Never compare a SAS date directly to a SAS datetime — convert one to the other's scale first.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

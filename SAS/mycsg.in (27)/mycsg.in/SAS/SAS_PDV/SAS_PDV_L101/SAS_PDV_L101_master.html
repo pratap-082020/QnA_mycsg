@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PDV_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Preparatory steps
+</h1>
+ 
+<h2>
+*null value representation in sas for character and numeric variables;<br>
+*two automatic variables in sas: _error_ and _n_;<br>
+*Another automatic variable in sas: _infile_;
+</h2>
+ 
+<h1>
+Basic code
+</h1>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="16">
+ 
+data pdv01;
+   infile cards;
+   input subjid age  sex$ race$ trt$;
+   agemon=age*12;
+   cards;
+1015 63 F WHITE Pbo
+1023 64 M BLACK Pbo
+1028 71 M WHITE Xan_Hi
+1033 74 M WHITE Xan_Lo
+1034 77 F ASIAN Xan_Hi
+1047 85 F WHITE Pbo
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+ 
+data pdv01;
+infile cards;
+input subjid age  sex$ race$ trt$;
+agemon=age*12;
+cards;
+ 
+NOTE: The data set WORK.PDV01 has 6 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h1>
+usage of put statement
+</h1>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="16">
+ 
+data put01;
+   put "This is the first line in log with put statement";
+   put "This is the second line in log with put statement";
+   name="CSG";
+   put "*******************************************my asterisks";
+   put ;
+   put "We mention the name of the variable to see the value present in it in the log";
+   put ;
+   put "My Variable is 'name' and the value in it is : " name;
+   put "**** " name " ****";
+   put "****" name "****";
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="32">
+ 
+data put01;
+put "This is the first line in log with put statement";
+put "This is the second line in log with put statement";
+name="CSG";
+put "*******************************************my asterisks";
+put ;
+put "We mention the name of the variable to see the value present in it in the log";
+put ;
+put "My Variable is 'name' and the value in it is : " name;
+put "**** " name " ****";
+put "****" name "****";
+run;
+ 
+This is the first line in log with put statement
+This is the second line in log with put statement
+*******************************************my asterisks
+ 
+We mention the name of the variable to see the value present in it in the log
+ 
+My Variable is 'name' and the value in it is : CSG
+**** CSG  ****
+****CSG ****
+NOTE: The data set WORK.PUT01 has 1 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+Notice the usage of keyword '_all_', which is used to display all the variables'
+values in log
+</h1>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data put02;
+   name="CSG";
+   site="mycsg.in";
+   put _all_;
+run;
+ 
+data put03;
+   set pdv01;
+   put _all_;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="34">
+data put02;
+name="CSG";
+site="mycsg.in";
+put _all_;
+run;
+ 
+NAME=CSG SITE=mycsg.in _ERROR_=0 _N_=1
+NOTE: The data set WORK.PUT02 has 1 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data put03;
+set pdv01;
+put _all_;
+run;
+ 
+SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=756 _ERROR_=0 _N_=1
+SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=768 _ERROR_=0 _N_=2
+SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=852 _ERROR_=0 _N_=3
+SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=888 _ERROR_=0 _N_=4
+SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=924 _ERROR_=0 _N_=5
+SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=1020 _ERROR_=0 _N_=6
+NOTE: There were 6 observations read from the data set WORK.PDV01.
+NOTE: The data set WORK.PUT03 has 6 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+ 
+<h1>
+Single put statement: after agemon variable
+</h1>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="18">
+ 
+data pdv02;
+   infile cards;
+   input subjid age  sex$ race$ trt$;
+   agemon=age*12;
+   put "After Creating agemon variable: " _all_ /;
+   cards;
+1015 63 F WHITE Pbo
+1023 64 M BLACK Pbo
+1028 71 M WHITE Xan_Hi
+1033 74 M WHITE Xan_Lo
+1034 77 F ASIAN Xan_Hi
+1047 85 F WHITE Pbo
+;
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+ 
+data pdv02;
+infile cards;
+input subjid age  sex$ race$ trt$;
+agemon=age*12;
+put "After Creating agemon variable: " _all_ /;
+cards;
+ 
+After Creating agemon variable: SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=756 _ERROR_=0 _N_=1
+ 
+After Creating agemon variable: SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=768 _ERROR_=0 _N_=2
+ 
+After Creating agemon variable: SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=852 _ERROR_=0 _N_=3
+ 
+After Creating agemon variable: SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=888 _ERROR_=0 _N_=4
+ 
+After Creating agemon variable: SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=924 _ERROR_=0 _N_=5
+ 
+After Creating agemon variable: SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=1020 _ERROR_=0 _N_=6
+NOTE: The data set WORK.PDV02 has 6 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+</textarea></div></div></div></div>
+ 
+<h1>
+*Single put statement: before agemon variable;<br>
+*notice that agemon variable has a missing value in log file;
+</h1>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="19">
+ 
+data pdv02;
+   infile cards;
+   input subjid age  sex$ race$ trt$;
+ 
+   put "Before Creating agemon variable: " _all_ /;
+ 
+   agemon=age*12;
+   cards;
+1015 63 F WHITE Pbo
+1023 64 M BLACK Pbo
+1028 71 M WHITE Xan_Hi
+1033 74 M WHITE Xan_Lo
+1034 77 F ASIAN Xan_Hi
+1047 85 F WHITE Pbo
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+ 
+data pdv02;
+infile cards;
+input subjid age  sex$ race$ trt$;
+ 
+put "Before Creating agemon variable: " _all_ /;
+ 
+agemon=age*12;
+cards;
+ 
+Before Creating agemon variable: SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=. _ERROR_=0 _N_=1
+ 
+Before Creating agemon variable: SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=. _ERROR_=0 _N_=2
+ 
+Before Creating agemon variable: SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=. _ERROR_=0 _N_=3
+ 
+Before Creating agemon variable: SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=. _ERROR_=0 _N_=4
+ 
+Before Creating agemon variable: SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=. _ERROR_=0 _N_=5
+ 
+Before Creating agemon variable: SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=. _ERROR_=0 _N_=6
+NOTE: The data set WORK.PDV02 has 6 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+ 
+<h1>
+*Two put statements: before and after agemon variable;<br>
+*notice that agemon variable has a missing value in log file in 'before' put but has a value
+in 'after' put statement;
+</h1>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="20">
+ 
+data pdv02;
+   infile cards;
+   input subjid age  sex$ race$ trt$;
+ 
+   put "Before Creating agemon variable: " _all_ /;
+   agemon=age*12;
+   put "After Creating agemon variable: " _all_ /;
+ 
+   cards;
+1015 63 F WHITE Pbo
+1023 64 M BLACK Pbo
+1028 71 M WHITE Xan_Hi
+1033 74 M WHITE Xan_Lo
+1034 77 F ASIAN Xan_Hi
+1047 85 F WHITE Pbo
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="44">
+ 
+data pdv02;
+infile cards;
+input subjid age  sex$ race$ trt$;
+ 
+put "Before Creating agemon variable: " _all_ /;
+agemon=age*12;
+put "After Creating agemon variable: " _all_ /;
+ 
+cards;
+ 
+Before Creating agemon variable: SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=. _ERROR_=0 _N_=1
+ 
+After Creating agemon variable: SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=756 _ERROR_=0 _N_=1
+ 
+Before Creating agemon variable: SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=. _ERROR_=0 _N_=2
+ 
+After Creating agemon variable: SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=768 _ERROR_=0 _N_=2
+ 
+Before Creating agemon variable: SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=. _ERROR_=0 _N_=3
+ 
+After Creating agemon variable: SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=852 _ERROR_=0 _N_=3
+ 
+Before Creating agemon variable: SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=. _ERROR_=0 _N_=4
+ 
+After Creating agemon variable: SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=888 _ERROR_=0 _N_=4
+ 
+Before Creating agemon variable: SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=. _ERROR_=0 _N_=5
+ 
+After Creating agemon variable: SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=924 _ERROR_=0 _N_=5
+ 
+Before Creating agemon variable: SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=. _ERROR_=0 _N_=6
+ 
+After Creating agemon variable: SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=1020 _ERROR_=0 _N_=6
+NOTE: The data set WORK.PDV02 has 6 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+ 
+<h1>
+*Two put statements: before input and after agemon variable;<br>
+*notice that agemon variable has a missing value in log file in 'before' put but has a value
+in 'after' put statement;
+ 
+</h1>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="20">
+ 
+data pdv02;
+   infile cards;
+ 
+   put "Before input statment: " _all_ /;
+   input subjid age  sex$ race$ trt$;
+   agemon=age*12;
+   put "After Creating agemon variable: " _all_ /;
+ 
+   cards;
+1015 63 F WHITE Pbo
+1023 64 M BLACK Pbo
+1028 71 M WHITE Xan_Hi
+1033 74 M WHITE Xan_Lo
+1034 77 F ASIAN Xan_Hi
+1047 85 F WHITE Pbo
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="46">
+ 
+data pdv02;
+infile cards;
+ 
+put "Before input statment: " _all_ /;
+input subjid age  sex$ race$ trt$;
+agemon=age*12;
+put "After Creating agemon variable: " _all_ /;
+ 
+cards;
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=1
+ 
+After Creating agemon variable: SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=756 _ERROR_=0 _N_=1
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=2
+ 
+After Creating agemon variable: SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=768 _ERROR_=0 _N_=2
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=3
+ 
+After Creating agemon variable: SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=852 _ERROR_=0 _N_=3
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=4
+ 
+After Creating agemon variable: SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=888 _ERROR_=0 _N_=4
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=5
+ 
+After Creating agemon variable: SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=924 _ERROR_=0 _N_=5
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=6
+ 
+After Creating agemon variable: SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=1020 _ERROR_=0 _N_=6
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=7
+NOTE: The data set WORK.PDV02 has 6 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+ 
+ 
+<h1>
+*Three put statements: before input, after input and after agemon variable;<br>
+*notice that agemon variable has a missing value in log file in 'before' put but has a value
+in 'after' put statement;
+ 
+</h1>
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="21">
+data pdv02;
+   infile cards;
+ 
+   put "Before input statment: " _all_ ;
+   input subjid age  sex$ race$ trt$;
+   put "After input statment: " _all_ ;
+ 
+   agemon=age*12;
+   put "After Creating agemon variable: " _all_ /;
+ 
+   cards;
+1015 63 F WHITE Pbo
+1023 64 M BLACK Pbo
+1028 71 M WHITE Xan_Hi
+1033 74 M WHITE Xan_Lo
+1034 77 F ASIAN Xan_Hi
+1047 85 F WHITE Pbo
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="47">
+data pdv02;
+infile cards;
+ 
+put "Before input statment: " _all_ ;
+input subjid age  sex$ race$ trt$;
+put "After input statment: " _all_ ;
+ 
+agemon=age*12;
+put "After Creating agemon variable: " _all_ /;
+ 
+cards;
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=1
+After input statment: SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=. _ERROR_=0 _N_=1
+After Creating agemon variable: SUBJID=1015 AGE=63 SEX=F RACE=WHITE TRT=Pbo AGEMON=756 _ERROR_=0 _N_=1
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=2
+After input statment: SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=. _ERROR_=0 _N_=2
+After Creating agemon variable: SUBJID=1023 AGE=64 SEX=M RACE=BLACK TRT=Pbo AGEMON=768 _ERROR_=0 _N_=2
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=3
+After input statment: SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=. _ERROR_=0 _N_=3
+After Creating agemon variable: SUBJID=1028 AGE=71 SEX=M RACE=WHITE TRT=Xan_Hi AGEMON=852 _ERROR_=0 _N_=3
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=4
+After input statment: SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=. _ERROR_=0 _N_=4
+After Creating agemon variable: SUBJID=1033 AGE=74 SEX=M RACE=WHITE TRT=Xan_Lo AGEMON=888 _ERROR_=0 _N_=4
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=5
+After input statment: SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=. _ERROR_=0 _N_=5
+After Creating agemon variable: SUBJID=1034 AGE=77 SEX=F RACE=ASIAN TRT=Xan_Hi AGEMON=924 _ERROR_=0 _N_=5
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=6
+After input statment: SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=. _ERROR_=0 _N_=6
+After Creating agemon variable: SUBJID=1047 AGE=85 SEX=F RACE=WHITE TRT=Pbo AGEMON=1020 _ERROR_=0 _N_=6
+ 
+Before input statment: SUBJID=. AGE=. SEX=  RACE=  TRT=  AGEMON=. _ERROR_=0 _N_=7
+NOTE: The data set WORK.PDV02 has 6 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+ 
+data pdv02;
+   infile cards;
+ 
+   put "Before input statment: " _all_ /;
+   input subjid age  sex$;
+   put "After input statment: " _all_ ;
+ 
+   agemon=age*12;
+   put "After Creating agemon variable: " _all_ /;
+   cards;
+1015 63 F
+1023 64 M
+1028 71 M
+;
+run;
+ 
+ 
+</div></body>
+
+</html>
+
+

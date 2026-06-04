@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_BYGROUPING_L103
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Sequential row numbering and group size counting within BY groups
+</h1>
+ 
+<h2>
+What this lesson covers
+</h2>
+ 
+<ul>
+<li>Previous BY group lessons covered the FIRST. and LAST. automatic variables and how to build per-group summaries</li>
+<li>This lesson focuses on two closely related derivations that appear constantly in clinical and analytical SAS programming</li>
+<li>The first is assigning a sequential row number within each BY group so every observation knows its position in the group</li>
+<li>The second is computing the total size of each BY group and carrying that count back to every row in the group</li>
+<li>Both techniques rely on RETAIN to preserve values across observations within the same group</li>
+</ul>
+ 
+<h2>
+Create sample data
+</h2>
+ 
+<ul>
+<li>We create a dataset of clinical measurements for multiple subjects across multiple visits</li>
+<li>Each subject has a different number of visits so group sizes differ — this makes the counting logic easy to verify</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="20">
+data measurements;
+    input subject $ visit $ aval;
+    datalines;
+001 VISIT1 10
+001 VISIT2 12
+001 VISIT3 15
+001 VISIT4 14
+002 VISIT1  8
+002 VISIT2 11
+003 VISIT1  9
+003 VISIT2 13
+003 VISIT3 16
+003 VISIT4 18
+003 VISIT5 17
+;
+run;
+ 
+proc sort data=measurements; by subject visit; run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="28">
+data measurements;
+input subject $ visit $ aval;
+datalines;
+ 
+NOTE: The data set WORK.MEASUREMENTS has 11 observations and 3 variables.
+NOTE: Compressing data set WORK.MEASUREMENTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc sort data=measurements; by subject visit; run;
+ 
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: The data set WORK.MEASUREMENTS has 11 observations and 3 variables.
+NOTE: Compressing data set WORK.MEASUREMENTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Subject 001 has 4 visits, subject 002 has 2 visits, subject 003 has 5 visits</li>
+<li>After this lesson each row will carry its position within the subject's visits and the subject's total visit count</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L103_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Sequential row numbering within each group
+</h1>
+ 
+<h2>
+Using RETAIN and FIRST to number rows
+</h2>
+ 
+<ul>
+<li>The approach is to maintain a counter variable using RETAIN</li>
+<li>When FIRST.subject is 1 we reset the counter to 1 because a new group is starting</li>
+<li>For every subsequent row in the same group we add 1 to the counter</li>
+<li>Without RETAIN the counter would reset to missing at the start of every DATA step iteration</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data measurements_numbered;
+    set measurements;
+    by subject;
+ 
+    retain row_num 0;
+ 
+    if first.subject then row_num=1;
+    else row_num+1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="21">
+data measurements_numbered;
+set measurements;
+by subject;
+ 
+retain row_num 0;
+ 
+if first.subject then row_num=1;
+else row_num+1;
+run;
+ 
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: The data set WORK.MEASUREMENTS_NUMBERED has 11 observations and 4 variables.
+NOTE: Compressing data set WORK.MEASUREMENTS_NUMBERED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `measurements_numbered` and confirm that `row_num` starts at 1 for the first visit of each subject and increments by 1 for each subsequent visit</li>
+<li>Subject 001 should have row_num values 1, 2, 3, 4, and subject 002 should have 1, 2</li>
+<li>Note that `row_num+1` is a sum statement and automatically retains its value — it is equivalent to `retain row_num; row_num=row_num+1;`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L103_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Alternative: using a sum statement directly
+</h2>
+ 
+<ul>
+<li>The sum statement (`variable+expression`) is a shorthand that both retains and increments the variable</li>
+<li>Combining it with FIRST detection gives a very compact form of the row counter pattern</li>
+<li>Initialising to 0 using `RETAIN row_num2 0` and then resetting at each new group is equivalent to the previous code</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data measurements_numbered2;
+    set measurements;
+    by subject;
+ 
+    if first.subject then row_num2=1;
+    else row_num2+1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data measurements_numbered2;
+set measurements;
+by subject;
+ 
+if first.subject then row_num2=1;
+else row_num2+1;
+run;
+ 
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: The data set WORK.MEASUREMENTS_NUMBERED2 has 11 observations and 4 variables.
+NOTE: Compressing data set WORK.MEASUREMENTS_NUMBERED2 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output is identical to the previous DATA step because the sum statement on `row_num2` implicitly retains its value between iterations</li>
+<li>Either form is acceptable — choose the one that reads most clearly in your programs</li>
+</ul>
+ 
+<h1>
+Group size counting - how many rows are in each group
+</h1>
+ 
+<h2>
+Two-pass approach using PROC FREQ or PROC SQL
+</h2>
+ 
+<ul>
+<li>The simplest way to add a group size variable to every row is a two-step approach</li>
+<li>In the first step we compute the count per group using PROC FREQ or PROC SQL and save it as a summary dataset</li>
+<li>In the second step we merge that count back onto the original data</li>
+<li>This approach is readable and works well when the data is already sorted</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="10">
+proc freq data=measurements noprint;
+    tables subject / out=subject_counts(keep=subject count rename=(count=n_visits));
+run;
+ 
+data measurements_with_n;
+    merge measurements subject_counts;
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+proc freq data=measurements noprint;
+tables subject / out=subject_counts(keep=subject count rename=(count=n_visits));
+run;
+ 
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: The data set WORK.SUBJECT_COUNTS has 3 observations and 2 variables.
+NOTE: Compressing data set WORK.SUBJECT_COUNTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data measurements_with_n;
+merge measurements subject_counts;
+by subject;
+run;
+ 
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: There were 3 observations read from the data set WORK.SUBJECT_COUNTS.
+NOTE: The data set WORK.MEASUREMENTS_WITH_N has 11 observations and 4 variables.
+NOTE: Compressing data set WORK.MEASUREMENTS_WITH_N increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `measurements_with_n` and confirm that `n_visits` is the same value for every row belonging to the same subject</li>
+<li>Subject 001 should have n_visits=4, subject 002 n_visits=2, subject 003 n_visits=5 on all their rows</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L103_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+One-pass approach using RETAIN and LAST
+</h2>
+ 
+<ul>
+<li>When avoiding an extra sort and merge is important, the count can be derived in a single DATA step pass using RETAIN</li>
+<li>The idea: use the row counter from earlier to build up a count, then at LAST.subject that counter equals the group size</li>
+<li>However, the problem is that earlier rows are already written to the output before the final count is known</li>
+<li>The solution is to first count using a LAST-only output pass, saving the group size to a separate dataset, then merge back — or to use the DOW (DO-WHILE) loop pattern</li>
+<li>The approach below uses a clean two-step within a single DATA step using DOW loop logic to count first then output with the total attached to every row</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="20">
+data measurements_with_n2;
+    do until (last.subject);
+        set measurements;
+        by subject;
+        n_visits+1;
+    end;
+ 
+    do until (last.subject);
+        set measurements;
+        by subject;
+        output;
+    end;
+ 
+    n_visits=n_visits;
+    drop n_visits;
+ 
+    retain n_visits;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+data measurements_with_n2;
+do until (last.subject);
+set measurements;
+by subject;
+n_visits+1;
+end;
+ 
+do until (last.subject);
+set measurements;
+by subject;
+output;
+end;
+ 
+n_visits=n_visits;
+drop n_visits;
+ 
+retain n_visits;
+run;
+ 
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: The data set WORK.MEASUREMENTS_WITH_N2 has 11 observations and 3 variables.
+NOTE: Compressing data set WORK.MEASUREMENTS_WITH_N2 increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>This DOW loop pattern reads the group twice: once to count, once to output with the count attached</li>
+<li>The first loop counts rows until LAST.subject and retains the final count</li>
+<li>The second loop re-reads the same group and outputs every row with `n_visits` already known</li>
+<li>This is an advanced technique — review the output and confirm it matches `measurements_with_n` from the simpler approach above</li>
+</ul>
+ 
+<h2>
+Combined row number and group size in one dataset
+</h2>
+ 
+<ul>
+<li>For many practical purposes both the sequential row number and the group total size are needed together</li>
+<li>The simplest production-grade approach is to combine the PROC FREQ merge method for group size with the RETAIN counter for row number in one DATA step</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="10">
+data measurements_full;
+    merge measurements subject_counts;
+    by subject;
+ 
+    retain row_num 0;
+    if first.subject then row_num=1;
+    else row_num+1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="21">
+data measurements_full;
+merge measurements subject_counts;
+by subject;
+ 
+retain row_num 0;
+if first.subject then row_num=1;
+else row_num+1;
+run;
+ 
+NOTE: There were 11 observations read from the data set WORK.MEASUREMENTS.
+NOTE: There were 3 observations read from the data set WORK.SUBJECT_COUNTS.
+NOTE: The data set WORK.MEASUREMENTS_FULL has 11 observations and 5 variables.
+NOTE: Compressing data set WORK.MEASUREMENTS_FULL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `measurements_full` and confirm that each row has both `row_num` (position within the subject) and `n_visits` (total visits for that subject)</li>
+<li>For subject 003 the last row should show row_num=5 and n_visits=5</li>
+<li>These two variables together are useful for identifying first and last observations, flagging specific positions, or computing per-subject percentages</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_BYGROUPING_L103_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>Sequential row numbering within groups uses RETAIN with a counter that resets to 1 at FIRST.byvar and increments by 1 for all subsequent rows</li>
+<li>The sum statement (`var+1`) is a compact alternative that automatically retains the value — set it back to 1 at FIRST.byvar for group-relative numbering</li>
+<li>Group size counting is most cleanly done with a PROC FREQ or PROC SQL summary followed by a merge back onto the detail data</li>
+<li>Advanced users can use the DOW loop pattern to count and output in one DATA step but the two-step merge is more transparent and easier to debug</li>
+<li>Both `row_num` and `n_visits` together enable common clinical programming patterns such as identifying the last non-missing observation or computing a within-subject percentile</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

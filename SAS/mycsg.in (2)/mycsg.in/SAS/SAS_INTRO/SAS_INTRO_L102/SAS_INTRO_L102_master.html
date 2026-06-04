@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_INTRO_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Introduction to SAS - Part 02: LIBNAME, SAS Libraries, and Permanent Datasets
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Part 01 introduced SAS as a system for data management and analysis and explained the concepts of observations, variables, DATA steps, and PROC steps.</li>
+<li>This lesson introduces SAS libraries — the mechanism that connects a short reference name (a libref) to a physical folder on disk — and explains the difference between temporary and permanent SAS datasets.</li>
+<li>Understanding libraries is essential for any SAS program that reads from or writes to files that must persist beyond the current session.</li>
+</ul>
+ 
+<h2>
+What Is a SAS Library?
+</h2>
+ 
+<ul>
+<li>A SAS library is an association between a short nickname (called a library reference or libref) and a physical folder on your computer or network.</li>
+<li>Once defined, you can refer to datasets in that folder using the two-level name format: libref.dataset_name (e.g., MYLIB.SUBJECTS).</li>
+<li>SAS has one built-in library that always exists: WORK. WORK is a temporary folder that SAS creates automatically at the start of each session. Any dataset in WORK is deleted when the session ends.</li>
+<li>All other libraries must be explicitly defined using the LIBNAME statement before they can be used.</li>
+</ul>
+ 
+<h2>
+The LIBNAME Statement
+</h2>
+ 
+<ul>
+<li>The LIBNAME statement assigns a libref to a folder path. SAS will use that folder for reading and writing datasets until the libref is cleared or the session ends.</li>
+<li>Syntax: LIBNAME libref "path\to\folder";</li>
+<li>The libref must be 1 to 8 characters long, start with a letter or underscore, and contain only letters, digits, and underscores.</li>
+<li>The folder path must exist before the LIBNAME statement runs — SAS does not create the folder automatically.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="12">
+*------------------------------------------------------------------------------;
+* Define a library pointing to an existing folder ;
+* Change the path to match a folder that exists on your system ;
+*------------------------------------------------------------------------------;
+libname mydata "C:\SAS_data\project1";
+ 
+*------------------------------------------------------------------------------;
+* List all currently defined libraries ;
+*------------------------------------------------------------------------------;
+libname _all_ list;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="227">
+*------------------------------------------------------------------------------;
+* Define a library pointing to an existing folder ;
+* Change the path to match a folder that exists on your system ;
+*------------------------------------------------------------------------------;
+libname mydata "C:\SAS_data\project1";
+ERROR: Create of library MYDATA failed.
+ERROR: Error in the LIBNAME statement.
+ 
+*------------------------------------------------------------------------------;
+* List all currently defined libraries ;
+*------------------------------------------------------------------------------;
+libname _all_ list;
+NOTE: Libref=   ROOT
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg
+NOTE: Libref=   SMETA
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\SDTM\SDTM_Master_Metadata
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\SDTM\SDTM_Master_Metadata
+NOTE: Libref=   OSCSG801
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\output\sdtm
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\output\sdtm
+NOTE: Libref=   OSCSG001
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\output\sdtm
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\output\sdtm
+NOTE: Libref=   OACSG001
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\output\adam
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\output\adam
+NOTE: Libref=   IRCSG801
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\input\raw
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\input\raw
+NOTE: Libref=   ISCSG801
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\input\sdtm
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\input\sdtm
+NOTE: Libref=   IACSG801
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\input\adam
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG801\input\adam
+NOTE: Libref=   IRCSG001
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\input\raw
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\input\raw
+NOTE: Libref=   ISCSG001
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\input\sdtm
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\input\sdtm
+NOTE: Libref=   IACSG001
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\input\adam
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\CSG001\input\adam
+NOTE: Libref=   CERT
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\base-guide-practice-data\cert
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\base-guide-practice-data\cert
+NOTE: Libref=   TFLW
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\programs_stat\system_files
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\programs_stat\system_files
+NOTE: Libref=   ADAMW
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\adam
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\adam
+NOTE: Libref=   SDTMW
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\sdtm
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\sdtm
+NOTE: Libref=   RAWW
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\raw
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\raw
+NOTE: Libref=   TFL
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\programs_stat\system_files
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\programs_stat\system_files
+NOTE: Libref=   ADAM
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\adam
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\adam
+NOTE: Libref=   SDTM
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\sdtm
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\sdtm
+NOTE: Libref=   RAW
+Scope=    DMS Process
+Engine=   V9
+Access=   READONLY
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\raw
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\data\shared\raw
+NOTE: Libref=   ROOT2
+Scope=    DMS Process
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_INTRO\SAS_INTRO_L102
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg\SAS\SAS_INTRO\SAS_INTRO_L102
+NOTE: Libref=   SASHELP
+Scope=    Kernel
+Levels=   17
+-Level 1-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\nls\en\SASCFG
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\nls\en\SASCFG
+-Level 2-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\core\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\core\sashelp
+-Level 3-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\aacomp\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\aacomp\sashelp
+-Level 4-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\af\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\af\sashelp
+-Level 5-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\assist\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\assist\sashelp
+-Level 6-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\cmp\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\cmp\sashelp
+-Level 7-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\connect\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\connect\sashelp
+-Level 8-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\eis\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\eis\sashelp
+-Level 9-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\ets\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\ets\sashelp
+-Level 10-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\gis\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\gis\sashelp
+-Level 11-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\graph\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\graph\sashelp
+-Level 12-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\iml\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\iml\sashelp
+-Level 13-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\inttech\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\inttech\sashelp
+-Level 14-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\or\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\or\sashelp
+-Level 15-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\qc\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\qc\sashelp
+-Level 16-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\spdsclient\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\spdsclient\sashelp
+-Level 17-
+Engine=   V9
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\stat\sashelp
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\stat\sashelp
+NOTE: Libref=   MAPS
+Scope=    Kernel
+Engine=   V9
+Access=   READONLY
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\maps
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\maps
+NOTE: Libref=   MAPSSAS
+Scope=    Kernel
+Engine=   V9
+Access=   READONLY
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\maps
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\maps
+NOTE: Libref=   MAPSGFK
+Scope=    Kernel
+Engine=   V9
+Access=   READONLY
+Physical Name= C:\Program Files\SASHome\SASFoundation\9.4\mapsgfk
+Filename= C:\Program Files\SASHome\SASFoundation\9.4\mapsgfk
+NOTE: Libref=   SASUSER
+Scope=    Kernel
+Engine=   V9
+Physical Name= D:\SAS\Home\dev\clinical_sas_samples\mycsg
+Filename= D:\SAS\Home\dev\clinical_sas_samples\mycsg
+NOTE: Libref=   WORK
+Scope=    Kernel
+Engine=   V9
+Access=   TEMP
+Physical Name= C:\Users\curio\AppData\Local\Temp\SAS Temporary Files\_TD24912_MYCSG-LENOVOAIO_
+Filename= C:\Users\curio\AppData\Local\Temp\SAS Temporary Files\_TD24912_MYCSG-LENOVOAIO_
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>After running LIBNAME mydata, you can read and write datasets in C:\SAS_data\project1 using the two-level name mydata.datasetname.</li>
+<li>LIBNAME _ALL_ LIST displays all active librefs, their paths, and their engine in the SAS log — useful for confirming a library was defined correctly.</li>
+<li>If the path does not exist, SAS will write an ERROR to the log: ERROR: Physical file does not exist. Always create the folder on disk before defining the LIBNAME.</li>
+<li>Look in the log after running the code — you should see a line confirming the library was successfully assigned.</li>
+</ul>
+ 
+<h2>
+Temporary vs Permanent Datasets
+</h2>
+ 
+<ul>
+<li>A temporary dataset uses a one-level name (e.g., subjects, work.subjects). It lives in the WORK library and is deleted when the SAS session ends.</li>
+<li>A permanent dataset uses a two-level name pointing to a library other than WORK (e.g., mydata.subjects). It is saved to the physical folder on disk and persists after the session closes.</li>
+<li>One-level names without a libref always refer to WORK — writing DATA subjects; is identical to DATA work.subjects;.</li>
+<li>Use WORK for intermediate processing datasets. Use a permanent library for datasets that need to be available in future sessions, shared with colleagues, or delivered as output.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="32">
+*------------------------------------------------------------------------------;
+* Create a temporary dataset (in WORK) ;
+*------------------------------------------------------------------------------;
+data work.temp_subjects;
+    input subject $ age;
+    datalines;
+001 34
+002 28
+003 45
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Create a permanent dataset (in mydata library) ;
+* This will be saved to C:\SAS_data\project1\perm_subjects.sas7bdat ;
+*------------------------------------------------------------------------------;
+/*
+data mydata.perm_subjects;
+    set work.temp_subjects;
+run;
+*/
+ 
+*------------------------------------------------------------------------------;
+* Read back a permanent dataset in a later session ;
+*------------------------------------------------------------------------------;
+/*
+data work.loaded;
+    set mydata.perm_subjects;
+run;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="38">
+*------------------------------------------------------------------------------;
+* Create a temporary dataset (in WORK) ;
+*------------------------------------------------------------------------------;
+data work.temp_subjects;
+input subject $ age;
+datalines;
+ 
+NOTE: The data set WORK.TEMP_SUBJECTS has 3 observations and 2 variables.
+NOTE: Compressing data set WORK.TEMP_SUBJECTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Create a permanent dataset (in mydata library) ;
+* This will be saved to C:\SAS_data\project1\perm_subjects.sas7bdat ;
+*------------------------------------------------------------------------------;
+/*
+data mydata.perm_subjects;
+set work.temp_subjects;
+run;
+*/
+ 
+*------------------------------------------------------------------------------;
+* Read back a permanent dataset in a later session ;
+*------------------------------------------------------------------------------;
+/*
+data work.loaded;
+set mydata.perm_subjects;
+run;
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The permanent data step is commented out to avoid errors if the mydata library is not available in your environment — uncomment it after defining the library.</li>
+<li>WORK.TEMP_SUBJECTS will be visible in the SAS explorer under the WORK library during this session. After closing SAS it will no longer exist.</li>
+<li>MYDATA.PERM_SUBJECTS will persist as a .sas7bdat file in the target folder and can be read in any future SAS session that defines the same LIBNAME.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Viewing Datasets in a Library with PROC DATASETS
+</h2>
+ 
+<ul>
+<li>PROC DATASETS lists all datasets in a specified library. This is useful for confirming what exists in a permanent library before reading or overwriting files.</li>
+<li>The CONTENTS statement within PROC DATASETS shows the structure (variable names, types, lengths) of a specific dataset.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="8">
+*------------------------------------------------------------------------------;
+* List all datasets in the WORK library ;
+*------------------------------------------------------------------------------;
+proc datasets library=work nolist;
+    contents data=_all_ memtype=data;
+quit;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+*------------------------------------------------------------------------------;
+* List all datasets in the WORK library ;
+*------------------------------------------------------------------------------;
+proc datasets library=work nolist;
+contents data=_all_ memtype=data;
+quit;
+ 
+NOTE: PROCEDURE DATASETS used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>LIBRARY=WORK specifies which library to inspect. Replace with a permanent libref to inspect that library.</li>
+<li>MEMTYPE=DATA restricts the listing to data tables only (excludes catalogs, views, etc.).</li>
+<li>The output shows all datasets currently in WORK — verify that WORK.TEMP_SUBJECTS appears in the list after running the earlier DATA step.</li>
+</ul>
+ 
+<h2>
+Clearing a Library with LIBNAME CLEAR
+</h2>
+ 
+<ul>
+<li>LIBNAME libref CLEAR removes the association between the libref and the folder. It does not delete the folder or the datasets in it — it simply disconnects the nickname.</li>
+<li>After clearing, the libref is no longer recognised, and any code that references it will produce an ERROR until a new LIBNAME statement is run.</li>
+<li>Clearing a library is useful in programs that use temporary librefs for intermediate processing and want to clean up at the end.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="13">
+*------------------------------------------------------------------------------;
+* Assign a temporary libref ;
+*------------------------------------------------------------------------------;
+libname scratch "C:\SAS_data\scratch";
+ 
+* ... use scratch.something here ... ;
+ 
+*------------------------------------------------------------------------------;
+* Clear the libref when done ;
+*------------------------------------------------------------------------------;
+/* libname scratch clear; */
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+*------------------------------------------------------------------------------;
+* Assign a temporary libref ;
+*------------------------------------------------------------------------------;
+libname scratch "C:\SAS_data\scratch";
+ERROR: Create of library SCRATCH failed.
+ERROR: Error in the LIBNAME statement.
+ 
+* ... use scratch.something here ... ;
+ 
+*------------------------------------------------------------------------------;
+* Clear the libref when done ;
+*------------------------------------------------------------------------------;
+/* libname scratch clear; */
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The LIBNAME CLEAR is commented out so it does not error if the library was never defined — uncomment it when using in a real program.</li>
+<li>The physical folder and files remain on disk after CLEAR — only the SAS session's reference to them is removed.</li>
+</ul>
+ 
+<h2>
+Multiple Libraries in One Session
+</h2>
+ 
+<ul>
+<li>A SAS session can have many librefs active simultaneously — for example, a raw data library, a derived data library, and an output library.</li>
+<li>Define all required LIBNAME statements at the top of your program so that every subsequent step can reference them without redefining them.</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="20">
+*------------------------------------------------------------------------------;
+* Typical program header pattern - adjust paths for your environment ;
+*------------------------------------------------------------------------------;
+/*
+libname raw     "C:\project\raw_data";
+libname derived "C:\project\derived";
+libname output  "C:\project\output";
+ 
+data derived.cleaned;
+    set raw.incoming;
+    ... processing ...
+run;
+ 
+proc export data=derived.cleaned
+    outfile="output\cleaned_data.xlsx"
+    dbms=xlsx replace;
+run;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="20">
+*------------------------------------------------------------------------------;
+* Typical program header pattern - adjust paths for your environment ;
+*------------------------------------------------------------------------------;
+/*
+libname raw     "C:\project\raw_data";
+libname derived "C:\project\derived";
+libname output  "C:\project\output";
+ 
+data derived.cleaned;
+set raw.incoming;
+... processing ...
+run;
+ 
+proc export data=derived.cleaned
+outfile="output\cleaned_data.xlsx"
+dbms=xlsx replace;
+run;
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Defining all librefs at the top of the program means the paths are centralised — moving the project to a different server only requires updating the LIBNAME statements, not every DATA step or PROC step.</li>
+<li>This pattern is standard in clinical programming where raw, derived, and output folders are clearly separated.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>A SAS library is a named reference (libref) pointing to a physical folder — defined with LIBNAME libref "path".</li>
+<li>WORK is the built-in temporary library; all one-level dataset names refer to WORK. WORK is deleted when the session ends.</li>
+<li>Permanent datasets use a two-level name (libref.dataset) and are saved as .sas7bdat files in the target folder — they persist across sessions.</li>
+<li>LIBNAME _ALL_ LIST shows all active librefs in the log; PROC DATASETS lists the contents of a library.</li>
+<li>LIBNAME libref CLEAR disconnects the reference without deleting the physical files.</li>
+<li>Define all LIBNAME statements at the top of every program to keep paths centralised and easy to maintain.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

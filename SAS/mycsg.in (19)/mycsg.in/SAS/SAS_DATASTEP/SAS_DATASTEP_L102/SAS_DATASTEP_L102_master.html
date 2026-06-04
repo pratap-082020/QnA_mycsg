@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_DATASTEP_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Writing to multiple output datasets in a single DATA step
+</h1>
+ 
+<h2>
+Why write to multiple datasets in one pass
+</h2>
+ 
+<ul>
+<li>The previous DATA step lesson covered explicit OUTPUT statements, which control when an observation is written to the output dataset</li>
+<li>SAS DATA steps can name more than one output dataset in the DATA statement and use conditional OUTPUT statements to route each observation to the appropriate destination</li>
+<li>This allows a single pass through the input data to produce several separate output datasets based on conditions</li>
+<li>Writing to multiple outputs in one step is more efficient than reading the same data multiple times with separate subsetting steps</li>
+<li>It also ensures that each observation is classified and routed consistently from one pass of the data</li>
+</ul>
+ 
+<h2>
+Create sample data
+</h2>
+ 
+<ul>
+<li>We create a dataset of clinical adverse events with varying severity grades</li>
+<li>The goal is to route each event to a severity-specific dataset in one DATA step</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data adverse_events;
+    input subject $ event $ severity$ grade;
+    datalines;
+001 Headache     Mild     1
+001 Nausea       Moderate 2
+002 Fatigue      Mild     1
+002 Rash         Severe   3
+003 Dizziness    Mild     1
+003 Vomiting     Moderate 2
+003 Liver_Issue  Severe   3
+004 Insomnia     Mild     1
+005 Hypertension Moderate 2
+005 Seizure      Severe   3
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data adverse_events;
+input subject $ event $ severity$ grade;
+datalines;
+ 
+NOTE: The data set WORK.ADVERSE_EVENTS has 10 observations and 4 variables.
+NOTE: Compressing data set WORK.ADVERSE_EVENTS increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Confirm that `adverse_events` has 10 rows with three severity levels: Mild (4), Moderate (3), and Severe (3)</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Naming multiple output datasets in the DATA statement
+</h1>
+ 
+<h2>
+List all output dataset names on the DATA statement
+</h2>
+ 
+<ul>
+<li>To write to multiple datasets, list them all on the DATA statement separated by spaces</li>
+<li>When multiple datasets are listed, the default implicit output at the end of the DATA step writes to ALL named datasets unless you include explicit OUTPUT statements</li>
+<li>To route observations selectively, you must use explicit OUTPUT statements that name the specific target dataset</li>
+<li>Once you use any explicit OUTPUT statement in a DATA step, the implicit output is suppressed — you must explicitly OUTPUT every observation you want written</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data ae_mild ae_moderate ae_severe;
+    set adverse_events;
+ 
+    if severity='Mild'     then output ae_mild;
+    else if severity='Moderate' then output ae_moderate;
+    else if severity='Severe'   then output ae_severe;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+data ae_mild ae_moderate ae_severe;
+set adverse_events;
+ 
+if severity='Mild'     then output ae_mild;
+else if severity='Moderate' then output ae_moderate;
+else if severity='Severe'   then output ae_severe;
+run;
+ 
+NOTE: There were 10 observations read from the data set WORK.ADVERSE_EVENTS.
+NOTE: The data set WORK.AE_MILD has 4 observations and 4 variables.
+NOTE: Compressing data set WORK.AE_MILD increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.AE_MODERATE has 3 observations and 4 variables.
+NOTE: Compressing data set WORK.AE_MODERATE increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.AE_SEVERE has 3 observations and 4 variables.
+NOTE: Compressing data set WORK.AE_SEVERE increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Three output datasets are created in one pass of `adverse_events`</li>
+<li>Each observation goes to exactly one output dataset based on its severity value</li>
+<li>Verify: `ae_mild` should have 4 rows, `ae_moderate` 3 rows, `ae_severe` 3 rows</li>
+<li>Because explicit OUTPUT statements are used, no observation is written implicitly — every row must be handled by an IF-THEN branch</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L102_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Route observations to more than one output dataset simultaneously
+</h2>
+ 
+<ul>
+<li>An observation can be written to more than one dataset by including multiple OUTPUT statements for it</li>
+<li>In this example, we create a dataset of all events, plus a separate dataset containing only the events from subjects who had at least one severe event</li>
+<li>An observation for a subject with a severe event appears in both `ae_all` and `ae_severe_subjects`</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="15">
+proc sql noprint;
+    select distinct subject into :severe_subjects separated by ' '
+    from adverse_events
+    where severity='Severe';
+quit;
+ 
+%put NOTE: Subjects with severe events: &severe_subjects;
+ 
+data ae_all ae_severe_subjects;
+    set adverse_events;
+    output ae_all;
+    if index("&severe_subjects", subject) gt 0 then output ae_severe_subjects;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="32">
+proc sql noprint;
+select distinct subject into :severe_subjects separated by ' '
+from adverse_events
+where severity='Severe';
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+%put NOTE: Subjects with severe events: &severe_subjects;
+NOTE: Subjects with severe events: 002 003 005
+ 
+data ae_all ae_severe_subjects;
+set adverse_events;
+output ae_all;
+if index("&severe_subjects", subject) gt 0 then output ae_severe_subjects;
+run;
+ 
+NOTE: There were 10 observations read from the data set WORK.ADVERSE_EVENTS.
+NOTE: The data set WORK.AE_ALL has 10 observations and 4 variables.
+NOTE: Compressing data set WORK.AE_ALL increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.AE_SEVERE_SUBJECTS has 0 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`ae_all` receives every row — all 10 adverse events</li>
+<li>`ae_severe_subjects` receives every event from subjects 002, 003, and 005 because those subjects had at least one severe event — even their mild and moderate events are included</li>
+<li>This pattern is useful when you need a complete profile for a subject based on them meeting a specific criterion in at least one observation</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L102_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Split data into train and test sets by row number
+</h2>
+ 
+<ul>
+<li>Another practical use of multiple output datasets is splitting a dataset into two portions based on a row counter</li>
+<li>This is a common requirement in model building, where you need a training set and a validation set</li>
+<li>We use the automatic `_N_` variable, which holds the current iteration number of the DATA step</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="7">
+data ae_first_half ae_second_half;
+    set adverse_events nobs=total;
+    if _n_ le (total/2) then output ae_first_half;
+    else output ae_second_half;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="20">
+data ae_first_half ae_second_half;
+set adverse_events nobs=total;
+if _n_ le (total/2) then output ae_first_half;
+else output ae_second_half;
+run;
+ 
+NOTE: There were 10 observations read from the data set WORK.ADVERSE_EVENTS.
+NOTE: The data set WORK.AE_FIRST_HALF has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.AE_FIRST_HALF increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.AE_SECOND_HALF has 5 observations and 4 variables.
+NOTE: Compressing data set WORK.AE_SECOND_HALF increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `nobs=total` dataset option in the SET statement populates `total` with the number of observations before the DATA step begins reading</li>
+<li>`_N_` is 1 for the first iteration, 2 for the second, and so on</li>
+<li>Observations 1 through 5 go to `ae_first_half` and observations 6 through 10 go to `ae_second_half`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L102_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Combine multiple output routing with additional variable creation
+</h2>
+ 
+<ul>
+<li>Multiple-output DATA steps can also create or modify variables just as any other DATA step can</li>
+<li>In this example, we add a numeric severity score and a flag variable before routing each observation</li>
+<li>All output datasets receive the newly created variables because they are assigned before the OUTPUT statements</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data ae_low ae_high;
+    set adverse_events;
+ 
+    select (severity);
+        when ('Mild')     severity_score=1;
+        when ('Moderate') severity_score=2;
+        when ('Severe')   severity_score=3;
+        otherwise         severity_score=.;
+    end;
+ 
+    high_flag = (severity_score ge 2);
+ 
+    if severity_score lt 2 then output ae_low;
+    else output ae_high;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+data ae_low ae_high;
+set adverse_events;
+ 
+select (severity);
+when ('Mild')     severity_score=1;
+when ('Moderate') severity_score=2;
+when ('Severe')   severity_score=3;
+otherwise         severity_score=.;
+end;
+ 
+high_flag = (severity_score ge 2);
+ 
+if severity_score lt 2 then output ae_low;
+else output ae_high;
+run;
+ 
+NOTE: There were 10 observations read from the data set WORK.ADVERSE_EVENTS.
+NOTE: The data set WORK.AE_LOW has 4 observations and 6 variables.
+NOTE: Compressing data set WORK.AE_LOW increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: The data set WORK.AE_HIGH has 6 observations and 6 variables.
+NOTE: Compressing data set WORK.AE_HIGH increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Both `ae_low` and `ae_high` contain the `severity_score` and `high_flag` variables created during the step</li>
+<li>`ae_low` has 4 rows (grade 1 events) and `ae_high` has 6 rows (grade 2 and 3 events)</li>
+<li>Confirm that `high_flag` is 0 in `ae_low` and 1 in `ae_high`</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L102_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>List multiple dataset names on the DATA statement to create more than one output dataset in a single step</li>
+<li>Once you use any explicit OUTPUT statement in a DATA step, SAS suppresses the implicit end-of-loop output — every observation you want written must have an explicit OUTPUT call</li>
+<li>An observation can be written to multiple datasets by including more than one OUTPUT statement for it</li>
+<li>The `nobs=` dataset option on a SET statement provides the total observation count before the loop starts — use it with `_N_` for row-position-based routing</li>
+<li>Variables created or modified before the OUTPUT statements are included in all target datasets that receive that observation</li>
+<li>One-pass multiple-output DATA steps are more efficient than reading the same source dataset multiple times in separate subsetting steps</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_DATASTEP_L151
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the Sum Statement
+</h1>
+ 
+<ul>
+<li>The sum statement is a compact DATA step statement with the form: `variable + expression;`</li>
+<li>It performs three things automatically that would otherwise require multiple lines of code</li>
+<li>First, it retains the variable across DATA step iterations without a separate `retain` statement</li>
+<li>Second, it initialises the variable to 0 at the beginning of the DATA step rather than to missing</li>
+<li>Third, when the expression evaluates to missing, the current value of the variable is left unchanged rather than being set to missing</li>
+<li>These three automatic behaviours make the sum statement a concise and safe way to build running totals and counters</li>
+</ul>
+ 
+<h2>
+Sum statement syntax
+</h2>
+ 
+<ul>
+<li>The general form is `variable + expression;`, where `variable` is the accumulating variable and `expression` is the amount to add</li>
+<li>The expression can be a constant such as `1`, a variable name, or an arithmetic expression</li>
+<li>There is no `run;` or keyword — just the variable, a plus sign, and the expression followed by a semicolon</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="9">
+/*
+data output;
+    set input;
+    counter + 1;          * add 1 each row - creates a running row counter;
+    running_total + score; * add the value of score each row;
+run;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="9">
+/*
+data output;
+set input;
+counter + 1;          * add 1 each row - creates a running row counter;
+running_total + score; * add the value of score each row;
+run;
+*/
+</textarea></div></div></div></div>
+ 
+<h1>
+Comparison with the RETAIN approach
+</h1>
+ 
+<ul>
+<li>The previous lesson on RETAIN showed how to preserve a variable across iterations using an explicit `retain` statement</li>
+<li>The sum statement replaces the combination of `retain` plus the assignment statement, and also handles missing values more safely</li>
+<li>The table below shows the same task written both ways</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="16">
+/*
+* RETAIN approach - explicit retain plus assignment;
+data output_retain;
+    set scores;
+    retain running_total 0;
+    if score ne . then running_total = running_total + score;
+run;
+ 
+* Sum statement approach - one line replaces three lines above;
+data output_sum;
+    set scores;
+    running_total + score;
+run;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+/*
+* RETAIN approach - explicit retain plus assignment;
+data output_retain;
+set scores;
+retain running_total 0;
+if score ne . then running_total = running_total + score;
+run;
+ 
+* Sum statement approach - one line replaces three lines above;
+data output_sum;
+set scores;
+running_total + score;
+run;
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The sum statement is shorter and the missing-value protection is built in, whereas the RETAIN approach requires you to explicitly check for missing values yourself if you do not want them to break the accumulation</li>
+<li>For simple counters and accumulators, the sum statement is generally preferred</li>
+</ul>
+ 
+<h1>
+Create input dataset
+</h1>
+ 
+<ul>
+<li>The dataset `scores` contains test-level scores for each subject</li>
+<li>Subject 1003 has a missing score for item 2 to demonstrate how the sum statement handles missing values</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="17">
+data scores;
+    infile cards truncover;
+    input usubjid $ item score;
+cards;
+1001 1 93
+1001 2 80
+1001 3 80
+1002 1 90
+1002 2 95
+1002 3 97
+1003 1 100
+1003 2 .
+1003 3 98
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+data scores;
+infile cards truncover;
+input usubjid $ item score;
+cards;
+ 
+NOTE: The data set WORK.SCORES has 9 observations and 3 variables.
+NOTE: Compressing data set WORK.SCORES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The three subjects each have three rows with item scores</li>
+<li>Subject 1003, row two has a missing score — this will demonstrate the missing-value tolerance of the sum statement</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L151_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Using the sum statement as a row counter
+</h1>
+ 
+<ul>
+<li>A sum statement with `+ 1` increments by one on every row of the input dataset</li>
+<li>No `retain` or initialisation is needed — the variable starts at 0 before the first row is read</li>
+<li>This is a simple and reliable way to assign a sequential row number</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data output;
+    set scores;
+    rownum + 1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data output;
+set scores;
+rownum + 1;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 9 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `rownum` in the output dataset — it should count from 1 upward across all nine rows</li>
+<li>Notice that no `retain rownum 0;` statement was required — the sum statement handled initialisation automatically</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L151_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h1>
+Using the sum statement for a running total
+</h1>
+ 
+<ul>
+<li>Adding a score variable accumulates the running total across all rows in the order they are read</li>
+<li>The missing score for subject 1003 item 2 should not break the accumulation — the sum statement skips missing contributions</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data output;
+    set scores;
+    running_total + score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data output;
+set scores;
+running_total + score;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 9 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Examine the `running_total` column — it climbs as each non-missing score is added</li>
+<li>On the row where `score` is missing for subject 1003 item 2, `running_total` should remain unchanged from the previous row rather than going to missing</li>
+<li>This confirms the built-in missing-value protection of the sum statement</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L151_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+Using the sum statement within BY groups
+</h1>
+ 
+<ul>
+<li>For subject-level totals rather than a grand running total, you need to reset the accumulating variable at the start of each new subject</li>
+<li>The sum statement retains the value across rows, so you must explicitly assign zero when `first.usubjid` is true</li>
+<li>After the reset, the sum statement continues accumulating within that subject group</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="12">
+proc sort data=scores;
+    by usubjid;
+run;
+ 
+data output;
+    set scores;
+    by usubjid;
+    if first.usubjid then subject_total = 0;
+    subject_total + score;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="32">
+proc sort data=scores;
+by usubjid;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.SCORES has 9 observations and 3 variables.
+NOTE: Compressing data set WORK.SCORES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data output;
+set scores;
+by usubjid;
+if first.usubjid then subject_total = 0;
+subject_total + score;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 9 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The explicit assignment `subject_total = 0` resets the accumulator at the boundary between subjects</li>
+<li>The sum statement then accumulates within each subject from that reset point</li>
+<li>Check the last row for each subject — `subject_total` should equal the sum of non-missing scores for that subject</li>
+<li>For subject 1003, the total should be 198 (100 + 98 with the missing score skipped)</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L151_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Using the sum statement as a within-group counter
+</h1>
+ 
+<ul>
+<li>The same reset-and-accumulate pattern applies when counting rows within a group rather than summing a numeric variable</li>
+<li>Reset to zero on `first.` and use `+ 1` to count each row within the group</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="12">
+proc sort data=scores;
+    by usubjid;
+run;
+ 
+data output;
+    set scores;
+    by usubjid;
+    if first.usubjid then item_count = 0;
+    item_count + 1;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="29">
+proc sort data=scores;
+by usubjid;
+run;
+ 
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data output;
+set scores;
+by usubjid;
+if first.usubjid then item_count = 0;
+item_count + 1;
+run;
+ 
+NOTE: There were 9 observations read from the data set WORK.SCORES.
+NOTE: The data set WORK.OUTPUT has 9 observations and 4 variables.
+NOTE: Compressing data set WORK.OUTPUT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`item_count` restarts at 1 for each new subject and increments for every row in that subject's group</li>
+<li>On the last row of each subject, `item_count` holds the total number of records for that subject</li>
+<li>This is equivalent to the RETAIN counter shown in lesson L150, but written more concisely</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_DATASTEP_L151_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>The sum statement `variable + expression;` automatically retains the variable, initialises it to 0, and ignores missing values in the expression</li>
+<li>For a grand running total across all rows, use the sum statement alone — no `retain` or `by` processing is needed</li>
+<li>For group-level accumulators, reset the variable explicitly using `if first.groupvar then variable = 0;` before the sum statement</li>
+<li>The sum statement is generally preferred over the equivalent RETAIN pattern because it is shorter and safer with missing values</li>
+<li>Both the sum statement and RETAIN are DATA-step-only features — they do not apply inside PROC SQL or PROC steps</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

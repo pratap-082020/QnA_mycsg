@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCCOMPARE_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+PROC COMPARE - Part 02: CRITERION= Tolerance, ID= Variable Matching, and QC Workflows
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Part 01 covered the fundamentals of PROC COMPARE: comparing dataset structure, variable attributes, and observation values.</li>
+<li>This lesson builds on that foundation with three practical extensions: numeric tolerance via CRITERION=, key-based observation matching via ID=, and using PROC COMPARE systematically in a QC or validation workflow.</li>
+<li>These techniques are especially useful in clinical programming where datasets are compared across production and validation environments.</li>
+</ul>
+ 
+<h2>
+Numeric Tolerance with CRITERION=
+</h2>
+ 
+<ul>
+<li>By default, PROC COMPARE flags any numeric difference, no matter how small — even a floating-point rounding difference at the 15th decimal place will be reported as a discrepancy.</li>
+<li>The CRITERION= option sets a relative tolerance threshold. Two values are considered equal if their absolute difference divided by the larger absolute value is less than the criterion.</li>
+<li>The default criterion is 1E-15. For most clinical QC purposes, a criterion of 1E-8 or 1E-6 is sufficient to ignore floating-point noise while still catching meaningful differences.</li>
+<li>Use CRITERION= when comparing derived statistics such as means, percentages, or change-from-baseline values that may differ slightly due to floating-point arithmetic.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="31">
+data work.expected;
+    input subject result;
+    datalines;
+001 12.3456789012345
+002 45.6789012345678
+003  8.0000000000001
+;
+run;
+ 
+data work.actual;
+    input subject result;
+    datalines;
+001 12.3456789012346
+002 45.6789012345679
+003  8.0000000000002
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Default criterion - will flag tiny floating-point differences ;
+*------------------------------------------------------------------------------;
+proc compare base=work.expected compare=work.actual;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Relaxed criterion - treats differences smaller than 1E-8 as equal ;
+*------------------------------------------------------------------------------;
+proc compare base=work.expected compare=work.actual criterion=1e-8;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="56">
+data work.expected;
+input subject result;
+datalines;
+ 
+NOTE: The data set WORK.EXPECTED has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data work.actual;
+input subject result;
+datalines;
+ 
+NOTE: The data set WORK.ACTUAL has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Default criterion - will flag tiny floating-point differences ;
+*------------------------------------------------------------------------------;
+proc compare base=work.expected compare=work.actual;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.EXPECTED.
+NOTE: There were 3 observations read from the data set WORK.ACTUAL.
+NOTE: At least one W.D format was too small for the number to be printed. The decimal may be shifted by the "BEST" format.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Relaxed criterion - treats differences smaller than 1E-8 as equal ;
+*------------------------------------------------------------------------------;
+proc compare base=work.expected compare=work.actual criterion=1e-8;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.EXPECTED.
+NOTE: There were 3 observations read from the data set WORK.ACTUAL.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Run both PROC COMPARE calls and examine the log output carefully.</li>
+<li>The first call with default CRITERION= will likely report differences in all three rows because the values differ at the 13th-14th decimal place.</li>
+<li>The second call with CRITERION=1E-8 should report a clean compare with no value differences, because all differences are far smaller than the threshold.</li>
+<li>Choose your criterion thoughtfully — setting it too high risks masking real data differences; setting it at the default risks noise from floating-point arithmetic overwhelming your QC results.</li>
+</ul>
+ 
+<h2>
+Matching Observations by Key Variable with ID=
+</h2>
+ 
+<ul>
+<li>By default, PROC COMPARE matches observations by their position: the first row of BASE is compared with the first row of COMPARE, the second with the second, and so on.</li>
+<li>Position-based matching breaks down when the two datasets have different sort orders or different numbers of rows — mismatched positions produce misleading discrepancy reports.</li>
+<li>The ID= option instructs PROC COMPARE to match observations by the value of one or more key variables, similar to a BY-key merge.</li>
+<li>Both datasets must be sorted by the ID variable(s) before running PROC COMPARE with ID=.</li>
+<li>Observations present in one dataset but not the other are reported as exclusive observations rather than value differences.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="30">
+data work.prod;
+    input subject $ visit result;
+    datalines;
+001 1 10
+001 2 12
+002 1  9
+002 2 11
+003 1 14
+;
+run;
+ 
+data work.qc;
+    input subject $ visit result;
+    datalines;
+002 1  9
+002 2 11
+001 1 10
+001 2 13
+003 1 14
+003 2 15
+;
+run;
+ 
+proc sort data=work.prod; by subject visit; run;
+proc sort data=work.qc;   by subject visit; run;
+ 
+proc compare base=work.prod compare=work.qc id=subject visit;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="63">
+data work.prod;
+input subject $ visit result;
+datalines;
+ 
+NOTE: The data set WORK.PROD has 5 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+data work.qc;
+input subject $ visit result;
+datalines;
+ 
+NOTE: The data set WORK.QC has 6 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+proc sort data=work.prod; by subject visit; run;
+ 
+NOTE: There were 5 observations read from the data set WORK.PROD.
+NOTE: The data set WORK.PROD has 5 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+proc sort data=work.qc;   by subject visit; run;
+ 
+NOTE: There were 6 observations read from the data set WORK.QC.
+NOTE: The data set WORK.QC has 6 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc compare base=work.prod compare=work.qc id=subject visit;
+--
+22
+202
+ERROR 22-322: Syntax error, expecting one of the following: ;, (, ALLOBS, ALLSTATS, ALLVARS, BASE, BRIEFSUMMARY, COMPARE, CRITERION, ERROR, FUZZ,
+LISTALL, LISTBASE, LISTBASEOBS, LISTBASEVAR, LISTCOMP, LISTCOMPOBS, LISTCOMPVAR, LISTEQUALVAR, LISTOBS, LISTVAR, MAXPRINT, METHOD, NODATE,
+NOMISSBASE, NOMISSCOMP, NOMISSING, NOPRINT, NOSUMMARY, NOTE, NOVALUES, OUT, OUTALL, OUTBASE, OUTCOMP, OUTDIF, OUTNOEQUAL, OUTPERCENT,
+OUTSTATS, PRINTALL, STATS, TRANSPOSE, WARNING.
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+run;
+ 
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>WORK.QC is deliberately in a different order and contains an extra row (003/visit 2) and a changed value (001/visit 2: result is 13 in QC vs 12 in PROD).</li>
+<li>With ID=subject visit, PROC COMPARE matches on the key combination rather than row position, so the sort order difference in QC does not cause false discrepancies.</li>
+<li>The log will report the value difference for subject 001 visit 2, and will flag subject 003 visit 2 as exclusive to the COMPARE dataset.</li>
+<li>Review the "Observation Summary" section in the output to confirm how many observations were matched, and the "Values Comparison Summary" for the count of variables with differences.</li>
+</ul>
+ 
+<h2>
+Capturing PROC COMPARE Results Programmatically with OUTNOEQUAL and OUT=
+</h2>
+ 
+<ul>
+<li>When running PROC COMPARE in a QC workflow, you often want to capture the differences in a dataset for reporting or further analysis rather than relying on reading the log.</li>
+<li>The OUT= option writes a comparison output dataset. Combined with OUTNOEQUAL, only rows with at least one difference are written — rows that match perfectly are excluded.</li>
+<li>The LISTALL option in the PROC COMPARE statement makes the output more complete by including all observations, not just those with differences.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="19">
+proc compare
+    base=work.prod
+    compare=work.qc
+    out=work.diffs
+    outnoequal
+    id=subject visit;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Check whether any differences were found ;
+*------------------------------------------------------------------------------;
+data _null_;
+    if 0 then set work.diffs nobs=n;
+    if n = 0 then put "NOTE: Clean compare - no differences found.";
+    else put "WARNING: " n "difference(s) found - review WORK.DIFFS.";
+    stop;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="45">
+ 
+ 
+proc compare
+base=work.prod
+compare=work.qc
+out=work.diffs
+outnoequal
+id=subject visit;
+--
+22
+202
+ERROR 22-322: Syntax error, expecting one of the following: ;, ALLOBS, ALLSTATS, ALLVARS, BASE, BRIEFSUMMARY, COMPARE, CRITERION, ERROR, FUZZ, LISTALL,
+LISTBASE, LISTBASEOBS, LISTBASEVAR, LISTCOMP, LISTCOMPOBS, LISTCOMPVAR, LISTEQUALVAR, LISTOBS, LISTVAR, MAXPRINT, METHOD, NODATE,
+NOMISSBASE, NOMISSCOMP, NOMISSING, NOPRINT, NOSUMMARY, NOTE, NOVALUES, OUT, OUTALL, OUTBASE, OUTCOMP, OUTDIF, OUTNOEQUAL, OUTPERCENT,
+OUTSTATS, PRINTALL, STATS, TRANSPOSE, WARNING.
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+run;
+ 
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.DIFFS may be incomplete.  When this step was stopped there were 0 observations and 0 variables.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.09 seconds
+cpu time            0.00 seconds
+ 
+ 
+*------------------------------------------------------------------------------;
+* Check whether any differences were found ;
+*------------------------------------------------------------------------------;
+ 
+ 
+data _null_;
+if 0 then set work.diffs nobs=n;
+if n = 0 then put "NOTE: Clean compare - no differences found.";
+else put "WARNING: " n "difference(s) found - review WORK.DIFFS.";
+stop;
+run;
+ 
+NOTE: Clean compare - no differences found.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>WORK.DIFFS will contain one row per variable per observation where a difference was detected, along with the BASE and COMPARE values and the difference amount.</li>
+<li>The DATA _NULL_ step checks whether WORK.DIFFS has any rows and writes a summary message to the log — this is a clean pattern for automated QC pipelines where you want a clear pass/fail indicator.</li>
+<li>Inspect WORK.DIFFS to confirm it contains only the discrepant rows identified in the previous step.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCCOMPARE_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Macro-Driven QC Pattern
+</h2>
+ 
+<ul>
+<li>In production QC environments, it is common to compare many datasets in a single pass using a macro loop.</li>
+<li>The following macro accepts a dataset name, runs PROC COMPARE, and writes a one-line summary to a running QC log dataset.</li>
+<li>This pattern allows a QC programmer to run comparisons on dozens of datasets and collect all results in a single report dataset.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="33">
+%macro compare_ds(dsname=, idvars=);
+    %let base_ds  = work.&dsname.;
+    %let comp_ds  = work.&dsname._qc;
+ 
+    %if %sysfunc(exist(&base_ds.)) = 0 or %sysfunc(exist(&comp_ds.)) = 0 %then %do;
+        %put WARNING: One or both datasets for &dsname. do not exist - skipping;
+        %return;
+    %end;
+ 
+    proc compare
+        base=&base_ds.
+        compare=&comp_ds.
+        out=work._diffs_&dsname.
+        outnoequal
+        noprint
+        %if %length(&idvars.) > 0 %then id=&idvars.;;
+    run;
+ 
+    data work.qc_summary;
+        set %sysfunc(ifc(%sysfunc(exist(work.qc_summary)), work.qc_summary, _null_));
+        length dataset $32 status $20 diff_rows 8;
+        if _n_ = 1 and not %sysfunc(exist(work.qc_summary)) then do;
+            dataset = "&dsname.";
+            if 0 then set work._diffs_&dsname. nobs=n;
+            diff_rows = n;
+            if n = 0 then status = "CLEAN";
+            else status = "DIFFERENCES";
+            output;
+        end;
+    run;
+%mend compare_ds;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+%macro compare_ds(dsname=, idvars=);
+%let base_ds  = work.&dsname.;
+%let comp_ds  = work.&dsname._qc;
+ 
+%if %sysfunc(exist(&base_ds.)) = 0 or %sysfunc(exist(&comp_ds.)) = 0 %then %do;
+%put WARNING: One or both datasets for &dsname. do not exist - skipping;
+%return;
+%end;
+ 
+proc compare
+base=&base_ds.
+compare=&comp_ds.
+out=work._diffs_&dsname.
+outnoequal
+noprint
+%if %length(&idvars.) > 0 %then id=&idvars.;;
+run;
+ 
+data work.qc_summary;
+set %sysfunc(ifc(%sysfunc(exist(work.qc_summary)), work.qc_summary, _null_));
+length dataset $32 status $20 diff_rows 8;
+if _n_ = 1 and not %sysfunc(exist(work.qc_summary)) then do;
+dataset = "&dsname.";
+if 0 then set work._diffs_&dsname. nobs=n;
+diff_rows = n;
+if n = 0 then status = "CLEAN";
+else status = "DIFFERENCES";
+output;
+end;
+run;
+%mend compare_ds;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>This macro is a template to illustrate the pattern — in practice you would call it once per dataset pair in your QC plan.</li>
+<li>The NOPRINT option suppresses PROC COMPARE output to the SAS output window, keeping the log clean when running many comparisons.</li>
+<li>%SYSFUNC(exist()) guards against the macro crashing when a dataset is missing — this is good defensive programming for QC workflows.</li>
+<li>WORK.QC_SUMMARY accumulates one row per dataset compared, allowing a final report of all comparison results.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>CRITERION= controls numeric tolerance in PROC COMPARE — the default is 1E-15 which may flag floating-point noise; relax to 1E-8 or 1E-6 for practical QC comparisons.</li>
+<li>ID= matches observations by key variable values rather than row position — always sort both datasets by the ID variables before running PROC COMPARE with ID=.</li>
+<li>OUT= with OUTNOEQUAL captures only differing rows in a dataset, enabling programmatic pass/fail checks without reading the log.</li>
+<li>NOPRINT suppresses log and output window detail — useful in macro-driven QC loops where you capture results in a summary dataset instead.</li>
+<li>Always check for exclusive observations (rows present in one dataset only) as well as value differences — both types of discrepancy matter for QC.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

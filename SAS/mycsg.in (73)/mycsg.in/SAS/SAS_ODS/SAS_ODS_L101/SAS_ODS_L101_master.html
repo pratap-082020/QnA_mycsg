@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_ODS_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Output Delivery System - Part 01: ODS Basics, Destinations, and Output Control
+</h1>
+ 
+<h2>
+What Is ODS?
+</h2>
+ 
+<ul>
+<li>The Output Delivery System (ODS) is the part of SAS that controls how procedure output is rendered and delivered.</li>
+<li>Before ODS, SAS procedure output was plain text sent to the listing output window. ODS allows the same procedure output to be sent simultaneously to multiple formats: PDF, RTF, Excel, HTML, and more.</li>
+<li>ODS works by intercepting the output objects that each PROC produces and formatting them according to the specified destination.</li>
+<li>ODS is always active — even when you are not using it explicitly, the default destination (ODS LISTING) is open and capturing plain text output.</li>
+</ul>
+ 
+<h2>
+ODS Destinations
+</h2>
+ 
+<ul>
+<li>An ODS destination is a target format or location where procedure output is sent. Multiple destinations can be open at the same time.</li>
+<li>Common destinations: LISTING (plain text, the default), HTML (browser-ready HTML files), PDF (Adobe Acrobat format), RTF (Word-compatible rich text), EXCEL (Excel workbook via ODS), and GRAPHICS (for graphical output objects).</li>
+<li>Each destination is opened with ODS destination-name ... ; and closed with ODS destination-name CLOSE; When you close a destination, SAS finalises the output file.</li>
+<li>ODS CLOSE ALL; closes all open destinations at once — a useful cleanup statement at the end of a program.</li>
+</ul>
+ 
+<h2>
+Sending Output to a PDF File
+</h2>
+ 
+<ul>
+<li>ODS PDF opens a PDF destination that captures all subsequent PROC output into a PDF file.</li>
+<li>The FILE= option specifies the path and filename of the PDF to create.</li>
+<li>All procedure steps between ODS PDF and ODS PDF CLOSE contribute pages to that PDF file.</li>
+<li>STYLE= controls the visual appearance. PDFTOC= controls the PDF table of contents depth.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="33">
+*------------------------------------------------------------------------------;
+* Create sample data for demonstrations ;
+*------------------------------------------------------------------------------;
+data work.results;
+    input subject $ trta $ aval;
+    datalines;
+001 Drug_A  12.5
+002 Placebo  8.3
+003 Drug_A  18.1
+004 Drug_B   9.7
+005 Placebo  6.2
+006 Drug_B  15.4
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Send PROC MEANS output to a PDF file ;
+* Adjust the file path to match your environment ;
+*------------------------------------------------------------------------------;
+/*
+ods pdf file="C:\output\summary_report.pdf" style=journal;
+ 
+title "Summary Statistics by Treatment";
+proc means data=work.results mean std min max maxdec=2;
+    class trta;
+    var aval;
+run;
+ 
+title;
+ods pdf close;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="34">
+*------------------------------------------------------------------------------;
+* Create sample data for demonstrations ;
+*------------------------------------------------------------------------------;
+data work.results;
+input subject $ trta $ aval;
+datalines;
+ 
+NOTE: The data set WORK.RESULTS has 6 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Send PROC MEANS output to a PDF file ;
+* Adjust the file path to match your environment ;
+*------------------------------------------------------------------------------;
+/*
+ods pdf file="C:\output\summary_report.pdf" style=journal;
+ 
+title "Summary Statistics by Treatment";
+proc means data=work.results mean std min max maxdec=2;
+class trta;
+var aval;
+run;
+ 
+title;
+ods pdf close;
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The ODS PDF block is commented out to avoid errors if the output path does not exist — uncomment it and update the path to run it.</li>
+<li>STYLE=JOURNAL applies a clean academic-style visual theme. Other common styles include LISTING, STATISTICAL, DEFAULT, and MEADOW.</li>
+<li>TITLE sets a title that appears above each table in the output. TITLE; (with no text) clears the title after the procedure.</li>
+<li>After running, open the PDF to confirm the PROC MEANS table appears with the expected treatment groups and statistics.</li>
+</ul>
+ 
+<h2>
+Sending Output to an RTF File
+</h2>
+ 
+<ul>
+<li>ODS RTF produces a Rich Text Format file that opens in Microsoft Word and is editable.</li>
+<li>RTF is commonly used when clinical tables need to be delivered in Word format for medical writing teams.</li>
+<li>BODYTITLE suppresses automatic column headers in the RTF body and allows the TITLE statement to serve as the table title.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="16">
+/*
+ods rtf file="C:\output\summary_table.rtf" bodytitle style=rtf;
+ 
+title "Adverse Events by Subject";
+proc print data=work.results label noobs;
+    var subject trta aval;
+    label subject="Subject ID"
+          trta="Treatment"
+          aval="Result";
+run;
+ 
+title;
+ods rtf close;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+/*
+ods rtf file="C:\output\summary_table.rtf" bodytitle style=rtf;
+ 
+title "Adverse Events by Subject";
+proc print data=work.results label noobs;
+var subject trta aval;
+label subject="Subject ID"
+trta="Treatment"
+aval="Result";
+run;
+ 
+title;
+ods rtf close;
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>STYLE=RTF is a Word-optimised style — it produces clean output that converts well when pasted into Word documents.</li>
+<li>NOOBS removes the observation number column from PROC PRINT output — standard in delivery-quality tables.</li>
+<li>LABEL causes variable labels to appear as column headings instead of variable names — always use this when delivering output to non-programmers.</li>
+</ul>
+ 
+<h2>
+Sending Output to Excel
+</h2>
+ 
+<ul>
+<li>ODS EXCEL produces a Microsoft Excel workbook (.xlsx). Each PROC step creates a new sheet in the workbook by default.</li>
+<li>The SHEET_NAME= option in PROC options or via ODS EXCEL options controls the tab name for each sheet.</li>
+<li>ODS EXCEL is available in SAS 9.4 maintenance release 3 and later. For earlier versions, use ODS TAGSETS.EXCELXP as the alternative.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="24">
+/*
+ods excel file="C:\output\data_export.xlsx" style=minimal
+    options(sheet_name="Results" embedded_titles="yes");
+ 
+title "Study Results Data";
+proc print data=work.results noobs label;
+    var subject trta aval;
+    label subject="Subject"
+          trta="Treatment"
+          aval="Value";
+run;
+ 
+ods excel options(sheet_name="Summary");
+title "Summary Statistics";
+proc means data=work.results mean std min max maxdec=2;
+    class trta;
+    var aval;
+run;
+ 
+title;
+ods excel close;
+*/
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="24">
+/*
+ods excel file="C:\output\data_export.xlsx" style=minimal
+options(sheet_name="Results" embedded_titles="yes");
+ 
+title "Study Results Data";
+proc print data=work.results noobs label;
+var subject trta aval;
+label subject="Subject"
+trta="Treatment"
+aval="Value";
+run;
+ 
+ods excel options(sheet_name="Summary");
+title "Summary Statistics";
+proc means data=work.results mean std min max maxdec=2;
+class trta;
+var aval;
+run;
+ 
+title;
+ods excel close;
+*/
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first ODS EXCEL statement opens the workbook and creates the first sheet named "Results".</li>
+<li>The second ODS EXCEL OPTIONS(SHEET_NAME=...) mid-stream changes the sheet name for the next procedure's output without closing and reopening the workbook.</li>
+<li>EMBEDDED_TITLES="yes" places the TITLE text inside the Excel cells rather than in a separate header area.</li>
+<li>After running, open the Excel file to confirm two sheets were created with the expected content on each tab.</li>
+</ul>
+ 
+<h2>
+ODS SELECT and EXCLUDE - Controlling Which Output Objects Appear
+</h2>
+ 
+<ul>
+<li>Many PROC steps produce multiple output objects (tables). ODS SELECT and ODS EXCLUDE control which specific objects are sent to the destination.</li>
+<li>ODS SELECT object-name; tells SAS to include only that named object and discard everything else from the next PROC step.</li>
+<li>ODS EXCLUDE object-name; tells SAS to discard that object and send everything else.</li>
+<li>Use PROC CONTENTS or run the PROC once with ODS TRACE ON to discover the names of output objects.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="26">
+*------------------------------------------------------------------------------;
+* ODS TRACE shows the names of all output objects produced ;
+*------------------------------------------------------------------------------;
+ods trace on;
+ 
+proc means data=work.results mean std min max;
+    class trta;
+    var aval;
+run;
+ 
+ods trace off;
+ 
+*------------------------------------------------------------------------------;
+* After checking the trace output in the log, ;
+* select only the Summary table (the main statistics table) ;
+*------------------------------------------------------------------------------;
+ods select summary;
+ 
+proc means data=work.results mean std min max maxdec=2;
+    class trta;
+    var aval;
+run;
+ 
+ods select all;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="48">
+*------------------------------------------------------------------------------;
+* ODS TRACE shows the names of all output objects produced ;
+*------------------------------------------------------------------------------;
+ods trace on;
+ 
+proc means data=work.results mean std min max;
+class trta;
+var aval;
+run;
+ 
+ 
+Output Added:
+-------------
+Name:       Summary
+Label:      Summary statistics
+Template:   base.summary
+Path:       Means.Summary
+-------------
+NOTE: There were 6 observations read from the data set WORK.RESULTS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+ods trace off;
+ 
+*------------------------------------------------------------------------------;
+* After checking the trace output in the log, ;
+* select only the Summary table (the main statistics table) ;
+*------------------------------------------------------------------------------;
+ods select summary;
+ 
+proc means data=work.results mean std min max maxdec=2;
+class trta;
+var aval;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.RESULTS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+ods select all;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>ODS TRACE ON writes a line to the log for every output object produced, showing its name and label. Run a PROC with TRACE ON to discover the object names before using SELECT.</li>
+<li>ODS SELECT SUMMARY tells SAS to send only the object named "Summary" to the output destination for the next PROC step.</li>
+<li>ODS SELECT ALL resets the selection — all output objects are sent again for subsequent PROCs. Always reset after using ODS SELECT to avoid accidentally suppressing output in later steps.</li>
+<li>Check the SAS output and log: with ODS SELECT SUMMARY, only the statistics table should appear, not any other tables PROC MEANS might produce.</li>
+</ul>
+ 
+<h2>
+Closing All Destinations at Session End
+</h2>
+ 
+<ul>
+<li>It is good practice to close all ODS destinations explicitly at the end of a program.</li>
+<li>ODS _ALL_ CLOSE; closes every open destination, finalising all output files. This ensures no files are left open or incomplete.</li>
+<li>After ODS _ALL_ CLOSE, the default LISTING destination is also closed. Re-open it with ODS LISTING; if you want subsequent PROC output to appear in the output window again.</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="7">
+*------------------------------------------------------------------------------;
+* Close all destinations and restore the default listing ;
+*------------------------------------------------------------------------------;
+ods _all_ close;
+ods listing;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="7">
+*------------------------------------------------------------------------------;
+* Close all destinations and restore the default listing ;
+*------------------------------------------------------------------------------;
+ods _all_ close;
+ods listing;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Include these two lines at the end of any program that uses ODS destinations, as a cleanup step.</li>
+<li>Without ODS LISTING; after ODS _ALL_ CLOSE, subsequent PROC output will not appear anywhere — useful if you want to suppress all output, but a common source of confusion if accidentally left in place.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>ODS routes procedure output to one or more destinations simultaneously — PDF, RTF, EXCEL, HTML, and LISTING are the most commonly used.</li>
+<li>Open a destination with ODS destination FILE=...; and close it with ODS destination CLOSE; — closing finalises the output file.</li>
+<li>Multiple destinations can be open at the same time; all open destinations receive every output object until closed.</li>
+<li>ODS SELECT object-name; restricts output to a specific named object from the next PROC step — always follow with ODS SELECT ALL; to restore normal output.</li>
+<li>Use ODS TRACE ON to discover the names of output objects produced by any PROC step, then use those names with ODS SELECT or ODS EXCLUDE.</li>
+<li>End every ODS program with ODS _ALL_ CLOSE; followed by ODS LISTING; to clean up all open destinations and restore default output behaviour.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

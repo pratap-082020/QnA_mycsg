@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_INTRO_L105
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Introduction to the SAS interface
+</h1>
+ 
+<ul>
+<li>The SAS interface is the working area where we write code, run code, review output, and inspect the SAS log</li>
+<li>Different SAS applications can look slightly different, but the core ideas remain the same</li>
+<li>As a beginner, it is important to recognise the main windows and understand what each window is used for</li>
+<li>When you know where code, results, and messages appear, it becomes much easier to write, debug, and learn SAS programs</li>
+</ul>
+ 
+<h1>
+Main parts of the SAS interface
+</h1>
+ 
+<h2>
+Editor window
+</h2>
+ 
+<ul>
+<li>The editor window is where you type SAS programs</li>
+<li>You can write one statement at a time or many steps in the same program file</li>
+<li>When you submit code, SAS reads the statements from this editor area and begins execution</li>
+<li>This is the window you will spend most of your time in as a programmer</li>
+</ul>
+ 
+<h2>
+Log window
+</h2>
+ 
+<ul>
+<li>The log window shows notes, warnings, and errors produced while SAS runs your code</li>
+<li>Even when the output looks correct, you should still review the log because the log may contain warnings that affect data quality</li>
+<li>The log is one of the most important tools for debugging SAS programs</li>
+<li>A good habit is to check the log after every code submission</li>
+</ul>
+ 
+<h2>
+Output or results window
+</h2>
+ 
+<ul>
+<li>The output window or results viewer shows printed results produced by procedures such as `proc print`, `proc freq`, and `proc means`</li>
+<li>This is where tabular reports and analytical summaries usually appear</li>
+<li>If a step creates only a dataset and no printed report, then you might not see anything new in the output window</li>
+</ul>
+ 
+<h2>
+Explorer or libraries area
+</h2>
+ 
+<ul>
+<li>The explorer area helps you view libraries, datasets, catalogs, and other SAS files</li>
+<li>You can use it to inspect what datasets currently exist in a library, such as `WORK` or `SASHELP`</li>
+<li>This is useful when you want to confirm whether a step created the expected output dataset</li>
+</ul>
+ 
+<h1>
+Why the log window deserves special attention
+</h1>
+ 
+<ul>
+<li>The log reports whether the code ran successfully or failed</li>
+<li>Syntax mistakes usually appear as errors in the log</li>
+<li>Data-related problems such as invalid values, truncation, and automatic type conversion often appear as warnings or notes in the log</li>
+<li>Professional SAS programming requires regular log review, not just output review</li>
+</ul>
+ 
+<h2>
+Create a small example dataset
+</h2>
+ 
+<ul>
+<li>We create a small dataset named `students_demo` so the learner can see how code is submitted from the editor window</li>
+<li>After the step runs, review the log and confirm that SAS reports the number of observations and variables created</li>
+<li>Then inspect the created dataset in the data viewer or through the lesson data output</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data students_demo;
+   set sashelp.class(obs=5);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data students_demo;
+set sashelp.class(obs=5);
+run;
+ 
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.STUDENTS_DEMO has 5 observations and 5 variables.
+NOTE: Compressing data set WORK.STUDENTS_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The code was typed in the editor and executed by SAS</li>
+<li>The log should mention that dataset `WORK.STUDENTS_DEMO` was created</li>
+<li>The dataset contains only the first 5 observations because of the `obs=5` dataset option</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L105_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+Display the dataset in the output window
+</h2>
+ 
+<ul>
+<li>`proc print` is used here so the learner can see the difference between creating a dataset and printing a report</li>
+<li>The output window should now display the observations from `students_demo`</li>
+<li>The log should also show that the procedure completed successfully</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc print data=students_demo;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc print data=students_demo;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.STUDENTS_DEMO.
+NOTE: PROCEDURE PRINT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The printed report appears in the output or results area</li>
+<li>The dataset itself still exists in the `WORK` library and can be used by later steps</li>
+</ul>
+ 
+<h2>
+Generate a simple summary report
+</h2>
+ 
+<ul>
+<li>`proc means` produces analytical output instead of simply listing rows</li>
+<li>This helps the learner understand that some steps create datasets, while other steps create printed summaries</li>
+<li>Review both the log and the output after running this code</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc means data=students_demo n mean min max;
+   var age height weight;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc means data=students_demo n mean min max;
+var age height weight;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.STUDENTS_DEMO.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output window now shows summary statistics for the numeric variables</li>
+<li>The log confirms that the procedure ran and processed the requested variables</li>
+<li>This reinforces the relationship between the editor, log, and output areas of the SAS interface</li>
+</ul>
+ 
+<h1>
+Typical beginner workflow in the SAS interface
+</h1>
+ 
+<ol>
+<li>Write code in the editor window</li>
+<li>Submit the code</li>
+<li>Check the log first for errors, warnings, and notes</li>
+<li>Review printed results in the output window when a procedure creates visible output</li>
+<li>Inspect created datasets in the library explorer or dataset viewer if needed</li>
+</ol>
+ 
+<h1>
+Another simple example of log plus output review
+</h1>
+ 
+<ul>
+<li>Here we run `proc freq` to create grouped frequency output</li>
+<li>The learner should observe that the output window changes, and the log records procedure completion details</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc freq data=students_demo;
+   tables sex;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc freq data=students_demo;
+tables sex;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.STUDENTS_DEMO.
+NOTE: PROCEDURE FREQ used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The output window shows the frequency table for `sex`</li>
+<li>The log confirms that the procedure executed successfully</li>
+<li>This is another example of how SAS separates program messages from printed results</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>The editor window is for writing code</li>
+<li>The log window is for messages, diagnostics, and debugging</li>
+<li>The output window is for printed reports and summaries</li>
+<li>The explorer or library area helps you inspect available datasets and files</li>
+<li>Always review the log after submitting SAS code</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

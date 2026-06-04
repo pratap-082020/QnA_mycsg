@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MERGING_L104
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Merging - Part 04: UPDATE Statement and Interleaving Datasets
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Previous merging lessons covered: L101 (SET-based appending), L102 (MERGE with IN= flags), L103 (one-to-many merges and many-to-many hazards).</li>
+<li>This lesson covers two further DATA step combining operations: the UPDATE statement and interleaving with SET and BY.</li>
+<li>UPDATE is a targeted overwrite operation distinct from MERGE — it replaces values selectively without touching variables that are not in the transaction dataset.</li>
+<li>Interleaving combines multiple datasets into one by reading observations in BY-variable order rather than concatenating them in sequence.</li>
+</ul>
+ 
+<h2>
+The UPDATE Statement
+</h2>
+ 
+<ul>
+<li>The UPDATE statement reads one BASE dataset and one TRANSACTION dataset. For each matching BY-key in the transaction, non-missing values in the transaction overwrite the corresponding values in the base record.</li>
+<li>The critical distinction from MERGE: UPDATE only overwrites values that are non-missing in the transaction. If a transaction variable is missing (blank), the base value is kept unchanged.</li>
+<li>MERGE with a matching BY key always writes the transaction value, even if that value is missing — which can overwrite good data with blanks. UPDATE avoids this problem entirely.</li>
+<li>Both datasets must be sorted by the BY variable. The BASE dataset must have unique BY values (one row per key). The TRANSACTION dataset may have multiple rows per key — the last non-missing value per variable wins.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="34">
+*------------------------------------------------------------------------------;
+* Base dataset: master subject record ;
+*------------------------------------------------------------------------------;
+data work.base;
+    input subject $ site $ country $ age weight;
+    datalines;
+001 S01 USA  34 72.5
+002 S01 USA  28 65.0
+003 S02 GBR  45 80.1
+004 S02 GBR  52 91.3
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Transaction dataset: corrections and updates ;
+*------------------------------------------------------------------------------;
+data work.transactions;
+    input subject $ site $ country $ age weight;
+    datalines;
+002 .   .    .  67.5
+003 S02 GBR  .  .
+004 .   .    53 .
+;
+run;
+ 
+proc sort data=work.base;        by subject; run;
+proc sort data=work.transactions; by subject; run;
+ 
+data work.updated;
+    update work.base work.transactions;
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="66">
+*------------------------------------------------------------------------------;
+* Base dataset: master subject record ;
+*------------------------------------------------------------------------------;
+data work.base;
+input subject $ site $ country $ age weight;
+datalines;
+ 
+NOTE: The data set WORK.BASE has 4 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Transaction dataset: corrections and updates ;
+*------------------------------------------------------------------------------;
+data work.transactions;
+input subject $ site $ country $ age weight;
+datalines;
+ 
+NOTE: The data set WORK.TRANSACTIONS has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+proc sort data=work.base;        by subject; run;
+ 
+NOTE: There were 4 observations read from the data set WORK.BASE.
+NOTE: The data set WORK.BASE has 4 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+proc sort data=work.transactions; by subject; run;
+ 
+NOTE: There were 3 observations read from the data set WORK.TRANSACTIONS.
+NOTE: The data set WORK.TRANSACTIONS has 3 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data work.updated;
+update work.base work.transactions;
+by subject;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.BASE.
+NOTE: There were 3 observations read from the data set WORK.TRANSACTIONS.
+NOTE: The data set WORK.UPDATED has 4 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Subject 002: only weight is non-missing in the transaction (67.5). The UPDATE statement replaces weight, but leaves site, country, and age from the base record unchanged.</li>
+<li>Subject 003: transaction has site and country populated but age and weight are missing. Base values for age and weight are preserved; site and country are overwritten (same values here, so no visible change).</li>
+<li>Subject 004: only age (53) is non-missing in the transaction. Weight stays at 91.3 from the base.</li>
+<li>Subject 001 has no transaction row — all base values carry through unchanged.</li>
+<li>Check WORK.UPDATED: compare it side-by-side with WORK.BASE to confirm only the intended values changed and all others are preserved.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L104_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+UPDATE vs MERGE - the Key Difference
+</h2>
+ 
+<ul>
+<li>To reinforce why UPDATE is preferred for corrections, the following example shows what a MERGE would produce instead.</li>
+<li>MERGE overwrites with missing values — UPDATE does not. This matters when the transaction dataset has incomplete records.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data work.merged_result;
+    merge work.base work.transactions;
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data work.merged_result;
+merge work.base work.transactions;
+by subject;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.BASE.
+NOTE: There were 3 observations read from the data set WORK.TRANSACTIONS.
+NOTE: The data set WORK.MERGED_RESULT has 4 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.03 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Check WORK.MERGED_RESULT and compare it to WORK.UPDATED.</li>
+<li>For subject 002, the MERGE result will have missing values for site and country (because the transaction row had missing values for those fields). WORK.UPDATED preserves them.</li>
+<li>For subject 004, the MERGE result will have missing weight because the transaction row had a missing weight. WORK.UPDATED preserves the base weight of 91.3.</li>
+<li>This confirms that UPDATE is the appropriate choice when you want to apply selective corrections without risk of overwriting non-missing data with blanks.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L104_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Interleaving Datasets with SET and BY
+</h2>
+ 
+<ul>
+<li>Concatenation (SET without BY) appends datasets one after another in the order they are listed: all rows from dataset 1, then all rows from dataset 2, and so on.</li>
+<li>Interleaving (SET with BY) reads from all listed datasets simultaneously, outputting observations in the sorted order of the BY variable — similar to a merge sort.</li>
+<li>The result of interleaving is a single dataset ordered by the BY variable, as if all source datasets had been concatenated and then sorted — but without running a separate PROC SORT step.</li>
+<li>All datasets in the SET statement must already be sorted by the BY variable. The interleaved output is guaranteed to be in BY order.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="46">
+*------------------------------------------------------------------------------;
+* Three separate datasets - each sorted by subject ;
+*------------------------------------------------------------------------------;
+data work.site_a;
+    input subject $ visit result;
+    datalines;
+001 1 10
+003 1 14
+003 2 12
+;
+run;
+ 
+data work.site_b;
+    input subject $ visit result;
+    datalines;
+002 1  9
+002 2 11
+004 1 16
+;
+run;
+ 
+data work.site_c;
+    input subject $ visit result;
+    datalines;
+001 2 13
+004 2 15
+005 1 18
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Concatenation - rows appear in dataset order ;
+*------------------------------------------------------------------------------;
+data work.concatenated;
+    set work.site_a work.site_b work.site_c;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Interleaving - rows appear in BY order across all datasets ;
+*------------------------------------------------------------------------------;
+data work.interleaved;
+    set work.site_a work.site_b work.site_c;
+    by subject;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="78">
+*------------------------------------------------------------------------------;
+* Three separate datasets - each sorted by subject ;
+*------------------------------------------------------------------------------;
+data work.site_a;
+input subject $ visit result;
+datalines;
+ 
+NOTE: The data set WORK.SITE_A has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+data work.site_b;
+input subject $ visit result;
+datalines;
+ 
+NOTE: The data set WORK.SITE_B has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+data work.site_c;
+input subject $ visit result;
+datalines;
+ 
+NOTE: The data set WORK.SITE_C has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+*------------------------------------------------------------------------------;
+* Concatenation - rows appear in dataset order ;
+*------------------------------------------------------------------------------;
+data work.concatenated;
+set work.site_a work.site_b work.site_c;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.SITE_A.
+NOTE: There were 3 observations read from the data set WORK.SITE_B.
+NOTE: There were 3 observations read from the data set WORK.SITE_C.
+NOTE: The data set WORK.CONCATENATED has 9 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+*------------------------------------------------------------------------------;
+* Interleaving - rows appear in BY order across all datasets ;
+*------------------------------------------------------------------------------;
+data work.interleaved;
+set work.site_a work.site_b work.site_c;
+by subject;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.SITE_A.
+NOTE: There were 3 observations read from the data set WORK.SITE_B.
+NOTE: There were 3 observations read from the data set WORK.SITE_C.
+NOTE: The data set WORK.INTERLEAVED has 9 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>WORK.CONCATENATED will have rows from site_a first, then site_b, then site_c — subjects appear in arrival order, not subject number order.</li>
+<li>WORK.INTERLEAVED will have all rows sorted by subject: 001 rows first, then 002, 003, 004, 005 — regardless of which source dataset they came from.</li>
+<li>Confirm both datasets have the same total observation count (9 rows). The difference is purely in row order.</li>
+<li>Interleaving is most valuable when you receive data from multiple sites or batches and want a single subject-ordered dataset without an extra PROC SORT step.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L104_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Interleaving with FIRST. and LAST. for BY-Group Logic
+</h2>
+ 
+<ul>
+<li>When you interleave with a BY statement, the FIRST. and LAST. automatic variables are available, just as they are in a standard DATA step with SET and BY.</li>
+<li>This allows you to apply BY-group logic (such as counting visits per subject or flagging the first record) on the interleaved output in a single pass.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="12">
+data work.interleaved_grouped;
+    set work.site_a work.site_b work.site_c;
+    by subject;
+ 
+    if first.subject then visit_seq = 0;
+    visit_seq + 1;
+ 
+    if last.subject then total_visits = visit_seq;
+    else total_visits = .;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="22">
+data work.interleaved_grouped;
+set work.site_a work.site_b work.site_c;
+by subject;
+ 
+if first.subject then visit_seq = 0;
+visit_seq + 1;
+ 
+if last.subject then total_visits = visit_seq;
+else total_visits = .;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.SITE_A.
+NOTE: There were 3 observations read from the data set WORK.SITE_B.
+NOTE: There were 3 observations read from the data set WORK.SITE_C.
+NOTE: The data set WORK.INTERLEAVED_GROUPED has 9 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>visit_seq increments within each subject group across all source datasets combined.</li>
+<li>total_visits is populated only on the last row per subject — it records the total number of observations for that subject across all three site datasets.</li>
+<li>This demonstrates that interleaving with BY is not just a sorting convenience — it also enables efficient single-pass BY-group aggregation.</li>
+<li>Inspect WORK.INTERLEAVED_GROUPED to verify subject 001 has 2 visits (one from site_a, one from site_c), subject 002 has 2 visits (both from site_b), and subject 003 has 2 visits (both from site_a).</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MERGING_L104_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>UPDATE overwrites base values only with non-missing transaction values — missing transaction values leave the base value intact. This makes UPDATE the correct choice for applying data corrections.</li>
+<li>MERGE always overwrites with the transaction value regardless of whether it is missing — use UPDATE when you cannot guarantee the transaction record is complete.</li>
+<li>Both datasets must be sorted by the BY variable before UPDATE, and the base dataset must have unique BY values.</li>
+<li>Interleaving (SET with BY) reads multiple sorted datasets simultaneously and outputs rows in BY-variable order — producing a merged sort without a separate PROC SORT step.</li>
+<li>FIRST. and LAST. BY-group variables are fully available during interleaving, enabling BY-group logic across multiple source datasets in a single DATA step.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

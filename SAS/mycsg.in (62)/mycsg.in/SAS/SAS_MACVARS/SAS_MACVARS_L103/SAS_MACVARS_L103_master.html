@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_MACVARS_L103
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Macro functions - %SCAN, %INDEX, %LENGTH, and building variable lists
+</h1>
+ 
+<h2>
+What are macro functions
+</h2>
+ 
+<ul>
+<li>SAS provides a set of built-in macro functions that operate on macro variable values as text</li>
+<li>These functions are distinct from DATA step functions — they run in the macro processor before any SAS step executes</li>
+<li>The three most commonly used text manipulation macro functions are `%scan`, `%index`, and `%length`</li>
+<li>Together they allow you to extract words from a list, locate text within a string, and measure string length — all at the macro level</li>
+<li>A very practical application is building and iterating over lists of variable names or dataset names inside a macro</li>
+</ul>
+ 
+<h2>
+%LENGTH - count characters in a macro variable value
+</h2>
+ 
+<ul>
+<li>`%length(text)` returns the number of characters in the text, including spaces</li>
+<li>It is the simplest of the three functions and is often used to check whether a parameter was supplied or is empty</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="7">
+%let my_var=Marketing;
+%put NOTE: Length of my_var is %length(&my_var);
+ 
+%let empty_var=;
+%put NOTE: Length of empty_var is %length(&empty_var);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="9">
+%let my_var=Marketing;
+%put NOTE: Length of my_var is %length(&my_var);
+NOTE: Length of my_var is 9
+ 
+%let empty_var=;
+%put NOTE: Length of empty_var is %length(&empty_var);
+NOTE: Length of empty_var is 0
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first `%put` should show length 9 (the word `Marketing` has nine characters)</li>
+<li>The second `%put` should show length 0 because `empty_var` has no value</li>
+<li>Testing `%length` is a clean way to validate whether a required parameter was passed to a macro</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="12">
+%macro check_param(dept=);
+    %if %length(&dept)=0 %then %do;
+        %put ERROR: dept parameter is required;
+        %return;
+    %end;
+    %put NOTE: Processing department: &dept;
+%mend check_param;
+ 
+%check_param(dept=Sales);
+%check_param(dept=);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+%macro check_param(dept=);
+%if %length(&dept)=0 %then %do;
+%put ERROR: dept parameter is required;
+%return;
+%end;
+%put NOTE: Processing department: &dept;
+%mend check_param;
+ 
+%check_param(dept=Sales);
+NOTE: Processing department: Sales
+%check_param(dept=);
+ERROR: dept parameter is required
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first call prints the NOTE confirming processing for Sales</li>
+<li>The second call triggers the ERROR message and returns early without continuing</li>
+<li>Using `%length` to guard against empty parameters makes macros more robust</li>
+</ul>
+ 
+<h2>
+%SCAN - extract words from a delimited string
+</h2>
+ 
+<ul>
+<li>`%scan(string, n, delimiters)` returns the nth word from `string` using the specified delimiters</li>
+<li>If the delimiter argument is omitted, SAS uses a default set of delimiters that includes spaces and several punctuation characters</li>
+<li>A space-separated list is the most common pattern for building variable or dataset lists in macros</li>
+<li>If `n` is positive, SAS counts from the left; if negative, it counts from the right</li>
+<li>If the requested word does not exist, `%scan` returns an empty string</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="7">
+%let var_list=systolic diastolic heart_rate weight;
+ 
+%put NOTE: First word:  %scan(&var_list,1,%str( ));
+%put NOTE: Second word: %scan(&var_list,2,%str( ));
+%put NOTE: Last word:   %scan(&var_list,-1,%str( ));
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="10">
+%let var_list=systolic diastolic heart_rate weight;
+ 
+%put NOTE: First word:  %scan(&var_list,1,%str( ));
+NOTE: First word:  systolic
+%put NOTE: Second word: %scan(&var_list,2,%str( ));
+NOTE: Second word: diastolic
+%put NOTE: Last word:   %scan(&var_list,-1,%str( ));
+NOTE: Last word:   weight
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The log should show `systolic`, `diastolic`, and `weight` for the first, second, and last positions respectively</li>
+<li>The `%str( )` wraps a single space, so SAS recognises the space as the delimiter rather than ignoring it</li>
+</ul>
+ 
+<h2>
+Loop through a list using %SCAN and %DO %WHILE
+</h2>
+ 
+<ul>
+<li>A very common pattern is to combine `%scan` with a `%do %while` loop to process each word in a list</li>
+<li>The loop increments a counter and uses `%scan` to pull the next word on each iteration</li>
+<li>The loop exits when `%scan` returns an empty string, which happens after the last word is extracted</li>
+<li>This pattern is the foundation for macros that need to repeat code for a list of variables or datasets</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="27">
+data vitals;
+    input subject $ systolic diastolic heart_rate weight;
+    datalines;
+001 120 80 72 75
+002 130 85 68 80
+003 118 76 70 65
+;
+run;
+ 
+%macro summarise_vars(varlist);
+    %local i var;
+    %let i=1;
+    %let var=%scan(&varlist,&i,%str( ));
+ 
+    %do %while(%length(&var) gt 0);
+        proc means data=vitals mean std min max;
+            var &var;
+            title "Summary for &var";
+        run;
+        %let i=%eval(&i+1);
+        %let var=%scan(&varlist,&i,%str( ));
+    %end;
+%mend summarise_vars;
+ 
+%summarise_vars(varlist=systolic diastolic heart_rate weight);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="59">
+data vitals;
+input subject $ systolic diastolic heart_rate weight;
+datalines;
+ 
+NOTE: The data set WORK.VITALS has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+ 
+%macro summarise_vars(varlist);
+%local i var;
+%let i=1;
+%let var=%scan(&varlist,&i,%str( ));
+ 
+%do %while(%length(&var) gt 0);
+proc means data=vitals mean std min max;
+var &var;
+title "Summary for &var";
+run;
+%let i=%eval(&i+1);
+%let var=%scan(&varlist,&i,%str( ));
+%end;
+%mend summarise_vars;
+ 
+%summarise_vars(varlist=systolic diastolic heart_rate weight);
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The macro runs PROC MEANS four times — once for each variable in the list</li>
+<li>All working variables (`i` and `var`) are declared `%local`, so the global symbol table is unaffected</li>
+<li>To extend the analysis to more variables, you only need to add names to the `varlist` parameter — no other code changes are required</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_MACVARS_L103_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+%INDEX - locate text within a macro variable value
+</h2>
+ 
+<ul>
+<li>`%index(source, target)` searches for the first occurrence of `target` within `source` and returns its starting position as a number</li>
+<li>Positions are counted from 1, so `%index` returns 1 if the target starts at the very beginning of the source</li>
+<li>If the target is not found, `%index` returns 0</li>
+<li>This is useful for checking whether a list already contains a particular value, or for conditional logic based on string content</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+%let active_list=systolic diastolic weight;
+ 
+%put NOTE: Position of diastolic: %index(&active_list,diastolic);
+%put NOTE: Position of heart_rate: %index(&active_list,heart_rate);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="8">
+%let active_list=systolic diastolic weight;
+ 
+%put NOTE: Position of diastolic: %index(&active_list,diastolic);
+NOTE: Position of diastolic: 10
+%put NOTE: Position of heart_rate: %index(&active_list,heart_rate);
+NOTE: Position of heart_rate: 0
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first `%put` returns a positive number (the starting character position of `diastolic` in the string)</li>
+<li>The second `%put` returns 0 because `heart_rate` is not in the list</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="16">
+%macro add_if_absent(varlist, newvar);
+    %local check;
+    %let check=%index(&varlist,&newvar);
+    %if &check gt 0 %then
+        %put NOTE: &newvar is already in the list;
+    %else %do;
+        %put NOTE: Adding &newvar to the list;
+        %let varlist=&varlist &newvar;
+        %put NOTE: Updated list is: &varlist;
+    %end;
+%mend add_if_absent;
+ 
+%add_if_absent(varlist=systolic diastolic weight, newvar=heart_rate);
+%add_if_absent(varlist=systolic diastolic weight, newvar=diastolic);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+%macro add_if_absent(varlist, newvar);
+%local check;
+%let check=%index(&varlist,&newvar);
+%if &check gt 0 %then
+%put NOTE: &newvar is already in the list;
+%else %do;
+%put NOTE: Adding &newvar to the list;
+%let varlist=&varlist &newvar;
+%put NOTE: Updated list is: &varlist;
+%end;
+%mend add_if_absent;
+ 
+%add_if_absent(varlist=systolic diastolic weight, newvar=heart_rate);
+NOTE: Adding heart_rate to the list
+NOTE: Updated list is: systolic diastolic weight heart_rate
+%add_if_absent(varlist=systolic diastolic weight, newvar=diastolic);
+NOTE: diastolic is already in the list
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The first call adds `heart_rate` because it is absent and prints the updated list</li>
+<li>The second call reports that `diastolic` is already present and does not duplicate it</li>
+<li>Note that the `varlist` update inside the macro is local and does not persist after the macro ends — this example demonstrates the logic pattern rather than persistent list management</li>
+</ul>
+ 
+<h2>
+Building a dynamic variable list from a dataset
+</h2>
+ 
+<ul>
+<li>A powerful application of these macro functions is building a list of variable names dynamically from the structure of a dataset</li>
+<li>PROC SQL with `into :macvar separated by` creates a macro variable containing all values from a column joined by a chosen delimiter</li>
+<li>Once stored, the list can be iterated with `%scan` in the same way as a hard-coded list</li>
+</ul>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc sql noprint;
+    select name into :num_vars separated by ' '
+    from dictionary.columns
+    where libname='WORK' and memname='VITALS' and type='num';
+quit;
+ 
+%put NOTE: Numeric variables in vitals: &num_vars;
+ 
+%summarise_vars(varlist=&num_vars);
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="45">
+proc sql noprint;
+select name into :num_vars separated by ' '
+from dictionary.columns
+where libname='WORK' and memname='VITALS' and type='num';
+quit;
+NOTE: PROCEDURE SQL used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+%put NOTE: Numeric variables in vitals: &num_vars;
+NOTE: Numeric variables in vitals: SYSTOLIC DIASTOLIC HEART_RATE WEIGHT
+ 
+%summarise_vars(varlist=&num_vars);
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+NOTE: There were 3 observations read from the data set WORK.VITALS.
+NOTE: PROCEDURE MEANS used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>PROC SQL queries the SAS data dictionary to retrieve the names of all numeric variables in the `vitals` dataset</li>
+<li>The names are joined with spaces and stored in `num_vars`</li>
+<li>The same `%summarise_vars` macro from earlier then processes every numeric variable without hard-coding any names</li>
+<li>This pattern is widely used in clinical and production programming, where variable sets are determined by the data rather than fixed in advance</li>
+</ul>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`%length(text)` returns the character count of a macro value — use it to check whether a parameter was supplied before proceeding</li>
+<li>`%scan(string, n, delimiter)` extracts the nth word from a string — use it with a counter variable and a `%do %while` loop to iterate over a list</li>
+<li>`%index(source, target)` returns the starting position of target in source, or 0 if not found — use it to test membership in a list</li>
+<li>Space-separated lists stored in macro variables are a lightweight, readable alternative to arrays for processing sets of names inside macros</li>
+<li>Combining `%scan` with a `%do %while` loop and a position counter is the standard pattern for iterating over a macro-level list</li>
+<li>Always declare working variables (`i`, `var`, `check`) as `%local` inside macros that use these functions</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

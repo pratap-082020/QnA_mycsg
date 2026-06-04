@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_FUNCTIONS_L103
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+Converting between character and numeric using INPUT and PUT
+</h1>
+ 
+<h2>
+Why type conversion is necessary
+</h2>
+ 
+<ul>
+<li>In SAS every variable is stored as either a character string or a number — there is no automatic coercion between the two types</li>
+<li>Attempting to assign a character value to a numeric variable or vice versa causes SAS to convert automatically but this implicit conversion is unreliable, generates warnings, and should be avoided</li>
+<li>The correct approach is to use the `INPUT` function to convert character text to a numeric value, and the `PUT` function to convert a numeric value to character text</li>
+<li>These two functions are among the most frequently used in clinical and production SAS programming</li>
+</ul>
+ 
+<h2>
+Create sample data with type conversion challenges
+</h2>
+ 
+<ul>
+<li>We create a dataset where numeric values have been read in as character strings (a common scenario when importing from flat files or spreadsheets)</li>
+<li>We also create a dataset where we need to convert numeric codes to formatted character labels</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="22">
+data raw_import;
+    input subject $ age_char $ weight_char $ visit_date_char $;
+    datalines;
+001 28 75.5 15JAN2024
+002 35 80.2 22JAN2024
+003 22 65.0 01FEB2024
+004 41  .   08FEB2024
+;
+run;
+ 
+data coded_data;
+    input subject $ sex_code result_code;
+    datalines;
+001 1 0
+002 2 1
+003 1 0
+004 2 1
+005 1 .
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="31">
+data raw_import;
+input subject $ age_char $ weight_char $ visit_date_char $;
+datalines;
+ 
+NOTE: The data set WORK.RAW_IMPORT has 4 observations and 4 variables.
+NOTE: Compressing data set WORK.RAW_IMPORT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.04 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+data coded_data;
+input subject $ sex_code result_code;
+datalines;
+ 
+NOTE: The data set WORK.CODED_DATA has 5 observations and 3 variables.
+NOTE: Compressing data set WORK.CODED_DATA increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>In `raw_import`, `age_char`, `weight_char`, and `visit_date_char` are all character variables even though they represent numeric values and a date</li>
+<li>In `coded_data`, `sex_code` and `result_code` are numeric and will be converted to character labels using PUT</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L103_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+The INPUT function - character to numeric
+</h1>
+ 
+<h2>
+INPUT function syntax
+</h2>
+ 
+<ul>
+<li>The INPUT function has the form: `INPUT(source, informat)`</li>
+<li>`source` is the character variable or expression to convert</li>
+<li>`informat` tells SAS how to interpret the text — for plain numbers use `best32.` or a specific width such as `8.`, and for dates use an appropriate date informat such as `date9.` or `ddmmyy10.`</li>
+<li>The result is a numeric value</li>
+<li>If the text cannot be converted using the specified informat SAS sets the result to missing and optionally issues a NOTE or WARNING</li>
+</ul>
+ 
+<h2>
+Convert character numbers to numeric
+</h2>
+ 
+<ul>
+<li>Here we convert `age_char` and `weight_char` from character to numeric in a DATA step</li>
+<li>We also handle the case where the weight value is a dot representing missing — `INPUT` correctly returns a numeric missing for this</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data converted;
+    set raw_import;
+    age    = input(age_char,    8.);
+    weight = input(weight_char, 8.);
+    drop age_char weight_char;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+data converted;
+set raw_import;
+age    = input(age_char,    8.);
+weight = input(weight_char, 8.);
+drop age_char weight_char;
+run;
+ 
+NOTE: There were 4 observations read from the data set WORK.RAW_IMPORT.
+NOTE: The data set WORK.CONVERTED has 4 observations and 4 variables.
+NOTE: Compressing data set WORK.CONVERTED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `converted` and confirm that `age` and `weight` are numeric variables</li>
+<li>Subject 004 should have a missing numeric value for `weight` because the source was a dot</li>
+<li>You can verify variable types by running `proc contents data=converted;` and checking the TYPE column</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L103_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Convert a character date to a SAS date value
+</h2>
+ 
+<ul>
+<li>Date values stored as text such as `15JAN2024` must be read with a date informat that matches the text format</li>
+<li>`date9.` reads dates in DDMonYYYY format such as `15JAN2024`</li>
+<li>The result is a numeric SAS date value (the number of days since 1 January 1960)</li>
+<li>Always assign a DATE format to the resulting variable so it displays as a readable date rather than a raw number</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data with_dates;
+    set raw_import;
+    visit_date = input(visit_date_char, date9.);
+    format visit_date date9.;
+    drop visit_date_char;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="29">
+data with_dates;
+set raw_import;
+visit_date = input(visit_date_char, date9.);
+format visit_date date9.;
+drop visit_date_char;
+run;
+ 
+NOTE: Invalid argument to function INPUT at line 1102039 column 18.
+SUBJECT=001 AGE_CHAR=28 WEIGHT_CHAR=75.5 VISIT_DATE_CHAR=15JAN202 VISIT_DATE=. _ERROR_=1 _N_=1
+NOTE: Invalid argument to function INPUT at line 1102039 column 18.
+SUBJECT=002 AGE_CHAR=35 WEIGHT_CHAR=80.2 VISIT_DATE_CHAR=22JAN202 VISIT_DATE=. _ERROR_=1 _N_=2
+NOTE: Invalid argument to function INPUT at line 1102039 column 18.
+SUBJECT=003 AGE_CHAR=22 WEIGHT_CHAR=65.0 VISIT_DATE_CHAR=01FEB202 VISIT_DATE=. _ERROR_=1 _N_=3
+NOTE: Invalid argument to function INPUT at line 1102039 column 18.
+SUBJECT=004 AGE_CHAR=41 WEIGHT_CHAR=  VISIT_DATE_CHAR=08FEB202 VISIT_DATE=. _ERROR_=1 _N_=4
+NOTE: Mathematical operations could not be performed at the following places. The results of the operations have been set to missing values.
+Each place is given by: (Number of times) at (Line):(Column).
+4 at 1102039:18
+NOTE: There were 4 observations read from the data set WORK.RAW_IMPORT.
+NOTE: The data set WORK.WITH_DATES has 4 observations and 4 variables.
+NOTE: Compressing data set WORK.WITH_DATES increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `with_dates` and confirm that `visit_date` is a numeric variable with a DATE9 format applied</li>
+<li>The display should show the original date strings back in readable form because the format and informat match</li>
+<li>Now that `visit_date` is a true SAS date it supports arithmetic such as computing days between dates</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L103_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h1>
+The PUT function - numeric to character
+</h1>
+ 
+<h2>
+PUT function syntax
+</h2>
+ 
+<ul>
+<li>The PUT function has the form: `PUT(source, format)`</li>
+<li>`source` is the numeric variable or expression to convert</li>
+<li>`format` controls how the number is rendered as text — for plain numbers use `best32.` or a specific width such as `8.`, and for dates use a date display format such as `date9.`</li>
+<li>The result is a character string</li>
+<li>Unlike INPUT, PUT always succeeds — it simply renders the numeric value as text using the format you specify</li>
+</ul>
+ 
+<h2>
+Convert a numeric code to a character label
+</h2>
+ 
+<ul>
+<li>A common use of PUT is to convert numeric flag or code variables to character labels for reporting or for creating a new flag variable</li>
+<li>Here we apply a user-defined format to decode numeric sex codes and result codes into readable text</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="12">
+proc format;
+    value sexfmt  1='Male' 2='Female';
+    value resfmt  0='Negative' 1='Positive';
+run;
+ 
+data decoded;
+    set coded_data;
+    sex_label    = put(sex_code,    sexfmt.);
+    result_label = put(result_code, resfmt.);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="30">
+proc format;
+value sexfmt  1='Male' 2='Female';
+NOTE: Format SEXFMT has been output.
+value resfmt  0='Negative' 1='Positive';
+NOTE: Format RESFMT has been output.
+run;
+ 
+NOTE: PROCEDURE FORMAT used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data decoded;
+set coded_data;
+sex_label    = put(sex_code,    sexfmt.);
+result_label = put(result_code, resfmt.);
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.CODED_DATA.
+NOTE: The data set WORK.DECODED has 5 observations and 5 variables.
+NOTE: Compressing data set WORK.DECODED increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `decoded` and confirm that the `sex_label` and `result_label` columns contain character strings, not numeric values</li>
+<li>Subject 005 has a missing `result_code` — PUT with a user-defined format applied to numeric missing returns a blank character string by default</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L103_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h2>
+Convert a SAS date to a character string
+</h2>
+ 
+<ul>
+<li>Sometimes a SAS date needs to be stored as a character string — for example when building a file name suffix or when concatenating into a title or label</li>
+<li>PUT with a date display format converts the numeric date to text in the chosen layout</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="8">
+data date_as_text;
+    set with_dates;
+    date_str_9   = put(visit_date, date9.);
+    date_str_yymd = put(visit_date, yymmddd10.);
+    drop age_char weight_char visit_date_char;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+data date_as_text;
+set with_dates;
+date_str_9   = put(visit_date, date9.);
+date_str_yymd = put(visit_date, yymmddd10.);
+drop age_char weight_char visit_date_char;
+run;
+ 
+WARNING: The variable VISIT_DATE_CHAR in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: There were 4 observations read from the data set WORK.WITH_DATES.
+NOTE: The data set WORK.DATE_AS_TEXT has 4 observations and 4 variables.
+NOTE: Compressing data set WORK.DATE_AS_TEXT increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`date_str_9` stores the date in DDMonYYYY format such as `15JAN2024`</li>
+<li>`date_str_yymd` stores the date in YYYY-MM-DD format such as `2024-01-15`</li>
+<li>Both variables are character strings, not dates — they cannot be used in date arithmetic but are useful for display, file naming, or text concatenation</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L103_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+Convert numeric to a padded character string using the Z format
+</h2>
+ 
+<ul>
+<li>A practical use of PUT is creating zero-padded ID strings from numeric values</li>
+<li>For example, a subject ID stored as a number such as 1 can be padded to `001` using the Z format</li>
+</ul>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="11">
+data padded_ids;
+    input num_id;
+    char_id = put(num_id, z3.);
+    datalines;
+1
+10
+100
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+data padded_ids;
+input num_id;
+char_id = put(num_id, z3.);
+datalines;
+ 
+NOTE: Compression was disabled for data set WORK.PADDED_IDS because compression overhead would increase the size of the data set.
+NOTE: The data set WORK.PADDED_IDS has 3 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The `z3.` format produces a 3-character zero-padded result so 1 becomes `001` and 10 becomes `010`</li>
+<li>Inspect `padded_ids` and confirm the character lengths and zero-padding are correct</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_FUNCTIONS_L103_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`INPUT(source, informat)` converts character to numeric — always specify an informat that matches the text format of the source</li>
+<li>`PUT(source, format)` converts numeric to character — always specify a format that produces the text representation you need</li>
+<li>For date conversion: use `INPUT` with a date informat to read text dates into SAS date values, and `PUT` with a date format to display SAS date values as text</li>
+<li>After INPUT the result is a numeric variable — assign a FORMAT statement if you want it to display as a date or formatted number</li>
+<li>After PUT the result is a character variable — it supports string operations but not date arithmetic</li>
+<li>Avoid relying on SAS automatic conversion which generates WARNING messages and may produce unexpected results in edge cases</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

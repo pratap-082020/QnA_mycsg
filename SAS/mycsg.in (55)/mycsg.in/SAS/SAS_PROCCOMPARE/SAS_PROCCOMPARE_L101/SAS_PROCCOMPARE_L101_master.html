@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCCOMPARE_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+ 
+<h1>
+Introduction
+</h1>
+ 
+<ul>
+<li>The word meaning of 'compare' is 'estimate, measure, or note the similarity or dissimilarity between entities.' </li>
+<li>In Clinical SAS programming, we must compare two independent versions of the datasets for quality control purposes</li>
+</ul>
+ 
+<h2>
+What can differ between two datasets
+</h2>
+ 
+<ul>
+<li>Names of the datasets</li>
+<li>Date/time of creation</li>
+<li>Date/time of modification</li>
+<li>Number of variables in the datasets</li>
+<li>Number of observations in the datasets</li>
+<li>Number of variables could be same but the names could differ</li>
+<li>Number of variables and their names could also be same - but have different data type</li>
+<li>Number of variables and their names could be same - but attributes like label, length, format, informat could differ</li>
+<li>Number of observations could be same - but the values may not be same (eg: could be of different subjects altogether)</li>
+<li>Some observations could be common based on key identifier variables but values differ on other variables </li>
+</ul>
+ 
+<h2>
+How do we check (compare) any differences between two datasets?
+</h2>
+<h3>
+Answer is our compare procedure
+</h3>
+ 
+<ul>
+<li>It can be used to compare two different datasets - with one dataset called base dataset, and other called the compare dataset</li>
+<li>It gives a comparison report in three levels. <br>1) Dataset summary <br>2) Variables summary <br>3) Observation summary </li>
+<li>In dataset level summary:<br>- it gives the names of base and compare datasets<br>- creation time<br>- modified time<br>- number of variables and <br>- number of observations</li>
+<li>In variables summary:<br> - it gives the number of common variables <br>- lists the variables which are exclusive to either of the datasets<br>- lists the variables which share same name but differing data type<br>- lists the differences in attributes of the variables</li>
+</ul>
+ 
+<h1>
+Lets understand 'variable summary' section
+</h1>
+ 
+<h2>
+Create sample data
+</h2>
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="35">
+ 
+data dm;
+    infile cards truncover dlm="|";
+    length domain $2 usubjid $5 sex $3;
+    input usubjid$ sex$ age$;
+    domain="DM";
+    label usubjid="Unique Subject Identifier";
+cards;
+1001|M|72
+1002|F|65
+1003|F|45
+1004|M|40
+1005|F|35
+1006|F|6
+1007|F|5
+;
+run;
+ 
+ 
+data qc_dm;
+    infile cards truncover dlm="|";
+    length domin $2;
+    input usubjid$ sex$ age;
+    domin="DM";
+cards;
+1001|M|72
+1002|F|65
+1003|F|45
+1004|M|40
+1005|M|35
+1008|M|2
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="36">
+ 
+data dm;
+infile cards truncover dlm="|";
+length domain $2 usubjid $5 sex $3;
+input usubjid$ sex$ age$;
+domain="DM";
+label usubjid="Unique Subject Identifier";
+cards;
+ 
+NOTE: The data set WORK.DM has 7 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+ 
+data qc_dm;
+infile cards truncover dlm="|";
+length domin $2;
+input usubjid$ sex$ age;
+domin="DM";
+cards;
+ 
+NOTE: The data set WORK.QC_DM has 6 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+ 
+<h2>
+Examine the default output produced
+</h2>
+ 
+<ul>
+<li>We need to specify the name of the first dataset using base= option on compare statement</li>
+<li>We need to specify the name of the second dataset using compare= option on compare statement</li>
+<li>We get the compare output by default in output window or results viewer window</li>
+<li>Expand the variable summary screenshot section to see the annotated compare output</li>
+<li>In the below code, we are also exporting the metadata using proc contents for both the datasets into two separate datasets </li>
+</ul>
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="11">
+proc compare base=dm compare=qc_dm;
+run;
+ 
+proc contents data=dm out=dm_cont01 noprint;
+run;
+ 
+proc contents data=qc_dm out=qc_dm_cont01 noprint;
+run;
+ 
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="33">
+proc compare base=dm compare=qc_dm;
+run;
+ 
+NOTE: There were 7 observations read from the data set WORK.DM.
+NOTE: There were 6 observations read from the data set WORK.QC_DM.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc contents data=dm out=dm_cont01 noprint;
+run;
+ 
+NOTE: The data set WORK.DM_CONT01 has 4 observations and 41 variables.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc contents data=qc_dm out=qc_dm_cont01 noprint;
+run;
+ 
+NOTE: The data set WORK.QC_DM_CONT01 has 4 observations and 41 variables.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+</textarea></div></div></div></div>
+ 
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1001">Default variable summary screenshot</button><div class="modal fade" id="imgModal1001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Default variable summary screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1001.png" alt="Default variable summary screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCCOMPARE_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+What if we want to see the list of variables which are not common?
+</h2>
+ 
+<ul>
+<li>We have an option called listvar on compare statement</li>
+<li>This option tells the procedure to display the names of the variables which are exclusive to either of the domains</li>
+</ul>
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc compare base=dm compare=qc_dm listvar;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc compare base=dm compare=qc_dm listvar;
+run;
+ 
+NOTE: There were 7 observations read from the data set WORK.DM.
+NOTE: There were 6 observations read from the data set WORK.QC_DM.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1002">List of not common variables screenshot</button><div class="modal fade" id="imgModal1002" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">List of not common variables screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1002.png" alt="List of not common variables screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+ 
+<h1>
+Lets understand observation summary section
+</h1>
+ 
+<ul>
+<li>We have seen above that the variables between two datasets can be <br>- common name and data type <br>- common name and different data type<br>- common name, data type but differing attributes<br>- exclusively present only in one of the datasets</li>
+<li>It is also possible that the number of observations between two datasets are different</li>
+<li>Comparison of observations occurs based on observation position in each dataset<br>- first observation of base dataset will be compared with first observation of compare dataset<br>- second observation of base dataset will be compared with second observation of compare dataset<br>- and so on till the end</li>
+<li>How is each observation compared?<br>- we know that each observation is a combination of values present in all variables on that row<br>- values present in each variable on an observation is compared and reported if there is a mismatch</li>
+<li>When the number of observations differ, the comparison happens only till the highest observation number in the dataset with lesser number of observations. </li>
+<li>For example, if base dataset has 10 observations and compare dataset has 8 observations - value comparison on variables occur only till 8 observations of base dataset</li>
+<li>Only those variables that have same name and data type between the two datasets will be compared</li>
+<li>Mismatches in variables on observations are listed in a section called 'Value Comparison Summary for Variables' </li>
+<li> </li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="4">
+proc compare base=dm compare=qc_dm;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="12">
+proc compare base=dm compare=qc_dm;
+run;
+ 
+NOTE: There were 7 observations read from the data set WORK.DM.
+NOTE: There were 6 observations read from the data set WORK.QC_DM.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1003">Default observation summary screenshot</button><div class="modal fade" id="imgModal1003" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Default observation summary screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1003.png" alt="Default observation summary screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1004">Value Comparison Summary screenshot</button><div class="modal fade" id="imgModal1004" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Value Comparison Summary screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1004.png" alt="Value Comparison Summary screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+What if we want to compare the observations based on matching values in some variables?
+</h1>
+ 
+<ul>
+<li>We can do that using id statement</li>
+<li>We can specify a list of variables on the id statement</li>
+<li>Instead of comparing based on observation position, now observation from base dataset will be compared with the observation having same values on id variables in compare dataset</li>
+<li>If USUBJID is listed as an id variable - record with 1001 in USUBJID in base dataset will be compared with record having a value of 1001 in USUBJID in compare dataset</li>
+<li>Both base and compare datasets should be sorted by the variables specified on id statement</li>
+<li>Number of observations with matching id values in both the datasets will be displayed in the observation summary section  </li>
+<li>Number of observations which are exclusive to either base or compare dataset will also be displayed</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="13">
+proc sort data=dm;
+    by usubjid;
+run;
+ 
+proc sort data=qc_dm;
+    by usubjid;
+run;
+ 
+proc compare base=dm compare=qc_dm;
+id usubjid;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="37">
+proc sort data=dm;
+by usubjid;
+run;
+ 
+NOTE: There were 7 observations read from the data set WORK.DM.
+NOTE: The data set WORK.DM has 7 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+proc sort data=qc_dm;
+by usubjid;
+run;
+ 
+NOTE: There were 6 observations read from the data set WORK.QC_DM.
+NOTE: The data set WORK.QC_DM has 6 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+real time           0.00 seconds
+cpu time            0.01 seconds
+ 
+ 
+ 
+proc compare base=dm compare=qc_dm;
+id usubjid;
+run;
+ 
+NOTE: There were 7 observations read from the data set WORK.DM.
+NOTE: There were 6 observations read from the data set WORK.QC_DM.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCCOMPARE_L101_filterable_data_02.html"></iframe></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1004">Value Comparison Summary screenshot</button><div class="modal fade" id="imgModal1004" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Value Comparison Summary screenshot</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1004.png" alt="Value Comparison Summary screenshot" class="img-fluid lesson-modal-image"></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1005">Value Comparison Summary with ID statement</button><div class="modal fade" id="imgModal1005" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Value Comparison Summary with ID statement</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1005.png" alt="Value Comparison Summary with ID statement" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+What if we want to see the observations which do not have a matching record in either base or compare dataset?
+</h1>
+ 
+<ul>
+<li>We can make use of listall option on proc compare statement</li>
+<li>One feature of Listall option is to display the observations which do not have a in between base and compare datasets</li>
+</ul>
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc compare base=dm compare=qc_dm listall;
+id usubjid;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc compare base=dm compare=qc_dm listall;
+id usubjid;
+run;
+ 
+NOTE: There were 7 observations read from the data set WORK.DM.
+NOTE: There were 6 observations read from the data set WORK.QC_DM.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1006">List of observations which are not common to both datasets</button><div class="modal fade" id="imgModal1006" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">List of observations which are not common to both datasets</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1006.png" alt="List of observations which are not common to both datasets" class="img-fluid lesson-modal-image"></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCCOMPARE_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+ 
+<h1>
+How does/should a clean compare look like?
+</h1>
+ 
+ 
+<h2>
+Fix the issues in input datasets used so far - for demonstration - creating the same data with different names
+</h2>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="33">
+ 
+data dm1(label="Demographics");
+    infile cards truncover dlm="|";
+    length domain $2 usubjid $5 sex $3;
+    input usubjid$ sex$ age$;
+    domain="DM";
+    label usubjid="Unique Subject Identifier";
+cards;
+1001|M|72
+1002|F|65
+1003|F|45
+1004|M|40
+1005|F|35
+;
+run;
+ 
+ 
+data qc_dm1(label="Demographics");
+    infile cards truncover dlm="|";
+    length domain $2 usubjid $5 sex $3;
+    input usubjid$ sex$ age$;
+    domain="DM";
+    label usubjid="Unique Subject Identifier";
+cards;
+1001|M|72
+1002|F|65
+1003|F|45
+1004|M|40
+1005|F|35
+;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="37">
+ 
+data dm1(label="Demographics");
+infile cards truncover dlm="|";
+length domain $2 usubjid $5 sex $3;
+input usubjid$ sex$ age$;
+domain="DM";
+label usubjid="Unique Subject Identifier";
+cards;
+ 
+NOTE: The data set WORK.DM1 has 5 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+ 
+ 
+data qc_dm1(label="Demographics");
+infile cards truncover dlm="|";
+length domain $2 usubjid $5 sex $3;
+input usubjid$ sex$ age$;
+domain="DM";
+label usubjid="Unique Subject Identifier";
+cards;
+ 
+NOTE: The data set WORK.QC_DM1 has 5 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+;
+run;
+</textarea></div></div></div></div>
+ 
+<h2>
+Run compare with listall option and using id statement
+</h2>
+ 
+<ul>
+<li>Number of variables should match</li>
+<li>Number of observations should match </li>
+<li>Number of observations common to both the datasets should match (because, the number of observations may be the same but differ on values in id variables)</li>
+<li>All variables should be common to both the datasets</li>
+<li>All variables should be of same data type</li>
+<li>Attributes (length, label, format) of all variables should match</li>
+<li>Values on all variables should match</li>
+<li>Note that proc compare cannot identify the difference in order(position) of variables in the dataset</li>
+</ul>
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc compare base=dm1 compare=qc_dm1 listall;
+    id usubjid;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="13">
+proc compare base=dm1 compare=qc_dm1 listall;
+id usubjid;
+run;
+ 
+NOTE: There were 5 observations read from the data set WORK.DM1.
+NOTE: There were 5 observations read from the data set WORK.QC_DM1.
+NOTE: PROCEDURE COMPARE used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1008">Screenshot of a clean compare</button><div class="modal fade" id="imgModal1008" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Screenshot of a clean compare</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_PROCCOMPARE_L101_1008.png" alt="Screenshot of a clean compare" class="img-fluid lesson-modal-image"></div></div></div></div>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCCOMPARE_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+</div></body>
+
+</html>
+
+

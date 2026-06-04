@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_PROCUNIVARIATE_L102
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+PROC UNIVARIATE - Part 02: HISTOGRAM, QQPLOT, and Normality Testing
+</h1>
+ 
+<h2>
+Overview
+</h2>
+ 
+<ul>
+<li>Part 01 covered the core statistical summary produced by PROC UNIVARIATE: moments, percentiles, extreme observations, the OUTPUT= statement, and merging summary statistics back to detail data.</li>
+<li>This lesson focuses on the graphical and distributional testing capabilities: producing histograms, Q-Q plots, and formal normality test statistics.</li>
+<li>These tools are used to assess whether a variable follows a normal (Gaussian) distribution — an assumption required by many parametric statistical tests.</li>
+<li>Note: PROC UNIVARIATE produces traditional SAS/GRAPH or ODS Graphics output depending on your SAS environment. The code shown here uses ODS Graphics which is the modern default in SAS 9.2 and later.</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="12">
+/* Create a sample dataset with two variables:
+   one approximately normal, one right-skewed */
+data work.measures;
+    call streaminit(42);
+    do subject = 1 to 50;
+        normal_val  = round(rand('normal', 100, 15), 0.1);
+        skewed_val  = round(rand('exponential') * 30 + 10, 0.1);
+        output;
+    end;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="19">
+/* Create a sample dataset with two variables:
+one approximately normal, one right-skewed */
+data work.measures;
+call streaminit(42);
+do subject = 1 to 50;
+normal_val  = round(rand('normal', 100, 15), 0.1);
+skewed_val  = round(rand('exponential') * 30 + 10, 0.1);
+output;
+end;
+run;
+ 
+NOTE: The data set WORK.MEASURES has 50 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>CALL STREAMINIT(42) sets a random number seed for reproducibility — running this code will produce the same dataset every time.</li>
+<li>RAND('normal', mean, std) generates values from a normal distribution with the specified mean and standard deviation.</li>
+<li>RAND('exponential') generates values from an exponential distribution which is inherently right-skewed — a useful contrast for demonstrating normality tests.</li>
+<li>Inspect WORK.MEASURES to see the two variables before running any analysis.</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_PROCUNIVARIATE_L102_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h2>
+HISTOGRAM Statement
+</h2>
+ 
+<ul>
+<li>The HISTOGRAM statement in PROC UNIVARIATE produces a graphical display of the distribution of a variable.</li>
+<li>By default, it uses automatic bin widths. You can overlay a normal distribution curve using the NORMAL option to visually assess how closely the data follow a normal shape.</li>
+<li>The MIDPOINTS= option specifies exact bin midpoints if you want to control the histogram bins manually.</li>
+<li>A histogram that is roughly bell-shaped and symmetric is consistent with normality; long tails, sharp peaks, or asymmetry suggest non-normality.</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="11">
+ods graphics on;
+ 
+proc univariate data=work.measures;
+    var normal_val skewed_val;
+    histogram / normal;
+    inset mean std / position=ne;
+run;
+ 
+ods graphics off;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="17">
+ods graphics on;
+ 
+proc univariate data=work.measures;
+var normal_val skewed_val;
+histogram / normal;
+inset mean std / position=ne;
+run;
+ 
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.93 seconds
+cpu time            0.32 seconds
+ 
+ 
+ 
+ods graphics off;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>ODS GRAPHICS ON enables the modern graphical output system. ODS GRAPHICS OFF closes it after the procedure to avoid leaving it active for subsequent steps.</li>
+<li>The NORMAL option on the HISTOGRAM statement overlays a fitted normal distribution curve on the histogram bars. This makes it easy to see whether the data shape matches the normal curve.</li>
+<li>INSET MEAN STD / POSITION=NE adds a small statistics box in the northeast corner of the plot showing the mean and standard deviation.</li>
+<li>Examine the histogram for normal_val — it should appear roughly bell-shaped. The histogram for skewed_val will show a long right tail, inconsistent with the overlaid normal curve.</li>
+</ul>
+ 
+<h2>
+Q-Q Plot (Quantile-Quantile Plot)
+</h2>
+ 
+<ul>
+<li>A Q-Q plot compares the quantiles of your data against the theoretical quantiles of a normal distribution.</li>
+<li>If the data are normally distributed, the points on the Q-Q plot should fall approximately along a straight diagonal reference line.</li>
+<li>Deviations from the line indicate non-normality: an S-shaped curve suggests heavy tails or light tails; a curved pattern suggests skewness.</li>
+<li>The QQPLOT statement in PROC UNIVARIATE generates a Q-Q plot. The NORMAL option overlays the reference line for the fitted normal distribution.</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="10">
+ods graphics on;
+ 
+proc univariate data=work.measures;
+    var normal_val skewed_val;
+    qqplot / normal(mu=est sigma=est);
+run;
+ 
+ods graphics off;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="16">
+ods graphics on;
+ 
+proc univariate data=work.measures;
+var normal_val skewed_val;
+qqplot / normal(mu=est sigma=est);
+run;
+ 
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.40 seconds
+cpu time            0.12 seconds
+ 
+ 
+ 
+ods graphics off;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>MU=EST and SIGMA=EST instruct SAS to estimate the mean and standard deviation from the data (rather than requiring you to specify them manually) and use those estimates for the reference line.</li>
+<li>For normal_val, the points should cluster closely around the diagonal reference line — minor deviations at the tails are expected with small samples.</li>
+<li>For skewed_val, the points will curve away from the reference line, especially in the upper tail, confirming the right-skewed distribution.</li>
+<li>Q-Q plots are generally more sensitive to distributional departures than histograms, particularly in the tails, making them a valuable complement to the histogram.</li>
+</ul>
+ 
+<h2>
+Formal Normality Tests with the NORMAL Option
+</h2>
+ 
+<ul>
+<li>Visual assessment of histograms and Q-Q plots is subjective. PROC UNIVARIATE also provides formal statistical tests for normality.</li>
+<li>Add the NORMAL option to the PROC UNIVARIATE statement to produce four normality test statistics in the output.</li>
+<li>The four tests are: Shapiro-Wilk (recommended for n less than 2000), Kolmogorov-Smirnov, Cramer-von Mises, and Anderson-Darling.</li>
+<li>The null hypothesis for all four tests is that the data are normally distributed. A small p-value (typically less than 0.05) leads to rejecting the null hypothesis and concluding non-normality.</li>
+<li>With large sample sizes, these tests become very sensitive and may flag minor, inconsequential departures from normality — always combine test results with visual assessment.</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="5">
+proc univariate data=work.measures normal;
+    var normal_val skewed_val;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="11">
+proc univariate data=work.measures normal;
+var normal_val skewed_val;
+run;
+ 
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Look for the "Tests for Normality" table in the output for each variable.</li>
+<li>For normal_val, the p-values for all four tests should be large (well above 0.05), indicating no evidence against normality.</li>
+<li>For skewed_val, the p-values should be small (below 0.05), indicating that the data are not consistent with a normal distribution.</li>
+<li>The Shapiro-Wilk W statistic ranges from 0 to 1, where values close to 1 indicate normality. A W below 0.9 is often a practical flag of concern.</li>
+</ul>
+ 
+<h2>
+Combining Histogram and QQPLOT in One Step
+</h2>
+ 
+<ul>
+<li>You can include both HISTOGRAM and QQPLOT in a single PROC UNIVARIATE call to get all distributional diagnostics at once.</li>
+<li>This is efficient for a standard normality check routine across multiple variables.</li>
+</ul>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="12">
+ods graphics on;
+ 
+proc univariate data=work.measures normal;
+    var normal_val skewed_val;
+    histogram / normal;
+    qqplot / normal(mu=est sigma=est);
+    inset n mean std skewness kurtosis / position=ne;
+run;
+ 
+ods graphics off;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="18">
+ods graphics on;
+ 
+proc univariate data=work.measures normal;
+var normal_val skewed_val;
+histogram / normal;
+qqplot / normal(mu=est sigma=est);
+inset n mean std skewness kurtosis / position=ne;
+run;
+ 
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+real time           0.85 seconds
+cpu time            0.26 seconds
+ 
+ 
+ 
+ods graphics off;
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>The INSET statement here adds n, mean, standard deviation, skewness, and kurtosis to the histogram plot — a quick distributional summary embedded in the graphic.</li>
+<li>Skewness near 0 and kurtosis near 3 (excess kurtosis near 0) are consistent with normality. Skewness above 1 or below -1 is generally considered a meaningful departure.</li>
+<li>This combined call produces histogram plots, Q-Q plots, and formal test statistics in a single PROC step — the standard approach for a normality assessment in a clinical or statistical analysis program.</li>
+</ul>
+ 
+<h1>
+Key Points
+</h1>
+ 
+<ul>
+<li>HISTOGRAM / NORMAL overlays a fitted normal curve on the distribution bars — a quick visual check of distributional shape.</li>
+<li>QQPLOT / NORMAL(MU=EST SIGMA=EST) plots observed vs theoretical quantiles — points along the diagonal line confirm normality; curves or S-shapes indicate departures.</li>
+<li>Adding NORMAL to the PROC UNIVARIATE statement produces four formal normality test statistics including the Shapiro-Wilk W test which is recommended for sample sizes below 2000.</li>
+<li>A p-value below 0.05 in the normality tests rejects the null hypothesis of normality — but with large samples, even trivial departures become significant, so always use visual assessment alongside formal tests.</li>
+<li>Always enclose ODS GRAPHICS ON and ODS GRAPHICS OFF around PROC UNIVARIATE graphical output to control when the graphical system is active.</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

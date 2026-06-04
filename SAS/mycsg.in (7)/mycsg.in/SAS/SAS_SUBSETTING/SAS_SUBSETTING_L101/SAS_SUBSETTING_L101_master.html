@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_SUBSETTING_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is the word meaning of subset
+</h1>
+ 
+<ol>
+<li>A part of a larger group of related things.</li>
+</ol>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal1001">Subset observations from a dataset</button><div class="modal fade" id="imgModal1001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Subset observations from a dataset</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_SUBSETTING_L101_1001.png" alt="Subset observations from a dataset" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h1>
+Where do we need to subset data
+</h1>
+ 
+<ul>
+<li>Subset the records of cars manufactured in a particular continent</li>
+<li>Select only the male student records from the class dataset</li>
+<li>Identify and list the subjects of a clinical trial whose age is greater than 60</li>
+</ul>
+ 
+<h1>
+Create sample input datasets
+</h1>
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="9">
+data class;
+   set sashelp.class;
+run;
+ 
+data cars;
+   set sashelp.cars;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="25">
+data class;
+set sashelp.class;
+run;
+ 
+NOTE: There were 19 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS has 19 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.10 seconds
+cpu time            0.00 seconds
+ 
+ 
+ 
+data cars;
+set sashelp.cars;
+run;
+ 
+NOTE: There were 428 observations read from the data set SASHELP.CARS.
+NOTE: The data set WORK.CARS has 428 observations and 15 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.06 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>`class` and `cars` will be used in the subsetting examples below</li>
+<li>Inspect the input datasets first, so you can clearly see which rows are retained by each subsetting technique</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+<h1>
+Subset records using the WHERE statement
+</h1>
+ 
+<ul>
+<li>The `where` statement filters observations based on a condition</li>
+<li>Only observations that meet the condition are read from the input dataset into the DATA step processing stream</li>
+<li>This can be more efficient than reading all observations and discarding some later</li>
+</ul>
+ 
+<h2>
+Create a dataset named males by subsetting the male student records from class dataset
+</h2>
+ 
+<ul>
+<li>Notice in the log the number of observations read and written</li>
+<li>Only observations with `sex="M"` are selected</li>
+</ul>
+ 
+<textarea id="codeBlock2" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data males;
+   set class;
+   where sex="M";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock2" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal2">View Log</button><div class="modal fade" id="logModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data males;
+set class;
+where sex="M";
+run;
+ 
+NOTE: There were 10 observations read from the data set WORK.CLASS.
+WHERE sex='M';
+NOTE: The data set WORK.MALES has 10 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `males` and confirm that all retained observations are male students</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal2">View Data</button><div class="modal fade" id="dataModal2" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_02.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named females_preteen by subsetting female student records whose age is less than 13
+</h2>
+ 
+<ul>
+<li>Here, the filter depends on two variables, `sex` and `age`</li>
+<li>The conditions are combined with `and` because both must be true</li>
+</ul>
+ 
+<textarea id="codeBlock3" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data females_preteen;
+   set class;
+   where sex="F" and age lt 13;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock3" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal3">View Log</button><div class="modal fade" id="logModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data females_preteen;
+set class;
+where sex="F" and age lt 13;
+run;
+ 
+NOTE: There were 3 observations read from the data set WORK.CLASS.
+WHERE (sex='F') and (age<13);
+NOTE: The data set WORK.FEMALES_PRETEEN has 3 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.12 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Verify that every retained observation is female and younger than 13</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal3">View Data</button><div class="modal fade" id="dataModal3" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_03.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named cars_mileage by subsetting cars with mpg_city greater than 24 or mpg_highway greater than 30
+</h2>
+ 
+<ul>
+<li>This example combines two conditions with `or` because a row is retained when at least one condition is true</li>
+<li>Such compound conditions are common in real filtering tasks</li>
+</ul>
+ 
+<textarea id="codeBlock4" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data cars_mileage;
+   set cars;
+   where mpg_city gt 24 or mpg_highway gt 30;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock4" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal4">View Log</button><div class="modal fade" id="logModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data cars_mileage;
+set cars;
+where mpg_city gt 24 or mpg_highway gt 30;
+run;
+ 
+NOTE: There were 83 observations read from the data set WORK.CARS.
+WHERE (mpg_city>24) or (mpg_highway>30);
+NOTE: The data set WORK.CARS_MILEAGE has 83 observations and 15 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect the retained rows and confirm that each car satisfies at least one of the two mileage conditions</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal4">View Data</button><div class="modal fade" id="dataModal4" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_04.html"></iframe></div></div></div></div>
+ 
+<h1>
+Subset records using a subsetting IF statement
+</h1>
+ 
+<ul>
+<li>When a subsetting IF statement is used, SAS first reads the observation into the PDV and then evaluates the condition</li>
+<li>If the expression evaluates to false, SAS returns to the top of the DATA step without writing the observation</li>
+<li>This is a flexible approach because the IF condition can use variables created earlier in the same DATA step</li>
+</ul>
+ 
+<h2>
+Create a dataset named females by subsetting female records using a subsetting IF statement
+</h2>
+ 
+<textarea id="codeBlock5" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data females;
+   set class;
+   if sex="F";
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock5" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal5">View Log</button><div class="modal fade" id="logModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data females;
+set class;
+if sex="F";
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.FEMALES has 9 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.04 seconds
+cpu time            0.01 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Compare `females` with the earlier WHERE example, and note that the final selected rows can be the same even though processing differs internally</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal5">View Data</button><div class="modal fade" id="dataModal5" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_05.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named select_sedans by subsetting Sedan cars with highway mileage greater than 35 using subsetting IF
+</h2>
+ 
+<textarea id="codeBlock6" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data select_sedans;
+   set cars;
+   if type="Sedan" and mpg_highway gt 35;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock6" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal6">View Log</button><div class="modal fade" id="logModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data select_sedans;
+set cars;
+if type="Sedan" and mpg_highway gt 35;
+run;
+ 
+NOTE: There were 428 observations read from the data set WORK.CARS.
+NOTE: The data set WORK.SELECT_SEDANS has 19 observations and 15 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal6">View Data</button><div class="modal fade" id="dataModal6" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_06.html"></iframe></div></div></div></div>
+ 
+<h2>
+Create a dataset named cheap_mileage by subsetting cars with msrp less than 15000 or city mileage greater than 40 using subsetting IF
+</h2>
+ 
+<textarea id="codeBlock7" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data cheap_mileage;
+   set cars;
+   if msrp lt 15000 or mpg_city gt 40;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock7" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal7">View Log</button><div class="modal fade" id="logModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data cheap_mileage;
+set cars;
+if msrp lt 15000 or mpg_city gt 40;
+run;
+ 
+NOTE: There were 428 observations read from the data set WORK.CARS.
+NOTE: The data set WORK.CHEAP_MILEAGE has 40 observations and 15 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.01 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal7">View Data</button><div class="modal fade" id="dataModal7" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_07.html"></iframe></div></div></div></div>
+ 
+<h1>
+Subset records using IF THEN OUTPUT
+</h1>
+<ul>
+<li>The `output` statement tells SAS to write the current contents of the PDV to the output dataset</li>
+<li>With `if condition then output;`, we explicitly write only rows that satisfy the condition</li>
+<li>This pattern is useful when one DATA step may write different observations to different output datasets</li>
+</ul>
+ 
+<h2>
+Create a dataset named tall by subsetting students with height greater than 60 using IF THEN OUTPUT
+</h2>
+ 
+<textarea id="codeBlock8" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data tall;
+   set class;
+   if height gt 60 then output;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock8" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal8">View Log</button><div class="modal fade" id="logModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data tall;
+set class;
+if height gt 60 then output;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.TALL has 12 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Inspect `tall` and confirm that every student has height greater than 60</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal8">View Data</button><div class="modal fade" id="dataModal8" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_08.html"></iframe></div></div></div></div>
+ 
+<h1>
+Subset records using IF THEN DELETE
+</h1>
+ 
+<ul>
+<li>The `delete` statement tells SAS to discard the current observation and return to the top of the DATA step</li>
+<li>With `if condition then delete;`, we remove unwanted rows instead of explicitly writing wanted rows</li>
+<li>This is especially convenient when it is easier to describe which observations should be excluded</li>
+</ul>
+ 
+<h2>
+Create a dataset named short by subsetting students with height less than 60 using IF THEN DELETE
+</h2>
+ 
+<ul>
+<li>Because we want the short students, we delete observations whose height is greater than or equal to 60</li>
+</ul>
+ 
+<textarea id="codeBlock9" class="codetextarea" spellcheck="false" cols="100" rows="6">
+data short;
+   set class;
+   if height ge 60 then delete;
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock9" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal9">View Log</button><div class="modal fade" id="logModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="14">
+data short;
+set class;
+if height ge 60 then delete;
+run;
+ 
+NOTE: There were 19 observations read from the data set WORK.CLASS.
+NOTE: The data set WORK.SHORT has 7 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Review `short` and confirm that only students with height less than 60 remain</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal9">View Data</button><div class="modal fade" id="dataModal9" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_SUBSETTING_L101_filterable_data_09.html"></iframe></div></div></div></div>
+ 
+<h1>
+Key points to remember
+</h1>
+ 
+<ul>
+<li>`where` filters observations before they are processed in the DATA step</li>
+<li>A subsetting `if` filters after the observation has been read into the PDV</li>
+<li>`if then output` explicitly writes selected observations</li>
+<li>`if then delete` explicitly discards selected observations</li>
+<li>Different subsetting styles can produce the same final result, but differ in processing behavior and flexibility</li>
+</ul>
+ 
+</div></body>
+
+</html>
+
+

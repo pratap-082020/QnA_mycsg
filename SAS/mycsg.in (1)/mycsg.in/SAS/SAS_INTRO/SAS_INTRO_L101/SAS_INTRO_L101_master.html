@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../lesson_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../lesson_scripts.js"></script>
+<title>
+
+SAS_INTRO_L101
+</title></head>
+
+<body>
+
+<div class="lesson-container">
+
+
+<h1 style="font-size:14pt; color:#5F5F5F; background-color:#e6f9ec; display: inline-block;">
+*Copyright @ www.mycsg.in;
+</h1>
+<br/>
+</p>
+ 
+<h1>
+What is a computer
+</h1>
+<ul>
+<li>A computer is a programmable electronic device that accepts input, processes instructions, and produces output</li>
+</ul>
+ 
+<h1>
+What is software
+</h1>
+<ul>
+<li>Software is a collection of instructions that tells a computer how to work</li>
+</ul>
+ 
+<h1>
+What is SAS
+</h1>
+<ul>
+<li>SAS is an integrated system of software solutions used for data entry, retrieval, management, reporting, and statistical analysis</li>
+<li>It can be used to manage data, create reports, perform descriptive analysis, and carry out more advanced statistical procedures</li>
+</ul>
+ 
+<h1>
+What is data
+</h1>
+<ul>
+<li>Data refers to distinct pieces of information collected and stored for a purpose</li>
+</ul>
+ 
+<h1>
+What is data entry
+</h1>
+<ul>
+<li>Data entry is the task of entering or updating data in a computer system</li>
+</ul>
+ 
+<h1>
+What is data retrieval
+</h1>
+<ul>
+<li>Data retrieval is the process of obtaining stored data for use or review</li>
+</ul>
+ 
+<h1>
+What is data management
+</h1>
+<ul>
+<li>Data management is the collection, storage, organisation, and maintenance of data</li>
+</ul>
+ 
+<h1>
+What is a report
+</h1>
+<ul>
+<li>A report is a structured presentation of information, observations, or findings</li>
+</ul>
+ 
+<h1>
+What is statistics
+</h1>
+<ul>
+<li>Statistics is the branch of mathematics concerned with collecting, organising, analysing, interpreting, and presenting data</li>
+</ul>
+ 
+<h1>
+What is statistical analysis
+</h1>
+<ul>
+<li>Statistical analysis is the process of exploring and summarising data to understand patterns, relationships, and differences</li>
+</ul>
+ 
+<h1>
+How do we use SAS
+</h1>
+<ul>
+<li>We provide instructions to SAS through SAS programs</li>
+<li>Those instructions tell SAS what the input data is, what analysis to perform, and what kind of result or report is needed</li>
+</ul>
+ 
+<h1>
+What kind of questions can SAS help us answer
+</h1>
+<ul>
+<li>Class example: average height, weight, and age of students in a class</li>
+<li>Class example: number of males and females in a class</li>
+<li>Cars example: average, minimum, and maximum mileage for each car maker</li>
+<li>Cars example: number of models available from each car maker</li>
+<li>Clinical trial example: total number of subjects in a study</li>
+<li>Clinical trial example: number of subjects in each treatment group</li>
+<li>Clinical trial example: number of males and females within each treatment group</li>
+</ul>
+ 
+<h1>
+How do we provide instructions to SAS
+</h1>
+<ul>
+<li>SAS includes its own programming language called SAS language</li>
+<li>We provide instructions to SAS in the form of a SAS program written in that language</li>
+</ul>
+ 
+<h1>
+What is a SAS program
+</h1>
+<ul>
+<li>A SAS program is a series of statements that tells SAS what to do</li>
+</ul>
+ 
+<h1>
+What does a SAS program contain
+</h1>
+<ul>
+<li>A SAS program contains one or more instruction sets called steps</li>
+<li>SAS executes one step at a time</li>
+<li>These steps are broadly classified into DATA steps and PROC steps</li>
+</ul>
+ 
+<h1>
+What happens when we execute a SAS program
+</h1>
+<ul>
+<li>SAS checks whether it understands the submitted instructions</li>
+<li>If serious issues are found, execution may stop</li>
+<li>Otherwise, SAS completes the requested processing and produces results or output datasets</li>
+</ul>
+ 
+<h1>
+How does SAS expect data to be organised
+</h1>
+<ul>
+<li>SAS expects data to be in tabular form with rows representing observations and columns representing variables</li>
+<li>An observation contains the collection of values for one entity such as one student, one car, or one subject</li>
+<li>A variable contains the same type of information across observations such as age, sex, or weight</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#imgModal9001">Dataset structure, variables, and observations</button><div class="modal fade" id="imgModal9001" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset structure, variables, and observations</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center"><img src="SAS_INTRO_L101_9001.png" alt="Dataset structure, variables, and observations" class="img-fluid lesson-modal-image"></div></div></div></div>
+ 
+<h2>
+Create a simple example dataset
+</h2>
+ 
+<ul>
+<li>This small example illustrates how rows and columns appear in a SAS dataset</li>
+<li>Review the output dataset and identify the observations and variables</li>
+</ul>
+ 
+<textarea id="codeBlock1" class="codetextarea" spellcheck="false" cols="100" rows="5">
+data class_demo;
+   set sashelp.class(obs=5);
+run;
+</textarea><button type="button" class="btn-copy lesson-action" data-copy-target="codeBlock1" onclick="copyLessonCode(this)">Copy Code</button>
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#logModal1">View Log</button><div class="modal fade" id="logModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">SAS Log</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="logtextarea" spellcheck="false" cols="100" rows="15">
+data class_demo;
+set sashelp.class(obs=5);
+run;
+ 
+NOTE: There were 5 observations read from the data set SASHELP.CLASS.
+NOTE: The data set WORK.CLASS_DEMO has 5 observations and 5 variables.
+NOTE: Compressing data set WORK.CLASS_DEMO increased size by 100.00 percent.
+Compressed is 2 pages; un-compressed would require 1 pages.
+NOTE: DATA statement used (Total process time):
+real time           0.00 seconds
+cpu time            0.00 seconds
+ 
+ 
+</textarea></div></div></div></div>
+ 
+<ul>
+<li>Each row of `class_demo` is one observation</li>
+<li>Each column such as `name`, `sex`, `age`, `height`, and `weight` is a variable</li>
+</ul>
+ 
+<button type="button" class="btn-view lesson-action" data-bs-toggle="modal" data-bs-target="#dataModal1">View Data</button><div class="modal fade" id="dataModal1" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Dataset View</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><iframe class="lesson-data-frame" src="SAS_INTRO_L101_filterable_data_01.html"></iframe></div></div></div></div>
+ 
+</div></body>
+
+</html>
+
+
