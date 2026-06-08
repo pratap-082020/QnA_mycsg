@@ -1,0 +1,207 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_PILOT01\TFL_PILOT01_LTDS001\TFL_PILOT01_LTDS001;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Reading and basic processing of input data
+=========================================================*/
+ 
+data adsl01;
+    set adsl;
+run;
+ 
+/*----------------------------------------------------------
+Creating additional rows to use in total column creation
+----------------------------------------------------------*/
+ 
+data adsl02;
+    set adsl01;
+    treatment=trt01pn;
+    output;
+    if trt01pn in (0,54,81) then do;
+        treatment=99;
+        output;
+    end;
+run;
+ 
+/*=========================================================
+Processing for treatment totals (denominators)
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get denominators into a dataset
+----------------------------------------------------------*/
+proc freq data= adsl02  ;
+    tables   treatment /list missing out=denoms01(rename=(count=denom) drop=percent);
+    where ittfl="Y";
+run;
+ 
+/*----------------------------------------------------------
+Create macro variables to hold the denominator values
+----------------------------------------------------------*/
+ 
+data _null_;
+    set denoms01;
+    call symputx("n"||strip(put(treatment,3.)),denom);
+run;
+ 
+%put n0=&n0 n54=&n54 n81=&n81 n99=&n99 ;
+ 
+/*=========================================================
+Core processing to obtain counts for the table content
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Obtain counts for each row in the table
+----------------------------------------------------------*/
+ 
+proc freq data= adsl02  ;
+    tables  treatment*ittfl  /out=ittfl(where=(ittfl="Y") drop=percent);
+    tables  treatment*saffl  /out=safety(where=(saffl="Y") drop=percent);
+    tables  treatment*efffl  /out=efffl(where=(efffl="Y") drop=percent);
+    tables  treatment*comp24fl  /out=comp24fl(where=(comp24fl="Y") drop=percent);
+    tables  treatment*disconfl  /out=compstudy(where=(disconfl ne "Y") drop=percent);
+run;
+ 
+/*----------------------------------------------------------
+Combine the counts for separate rows into a single dataset
+----------------------------------------------------------*/
+ 
+/*----------------------------------------------------------
+Create an order variable for sorting the data as per table requirement
+----------------------------------------------------------*/
+ 
+/*----------------------------------------------------------
+Create labels as per the table requirement
+----------------------------------------------------------*/
+ 
+data counts01;
+    set ittfl(in=a) safety(in=b) efffl(in=c) comp24fl(in=d) compstudy(in=e);
+ 
+    if a then do;
+        order=1;
+        label="Intent-To-Treat (ITT)";
+    end;
+    else if b then do;
+        order=2;
+        label="Safety";
+    end;
+    else if c then do;
+        order=3;
+        label="Efficacy";
+    end;
+    else if d then do;
+        order=4;
+        label="Complete Week 24";
+    end;
+    else if e then do;
+        order=5;
+        label="Complete Study";
+    end;
+ 
+    keep treatment order label count;
+run;
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get treatment totals into the dataset with table row counts
+----------------------------------------------------------*/
+ 
+proc sort data=counts01;
+    by treatment;
+run;
+ 
+proc sort data=denoms01;
+    by treatment;
+run;
+ 
+data counts02;
+    merge counts01(in=a) denoms01(in=b);
+    by treatment;
+run;
+ 
+/*----------------------------------------------------------
+Calculate percentages and concatenate count and percentage values
+----------------------------------------------------------*/
+ 
+data counts02;
+    set counts02;
+    length cp $30;
+ 
+    cp=put(count,3.)||" ("||put(count/denom*100,5.1)||"%)";
+run;
+ 
+ 
+/*=========================================================
+Transpose data to obtain treatments as columns
+=========================================================*/
+ 
+proc sort data=counts02;
+    by order label;
+run;
+ 
+proc transpose data=counts02 out=trans01 prefix=trt_;
+    by order label;
+    id treatment;
+    var cp;
+run;
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Assign titles and footnotes
+----------------------------------------------------------*/
+ 
+title "Protocol: CDISCPILOT01";
+title2 "Population: All Subjects";
+title3 ;
+title4 "Table 14-1.01";
+title5 "Summary of Populations";
+ 
+footnote "NOTE: N in column headers represents number of subjects entered in study (i.e., signed informed consent).";
+footnote2 "The ITT population includes all subjects randomized. The Safety population includes all randomized";
+footnote3 "subjects known to have taken at least one dose of randomized study drug. The Efficacy population includes";
+footnote4 "all subjects in the safety population who also have at least one post-baseline ADAS-Cog and CIBIC+";
+footnote5 "assessment.";
+ 
+/*----------------------------------------------------------
+Defining layout using proc report and rtf destination specific options
+----------------------------------------------------------*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans01 nowd headline headskip split='~' nocenter;
+    columns order label trt_0 trt_54 trt_81 trt_99;
+ 
+    define order/order noprint;
+    define label/"" style(column)=[cellwidth=2.5in];
+    define trt_0/"Placebo~(N=&n0)" style(column)=[cellwidth=1.5in] ;
+    define trt_54/"Active~Low Dose~(N=&n54)" style(column)=[cellwidth=1.5in];
+    define trt_81/"Active~High Dose~(N=&n81)" style(column)=[cellwidth=1.5in];
+    define trt_99/"Total~(N=&n99)" style(column)=[cellwidth=1.5in];
+ 
+run;
+ 
+ 
+ods rtf close;
+ 
+ 

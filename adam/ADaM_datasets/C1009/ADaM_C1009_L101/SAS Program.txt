@@ -1,0 +1,56 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1009\ADaM_C1009_L101\ADaM_C1009_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+/*----------------------------------------------------------
+create AWTDIFF
+----------------------------------------------------------*/
+ 
+data vs01;
+   set advs;
+   if nmiss(ady,awtarget)=0 then awtdiff=abs(ady-awtarget);
+run;
+/*=========================================================
+Create analysis flag - ANL01FL
+=========================================================*/
+ 
+ 
+proc sort data=vs01;
+   by usubjid paramcd avisitn avisit awtdiff ady;
+run;
+ 
+data vs02;
+   set vs01;
+   by usubjid paramcd avisitn avisit awtdiff ady;
+   if first.avisitn and avisitn ne . then anl01fl="Y";
+run;
+ 
+proc sort data=vs02;
+   by usubjid paramn adt;
+run;
+ 
+ 
+/*=========================================================
+Keep only the required variables and order the variables in a logical sequence
+=========================================================*/
+data output;
+   retain usubjid paramcd param paramn avisitn avisit adt ady anl01fl aval awlo awtarget awhi awtdiff trtsdt ;
+   set vs02;
+   keep usubjid paramcd param paramn avisitn avisit adt ady anl01fl aval awlo awtarget awhi awtdiff trtsdt ;
+run;
+ 
+ 

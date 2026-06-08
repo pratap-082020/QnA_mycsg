@@ -1,0 +1,49 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1010\ADaM_C1010_L131\ADaM_C1010_L131;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Sort the data by timepoint;
+*==============================================================================;
+ 
+proc sort data=adre out=bocf01;
+    by usubjid paramn avisitn;
+run;
+ 
+*==============================================================================;
+*Retain the maximum value seen up to that timepoint (min is worst);
+*==============================================================================;
+ 
+data bocf02;
+   set bocf01;
+   by usubjid paramn avisitn;
+    orig_aval=aval;
+ 
+    retain maxvalue;
+ 
+    if first.paramn then maxvalue=.;
+ 
+    if not missing(aval) then maxvalue=max(aval,maxvalue);
+    else do;
+        aval=maxvalue;
+        if aval ne . then dtype="BOCF";
+    end;
+run;
+ 
+data output;
+    set bocf02;
+    drop maxvalue orig_aval;
+run;
+ 
+ 

@@ -1,0 +1,72 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1010\ADaM_C1010_L111\ADaM_C1010_L111;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data vs;
+   set vs;
+   format adt trtsdt yymmdd10.;
+run;
+ 
+/*=========================================================
+Impute the AVAL value on the collection with missing result using the baseline result
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Create a new variable named tempaval to hold the baseline result
+----------------------------------------------------------*/
+ 
+data baseline;
+   set vs;
+   where avisitn=0;
+   tempaval=aval;
+   keep usubjid paramn tempaval;
+run;
+ 
+/*----------------------------------------------------------
+Populate the tempaval across all records of the parameter of a subject<br/>
+On the postbaseline records with missing result, populate the value from tempaval.
+----------------------------------------------------------*/
+ 
+ 
+proc sort data=vs out=vs01;
+   by usubjid paramn avisitn;
+run;
+ 
+proc sort data=baseline;
+   by usubjid paramn;
+run;
+ 
+data vs02;
+   merge vs01(in=a) baseline(in=b);
+   by usubjid paramn;
+   if a;
+   if aval=. and avisitn gt 0 then do;
+      aval=tempaval;
+      dtype="BLOCF";
+   end;
+run;
+ 
+/*=========================================================
+Keep only the required variables and order the variables in a logical sequence
+=========================================================*/
+data output;
+   retain usubjid paramcd param paramn avisitn avisit adt ady aval dtype trtsdt  ;
+   set vs02;
+   keep usubjid paramcd param paramn avisitn avisit adt ady aval dtype trtsdt  ;
+run;
+ 

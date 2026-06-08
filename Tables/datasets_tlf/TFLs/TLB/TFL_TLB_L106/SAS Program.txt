@@ -1,0 +1,250 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TLB\TFL_TLB_L106\TFL_TLB_L106;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read and process input datasets
+=========================================================*/
+data adlb01;
+   set adlb;
+   where anl02fl="Y" and atoxgrn ne . and btoxgrn ne . and saffl="Y";
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+data adsl01;
+   set adsl;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+ 
+/*=========================================================
+duplicate records for total atoxgrn and btoxgrn
+=========================================================*/
+data adlb02;
+   set adlb01;
+   output;
+   if atoxgrn ne . then do;
+      atoxgrn=6;
+      output;
+   end;
+run;
+ 
+data adlb03;
+   set adlb02;
+   output;
+   if btoxgrn ne . then do;
+      btoxgrn=6;
+      output;
+   end;
+run;
+ 
+ 
+/*=========================================================
+Fetch treatment totals
+=========================================================*/
+ 
+proc freq data=adsl01 noprint;
+   tables treatment/out=denoms(rename=(count=denom) drop=percent);
+run;
+ 
+ 
+/*=========================================================
+Get actual counts in atoxgrn vs btoxgrn
+=========================================================*/
+ 
+proc freq data=adlb03 noprint;
+   tables paramn*param*treatment*atoxgrn*btoxgrn/out=counts01(drop=percent);
+run;
+ 
+ 
+/*=========================================================
+Create dummy to get all levels
+=========================================================*/
+ 
+proc sort data=adlb03 out=dummy01(keep=paramn param) nodupkey;
+   by paramn param;
+run;
+ 
+data dummy02;
+   set dummy01;
+   do treatment=1 to 3;
+      do atoxgrn=0 to 6;
+         do btoxgrn=0 to 6;
+            output;
+         end;
+      end;
+   end;
+run;
+ 
+/*=========================================================
+Merge dummy and actual counts to have all levels in table
+=========================================================*/
+ 
+proc sort data=counts01;
+   by paramn param treatment atoxgrn btoxgrn;
+run;
+ 
+proc sort data=dummy02;
+   by paramn param treatment atoxgrn btoxgrn;
+run;
+ 
+data counts02;
+   merge dummy02 counts01;
+   by paramn param treatment atoxgrn btoxgrn;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Fetch treatment totals into counts dataset
+=========================================================*/
+proc sort data=counts02;
+   by treatment;
+run;
+ 
+data counts03_pre;
+   merge counts02 denoms;
+   by treatment;
+run;
+ 
+/*=========================================================
+Fetch total to total row counts as a column to use as denominator for calculating percentages
+=========================================================*/
+ 
+ 
+data altdenoms;
+   set counts02;
+   where atoxgrn=6 and btoxgrn=6;
+   altdenom=count;
+   keep paramn param treatment altdenom;
+run;
+ 
+proc sort data=counts03_pre;
+   by paramn param treatment;
+run;
+ 
+proc sort data=altdenoms;
+   by paramn param treatment;
+run;
+ 
+data counts03;
+   merge counts03_pre altdenoms;
+   by paramn param treatment;
+run;
+ 
+ 
+/*=========================================================
+Calculate percentage
+=========================================================*/
+ 
+data counts04;
+   set counts03;
+   length cp $30 label $100;
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/altdenom*100,5.1)||")";
+   else cp="  0";
+   if treatment=1 then label="ARM A (N="||cats(denom)||")";
+   else if treatment=2 then label="ARM B (N="||cats(denom)||")";
+   else if treatment=3 then label="Total (N="||cats(denom)||")";
+run;
+ 
+ 
+/*=========================================================
+Transpose the data such that post-baseline toxicity levels become columns
+=========================================================*/
+proc sort data=counts04;
+   by paramn param treatment label btoxgrn atoxgrn;
+run;
+ 
+proc transpose data=counts04 out=trans01 prefix=tox;
+   by paramn param treatment label btoxgrn;
+   id atoxgrn;
+   var cp;
+run;
+ 
+/*=========================================================
+Create labels based on data as per tfl requirement and combine them to actual data
+=========================================================*/
+ 
+data labels;
+  set trans01;
+  by paramn param treatment label;
+  if first.treatment;
+  btoxgrn=-1;
+  keep paramn param treatment label btoxgrn;
+run;
+ 
+data trans02;
+   set trans01(in=a) labels;
+   by paramn param treatment label btoxgrn;
+   if a then label="(*ESC*)\li200 "||cats(btoxgrn);
+   if btoxgrn=6 then label="(*ESC*)\li200 Total";
+run;
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+footnote2 "Percentages are based on subjects with at least one baseline and post-baseline result for a parameter.";
+ 
+title "Shifts in Laboratory Test Results in terms of CTCAE Grades";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd missing
+   style(report)={just=center}
+   style(header)={just=center}
+   style(column)={just=center};
+ 
+   column paramn param treatment btoxgrn label
+     ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=center} Number of Subjects (%)"
+      ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=center} Worst Post-Baseline Value" tox1 tox2 tox3 tox4 tox5 tox6)
+      );
+ 
+   define paramn/order noprint;
+   define treatment/order noprint;
+   define btoxgrn/order noprint order=data;
+ 
+   define param/"Parameter" order style(header)={just=left} style(column)={just=left cellwidth=1in};
+   define label/"Baseline" style(header)={just=left} style(column)={just=left cellwidth=1in};
+   define tox1/"1" style(column)={cellwidth=1in};
+   define tox2/"2" style(column)={cellwidth=1in};
+   define tox3/"3" style(column)={cellwidth=1in};
+   define tox4/"4" style(column)={cellwidth=1in};
+   define tox5/"5" style(column)={cellwidth=1in};
+   define tox6/"Total" style(column)={cellwidth=1in};
+ 
+   break after paramn/page;
+ 
+   compute after treatment;
+      line @1 " ";
+   endcomp;
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+ 

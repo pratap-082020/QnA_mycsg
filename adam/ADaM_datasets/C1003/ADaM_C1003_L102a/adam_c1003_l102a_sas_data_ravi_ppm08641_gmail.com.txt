@@ -1,0 +1,40 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1003_L102a;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data ae;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $40. AEDECOD : $50. AESTDTC : $10. AEENDTC : $10. AESEV : $8. TRTSDT : YYMMDD10. TRTEDT : YYMMDD10.;
+label ;
+format TRTSDT YYMMDD10. TRTEDT YYMMDD10.;;
+datalines4;
+CSG-1001|Headache|2010-01-03|2010-01-04|Moderate|2010-01-06|2010-03-09
+CSG-1001|Headache|2010-01-05|2010-01-05|Mild|2010-01-06|2010-03-09
+CSG-1001|Headache|2010-01-07|2010-01-07|Mild|2010-01-06|2010-03-09
+CSG-1001|Headache|2010-01-10|2010-01-15|Severe|2010-01-06|2010-03-09
+CSG-1001|Nausea|2010-02-01|2010-02-10|Mild|2010-01-06|2010-03-09
+CSG-1001|Pepticuclcer|2009-01-01|2009-10|Moderate|2010-01-06|2010-03-09
+CSG-1001|Neuropathy|2009-05-10|2010-03-01|Mild|2010-01-06|2010-03-09
+CSG-1001|Vomiting|2010-03-03|2010-03-06|Mild|2010-01-06|2010-03-09
+CSG-1001|Diarrhea|2010-04-01|2010-04-03|Mild|2010-01-06|2010-03-09
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

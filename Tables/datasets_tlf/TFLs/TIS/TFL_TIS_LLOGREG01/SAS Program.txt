@@ -1,0 +1,146 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_LLOGREG01\TFL_TIS_LLOGREG01;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Count the number of subjects - denominator;
+*==============================================================================;
+ 
+ 
+proc freq data=adrs   ;
+    tables  trtpn*trtp  /list missing out=subjs01(drop=percent rename=(count=nsubj));
+run;
+ 
+ 
+*==============================================================================;
+*Count the number and percent of responders;
+*==============================================================================;
+ 
+proc freq data=adrs   ;
+    tables  trtpn*trtp  /list missing out=resp01;
+    where avalc="Y";
+run;
+ 
+ 
+*==============================================================================;
+*Get odds ratio, ci and p-value;
+*==============================================================================;
+ 
+ods output oddsratios = odds01
+           parameterestimates = est01;
+ 
+proc logistic data=adrs;
+    class trtp (ref='Placebo') / param=ref;
+    model avalc(event='Y') = trtp;
+run;
+ 
+ods output close;
+ 
+data odds02;
+    set odds01;
+    if effect="TRTP High Dose vs Placebo" then trtpn=3;
+    else if effect="TRTP Low Dose  vs Placebo" then trtpn=2;
+ 
+    keep trtpn oddsratioest lowercl uppercl;
+run;
+ 
+data est02;
+    set est01;
+    where variable="TRTP";
+ 
+    if classval0="High Dose" then trtpn=3;
+    else if classval0="Low Dose" then trtpn=2;
+    keep trtpn probchisq;
+run;
+ 
+*==============================================================================;
+*combine all information into a single dataset;
+*==============================================================================;
+ 
+proc sort data=odds02;
+    by trtpn;
+run;
+ 
+proc sort data=est02;
+    by trtpn;
+run;
+ 
+data all01;
+    merge subjs01(in=a) resp01 odds02 est02;
+    by trtpn;
+run;
+ 
+*------------------------------------------------------------------------------;
+*process further as per table presentation requirement;
+*------------------------------------------------------------------------------;
+ 
+data all02;
+    set all01;
+    length N resp or ci pval lcl ucl $30;
+    n=put(nsubj,2.);
+    if count ne 0 then resp=put(count,2.)||" ("||put(percent,5.1)||"%)";
+ 
+    if trtpn=1 then or="Reference";
+    else or=put(oddsratioest,6.2);
+ 
+    if lowercl ne . then lcl=put(lowercl,6.2);
+    else lcl="-";
+    
+    if uppercl ne . then ucl=put(uppercl,6.2);
+    else ucl="-";
+ 
+    if trtpn ne 1 then ci= trim(lcl)||" - "||trim(ucl);
+    else ci="-";
+ 
+    if trtpn ne 1 and probchisq ne . then pval=put(probchisq,6.3);
+    else pval="-";
+ 
+    keep trtpn trtp n resp or ci pval;
+run;
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+footnote2 j=l "Odds ratios, 95% confidence intervals, and p-values are derived from a logistic regression model with treatment
+group as a categorical fixed effect (reference: Placebo). The model estimates the odds of response (AVALC = ‘Y’)
+for each active treatment group compared to placebo using the PROC LOGISTIC procedure.";
+ 
+title "Logistic Regression: Summary of Treatment Response and Odds Ratios from Logistic Regression";
+title2 "ITT Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=all02 center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center]
+    style(column)=[just=center];
+   columns trtpn trtp n resp or ci pval
+   ;
+ 
+   define trtpn/order noprint;
+   define trtp/"Treatment Group" order style(column)={cellwidth=1.5in};
+   define n/ display "N"  style(column)={cellwidth=1in};
+   define resp/"Responders (n, %)" style(column)={cellwidth=1.5in};
+   define or/"Odds Ratio (vs. Placebo)" style(column)={cellwidth=1.5in};
+   define ci/"95% CI" style(column)={cellwidth=1in};
+   define pval/"p-value" style(column)={cellwidth=0.5in};
+ 
+ 
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+ 

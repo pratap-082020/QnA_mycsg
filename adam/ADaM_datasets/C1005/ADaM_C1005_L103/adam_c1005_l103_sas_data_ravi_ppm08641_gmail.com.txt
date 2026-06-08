@@ -1,0 +1,43 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1005_L103;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data adeg;
+infile datalines dlm='|' dsd missover;
+input STUDYID : $30. USUBJID : $30. PARAMCD : $8. PARAM : $200. ADT : DATE9. ATM : TIME8. ADY : best32. AVISIT : $50. AVISITN : best32. AVAL : best32.;
+label ;
+format ADT DATE9.;
+datalines4;
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|25FEB2014|8:30:00|1|Baseline|-2|449
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|25FEB2014|8:31:00|1|Baseline|-2|474
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|25FEB2014|8:31:00|1|Baseline|-2|477
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|27FEB2014|9:13:00|3|Day 3|0|457
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|27FEB2014|9:14:00|3|Day 3|0|469
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|27FEB2014|9:14:00|3|Day 3|0|456
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|13MAR2014|9:29:00|17|Week 2|2|500
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|13MAR2014|9:30:00|17|Week 2|2|495
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|13MAR2014|9:30:00|17|Week 2|2|480
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|03APR2014|9:18:00|38|Week 5|5|449
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|03APR2014|9:19:00|38|Week 5|5|460
+MYCSG|MYCSG-1001|QTcB|QT interval using Bazett's correction(msec)|03APR2014|9:19:00|38|Week 5|5|460
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

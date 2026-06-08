@@ -1,0 +1,305 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TEG\TFL_TEG_L101\TFL_TEG_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data adeg01;
+   set adeg;
+   where avisitn gt 1;
+run;
+ 
+data adsl01;
+   set adsl;
+   where saffl="Y";
+run;
+ 
+/*=========================================================
+Create a variable named 'treatment' to hold report level column groupings<br/>
+Also create duplicate rows for presenting total column
+=========================================================*/
+ 
+data adeg02;
+   set adeg01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+data adsl02;
+   set adsl01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+/*=========================================================
+Create a numeric variable in ADEG corresponding to each level in AVALC
+=========================================================*/
+ 
+data adeg03;
+   set adeg02;
+   if avalc="NORMAL" then result=2;
+   else if avalc="ABNORMAL - CLINICALLY SIGNIFICANT" then result=4;
+   else if avalc="ABNORMAL - NOT CLINICALLY SIGNIFICANT" then result=3;
+run;
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables(for column headers)
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get treatment totals based on actual data
+----------------------------------------------------------*/
+proc sql;
+   create table trttotal_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_pre;
+   do treatment=1 to 3;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummt counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_pre(in=a) trttotal_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Create macro variables to present treatment totals in column headers of report
+----------------------------------------------------------*/
+ 
+proc sql noprint;
+   select count(distinct usubjid) into :n1 from adsl02 where treatment=1;
+   select count(distinct usubjid) into :n2 from adsl02 where treatment=2;
+   select count(distinct usubjid) into :n3 from adsl02 where treatment=3;
+quit;
+ 
+ 
+/*=========================================================
+Obtaining actual counts-for the table
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get counts for 'number of subjects with a non-missing value'
+----------------------------------------------------------*/
+ 
+proc sql noprint;
+   create table sub_count as
+   select 1 as result,avisitn,avisit,treatment,
+   count(distinct usubjid) as count
+   from adeg03
+   where not missing(result)
+   group by avisitn,avisit,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+Get counts for each level of avalc - abnormality level counts
+----------------------------------------------------------*/
+ 
+proc sql noprint;
+   create table abn_count as
+      select avisitn,avisit,result,treatment,
+      count(distinct usubjid) as count
+      from adeg03
+      group by avisitn,avisit,result,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+Combine all datasets with counts into a single dataset
+----------------------------------------------------------*/
+ 
+data counts01;
+   set sub_count abn_count;
+run;
+ 
+ 
+/*=========================================================
+Create zero counts for levels which are not present in actual data
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get all available visits
+----------------------------------------------------------*/
+proc sort data=counts01 out=dummy01(keep=avisitn avisit  ) nodupkey;
+   by avisitn avisit ;
+run;
+ 
+/*----------------------------------------------------------
+Create a row for each treatment and row to be presented in table
+----------------------------------------------------------*/
+data dummy02;
+   set dummy01;
+   do treatment=1 to 3;
+      do result=1 to 4;
+         output;
+      end;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge dummy counts with actual counts
+----------------------------------------------------------*/
+ 
+proc sort data=dummy02;
+   by avisitn avisit result treatment;
+run;
+ 
+proc sort data=counts01;
+   by avisitn avisit result treatment;
+run;
+ 
+data counts02;
+   merge dummy02(in=a) counts01(in=b);
+   by avisitn avisit result treatment;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Process the data to calculate percentages
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Denomiator: number of subjects with non-missing data<br/>
+Populate 'n' row counts at a visit on all rows of the visit
+----------------------------------------------------------*/
+ 
+ 
+proc sort data=counts02;
+   by treatment avisitn avisit;
+run;
+ 
+proc sort data=sub_count out=denom01(keep=treatment avisitn avisit count rename=(count=denom));
+   by treatment avisitn avisit;
+run;
+ 
+data counts03;
+   merge counts02(in=a) denom01(in=b);
+   by treatment avisitn avisit;
+   if a;
+   if denom=. then denom=0;
+run;
+ 
+/*----------------------------------------------------------
+Calculate percentages
+----------------------------------------------------------*/
+ 
+/*----------------------------------------------------------
+ 
+----------------------------------------------------------*/
+data counts04;
+   set counts03;
+   length cp $30;
+   if result ne 1 then
+      do;
+         if count ne 0 then cp=put(count,3.)||" ("||put(count/denom*100,5.1)||"%)";
+         else cp=put(count,3.);
+      end;
+   else cp=put(count,3.);
+run;
+ 
+ 
+/*=========================================================
+Create the label column
+=========================================================*/
+ 
+data counts05;
+   set counts04;
+   length c2 $30;
+   if result=1 then c2="n";
+   else if result=2 then c2="Normal";
+   else if result=3 then c2="Abnormal - NCS";
+   else if result=4 then c2="Abnormal - CS";
+run;
+ 
+ 
+/*=========================================================
+Transpose to obtain treatment as columns
+=========================================================*/
+ 
+proc sort data=counts05;
+   by avisitn avisit result c2 treatment ;
+run;
+ 
+proc transpose data=counts05 out=trans01 prefix=trt;
+   by avisitn avisit result c2;
+   var cp;
+   id treatment;
+run;
+ 
+data trans02;
+   set trans01;
+   c1=avisit;
+   keep avisitn c1 result c2 trt1 trt2 trt3;
+run;
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Interpretation of ECG Results";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns avisitn c1 result c2 trt1 trt2 trt3;
+   define avisitn/ order noprint;
+   define result/ order noprint;
+   define c1 /order "Time" style(column)=[cellwidth=1.5in protectspecialchars=off]
+            style(header)=[just=left] ;
+   define c2 /order "Assessment" style(column)=[cellwidth=2in protectspecialchars=off]
+            style(header)=[just=left] ;
+   define trt1/"Placebo" "(N=%cmpres(&n1))"  style(column)=[cellwidth=1.7in just=center] ;
+   define trt2/"Active" "(N=%cmpres(&n2))"  style(column)=[cellwidth=1.7in just=center]   ;
+   define trt3/"Total" "(N=%cmpres(&n3))"   style(column)=[cellwidth=1.7in just=center]   ;
+ 
+   compute after avisitn;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

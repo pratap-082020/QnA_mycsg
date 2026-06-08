@@ -1,0 +1,168 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_BDS\ADaM_BDS_LADICE01\ADaM_BDS_LADICE01;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Process input datasets;
+*==============================================================================;
+ 
+proc sort data=sv out=sv01;
+   by usubjid visitnum visit;
+   where int(visitnum)=visitnum;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Pull adsl variables into sv;
+*------------------------------------------------------------------------------;
+ 
+data sv02;
+   merge sv01(in=a)
+         adsl(in=b);
+   by usubjid;
+ 
+   if a and b;
+run;
+ 
+ 
+*------------------------------------------------------------------------------;
+*Create AVISIT and also create record for additional Upto EOS;
+*------------------------------------------------------------------------------;
+ 
+data vis01;
+   set sv02;
+   by usubjid visitnum visit;
+   avisit="Upto "||strip(visit);
+   astdt=trtsdt;
+   aendt=input(svstdtc,??yymmdd10.);
+ 
+   output;
+ 
+   if last.usubjid then do;
+      astdt=trtsdt;
+      aendt=eosdt;
+      avisit="Upto EOS";
+      output;
+   end;
+ 
+   format astdt aendt date9.;
+run;
+ 
+*==============================================================================;
+*Get lack of efficacy date and other event date into adsl;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*lack of efficacy date;
+*------------------------------------------------------------------------------;
+ 
+data loedt;
+   set ds;
+   where dsscat="STUDY TREATMENT" and dsdecod="LACK OF EFFICACY";
+   loedt=input(dsstdtc,??yymmdd10.);
+   format loedt date9.;
+   keep usubjid loedt;
+run;
+ 
+*------------------------------------------------------------------------------;
+*other event date;
+*------------------------------------------------------------------------------;
+ 
+data oevntdt;
+   set ds;
+   where dsscat="STUDY TREATMENT" and dsdecod not in ("LACK OF EFFICACY" "COMPLETED");
+   oevntdt=input(dsstdtc,??yymmdd10.);
+   format oevntdt date9.;
+   keep usubjid oevntdt;
+run;
+ 
+*==============================================================================;
+*Pull event dates into visits template;
+*==============================================================================;
+ 
+data vis02;
+   merge vis01(in=a)
+         loedt(in=b)
+         oevntdt;
+   by usubjid;
+ 
+   if a;
+run;
+ 
+*==============================================================================;
+*Create rows for parameters;
+*==============================================================================;
+ 
+data params01;
+   set vis02;
+ 
+   length paramcd $8;
+ 
+   paramcd="LACKEFF";
+   if . lt astdt le loedt le aendt then avalc="Y";
+   else avalc="N";
+   output;
+   call missing(paramcd,avalc);
+ 
+   paramcd="OTHEVNT";
+   if . lt astdt le oevntdt le aendt then avalc="Y";
+   else avalc="N";
+   output;
+ 
+   paramcd="ANYEVNT";
+   if (. lt astdt le loedt le aendt) or (. lt astdt le oevntdt le aendt) then avalc="Y";
+   else avalc="N";
+   output;
+ 
+run;
+ 
+*==============================================================================;
+*Derive additional variables;
+*==============================================================================;
+ 
+data params02;
+   set params01;
+ 
+   length param $200;
+ 
+   if paramcd='LACKEFF' then do; param='Lack of Efficacy';  paramn=101; end;
+   else if paramcd='OTHEVNT' then do; param='Other Intercurrent Event';  paramn=102; end;
+   else if paramcd='ANYEVNT' then do; param='Any Intercurrent Event';  paramn=103; end;
+ 
+   if upcase(avisit)="UPTO WEEK 12" then avisitn=112;
+   else if upcase(avisit)="UPTO WEEK 24" then avisitn=124;
+   else if upcase(avisit)="UPTO WEEK 36" then avisitn=136;
+   else if upcase(avisit)="UPTO WEEK 48" then avisitn=148;
+   else if upcase(avisit)="UPTO WEEK 60" then avisitn=160;
+   else if upcase(avisit)="UPTO EOS" then avisitn=200;
+ 
+run;
+ 
+ 
+proc sort data=params02;
+   by usubjid avisitn paramn;
+run;
+ 
+*==============================================================================;
+*Keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID AVISITN AVISIT ASTDT AENDT PARAM PARAMCD PARAMN AVALC TRTSDT EOSDT;
+;
+ 
+data adice;
+   retain &varlist.;
+   set params02;
+   keep &varlist.;
+run;
+ 

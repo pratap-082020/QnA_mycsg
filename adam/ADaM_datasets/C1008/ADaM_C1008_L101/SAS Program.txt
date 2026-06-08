@@ -1,0 +1,78 @@
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1008\ADaM_C1008_L101\ADaM_C1008_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+run;
+ 
+data ae01;
+   set ae;
+run;
+ 
+ 
+/*=========================================================
+Merge ADSL and AE datasets
+=========================================================*/
+ 
+proc sort data=adsl01;
+   by usubjid;
+run;
+ 
+proc sort data=ae01;
+   by usubjid;
+run;
+ 
+data ae02;
+   merge ae01(in=a) adsl01(in=b);
+   by usubjid;
+   if a;
+run;
+ 
+/*=========================================================
+Create ASTDT, APERIOD, TRTP and TRTA variables
+=========================================================*/
+ 
+data ae03;
+   set ae02;
+ 
+   if length(aestdtc)=10 then astdt=input(aestdtc,yymmdd10.);
+ 
+   if . lt ap01sdt le astdt le ap01edt then do;
+      aperiod=1;
+      trtp=trt01p;
+      trta=trt01a;
+   end;
+   else if . lt ap02sdt le astdt le ap02edt then do;
+      aperiod=2;
+      trtp=trt02p;
+      trta=trt02a;
+   end;
+   else if . lt ap03sdt le astdt le ap03edt then do;
+      aperiod=3;
+      trtp=trt03p;
+      trta=trt03a;
+   end;
+ 
+   format astdt date9.;
+run;
+ 
+data output;
+    set ae03;
+run;
+ 
+ 

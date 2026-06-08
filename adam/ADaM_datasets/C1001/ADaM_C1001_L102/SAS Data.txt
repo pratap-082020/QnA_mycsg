@@ -1,0 +1,73 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1001\ADaM_C1001_L103\ADaM_C1001_L103;
+
+%include "&root2._data.sas";
+
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+
+/*=========================================================
+Derive treatment start date
+=========================================================*/
+
+proc sort data=ex out=trtsdt01;
+    by usubjid exstdtc;
+    where EXCAT="TREATMENT PERIOD" and not missing(EXSTDTC);
+run;
+
+data trtsdt;
+    set trtsdt01;
+    by usubjid exstdtc;
+    if first.usubjid;
+    if not missing(exstdtc) then trtsdt=input(substrn(exstdtc,1,10),yymmdd10.);
+    format trtsdt yymmdd10.;
+    keep usubjid trtsdt;
+run;
+
+/*=========================================================
+Derive treatment end date
+=========================================================*/
+
+proc sort data=ex out=TRTEDT01;
+    by usubjid EXENDTC;
+    where EXCAT="TREATMENT PERIOD" and not missing(EXENDTC);
+run;
+
+data TRTEDT;
+    set TRTEDT01;
+    by usubjid EXENDTC;
+    if last.usubjid;
+    if not missing(EXENDTC) then TRTEDT=input(substrn(EXENDTC,1,10),yymmdd10.);
+    format TRTEDT yymmdd10.;
+    keep usubjid TRTEDT;
+run;
+
+/*=========================================================
+Merge required variables into final dataset and derive TRT01P and TRT01A
+=========================================================*/
+
+data adsl;
+   merge dm(in=a) trtsdt(in=d) trtedt(in=e);
+   by usubjid;
+   if a;
+   tr01sdt=trtsdt;
+   tr01edt=trtedt;
+   format tr01sdt tr01edt yymmdd10.;
+   if arm ne "Screen Failure" then do;
+        trt01p=arm;
+        trt01a=actarm;
+    end;
+run;
+
+/*=========================================================
+Keep required variables in final dataset
+=========================================================*/
+
+data output;
+    set adsl;
+    keep usubjid trt01p trt01a trtsdt trtedt;
+run;

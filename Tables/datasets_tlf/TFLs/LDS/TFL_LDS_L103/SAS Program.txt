@@ -1,0 +1,140 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_LDS\TFL_LDS_L103\TFL_LDS_L103;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+   where dstfl ="Y";
+run;
+ 
+/*=========================================================
+Create columns as per listing presentation requirement
+=========================================================*/
+ 
+data list01;
+   set adsl01;
+ 
+   *------------------------------------------------------------------------------;
+   *siteid - col1, usubjid-col2, treatment-col3, age-col4, sex-col5, race -col6;
+   *------------------------------------------------------------------------------;
+   length col1 col2 col3 col4 col5 col6 $100;
+ 
+   col1="Investigator Site = "||strip(siteid);
+ 
+   col2=usubjid;
+ 
+   col3=trt01a;
+ 
+   if age ne . then col4=cats(age);
+   else col4="-";
+ 
+   if sex ne "" then col5=sex;
+   else col5="-";
+ 
+   if arace ne "" then col6=arace;
+   else col6="-";
+ 
+   *------------------------------------------------------------------------------;
+   *last dose date-day - col7;
+   *------------------------------------------------------------------------------;
+ 
+   length col7 trtedt_ trtedy_ $100;
+   if trtedt ne . then trtedt_=put(trtedt,yymmdd10.);
+   else trtedt_="-";
+ 
+   if trtedy ne . then trtedy_=strip(put(trtedy,best.));
+   else trtedy_="-";
+ 
+   col7=cats(trtedy_,"/",trtedt_);
+ 
+   *------------------------------------------------------------------------------;
+   *dstreas - col8, discon. date/day -col9;
+   *------------------------------------------------------------------------------;
+ 
+   length col9 dstdt_ dstdy_ $100;
+   col8=dstreas;
+   if dstdt ne . then dstdt_=put(dstdt,yymmdd10.);
+   else dstdt_="-";
+ 
+   if dstdy ne . then dstdy_=strip(put(dstdy,best.));
+   else dstdy_="-";
+ 
+   col9=cats(dstdy_,"/",dstdt_);
+run;
+ 
+/*=========================================================
+Sort the records as per listing requirement and create a sequence variable
+=========================================================*/
+ 
+proc sort data=list01;
+   by siteid usubjid;
+run;
+ 
+data list02;
+   set list01;
+   by siteid usubjid;
+   listseq=_n_;
+run;
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote " ";
+title "Treatment Discontinuation";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=list02 nowd missing split="~"
+   style(report)={just=center}
+   style(report)={just=left}
+   style(header)={just=left};
+ 
+   column siteid col1 usubjid col2 col3 col4 col5 col6 col7 col8 col9;
+ 
+   define siteid/order order=data noprint;
+   define col1/order order=data noprint;
+   define usubjid/order order=data noprint;
+ 
+   define col2/"Subject ID" style(column)={cellwidth=0.75in};
+   define col3/"Treatment" "group" style(column)={cellwidth=0.75in};
+   define col4/"Age (Years)" style(column)={cellwidth=0.75in};
+   define col5/"Sex" style(column)={cellwidth=0.5in};
+   define col6/"Race" style(column)={cellwidth=1.5in};
+   define col7/"Last Dose Day/Date" style(column)={cellwidth=1in};
+   define col8/"Primary Reason for End of " "Treatment" style(column)={cellwidth=2in};
+   define col9/"Discontinuation" "Day/Date" style(column)={cellwidth=1in};
+ 
+   compute after siteid;
+      line @1 " ";
+   endcomp;
+ 
+   compute before col1;
+      line @1 col1 $150.;
+      line @1 " ";
+   endcomp;
+ 
+run;
+ods rtf close;
+ods listing;
+ 
+ 

@@ -1,0 +1,37 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1002_L102a;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data cm;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $40. CMSTDTC : $20. CMENDTC : $20.;
+label ;
+format ;
+datalines4;
+CSG-1001|2010-01-01|2011
+CSG-1001|2010-01|2011-11
+CSG-1001|2010-01|2011-12
+CSG-1001|2010|2011-02
+CSG-1001|2010-02|2012-02
+CSG-1001|2010-02|2013-02
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

@@ -1,0 +1,35 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1003_L103;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data ae;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $40. AEDECOD : $50. AESTDTC : $10. TRT01A : $10. TRT02A : $10. TRT03A : $10. AP01SDT : DATE9. AP01EDT : DATE9. AP02SDT : DATE9. AP02EDT : DATE9. AP03SDT : DATE9. AP03EDT : DATE9.;
+label ;
+format AP01SDT DATE9. AP01EDT DATE9. AP02SDT DATE9. AP02EDT DATE9. AP03SDT DATE9. AP03EDT DATE9.;;
+datalines4;
+CSG-1001|Fever|2010-05-13|DrugA|DrugB|DrugC|03APR2010|15MAY2010|16MAY2010|27JUN2010|28JUN2010|09AUG2010
+CSG-1001|Headache|2010-05-18|DrugA|DrugB|DrugC|03APR2010|15MAY2010|16MAY2010|27JUN2010|28JUN2010|09AUG2010
+CSG-1001|Bonepain|2010-08-01|DrugA|DrugB|DrugC|03APR2010|15MAY2010|16MAY2010|27JUN2010|28JUN2010|09AUG2010
+CSG-1001|Nausea|2010-08-10|DrugA|DrugB|DrugC|03APR2010|15MAY2010|16MAY2010|27JUN2010|28JUN2010|09AUG2010
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

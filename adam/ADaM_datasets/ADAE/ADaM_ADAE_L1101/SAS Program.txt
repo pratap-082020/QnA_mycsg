@@ -1,0 +1,237 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADAE\ADaM_ADAE_L1101\ADaM_ADAE_L1101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read and process input datasets;
+*==============================================================================;
+ 
+proc sort data=ae out=ae01;
+    by studyid usubjid;
+run;
+ 
+proc sort data=adsl;
+    by studyid usubjid;
+run;
+ 
+data ae02;
+    merge ae01(in=a) adsl(in=b);
+    by studyid usubjid;
+    if a and b;
+run;
+ 
+*==============================================================================;
+*Create derived variables;
+*==============================================================================;
+ 
+data ae03;
+    set ae02;
+ 
+*------------------------------------------------------------------------------;
+*ASTDT/ASTDTF;
+*------------------------------------------------------------------------------;
+ 
+    if length(aestdtc)=10 then do;
+        astdt=input(aestdtc,??yymmdd10.);
+    end;
+    else if missing(aestdtc) then do;
+        astdt=trtsdt;
+        astdtf="Y";
+    end;
+    else if length(aestdtc)=7 then do;
+        astdt=input(cats(aestdtc,"-01"),??yymmdd10.);
+        astdtf="D";
+    end;
+    else if length(aestdtc)=4 then do;
+        astdt=input(cats(aestdtc,"-01-01"),??yymmdd10.);
+        astdtf="M";
+    end;
+ 
+    format astdt date9.;
+ 
+*------------------------------------------------------------------------------;
+*AENDT/AENDTF;
+*------------------------------------------------------------------------------;
+ 
+    if trtedt ne . then trtey=put(year(trtedt),4.);
+ 
+    if length(aeendtc)=10 then do;
+        aendt=input(aeendtc,??yymmdd10.);
+    end;
+    else if missing(aeendtc) then do;
+        aendt=trtedt;
+        aendtf="Y";
+    end;
+    else if length(aeendtc)=7 then do;
+        aendt=intnx("month",input(cats(aeendtc,"-01"),??yymmdd10.),0,"e");
+        aendtf="D";
+    end;
+    else if length(aeendtc)=4 then do;
+        if aeendtc=trtey then aendt=trtedt;
+        else aendt=input(cats(aeendtc,"-12-31"),??yymmdd10.);
+        aendtf="M";
+    end;
+ 
+    format aendt date9.;
+ 
+*------------------------------------------------------------------------------;
+*TRTEMFL/PREFL/FUPFL;
+*------------------------------------------------------------------------------;
+ 
+    if trtedt ne . then trtedt14=trtedt+14;
+ 
+    if . lt trtsdt le astdt le trtedt14 then trtemfl="Y";
+    if . lt astdt lt trtsdt then prefl="Y";
+    if astdt gt trtedt14 gt . then fupfl="Y";
+ 
+*------------------------------------------------------------------------------;
+*ASEV/ASEVN;
+*------------------------------------------------------------------------------;
+ 
+    length asev $8;
+    if missing(aesev) then asev="Severe";
+    else asev=propcase(aesev);
+ 
+    if asev="Mild" then asevn=1;
+    else if asev="Moderate" then asevn=2;
+    else if asev="Severe" then asevn=3;
+ 
+*------------------------------------------------------------------------------;
+*RELGR1/RELGR1N;
+*------------------------------------------------------------------------------;
+ 
+    length relgr1 $30;
+ 
+    if missing(aerel) then do; relgr1="Related"; relgr1n=1; end;
+    else if aerel in ("NOT RELATED" "UNLIKELY RELATED") then do; relgr1="Not Related"; relgr1n=0; end;
+    else if aerel in ("POSSIBLY RELATED" "PROBABLY RELATED" "DEFINITELY RELATED") then do; relgr1="Related"; relgr1n=1; end;
+ 
+*------------------------------------------------------------------------------;
+*Other variables;
+*------------------------------------------------------------------------------;
+ 
+    trtan=trt01an;
+    trta=trt01a;
+ 
+    if nmiss(astdt,trtsdt)=0 then astdy=astdt-trtsdt+(astdt>=trtsdt);
+    if nmiss(aendt,trtsdt)=0 then aendy=aendt-trtsdt+(aendt>=trtsdt);
+ 
+    length aphase $30;
+ 
+    if . lt astdt lt trtsdt then aphase="PRE-TREATMENT";
+    else if . lt trtsdt le astdt le trtedt14 then aphase="TREATMENT";
+    else if astdt gt trtedt14 gt . then aphase="FOLLOW-UP";
+ 
+run;
+ 
+*==============================================================================;
+*Occurrence flags;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*AOCCFL;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=ae03 out=aocc01;
+    by studyid usubjid astdt aeseq;
+    where trtemfl="Y";
+run;
+ 
+data aocc02;
+    set aocc01;
+    by studyid usubjid astdt aeseq;
+    if first.usubjid;
+    aoccfl="Y";
+    keep studyid usubjid aeseq aoccfl;
+run;
+ 
+*------------------------------------------------------------------------------;
+*AOCCSFL;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=ae03 out=aoccs01;
+    by studyid usubjid aebodsys astdt aeseq;
+    where trtemfl="Y";
+run;
+ 
+data aoccs02;
+    set aoccs01;
+    by studyid usubjid aebodsys astdt aeseq;
+    if first.aebodsys;
+    aoccsfl="Y";
+    keep studyid usubjid aeseq aoccsfl;
+run;
+ 
+*------------------------------------------------------------------------------;
+*AOCCPFL;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=ae03 out=aoccp01;
+    by studyid usubjid aebodsys aedecod astdt aeseq;
+    where trtemfl="Y";
+run;
+ 
+data aoccp02;
+    set aoccp01;
+    by studyid usubjid aebodsys aedecod astdt aeseq;
+    if first.aedecod;
+    aoccpfl="Y";
+    keep studyid usubjid aeseq aoccpfl;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Bring all flags into ae03;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=ae03;
+    by studyid usubjid aeseq;
+run;
+ 
+proc sort data=aocc02;
+    by studyid usubjid aeseq;
+run;
+ 
+proc sort data=aoccs02;
+    by studyid usubjid aeseq;
+run;
+ 
+proc sort data=aoccp02;
+    by studyid usubjid aeseq;
+run;
+ 
+data ae04;
+    merge ae03(in=a) aocc02 aoccs02 aoccp02;
+    by studyid usubjid aeseq;
+    if a;
+run;
+ 
+*==============================================================================;
+*Keep only required variables and sort as per requirement;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID AESEQ AETERM AEDECOD AEBODSYS TRTEMFL PREFL FUPFL AESTDTC
+ASTDT ASTDTF ASTDY AEENDTC AENDT AENDTF AENDY AESER APHASE AESEV ASEV ASEVN AEREL RELGR1 RELGR1N
+SAFFL AOCCFL AOCCSFL AOCCPFL TRTA TRTAN TRTSDT TRTEDT AGE AGEGR1 SEX RACE;
+ 
+data adae;
+    retain &varlist.;
+    set ae04;
+    keep &varlist.;
+run;
+ 
+proc sort data=adae;
+    by studyid usubjid astdt aedecod aendt;
+run;
+ 
+ 

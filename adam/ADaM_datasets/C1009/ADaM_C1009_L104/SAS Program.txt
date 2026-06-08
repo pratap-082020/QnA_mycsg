@@ -1,0 +1,76 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1009\ADaM_C1009_L104\ADaM_C1009_L104;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input datasets ;
+*==============================================================================;
+ 
+data eg01;
+    set adeg;
+run;
+ 
+*==============================================================================;
+*Populate baseline date on all records of a subject/parameter ;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Subset baseline records;
+*------------------------------------------------------------------------------;
+ 
+data base01;
+    set eg01;
+    where ablfl="Y";
+    basedt=adt;
+    format basedt date9.;
+    keep studyid usubjid paramcd basedt;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Populate baseline date on all records;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=eg01;
+   by studyid usubjid paramcd;
+run;
+ 
+proc sort data=base01;
+   by studyid usubjid paramcd;
+run;
+ 
+data eg02;
+    merge eg01(in=a) base01(in=b);
+    by studyid usubjid paramcd;
+    if a;
+run;
+ 
+*==============================================================================;
+*Populate ANL02FL;
+*==============================================================================;
+ 
+data eg03;
+    set eg02;
+    if adt gt trtsdt gt . and adt gt basedt gt . then anl02fl="Y";
+run;
+ 
+*==============================================================================;
+*Keep only required variables;
+*==============================================================================;
+ 
+data output;
+    set eg03;
+    keep studyid usubjid paramcd adt avalc ablfl trtsdt anl02fl;
+run;
+ 
+ 

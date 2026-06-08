@@ -1,0 +1,290 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_L151\TFL_TIS_L151;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read  and process input data
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+run;
+ 
+data adlb01;
+   set adlb;
+run;
+ 
+data adsl02;
+   set adsl01;
+   where fasfl="Y";
+   treatment=trt01pn;
+   if treatment=1 then group=3;
+    else if treatment=2 then group=2;
+    else if treatment=3 then group=1;
+run;
+ 
+data adlb02;
+   set adlb01;
+   where fasfl="Y" and avisitn=12;
+   treatment=trt01pn;
+   if treatment=1 then group=3;
+    else if treatment=2 then group=2;
+    else if treatment=3 then group=1;
+run;
+ 
+ 
+/*=========================================================
+Fetch denominators and create macro variables to hold treatment totals
+=========================================================*/
+ 
+proc freq data=adsl02 noprint;
+   tables treatment*group/out=denoms(drop=percent rename=(count=denom));
+run;
+ 
+data _null_;
+   set denoms;
+   call symputx(cats("n",treatment),denom);
+run;
+ 
+/*=========================================================
+Obtain required inferential statistics
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Fetch lsmean, difference in lsmeans, standard errors, confidence intervals using proc glm
+----------------------------------------------------------*/
+ 
+ods trace on ;
+ods output lsmeans=lsmeans01
+           lsmeancl=lsmeanscl01
+           diff=diff01
+           lsmeandiffcl=diffcl01
+           estimates=est01
+   ;
+proc glm data=adlb02;
+   class treatment;
+   model chg=treatment blhba1c;
+   lsmeans treatment/pdiff stderr cl;
+   estimate 'high vs placebo' treatment 1 0 -1;
+   estimate 'low vs placebo' treatment 0 1 -1;
+   estimate 'high vs low' treatment 1 -1 0;
+run;
+quit;
+ods trace off;
+ 
+/*----------------------------------------------------------
+Process lsmeans dataset to create lsmean, standard error
+----------------------------------------------------------*/
+ 
+data lsmeans02;
+   set lsmeans01;
+   length lsm se lsm_se $30;
+   if lsmean ne . then lsm=strip(put(round(lsmean,0.01),6.2));
+   else lsm="NE";
+   if stderr ne . then se=strip(put(round(stderr,0.001),7.3));
+   else se="NE";
+   if treatment="1" then group=3;
+   else if treatment="2" then group=2;
+   else if treatment="3" then group=1;
+   order=1;
+   lsm_se=strip(lsm)||"("||strip(se)||")";
+   keep group order lsm_se;
+ 
+run;
+ 
+/*----------------------------------------------------------
+Process lsmeanscl dataset to create 95% confidence intervals
+----------------------------------------------------------*/
+ 
+data lsmeanscl02;
+   set lsmeanscl01;
+   length lower upper ci $30;
+   if lowercl ne . then lower=strip(put(round(lowercl,0.01),6.2));
+   else lower="NE";
+   if uppercl ne . then upper=strip(put(round(uppercl,0.01),6.2));
+   else upper="NE";
+ 
+   ci="("||strip(lower)||","||strip(upper)||")";
+   if treatment="1" then group=3;
+   else if treatment="2" then group=2;
+   else if treatment="3" then group=1;
+   order=1;
+   keep group order ci;
+run;
+ 
+/*----------------------------------------------------------
+Process estimates dataset to create lsmean and stand error for difference and p-value
+----------------------------------------------------------*/
+ 
+data est02;
+   set est01;
+ 
+   length lsm se dlsm_se p_value $30;
+   if estimate ne . then lsm=strip(put(round(estimate,0.01),6.2));
+   else lsm="NE";
+ 
+   if stderr ne . then se=strip(put(round(stderr,0.001),7.3));
+   else se="NE";
+ 
+   if probt ne . then p_value=put(probt,6.3);
+   else p_value="-";
+ 
+   dlsm_se=strip(lsm)||"("||strip(se)||")";
+ 
+   if parameter="high vs placebo" then do; group=3; order=1; end;
+   else if parameter="low vs placebo" then do; group=2; order=1; end;
+   else if parameter="high vs low" then do; group=3; order=2; end;
+   keep group order dlsm_se p_value;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Process diffcl01 dataset to create 95% confidence intervals for difference
+----------------------------------------------------------*/
+ 
+data diffcl02;
+   set diffcl01(rename=(treatment=trt));
+   length lower upper dci $30;
+   if lowercl ne . then lower=strip(put(round(lowercl,0.01),6.2));
+   else lower="NE";
+   if uppercl ne . then upper=strip(put(round(uppercl,0.01),6.2));
+   else upper="NE";
+ 
+   dci="("||strip(lower)||","||strip(upper)||")";
+ 
+   if trt=1 and _treatment=3 then do; group=3; order=1; end;
+   if trt=1 and _treatment=2 then do; group=3; order=2; end;
+   if trt=2 and _treatment=3 then do; group=2; order=1; end;
+ 
+   keep group order dci;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Fetch number of subjcets with available data
+----------------------------------------------------------*/
+ 
+proc sql;
+   create table n as
+      select group,1 as order, put(count(distinct usubjid),3.) as n
+      from adlb02
+      group by group
+      ;
+quit;
+ 
+/*=========================================================
+Merge the required datasets
+=========================================================*/
+ 
+ 
+proc sort data=lsmeans02;
+   by group order;
+run;
+ 
+proc sort data=lsmeanscl02;
+   by group order;
+run;
+ 
+proc sort data=diffcl02;
+   by group order;
+run;
+ 
+proc sort data=est02;
+   by group order;
+run;
+ 
+data all01;
+   merge n(in=a) lsmeans02 lsmeanscl02 diffcl02 est02;
+   by group order;
+run;
+ 
+/*=========================================================
+Fetch denominators and create lables as per TFL shell requirement
+=========================================================*/
+ 
+data denoms02;
+   set denoms;
+run;
+ 
+ 
+proc sort data=denoms02;
+   by group;
+run;
+ 
+data all02;
+   merge all01 denoms02;
+   by group;
+run;
+ 
+data all03;
+   set all02;
+   length trtgroup comparison $50;
+   if group=1 then do; order=1; trtgroup="Placebo (N="||cats(denom)||")"; end;
+   else if group=2 then do;
+            order=1;
+         trtgroup="Low Dose (N="||cats(denom)||")";
+         comparison="Low Dose vs Placebo";
+      end;
+   else if group=3 then do;
+      trtgroup="High Dose (N="||cats(denom)||")";
+      if order=1 then comparison="High Dose vs Placebo";
+      if order=2 then comparison="High Dose vs Low Dose";
+   end;
+run;
+ 
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+footnote2 "*a - Number of subjects with non-missing data, used in analysis.";
+footnote3 "*b - Statistics are from an analysis of covariance (ANCOVA) model with factors as continuous
+baseline HbA1c and treatment group";
+ 
+title "ANCOVA: Change from baseline analysis";
+title2 "ITT Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=all03 center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center] ;
+   columns group trtgroup order
+   ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=c} ANCOVA Analysis Results*b" n lsm_se ci comparison dlsm_se dci p_value)
+   ;
+ 
+   define group/order noprint;
+   define order/order noprint;
+   define trtgroup/"Treatment Group" order style(column)={cellwidth=1.5in just=left};
+   define n/ display "n*a"  style(column)={cellwidth=0.5in};
+   define lsm_se/"LS Mean (SE)" style(column)={cellwidth=1in};
+   define ci/"95% CI" style(column)={cellwidth=1in};
+   define comparison/"Comparison" style(column)={cellwidth=1.5in just=left};
+   define dlsm_se/"LS Mean Difference (SE)" style(column)={cellwidth=1in};
+   define dci/"95% CI for Difference" style(column)={cellwidth=1in};
+   define p_value/"p-value" style(column)={cellwidth=0.5in };
+ 
+   compute after group;
+      line @1 "";
+   endcomp;
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+ 

@@ -1,0 +1,362 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_PILOT01\TFL_PILOT01_LTDS001b\TFL_PILOT01_LTDS001b;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Reading and basic processing of input data
+=========================================================*/
+ 
+data adsl01;
+    set adsl;
+run;
+ 
+/*----------------------------------------------------------
+Creating additional rows to use in total column creation
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Creating two report level subgroup related variables -numeric version for sorting, character version for display label in report
+----------------------------------------------------------*/
+data adsl02;
+    set adsl01;
+    treatment=trt01pn;
+    length rsubgroup rsubgroupcat $200;
+ 
+    rsubgroupcat="Sex";
+    rsubgroupcatn=1;
+ 
+    if sex="F" then do;
+        rsubgroup="Sex: Female";
+        rsubgroupn=2;
+    end;
+    else if sex="M" then do;
+        rsubgroup="Sex: Male";
+        rsubgroupn=1;
+    end;
+ 
+    output;
+    if trt01pn in (0,54,81) then do;
+        treatment=99;
+        output;
+    end;
+run;
+ 
+/*=========================================================
+Creating Overall of subgroups
+=========================================================*/
+ 
+data adsl03;
+    set adsl02;
+    where rsubgroupn ne .;
+    output;
+    rsubgroupn=0;
+    rsubgroup="Sex: Male and Female";
+    output;
+run;
+ 
+/*=========================================================
+Processing for treatment totals (denominators) within each subgroup
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get denominators into a dataset
+----------------------------------------------------------*/
+proc freq data= adsl03  noprint;
+    tables   rsubgroupcatn*rsubgroupcat*rsubgroupn*rsubgroup*treatment /list missing out=denoms01_pre(rename=(count=denom) drop=percent);
+    where ittfl="Y";
+run;
+ 
+/*----------------------------------------------------------
+Create dummy treatment dataset to have all possible treatment rows with in each subgroup;
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Create subgroup levels in a separate dataset and use it for treatment rows creation
+----------------------------------------------------------*/
+data rsubgroups01;
+    do rsubgroupcatn=1;
+        do rsubgroupn=0,1,2;
+            output;
+        end;
+    end;
+run;
+ 
+data rsubgroups02;
+    set rsubgroups01;
+    length rsubgroupcat rsubgroup $200;
+ 
+    if rsubgroupcatn=1 then do;
+        rsubgroupcat="Sex";
+        if rsubgroupn=1 then rsubgroup="Sex: Male";
+        else if rsubgroupn=2 then rsubgroup="Sex: Female";
+        else if rsubgroupn=0 then rsubgroup="Sex: Male and Female";
+    end;
+ 
+run;
+ 
+data dummy_trt_totals;
+    set rsubgroups02;
+    do treatment=0,54,81,99;
+        output;
+    end;
+run;
+ 
+/*----------------------------------------------------------
+Merge dummy and actual treatment denominators
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Set denom to 0 if a treatment or subgroup did not exist in acutal data
+----------------------------------------------------------*/
+ 
+proc sort data=denoms01_pre;
+    by rsubgroupcatn rsubgroupn treatment;
+run;
+ 
+proc sort data=dummy_trt_totals;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+run;
+ 
+data denoms01;
+    merge denoms01_pre(in=a) dummy_trt_totals(in=b);
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+    if b and not a then denom=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Create macro variables to hold the denominator values
+----------------------------------------------------------*/
+ 
+data _null_;
+    set denoms01;
+    call symputx("n_"||catx("_",rsubgroupcatn,rsubgroupn,treatment),denom);
+run;
+ 
+%put _all_;
+ 
+ 
+/*=========================================================
+Create dummy shell as per the layout requirement
+=========================================================*/
+/*----------------------------------------------------------
+Create a row for label within each treatment by using two do loops - one for row labels and second for treatment
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Use the dummy subgroups dataset created in above step
+----------------------------------------------------------*/
+data dummy_shell01;
+    set rsubgroups02;
+    do order=1 to 5;
+        output;
+     end;
+run;
+ 
+data dummy_shell02;
+    set dummy_shell01;
+ 
+    length label $100;
+ 
+    if order=1 then label="Intent-To-Treat (ITT)";
+    else if order=2 then label="Safety";
+    else if order=3 then label="Efficacy";
+    else if order=4 then label="Complete Week 24";
+    else if order=5 then label="Complete Study";
+ 
+    do treatment=0,54,81,99;
+        output;
+    end;
+ 
+run;
+ 
+/*=========================================================
+Core processing to obtain counts for the table content within each subgroup
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Obtain counts for each row in the table
+----------------------------------------------------------*/
+ 
+proc freq data= adsl03  ;
+    tables  rsubgroupcatn*rsubgroupcat*rsubgroupn*rsubgroup*treatment*ittfl  /out=ittfl(where=(ittfl="Y") drop=percent);
+    tables  rsubgroupcatn*rsubgroupcat*rsubgroupn*rsubgroup*treatment*saffl  /out=safety(where=(saffl="Y") drop=percent);
+    tables  rsubgroupcatn*rsubgroupcat*rsubgroupn*rsubgroup*treatment*efffl  /out=efffl(where=(efffl="Y") drop=percent);
+    tables  rsubgroupcatn*rsubgroupcat*rsubgroupn*rsubgroup*treatment*comp24fl  /out=comp24fl(where=(comp24fl="Y") drop=percent);
+    tables  rsubgroupcatn*rsubgroupcat*rsubgroupn*rsubgroup*treatment*disconfl  /out=compstudy(where=(disconfl ne "Y") drop=percent);
+run;
+ 
+/*----------------------------------------------------------
+Combine the counts for separate rows into a single dataset
+----------------------------------------------------------*/
+ 
+/*----------------------------------------------------------
+Create an order variable for sorting the data as per table requirement
+----------------------------------------------------------*/
+ 
+/*----------------------------------------------------------
+Create labels as per the table requirement
+----------------------------------------------------------*/
+ 
+data counts01;
+    set ittfl(in=a) safety(in=b) efffl(in=c) comp24fl(in=d) compstudy(in=e);
+    length label $100;
+    if a then do;
+        order=1;
+        label="Intent-To-Treat (ITT)";
+    end;
+    else if b then do;
+        order=2;
+        label="Safety";
+    end;
+    else if c then do;
+        order=3;
+        label="Efficacy";
+    end;
+    else if d then do;
+        order=4;
+        label="Complete Week 24";
+    end;
+    else if e then do;
+        order=5;
+        label="Complete Study";
+    end;
+ 
+    keep rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment order label count;
+run;
+ 
+/*=========================================================
+Merge dummy and actual counts to get a full template as per table requirement
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Set the count to 0 if a row did not exist in actual data
+----------------------------------------------------------*/
+ 
+proc sort data=counts01;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup order label treatment;
+run;
+ 
+proc sort data=dummy_shell02;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup order label treatment;
+run;
+ 
+data counts02;
+    merge counts01(in=a) dummy_shell02(in=b);
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup order label treatment;
+    if b and not a then count=0;
+run;
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get treatment totals into the dataset with table row counts
+----------------------------------------------------------*/
+ 
+proc sort data=counts02;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+run;
+ 
+proc sort data=denoms01;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+run;
+ 
+data counts03;
+    merge counts02(in=a) denoms01(in=b);
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+run;
+ 
+/*----------------------------------------------------------
+Calculate percentages and concatenate count and percentage values
+----------------------------------------------------------*/
+ 
+data counts03;
+    set counts03;
+    length cp $30;
+ 
+    cp=put(count,3.)||" ("||put(count/denom*100,5.1)||"%)";
+run;
+ 
+ 
+/*=========================================================
+Transpose data to obtain treatments as columns
+=========================================================*/
+ 
+proc sort data=counts03;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup order label;
+run;
+ 
+proc transpose data=counts03 out=trans01 prefix=trt_;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup order label;
+    id treatment;
+    var cp;
+run;
+ 
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Assign titles and footnotes
+----------------------------------------------------------*/
+ 
+title "Protocol: CDISCPILOT01";
+title2 "Population: All Subjects";
+title3 ;
+title4 "Table 14-1.01";
+title5 "Summary of Populations";
+title6 "Subgroup: " "#byval2";
+ 
+footnote "NOTE: N in column headers represents number of subjects entered in study (i.e., signed informed consent).";
+footnote2 "The ITT population includes all subjects randomized. The Safety population includes all randomized";
+footnote3 "subjects known to have taken at least one dose of randomized study drug. The Efficacy population includes";
+footnote4 "all subjects in the safety population who also have at least one post-baseline ADAS-Cog and CIBIC+";
+footnote5 "assessment.";
+ 
+/*----------------------------------------------------------
+Defining layout using proc report and rtf destination specific options
+----------------------------------------------------------*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+options nobyline;
+ 
+%macro report_runner(rsubgroupcatn=,rsubgroupn=);
+ 
+proc report data=trans01 nowd headline headskip split='~' nocenter;
+    columns  order label trt_0 trt_54 trt_81 trt_99;
+    by rsubgroupn rsubgroup;
+ 
+    where rsubgroupcatn=&rsubgroupcatn. and rsubgroupn=&rsubgroupn.;
+ 
+    define order/order noprint;
+    define label/"" style(column)=[cellwidth=2.5in];
+    define trt_0/"Placebo~(N=&&n_&rsubgroupcatn._&rsubgroupn._0)" style(column)=[cellwidth=1.5in] ;
+    define trt_54/"Active~Low Dose~(N=&&n_&rsubgroupcatn._&rsubgroupn._54)" style(column)=[cellwidth=1.5in];
+    define trt_81/"Active~High Dose~(N=&&n_&rsubgroupcatn._&rsubgroupn._81)" style(column)=[cellwidth=1.5in];
+    define trt_99/"Total~(N=&&n_&rsubgroupcatn._&rsubgroupn._99)" style(column)=[cellwidth=1.5in];
+ 
+run;
+ 
+%mend;
+ 
+%report_runner(rsubgroupcatn=1,rsubgroupn=0);
+%report_runner(rsubgroupcatn=1,rsubgroupn=1);
+%report_runner(rsubgroupcatn=1,rsubgroupn=2);
+ 
+ods rtf close;
+ 
+ 

@@ -1,0 +1,139 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LBAR101\TFL_FGN_LBAR101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input dataset;
+*==============================================================================;
+ 
+data graph01;
+    set stats01;
+run;
+ 
+*==============================================================================;
+*Create formats;
+*==============================================================================;
+proc format;
+    value treatment
+    1="Low Dose"
+    2="High Dose"
+    3="Placebo"
+    ;
+run;
+ 
+*==============================================================================;
+*create graph template ;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Set some graph options;
+*------------------------------------------------------------------------------;
+goptions reset=all;
+ods graphics on/ width=9in height=4.5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read)  sashelp.tmplmst(read);
+options orientation=landscape;
+ 
+*------------------------------------------------------------------------------;
+*build template;
+*------------------------------------------------------------------------------;
+ 
+proc template;
+ 
+define statgraph barchart;
+ 
+begingraph/border=false;
+ 
+    discreteattrmap name="barattrs"/ignorecase=true;
+        value "High Dose"/fillattrs=(color=blue) lineattrs=(color=blue);
+        value "Low Dose"/fillattrs=(color=green) lineattrs=(color=green);
+        value "Placebo"/fillattrs=(color=red) lineattrs=(color=red);
+    enddiscreteattrmap;
+ 
+    discreteattrvar var=treatment  attrmap="barattrs" attrvar=treatmentbars ;
+ 
+    layout lattice/
+        rowweights=(0.9 0.1)
+        columndatarange=union
+        ;
+        layout overlay/
+            xaxisopts=(label="Analysis Visit")
+            yaxisopts=(
+                type=linear
+                label="Seroconversion (%)"
+                linearopts=(viewmin=0 viewmax=100) offsetmin=0
+ 
+            )
+            ;
+            barchart x=avisit y=percent/
+                name="bar"
+                group=treatmentbars
+                groupdisplay=cluster
+ 
+                ;
+ 
+            discretelegend "bar"/
+                location=outside
+                halign=center
+                valign=bottom
+                ;
+        endlayout;
+ 
+        layout overlay/
+            border=false
+            walldisplay=none
+            xaxisopts=(display=none)
+            yaxisopts=(display=none)
+            ;
+            blockplot x=avisit block=nsubj/
+                class=treatmentbars
+                labelposition=left
+                display=(values label)
+                repeatedvalues=true
+                valuehalign=start
+                ;
+ 
+        endlayout;
+ 
+    endlayout;
+ 
+endgraph;
+ 
+end;
+run;
+quit;
+ 
+*==============================================================================;
+*Generate graph by associating data to graph template with sgrender procedure;
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+ 
+*------------------------------------------------------------------------------;
+*set some rtf optioons;
+*------------------------------------------------------------------------------;
+ 
+footnote "&outputname.";
+title "Bar Chart of Seroconversion over time";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc sgrender data=graph01 template=barchart;
+format treatment treatment.;
+run;
+ 
+ods listing;
+ods rt

@@ -1,0 +1,28 @@
+# ============================================================
+# Downloaded from myCSG lesson content
+# Lesson: ADaM_C1003_L102a
+# Content Type: r_data
+# Downloaded By: Ravi
+# Email: ppm08641@gmail.com
+# ============================================================
+
+ae<-tribble(
+~usubjid,~aedecod,~aestdtc,~aeendtc,~aesev,~trtsdt,~trtedt,
+"CSG-1001","Headache","2010-01-03","2010-01-04","Moderate",18268,18330,
+"CSG-1001","Headache","2010-01-05","2010-01-05","Mild",18268,18330,
+"CSG-1001","Headache","2010-01-07","2010-01-07","Mild",18268,18330,
+"CSG-1001","Headache","2010-01-10","2010-01-15","Severe",18268,18330,
+"CSG-1001","Nausea","2010-02-01","2010-02-10","Mild",18268,18330,
+"CSG-1001","Pepticuclcer","2009-01-01","2009-10","Moderate",18268,18330,
+"CSG-1001","Neuropathy","2009-05-10","2010-03-01","Mild",18268,18330,
+"CSG-1001","Vomiting","2010-03-03","2010-03-06","Mild",18268,18330,
+"CSG-1001","Diarrhea","2010-04-01","2010-04-03","Mild",18268,18330,
+)
+
+
+
+# ============================================================
+# End of downloaded content
+# Downloaded By: Ravi
+# Email: ppm08641@gmail.com
+# ============================================================

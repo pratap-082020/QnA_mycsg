@@ -1,0 +1,135 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1010\ADaM_C1010_L103a\ADaM_C1010_L103a;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data vs;
+   set vs;
+   format adt trtsdt yymmdd10.;
+run;
+ 
+proc sort data=vs out=vs01;
+   by usubjid paramn avisitn adt;
+run;
+ 
+ 
+/*=========================================================
+Create full template of visits
+=========================================================*/
+ 
+proc sql;
+   create table template01 as
+      select distinct usubjid,paramn
+      from vs01;
+quit;
+ 
+data template02;
+   set template01;
+   length avisit $50;
+   if paramn=1 then do;
+      do avisitn=1 to 5;
+         avisit="Week "||strip(put(avisitn,best.));
+         output;
+      end;
+   end;
+   else if paramn=6 then do;
+      do avisitn=12,24,36,48;
+         avisit="Week "||strip(put(avisitn,best.));
+         output;
+      end;
+   end;
+run;
+ 
+ 
+/*=========================================================
+Create a variable to hold a unique sequence for each record
+=========================================================*/
+ 
+data vs02;
+   set vs01;
+   by usubjid paramn avisitn adt;
+   seq=_n_;
+run;
+ 
+ 
+/*=========================================================
+Merge template and actual data
+=========================================================*/
+/*----------------------------------------------------------
+Retain the sequence onto the records coming from template dataset
+----------------------------------------------------------*/
+ 
+proc sort data=template02;
+   by usubjid paramn avisitn;
+run;
+ 
+data template03;
+   merge template02(in=a) vs02(in=b);
+   by usubjid paramn avisitn;
+   if a and not b then dtype="LOCF";
+   keep usubjid seq dtype avisitn avisit paramn adt;
+run;
+ 
+proc sort data=template03;
+   by usubjid paramn avisitn adt;
+run;
+ 
+data template04;
+   set template03(rename=(seq=old_seq));
+   by usubjid paramn avisitn adt;
+   if first.paramn then seq=.;
+   retain seq;
+   if not missing(old_seq) and avisitn gt 0 then seq=old_seq;
+   if dtype ne "" and seq=. then delete;
+   keep usubjid dtype avisitn avisit seq old_seq;
+run;
+ 
+data template05;
+   set template04;
+   if dtype="" then seq=old_seq;
+run;
+ 
+ 
+/*=========================================================
+Merge the template created with data present based on sequence created
+=========================================================*/
+ 
+proc sort data=template05;
+   by usubjid seq;
+run;
+ 
+data vs03;
+   merge template05(in=a) vs02(in=b drop=avisitn avisit);
+   by usubjid seq;
+run;
+ 
+proc sort data=vs03;
+    by usubjid paramn avisitn adt;
+run;
+ 
+ 
+/*=========================================================
+Keep only the required variables and order the variables in a logical sequence
+=========================================================*/
+ 
+data output;
+   retain usubjid paramcd param paramn avisitn avisit adt ady aval dtype trtsdt  ;
+   set vs03;
+   keep usubjid paramcd param paramn avisitn avisit adt ady aval dtype trtsdt  ;
+run;
+ 
+ 

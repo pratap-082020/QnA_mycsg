@@ -1,0 +1,251 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TPP\TFL_TPP_L101\TFL_TPP_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Process input data;
+*==============================================================================;
+ 
+data adsl01;
+    set adsl;
+    where pkfl="Y";
+     treatment=trt01an;
+run;
+ 
+data adpp01;
+    set adpp;
+    where pkfl="Y";
+    treatment=trt01an;
+    *------------------------------------------------------------------------------;
+    *Convert result values to log values for geometric statistics;
+    *------------------------------------------------------------------------------;
+ 
+    if aval gt 0 then logaval=log(aval);
+run;
+ 
+*==============================================================================;
+*Create a format for treatment levels - using proc format;
+*==============================================================================;
+ 
+proc format;
+    value treatment
+    1=1
+    2=2
+    ;
+run;
+ 
+*==============================================================================;
+*Obtain the descriptive statistics for the result and log result;
+*==============================================================================;
+proc sort data=adpp01 out=adpp02;
+    by paramcd avisitn avisit;
+run;
+ 
+proc summary data=adpp02 nway completetypes;
+     by paramcd avisitn avisit;
+    class treatment/preloadfmt;
+    var  aval logaval;
+    output out=stats01 n= an ln mean=amean lmean std=astd lstd min=amin lmin median=amedian lmedian max=amax lmax;
+    format treatment treatment.;
+run;
+ 
+*==============================================================================;
+*Process the statistics as per presentation requirements;
+*==============================================================================;
+ 
+data stats02;
+    set stats01;
+    length n mean std min max median minmax gmean gstd gcv $30;
+ 
+    *process individual statistics;
+ 
+ 
+    if amean ne . then mean=put(amean,6.2);
+    if astd ne . then std=put(astd,7.3);
+    if amedian ne . then median=put(amedian,6.2);
+    if amin ne . then min=put(amin,5.1);
+    if amax ne . then max=put(amax,5.1);
+ 
+    if lmean ne . then gmean=put(exp(lmean),6.2);
+    if lstd ne . then gstd=put(exp(lstd),7.3);
+     if an ne . then n=put(an,3.);
+ 
+     *derive gcv;
+     if lstd ne . then do;
+        variance = lstd**2;
+        varexp = exp(variance);
+        var_1 = varexp - 1;
+        varsqrt = sqrt(var_1);
+        gcv = put(varsqrt * 100,5.1);
+     end;
+ 
+     *process combined statistics;
+    if an ne 0 then do;
+        minmax=trim(min)||","||trim(max);
+    end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Keep only the required variables - treatment and concatenated statistics;
+*------------------------------------------------------------------------------;
+ 
+data stats03;
+    set stats02;
+    keep paramcd avisitn avisit treatment n mean std gmean gstd gcv median minmax;
+run;
+ 
+*==============================================================================;
+*Restructure the statistics such that they appear as 'rows' - using proc transpose;
+*==============================================================================;
+ 
+proc sort data=stats03;
+    by paramcd avisitn avisit treatment;
+run;
+ 
+proc transpose data=stats03 out=stats04;
+    by paramcd avisitn avisit treatment;
+    var n mean std gmean gstd gcv median minmax;
+run;
+ 
+*==============================================================================;
+*Create some supporting variables as per sorting and presentation requirements;
+*==============================================================================;
+ 
+data stats05;
+    set stats04;
+    length statistic paramlabel $200;
+ 
+    _name_=upcase(_name_);
+ 
+    if _name_="N"  then do; intord=1; statistic="n"; end;
+    if _name_="MEAN" then do; intord=2; statistic="Mean";   end;
+    if _name_="STD"  then do; intord=3; statistic="Std";      end;
+    if _name_="GMEAN"    then do; intord=4; statistic="Geo. Mean"; end;
+    if _name_="GSTD"  then do; intord=5; statistic="Geo. Std"; end;
+    if _name_="GCV"  then do; intord=6; statistic="Geo. CV (%)";      end;
+    if _name_="MEDIAN"    then do; intord=7; statistic="Median"; end;
+    if _name_="MINMAX"  then do; intord=8; statistic="Min, Max"; end;
+ 
+     if paramcd="CMAX" then do; paramn=2; paramlabel="C(*ESC*){sub max}"; end;
+     else if paramcd="AUC0-24" then do; paramn=1; paramlabel="AUC(*ESC*){sub 0-24}"; end;
+     else if paramcd="TMAX" then do; paramn=3; paramlabel="T(*ESC*){sub max}"; end;
+     else if paramcd="T1/2" then do; paramn=4; paramlabel="T(*ESC*){sub 1/2}"; end;
+run;
+ 
+*==============================================================================;
+*Restructure the data such that treatments appear as 'columns' - using proc transpose;
+*==============================================================================;
+ 
+proc sort data=stats05;
+    by paramn paramcd paramlabel avisitn avisit intord statistic;
+run;
+ 
+proc transpose data=stats05 out=stats06 prefix=trt;
+    by paramn paramcd paramlabel avisitn avisit intord statistic;
+    var col1;
+    id treatment;
+run;
+ 
+*==============================================================================;
+*Create final dataset - keeping only required variables;
+*==============================================================================;
+ 
+data final;
+    set stats06;
+    keep paramn paramlabel paramcd avisitn avisit intord statistic trt1 trt2;
+run;
+ 
+*==============================================================================;
+*Get the treatment totals into a dataset and macro variables;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Create a dummy dataset containing a row for each treatment column to be displayed;
+*------------------------------------------------------------------------------;
+ 
+data dummy_trttotals;
+    do treatment=1,2;
+        output;
+    end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Get treatment totals based on actual data - using proc freq;
+*------------------------------------------------------------------------------;
+ 
+proc freq data=adsl01;
+    tables  treatment  /out=trttotals01(rename=(count=trttotal) drop=percent);
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge the dummy dataset containing all treatment rows with actual treatment totals dataset;
+*------------------------------------------------------------------------------;
+ 
+data trttotals;
+    merge dummy_trttotals(in=a) trttotals01(in=b);
+    by treatment;
+    if a and not b then trttotal=0;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Create macro variables to hold treatment totals - using call symputx in data step;
+*------------------------------------------------------------------------------;
+ 
+data _null_;
+    set trttotals;
+    call symputx(cats("trt",treatment),trttotal);
+run;
+ 
+*==============================================================================;
+*Report generation;
+*==============================================================================;
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Pharmacokinetic parameters summary";
+title2 "Pharmacokinetics Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data = final center nowd missing style(report)=[just=center]
+   style(header)=[just=center];
+ 
+   column avisitn avisit paramn paramlabel intord statistic trt1 trt2;
+ 
+    define avisitn/order noprint;
+    define paramn/order noprint;
+   define intord /order noprint;
+ 
+    define paramlabel/ "Parameter" order style(column)=[cellwidth=1.5in protectspecialchars=off] style(header)=[just=left];
+   define avisit/ "Analysis Visit" order style(column)=[cellwidth=1.5in protectspecialchars=off] style(header)=[just=left];
+   define statistic/width=30 "Statistic" style(column)=[cellwidth=1in protectspecialchars=off] style(header)=[just=left];
+ 
+   define trt1/"MYCSG 20 mg" "(N=&trt1.)"  style(column)=[cellwidth=2in just=center] ;
+   define trt2/"MYCSG 40 mg" "(N=&trt2.)"  style(column)=[cellwidth=2in just=center]   ;
+ 
+   compute after paramn;
+      line @1 " ";
+   endcomp;
+ 
+run;
+ 
+ 
+ods rtf close;
+ods listing;
+ 
+ 

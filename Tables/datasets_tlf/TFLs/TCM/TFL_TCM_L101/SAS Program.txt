@@ -1,0 +1,312 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TCM\TFL_TCM_L101\TFL_TCM_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Read input datasets
+----------------------------------------------------------*/
+ 
+data adcm01;
+    set adcm;
+    where saffl="Y";
+run;
+ 
+ 
+data adsl01;
+    set adsl;
+    where saffl="Y";
+run;
+ 
+ 
+/*=========================================================
+Create variable named 'treatment' to hold report level column groupings
+Also create duplicate rows for presenting total column
+=========================================================*/
+ 
+ 
+data adcm02;
+    set adcm01;
+    treatment=trt01an;
+    output;
+    treatment=3;
+    output;
+run;
+ 
+data adsl02;
+   set adsl01;
+    treatment=trt01an;
+    output;
+    treatment=3;
+    output;
+run;
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables (for column headers)
+=========================================================*/
+ 
+ 
+proc sql;
+   create table trttotal_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_pre;
+   do treatment=1 to 3;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummy counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_pre(in=a) trttotal_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Macro variables
+----------------------------------------------------------*/
+proc sql noprint;
+   select count(distinct usubjid) into :n1 from adsl02 where treatment=1;
+   select count(distinct usubjid) into :n2 from adsl02 where treatment=2;
+   select count(distinct usubjid) into :n3 from adsl02 where treatment=3;
+quit;
+ 
+ 
+/*=========================================================
+Obtaining actual counts-for the table
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Subject level count- top row
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table sub_count as
+   select "Overall" as label length=200,
+   treatment,
+   count(distinct usubjid) as count
+   from adcm02
+   group by treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+ATC2 level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table atc2_count as
+      select cm2atcl, treatment,
+      count(distinct usubjid) as count
+      from adcm02
+      group by cm2atcl,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+ATC4 level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table atc4_count as
+      select cm2atcl,cm4atcl,treatment,
+      count(distinct usubjid) as count
+      from adcm02
+      group by cm2atcl,cm4atcl,treatment;
+quit;
+ 
+/*----------------------------------------------------------
+CMDECOD level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table pt_count as
+      select cm2atcl,cm4atcl,cmdecod,treatment,
+      count(distinct usubjid) as count
+      from adcm02
+      group by cm2atcl,cm4atcl,cmdecod,treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Combine toprow, ATC2, ATC4 and CMDECOC counts into single dataset
+----------------------------------------------------------*/
+ 
+ 
+data counts01;
+   set sub_count atc2_count atc4_count pt_count;
+run;
+ 
+/*=========================================================
+Create zero counts if an event is not present in a treatment
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Get all the available SOC and PT values
+----------------------------------------------------------*/
+ 
+proc sort data=counts01 out=dummy01(keep=cm2atcl cm4atcl cmdecod label) nodupkey;
+   by cm2atcl cm4atcl cmdecod label;
+run;
+ 
+/*----------------------------------------------------------
+Create a row for each treatment
+----------------------------------------------------------*/
+ 
+data dummy02;
+   set dummy01;
+   do treatment=1 to 3;
+         output;
+   end;
+run;
+ 
+/*=========================================================
+Merge dummy counts with actual counts
+=========================================================*/
+ 
+proc sort data=dummy02;
+   by cm2atcl cm4atcl cmdecod label treatment;
+run;
+ 
+ 
+proc sort data=counts01;
+   by cm2atcl cm4atcl cmdecod label treatment;
+run;
+ 
+data counts02;
+   merge dummy02(in=a) counts01(in=b);
+   by cm2atcl cm4atcl cmdecod label treatment;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+ 
+proc sort data=counts02;
+   by treatment;
+run;
+ 
+proc sort data=trttotals;
+   by treatment;
+run;
+ 
+data counts03;
+   merge counts02(in=a) trttotals(in=b);
+   by treatment;
+   if a;
+run;
+ 
+data counts04;
+   set counts03;
+   length cp $30;
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/trttotal*100,5.1)||"%)";
+   else cp=put(count,3.);
+run;
+ 
+ 
+/*=========================================================
+Create the label column
+=========================================================*/
+ 
+ 
+data counts05;
+   set counts04;
+   if cmiss(cm2atcl,cm4atcl,cmdecod)=3 then label=label;
+   else if not missing(cm2atcl) and cmiss(cm4atcl,cmdecod)=2 then label=strip(cm2atcl);
+   else if cmiss(cm2atcl,cm4atcl)=0 and missing(cmdecod) then label='(*ESC*)R"\pnhang\fi220\li220 "'||strip(cm4atcl);
+   else if cmiss(cm2atcl,cm4atcl,cmdecod)=0 then label='(*ESC*)R"\pnhang\fi420\li420 "'||strip(cmdecod);
+run;
+ 
+ 
+/*=========================================================
+Transpose to obtain treatment as columns
+=========================================================*/
+ 
+ 
+proc sort data=counts05;
+   by cm2atcl cm4atcl cmdecod label ;
+run;
+ 
+proc transpose data=counts05 out=trans01 prefix=trt;
+   by cm2atcl cm4atcl cmdecod label;
+   var cp;
+   id treatment;
+run;
+ 
+ 
+data trans02;
+   set trans01;
+   keep cm2atcl cm4atcl cmdecod c1 trt:;
+   c1=label;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Concmitant Medications";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns cm2atcl cm4atcl cmdecod c1  trt1 trt2 trt3;
+   define cm2atcl/ order noprint;
+   define cm4atcl/order noprint;
+   define cmdecod/order noprint;
+ 
+   define c1 /order "Therapeutic Subgroup (ATC 2nd level)" "        Chemical Subgroup (ATC 4th level)"
+            "              Preferred WHO name"
+                  style(column)=[cellwidth=3.7in protectspecialchars=off]
+            style(header)=[just=left asis=on] ;
+ 
+   define trt1/"Placebo" "(N=%cmpres(&n1))"  style(column)=[cellwidth=1.7in just=center] ;
+   define trt2/"Active" "(N=%cmpres(&n2))"  style(column)=[cellwidth=1.7in just=center]   ;
+   define trt3/"Total" "(N=%cmpres(&n3))"   style(column)=[cellwidth=1.7in just=center]   ;
+ 
+   compute after cm2atcl;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

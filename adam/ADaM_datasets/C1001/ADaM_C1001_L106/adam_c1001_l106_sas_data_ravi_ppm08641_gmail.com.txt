@@ -1,0 +1,52 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1001_L106;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $12.;
+label USUBJID ='-';
+format ;
+datalines4;
+CSG-1001
+CSG-1002
+CSG-1003
+CSG-1004
+CSG-1005
+;;;;
+run;
+
+data ds;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $12. DSDECOD : $53. DSCAT : $18. DSSCAT : $33. DSSTDTC : $10.;
+label USUBJID ='-' DSDECOD ='-' DSCAT ='-' DSSCAT ='-' DSSTDTC ='-';
+format ;
+datalines4;
+CSG-1001|COMPLETED|DISPOSITION EVENT|END OF TREATMENT|2010-01-15
+CSG-1001|COMPLETED|DISPOSITION EVENT|END OF STUDY|2010-02-15
+CSG-1002|COMPLETED|DISPOSITION EVENT|END OF TREATMENT|2010-01-15
+CSG-1002|LOST TO FOLLOW-UP|DISPOSITION EVENT|END OF STUDY|2010-02-15
+CSG-1003|ADVERSE EVENT|DISPOSITION EVENT|END OF TREATMENT|2010-01-15
+CSG-1003|ADVERSE EVENT|DISPOSITION EVENT|END OF STUDY|2010-01-15
+CSG-1004|COMPLETED|DISPOSITION EVENT|END OF TREATMENT|2010-01-15
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

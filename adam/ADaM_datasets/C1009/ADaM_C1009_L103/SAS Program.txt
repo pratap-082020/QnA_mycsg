@@ -1,0 +1,99 @@
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1009\ADaM_C1009_L103\ADaM_C1009_L103;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+data vs01;
+   set advs;
+run;
+ 
+ 
+/*=========================================================
+creation of average record for multiple collections at a timepoint
+=========================================================*/
+ 
+ 
+proc sql;
+   create table average as
+      select usubjid,paramcd,param,paramn,avisitn,avisit,adt,ady,
+         awlo,awtarget,awhi,mean(aval) as aval,count(*) as count
+      from vs01
+      group by usubjid,paramcd,param,paramn,avisitn,avisit,adt,ady,
+         awlo,awtarget,awhi;
+quit;
+ 
+ 
+/*=========================================================
+Separate the average result record where there exists more than one record at a time
+=========================================================*/
+ 
+ 
+data new_records;
+    set average;
+    where count gt 1;
+run;
+ 
+ 
+/*=========================================================
+Combine the the newly created records with parent records and assign dtype value
+=========================================================*/
+ 
+ 
+data vs02;
+   set vs01 new_records(in=b);
+   if nmiss(ady,awtarget)=0 then awtdiff=abs(ady-awtarget);
+   if b then dtype="AVERAGE";
+run;
+ 
+ 
+/*=========================================================
+Create analysis flag - ANL01FL
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Sort the data such that the closest,latest and average result come on top with in each analysis vist
+----------------------------------------------------------*/
+ 
+proc sort data=vs02;
+   by usubjid paramcd avisitn avisit awtdiff descending ady descending dtype;
+run;
+ 
+/*----------------------------------------------------------
+Assign the ANL01FL
+----------------------------------------------------------*/
+ 
+data vs03;
+   set vs02;
+   by usubjid paramcd avisitn avisit awtdiff descending ady descending dtype;
+   if first.avisitn and avisitn ne . then anl01fl="Y";
+run;
+ 
+proc sort data=vs03;
+   by usubjid paramn avisitn avisit ady dtype;
+run;
+ 
+ 
+/*=========================================================
+Keep only the required records and order the variables in a logical sequence
+=========================================================*/
+ 
+ 
+data output;
+   retain usubjid paramcd param paramn avisitn avisit adt ady anl01fl aval dtype awlo awtarget awhi awtdiff visitnum visit;
+   set vs03;
+   keep usubjid paramcd param paramn avisitn avisit adt ady anl01fl aval awlo dtype awtarget awhi awtdiff visitnum visit;
+run;
+ 
+ 

@@ -1,0 +1,86 @@
+source("D:/SAS/Home/dev/clinical_sas_samples/mycsg/mycsg_config.R")
+#rmac1-std1
+#rmac1-std2
+#rmac1-std3
+ 
+ 
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+ 
+ 
+library(glue)
+library(tidyverse)
+library(haven)
+library(assertthat)
+library(huxtable)
+library(data.table)
+library(hms)
+library(lubridate)
+library(pharmaRTF)
+ 
+ 
+source("./ADaM_C1001_L101_data.r")
+ 
+ 
+rficdt<-ds %>%
+ filter(dscat=="PROTOCOL MILESTONE", dsscat=="INFORMED CONSENT OBTAINED",dsdecod=="SUBJECT INFORMED CONSENT") %>%
+ mutate(rficdt=as.Date(dsstdtc)) %>%
+ select(usubjid,rficdt)
+ 
+ 
+randdt<-ds %>%
+ filter(dscat=="PROTOCOL MILESTONE",dsdecod=="RANDOMIZED") %>%
+ mutate(randdt=as.Date(dsstdtc)) %>%
+ select(usubjid,randdt)
+ 
+ex01<-bind_rows(
+ ex %>% rename(dtc=exstdtc),
+ ex %>% rename(dtc=exendtc)
+)
+ 
+trtsdt<-ex01 %>%
+ filter(excat=="TREATMENT PERIOD",exdose>0,dtc!="") %>%
+ arrange(usubjid,dtc) %>%
+ group_by(usubjid) %>%
+ slice(1) %>%
+ mutate(trtsdt=as.Date(dtc)) %>%
+ select(usubjid,trtsdt)
+ 
+trtedt<-ex01 %>%
+ filter(excat=="TREATMENT PERIOD",exdose>0,dtc!="") %>%
+ arrange(usubjid,dtc) %>%
+ group_by(usubjid) %>%
+ slice(n()) %>%
+ mutate(trtedt=as.Date(dtc)) %>%
+ select(usubjid,trtedt)
+ 
+ 
+ 
+sv01<-bind_rows(
+ sv %>% rename(dtc=svstdtc),
+ sv %>% rename(dtc=svendtc)
+)
+ 
+fvisdt<-sv01 %>%
+ filter(dtc!="") %>%
+ arrange(usubjid,dtc) %>%
+ group_by(usubjid) %>%
+ slice(1) %>%
+ mutate(fvisdt=as.Date(dtc)) %>%
+ select(usubjid,fvisdt)
+ 
+lvisdt<-sv01 %>%
+ filter(dtc!="") %>%
+ arrange(usubjid,dtc) %>%
+ group_by(usubjid) %>%
+ slice(n()) %>%
+ mutate(lvisdt=as.Date(dtc)) %>%
+ select(usubjid,lvisdt)
+ 
+#Bring all dates into dm dataset
+datasets <- list(dm,rficdt,randdt,trtsdt,trtedt,fvisdt,lvisdt)
+ 
+# Join the datasets using left_join
+adsl <- reduce(datasets, left_join, by = "usubjid")
+ 
+output<-adsl
+ 

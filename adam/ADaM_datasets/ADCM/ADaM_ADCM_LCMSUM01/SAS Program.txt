@@ -1,0 +1,155 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADCM\ADaM_ADCM_LCMSUM01\ADaM_ADCM_LCMSUM01;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+*==============================================================================;
+*process input datasets;
+*==============================================================================;
+ 
+data adsl01;
+   set adsl;
+   where trtsdt ne .;
+run;
+ 
+*==============================================================================;
+*Create a dataset to hold the list of all derived parameters to be created;
+*==============================================================================;
+ 
+data template01;
+   length paramcd $8;
+   paramcd='W4VIS'; start=1; end=57; output;
+   paramcd='W12VIS'; start=58; end=106; output;
+   paramcd='W18VIS'; start=107; end=155; output;
+   paramcd='W26VIS'; start=156; end=204; output;
+   paramcd='W32VIS'; start=205; end=250; output;
+   paramcd='W39VIS'; start=251; end=295; output;
+   paramcd='W45VIS'; start=296; end=341; output;
+   paramcd='W52VIS'; start=342; end=372; output;
+   paramcd='W4RESC'; start=1; end=57; output;
+   paramcd='W12RESC'; start=58; end=106; output;
+   paramcd='W18RESC'; start=107; end=155; output;
+   paramcd='W26RESC'; start=156; end=204; output;
+   paramcd='W32RESC'; start=205; end=250; output;
+   paramcd='W39RESC'; start=251; end=295; output;
+   paramcd='W45RESC'; start=296; end=341; output;
+   paramcd='W52RESC'; start=342; end=372; output;
+run;
+ 
+*------------------------------------------------------------------------------;
+*create a separate grouping variable for CM and SV based parameters;
+*create param/paramn as well;
+*------------------------------------------------------------------------------;
+ 
+data template02;
+   set template01;
+   length group $10 param $200;
+ 
+   if find(paramcd,"RESC") then group="CM";
+   else if find(paramcd,"VIS") then group="SV";
+ 
+   if paramcd='W4VIS' then do; param='Baseline to Week 4 Visit';  paramn=101; end;
+   else if paramcd='W12VIS' then do; param='Week 4 to Week 12 Visit';  paramn=102; end;
+   else if paramcd='W18VIS' then do; param='Week 12 to Week 18 Visit';  paramn=103; end;
+   else if paramcd='W26VIS' then do; param='Week 18 to Week 26 Visit';  paramn=104; end;
+   else if paramcd='W32VIS' then do; param='Week 26 to Week 32 Visit';  paramn=105; end;
+   else if paramcd='W39VIS' then do; param='Week 32 to Week 39 Visit';  paramn=106; end;
+   else if paramcd='W45VIS' then do; param='Week 39 to Week 45 Visit';  paramn=107; end;
+   else if paramcd='W52VIS' then do; param='Week 45 to Week 52 Visit';  paramn=108; end;
+   else if paramcd='W4RESC' then do; param='Baseline to Week 4 Rescue Therapy';  paramn=201; end;
+   else if paramcd='W12RESC' then do; param='Week 4 to Week 12 Rescue Therapy';  paramn=202; end;
+   else if paramcd='W18RESC' then do; param='Week 12 to Week 18 Rescue Therapy';  paramn=203; end;
+   else if paramcd='W26RESC' then do; param='Week 18 to Week 26 Rescue Therapy';  paramn=204; end;
+   else if paramcd='W32RESC' then do; param='Week 26 to Week 32 Rescue Therapy';  paramn=205; end;
+   else if paramcd='W39RESC' then do; param='Week 32 to Week 39 Rescue Therapy';  paramn=206; end;
+   else if paramcd='W45RESC' then do; param='Week 39 to Week 45 Rescue Therapy';  paramn=207; end;
+   else if paramcd='W52RESC' then do; param='Week 45 to Week 52 Rescue Therapy';  paramn=208; end;
+ 
+run;
+ 
+*==============================================================================;
+*create a record for each paramcd for all required subjects;
+*==============================================================================;
+ 
+ 
+proc sql;
+   create table template03 as
+      select a.studyid,a.usubjid,a.trtsdt,b.*
+      from adsl as a,template02 as b
+      order by usubjid,start,paramcd
+      ;
+quit;
+ 
+*==============================================================================;
+*Pool required records from SV and CM datasets;
+*use only rescuemed used records from CM;
+*==============================================================================;
+ 
+data days01;
+   set sv(in=a keep=studyid usubjid svstdy rename=(svstdy=day))
+       cm(in=b keep=studyid usubjid cmstdy rescmed rename=(cmstdy=day) where=(rescmed="Y"));
+ 
+   length group $10;
+   if a then group="SV";
+   else if b then group="CM";
+run;
+ 
+*==============================================================================;
+*Derive AVALC;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Fetch all the cases where rescue medication was given in between
+the start and end dates of a visit interval;
+*------------------------------------------------------------------------------;
+ 
+proc sql;
+   create table sum01 as
+      select a.*,b.day
+      from template03 as a
+      left join
+      days01 as b
+      on a.usubjid=b.usubjid and a.group=b.group and a.start le b.day le a.end
+      order by usubjid,group,paramcd,day
+      ;
+quit;
+ 
+*------------------------------------------------------------------------------;
+*There can multiple instances of rescue meds within an interval;
+*Choose latest - dates are of no importance - one record per interval is needed;
+*------------------------------------------------------------------------------;
+ 
+data sum02;
+   set sum01;
+   by usubjid group paramcd day;
+   if last.paramcd;
+   if day ne . then avalc="Y";
+   else avalc="N";
+run;
+ 
+proc sort data=sum02;
+   by usubjid paramn;
+run;
+ 
+*==============================================================================;
+*Keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID PARAM PARAMCD PARAMN AVALC;
+ 
+data adcmsum;
+   retain &varlist.;
+   set sum02;
+   keep &varlist.;
+run;
+ 
+ 

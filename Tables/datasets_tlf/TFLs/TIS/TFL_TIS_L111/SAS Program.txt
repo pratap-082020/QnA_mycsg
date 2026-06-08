@@ -1,0 +1,394 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_L111\TFL_TIS_L111;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+ 
+data adsl01;
+   set adsl;
+   where saffl="Y";
+run;
+ 
+/*=========================================================
+Create a variable named 'treatment' to hold report level column groupings<br/>
+Also create duplicate rows for presenting total column
+=========================================================*/
+ 
+data adsl02;
+   set adsl01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+/*=========================================================
+Create formats for preloading to create full template for sparse data
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Notice the creation of numeric and character formats for categorical variables
+----------------------------------------------------------*/
+ 
+ 
+proc format;
+   value treatment
+      1=1
+      2=2;
+ 
+   value sexn
+      1=1
+      2=2;
+ 
+   value racen
+      1=1
+      2=2
+      3=3
+      4=4;
+ 
+   value sexn_disp
+      99="Missing"
+      1="Male"
+      2="Female";
+ 
+   value racen_disp
+      99="Missing"
+      1="White"
+      2="Black or African American"
+      3="Asian"
+      4="Other";
+run;
+ 
+ 
+/*=========================================================
+Create numeric variables for categorical variables, also setting them to 0 for missing values
+=========================================================*/
+ 
+ 
+data adsl03;
+   set adsl02;
+   if missing(sexn) then sexn=99;
+   if missing(racen) then racen=99;
+run;
+ 
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables(for column headers)
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get treatment totals based on actual data
+----------------------------------------------------------*/
+proc sql;
+   create table trttotal_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_pre;
+   do treatment=1 to 2;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummt counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_pre(in=a) trttotal_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Create macro variables to present treatment totals in column headers of report
+----------------------------------------------------------*/
+ 
+proc sql noprint;
+   select count(distinct usubjid) into :n1 from adsl02 where treatment=1;
+   select count(distinct usubjid) into :n2 from adsl02 where treatment=2;
+quit;
+ 
+/*=========================================================
+Create a macro for obtaining counts and percentages for categorical variables
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Macro flow: <br/>
+Obtain non-missing values as denominator<br/>
+Obtain level counts using proc summary using completetypes,preloadfmt and nway options<br/>
+Merge level counts with denominator counts<br/>
+Calculate percentages<br/>
+Transpose the dataset to get treatments as columns<br/>
+----------------------------------------------------------*/
+ 
+ 
+%macro count_percent(var=,
+                label=,
+                group=
+               );
+ 
+*-------------------------------------------;
+*obtain non-missing values as denominator;
+*-------------------------------------------;
+ 
+proc sql;
+   create table &var._denoms as
+   select treatment,count(distinct usubjid) as denom
+   from adsl03
+   where &var not in (., 99)
+   group by treatment
+   order by treatment;
+quit;
+ 
+data &var.denoms;
+   merge dummy_pre &var._denoms;
+   by treatment;
+   if denom =. then denom=0;
+run;
+ 
+*-------------------------------------------;
+*obtain level counts using proc summary using completetypes,preloadfmt and nway options;
+*-------------------------------------------;
+ 
+proc summary data=adsl03 completetypes nway;
+   class treatment /preloadfmt;
+   class &var./preloadfmt;
+   where not missing(&var.);
+   format  &var. &var.. treatment treatment.;
+   output out=&var._stats(drop=_type_ rename=(_freq_=count));
+run;
+ 
+*---------------------------------------;
+*merge level counts with denominator counts;
+*---------------------------------------;
+ 
+*numerator counts;
+ 
+proc sort data=&var._stats;
+   by treatment ;
+run;
+ 
+*denominator counts;
+ 
+proc sort data=&var._denoms;
+   by treatment ;
+run;
+ 
+data &var._stats2;
+   merge &var._stats &var._denoms;
+   by treatment ;
+run;
+ 
+*-----------------------------------------------;
+*calculate percentages;
+*-----------------------------------------------;
+ 
+data &var._stats3;
+   set &var._stats2;
+   length label statistic $50 cp $20;
+ 
+   label="&label.";
+   group=&group.;
+ 
+   intord=&var.;
+ 
+   statistic=put(&var.,&var._disp.);
+ 
+ 
+   if count ne 0 and intord ne 99 then cp=put(count,3.)|| ' ('||put(round(count*100/denom,0.1),5.1)||'%)';
+   else cp=put(count,3.);
+ 
+run;
+ 
+*-----------------------------------------------;
+*Transpose the dataset to get treatments as columns;
+*-----------------------------------------------;
+ 
+proc sort data=&var._stats3;
+   by  group intord label statistic;
+run;
+ 
+proc transpose data=&var._stats3 out=&var._stats4;
+   by  group intord label statistic;
+   var cp;
+   id treatment;
+run;
+ 
+data final_stats_&var.;
+   length c1-c4 $200;
+   set &var._stats4;
+   if intord=0 and compress(_3)="0" then delete;
+   c1=label;
+   c2=statistic;
+   c3=_1;
+   c4=_2;
+ 
+   keep group  intord c1-c4 ;
+run;
+ 
+proc sort data=final_stats_&var.;
+   by  group intord;
+run;
+%mend;
+ 
+ 
+/*=========================================================
+Call the macro to get counts and percentages for sex and race variables
+=========================================================*/
+/*----------------------------------------------------------
+Notice the creation of group and order variables within macro
+----------------------------------------------------------*/
+%count_percent(var=sexn,
+            label=%str(Sex),
+             group=1
+            );
+ 
+ 
+%count_percent(var=racen,
+            label=%str(Race),
+             group=2
+            );
+ 
+ 
+/*=========================================================
+Combine all datasets containing counts/percentages
+=========================================================*/
+ 
+ 
+data all01;
+   set final_stats_:;
+run;
+ 
+proc sort data=all01;
+   by group intord;
+run;
+ 
+/*=========================================================
+Calculate p-value using chisquare test
+=========================================================*/
+ 
+data events01;
+   set sexn_stats3(in=a) racen_stats3(in=b);
+   keep treatment group intord count;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Run proc freq with required options to get fisher exact p-value
+----------------------------------------------------------*/
+ 
+proc sort data=events01;
+   by group treatment intord;
+run;
+ods trace on;
+ods output chisq=p_val01;
+proc freq data=events01;
+    by group;
+    tables treatment*intord/chisq;
+    weight count;
+run;
+ods trace off;
+ 
+ 
+/*----------------------------------------------------------
+Process p-value dataset to create variable to hold p-value
+----------------------------------------------------------*/
+ 
+data p_val02;
+    set p_val01;
+    where statistic="Chi-Square";
+    length pval $10;
+    if . lt prob lt 0.0001 then pval="<.0001";
+    else pval=strip(put(prob,6.4));
+    intord=1;
+run;
+ 
+/*----------------------------------------------------------
+Merge the p-value dataset to the dataset containing treatments as columns
+----------------------------------------------------------*/
+ 
+proc sort data=all01;
+   by group intord;
+run;
+ 
+data final;
+   merge all01(in=a) p_val02(in=b keep=group intord pval);
+   by group intord;
+   if a;
+   if missing(pval) and intord=1 then pval="-";
+run;
+ 
+data final;
+   set final;
+   page=1;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+footnote2 "Pearson's chisquare test";
+title "Chi-Square: Comparison of proportions - Demographics";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data = final center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center];
+ 
+   column page group c1 intord c2 c3 c4 pval  ;
+ 
+   define group/order noprint;
+   define intord /order noprint;
+   define page/order noprint;
+ 
+   define c1/width=30 "Parameter" order style(column)=[cellwidth=1.5in protectspecialchars=off] style(header)=[just=left];
+   define c2/width=30 "Category/~Statistic" style(column)=[cellwidth=2in protectspecialchars=off] style(header)=[just=left];
+ 
+   define c3/"Placebo" "(N=%cmpres(&n1))"  style(column)=[cellwidth=1.5in just=center] ;
+   define c4/"Test Drug" "(N=%cmpres(&n2))"  style(column)=[cellwidth=1.5in just=center]   ;
+   define pval/"p-value" "[1]"   style(column)=[cellwidth=0.5in just=center]   ;
+ 
+   compute after group;
+      line @1 "";
+   endcomp;
+ 
+   break after page/page;
+run;
+ 
+ 
+ods rtf close;
+ods listing;
+ 
+ 

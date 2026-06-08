@@ -1,0 +1,37 @@
+*==============================================================================;
+*Programming for the task;
+*==============================================================================;
+
+proc sort data=vs out=vs01;
+   by usubjid paramcd avisitn ;
+run;
+ 
+data vs02;
+   set vs01;
+   by usubjid paramcd avisitn;
+ 
+   orig_aval=aval;
+   length dtype $10;
+   retain last_aval;
+   if first.paramcd then call missing(last_aval);
+   if not missing(aval) then last_aval=aval;
+
+    if aval=. then do;
+        if dcsreas="ADVERSE EVENT" then do;
+            if avisitn gt dcaevisn gt . then do;
+                aval=base;
+                dtype="MBOCF";
+            end;
+            else do;
+                aval=last_aval;
+                dtype="LOCF";
+            end;
+        end;
+        else do;
+            aval=last_aval;
+            dtype="LOCF";
+        end;
+    
+    end;
+    
+run;

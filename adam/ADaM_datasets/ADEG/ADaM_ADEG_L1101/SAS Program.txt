@@ -1,0 +1,283 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADEG\ADaM_ADEG_L1101\ADaM_ADEG_L1101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Get treatment start date into VS;
+*==============================================================================;
+ 
+proc sort data=eg;
+   by studyid usubjid;
+run;
+ 
+proc sort data=adsl;
+   by studyid usubjid;
+run;
+ 
+data eg01;
+   merge eg(in=a) adsl(keep=studyid usubjid trtsdt);
+   by studyid usubjid;
+   if a;
+run;
+ 
+*==============================================================================;
+*Create variables which are directly based on input variables;
+*==============================================================================;
+ 
+data adeg01;
+   set eg01;
+ 
+   *------------------------------------------------------------------------------;
+   *parameter related variables;
+   *------------------------------------------------------------------------------;
+   length paramcd $8 param $200;
+ 
+   paramcd=egtestcd;
+ 
+    if paramcd='HR' then do; param='Heart Rate (beats/min)';  paramn=1; end;
+    else if paramcd='PR' then do; param='PR Interval (msec)';  paramn=2; end;
+    else if paramcd='QT' then do; param='QT Interval (msec)';  paramn=3; end;
+    else if paramcd='RR' then do; param='RR Interval (msec)';  paramn=4; end;
+    else if paramcd='QRS' then do; param='QRS Interval (msec)';  paramn=5; end;
+    else if paramcd='INTP' then do; param='Interpretation';  paramn=6; end;
+ 
+ 
+   *------------------------------------------------------------------------------;
+   *timing variables;
+   *------------------------------------------------------------------------------;
+   if length(egdtc) ge 10 then adt=input(egdtc,??yymmdd10.);
+ 
+   if nmiss(adt,trtsdt)=0 then do;
+      if adt lt trtsdt then ady =adt-trtsdt;
+      else if adt ge trtsdt then ady=adt-trtsdt+1;
+   end;
+ 
+   length avisit $50;
+ 
+   if 2 le ady le 127 then do;
+      avisit="Week 12";
+      avisitn=12;
+      awtarget=85;
+      awlo=2;
+      awhi=127;
+   end;
+   else if 128 le ady le 210 then do;
+      avisit="Week 24";
+      avisitn=24;
+      awtarget=169;
+      awlo=128;
+      awhi=210;
+   end;
+ 
+   if nmiss(awtarget,ady)=0 then awtdiff=abs(awtarget-ady);
+   if awtdiff ne . and avisit ne "" then awu="DAYS";
+   format adt date9.;
+ 
+   *------------------------------------------------------------------------------;
+   *other variables;
+   *------------------------------------------------------------------------------;
+ 
+   aval=egstresn;
+   if paramcd="INTP" then avalc=egstresc;
+ 
+   *------------------------------------------------------------------------------;
+   *categorization - AVALCAT1/AVALCAT1N;
+   *------------------------------------------------------------------------------;
+ 
+   length avalcat1 $30;
+   if paramcd="HR" then do;
+      if . lt aval lt 50 then do; avalcat1="< 50 bpm"; avalca1n=1; end;
+      else if 50 le aval le 100 then do; avalcat1="50 -100 bpm"; avalca1n=2; end;
+      else if aval gt 100 then do; avalcat1="> 100 bpm"; avalca1n=3; end;
+   end;
+   else if paramcd in ("PR" "QRS") then do;
+      if . lt aval lt 200 then do; avalcat1="< 200 msec"; avalca1n=1; end;
+      else if aval ge 200 then do; avalcat1=">= 200 msec"; avalca1n=2; end;
+   end;
+   else if paramcd="QT" then do;
+      if . lt aval lt 450 then do; avalcat1="< 450 msec"; avalca1n=1; end;
+      else if 450 le aval lt 480 then do; avalcat1=">= 450 - <480 msec"; avalca1n=2; end;
+      else if 480 le aval lt 500 then do; avalcat1=">= 480 - < 500 msec"; avalca1n=3; end;
+      else if aval ge 500 then do; avalcat1=">= 500 msec"; avalca1n=4; end;
+   end;
+run;
+ 
+*==============================================================================;
+*Create baseline flag and dependent variables;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Subset the records with non-missing result which are on or before treatment start
+Create ABLFL variable by assiging a value of "Y" on the latest record identified;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adeg01 out=base01;
+   by usubjid paramcd adt visitnum egseq;
+   where . lt adt le trtsdt and (aval ne . or avalc ne "");
+run;
+ 
+data base02;
+   set base01;
+   by usubjid paramcd adt visitnum egseq;
+   if last.paramcd;
+   keep usubjid paramcd adt visitnum ablfl egseq base basec basecat1 baseca1n;
+   ablfl="Y";
+   base=aval;
+   basec=avalc;
+   basecat1=avalcat1;
+   baseca1n=avalca1n;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge the baseline flag back onto the parent dataset using appropriate by variables
+Assign AVISIT/AVISITN with appropriate values as per specification.;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adeg01;
+   by usubjid paramcd adt visitnum egseq;
+run;
+ 
+data adeg02;
+   merge adeg01(in=a) base02(in=b keep=usubjid paramcd adt visitnum egseq ablfl);
+   by usubjid paramcd adt visitnum egseq;
+   if a;
+run;
+ 
+data adeg03;
+   set adeg02;
+   if ablfl="Y" then do;
+      avisitn=0;
+      avisit="Baseline";
+   end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Deriving base, chg, and pchg variables;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adeg03;
+   by usubjid paramcd;
+run;
+ 
+proc sort data=base02;
+   by usubjid paramcd;
+run;
+ 
+data adeg04;
+   merge adeg03(in=a) base02(in=b keep=usubjid paramcd base basec basecat1 baseca1n);
+   by usubjid paramcd;
+run;
+ 
+data adeg05;
+   set adeg04;
+ 
+   if adt gt trtsdt gt . then do;
+      anl02fl="Y";
+      if aval ne . and base ne . then do;
+         chg=aval-base;
+         if base ne 0 then pchg=chg/base*100;
+      end;
+   end;
+ 
+   *------------------------------------------------------------------------------;
+   *chgcat1;
+   *------------------------------------------------------------------------------;
+ 
+   length chgcat1 $30;
+   if paramcd="QT" then do;
+      if . lt chg le 30 then do; chgcat1="<= 30 msec"; chgcat1n=1; end;
+      else if 30 lt chg le 60 then do; chgcat1="> 30 - 60 msec"; chgcat1n=2; end;
+      else if chg gt 60 then do; chgcat1="> 60 msec"; chgcat1n=3; end;
+   end;
+ 
+   *------------------------------------------------------------------------------;
+   *Shift variables;
+   *------------------------------------------------------------------------------;
+ 
+   length tempavalc tempbasec tempavalcat1 tempbasecat1 $50 shift1 shift2 $100;
+ 
+   if anl02fl="Y" then do;
+ 
+      if paramcd in ("INTP") then do;
+ 
+         if avalc="" then tempavalc="Missing";
+         else tempavalc=avalc;
+ 
+         if basec="" then tempbasec="Missing";
+         else tempbasec=basec;
+ 
+      end;
+ 
+      if paramcd in ("HR", "PR", "QRS", "QT") then do;
+ 
+         if avalcat1="" then tempavalcat1="Missing";
+         else tempavalcat1=avalcat1;
+ 
+         if basecat1="" then tempbasecat1="Missing";
+         else tempbasecat1=basecat1;
+ 
+      end;
+ 
+      if cmiss(tempavalc,tempbasec)=0 then shift1=catx(" to ",tempbasec,tempavalc);
+      if cmiss(tempavalcat1,tempbasecat1)=0 then shift2=catx(" to ",tempbasecat1,tempavalcat1);
+ 
+   end;
+run;
+ 
+*==============================================================================;
+*Create anl01fl;
+*==============================================================================;
+ 
+proc sort data=adeg05;
+   by usubjid paramcd avisitn avisit awtdiff descending adt;
+run;
+ 
+data adeg05;
+   set adeg05;
+   by usubjid paramcd avisitn avisit awtdiff descending adt;
+   if first.avisitn and avisitn ne . then anl01fl="Y";
+run;
+ 
+proc sort data=adeg05;
+   by usubjid paramn avisitn avisit adt;
+run;
+ 
+*==============================================================================;
+*Merge with adsl to fetch other subject level variables;
+*==============================================================================;
+ 
+data adeg06;
+   merge adeg05(in=a) adsl;
+   by studyid usubjid;
+   if a;
+run;
+ 
+*==============================================================================;
+*keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID SUBJID PARAM PARAMCD PARAMN ADT ADY AVISIT AVISITN
+AVAL AVALC ABLFL ANL01FL ANL02FL AVALCAT1 AVALCA1N BASE BASEC BASECAT1 BASECA1N
+CHG CHGCAT1 CHGCAT1N PCHG SHIFT1 SHIFT2
+AWTARGET AWTDIFF AWLO AWHI AWU EGSEQ VISITNUM
+VISIT SITEID AGE AGEU SEX RACE SAFFL RANDFL ENRLFL
+;
+ 
+data adeg;
+   retain &varlist.;
+   set adeg06;
+   keep &varlist.;
+run;
+ 
+ 

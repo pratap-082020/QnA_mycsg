@@ -1,0 +1,218 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADIS\ADaM_ADIS_LVAC01\ADaM_ADIS_LVAC01;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Get treatment start date into VS;
+*==============================================================================;
+ 
+proc sort data=is;
+   by studyid usubjid;
+run;
+ 
+proc sort data=adsl;
+   by studyid usubjid;
+run;
+ 
+data is01;
+   merge is(in=a) adsl(keep=studyid usubjid trtsdt);
+   by studyid usubjid;
+   if a;
+run;
+ 
+*==============================================================================;
+*Create variables which are directly based on input variables;
+*==============================================================================;
+ 
+data adis01;
+   set is01;
+ 
+   *------------------------------------------------------------------------------;
+   *parameter related variables;
+   *------------------------------------------------------------------------------;
+   length paramcd $8 param $200;
+ 
+   paramcd=istestcd;
+ 
+   if paramcd="TITER" then param="Titer (GCE/ml)";
+ 
+   if paramcd="TITER" then paramn=1;
+ 
+ 
+   *------------------------------------------------------------------------------;
+   *timing variables;
+   *------------------------------------------------------------------------------;
+   if length(isdtc) ge 10 then adt=input(isdtc,??yymmdd10.);
+   if nmiss(adt,trtsdt)=0 then do;
+      if adt lt trtsdt then ady =adt-trtsdt;
+      else if adt ge trtsdt then ady=adt-trtsdt+1;
+   end;
+ 
+   format adt date9.;
+ 
+   if . le ady le -1 then do; avisit='Screening'; avisitn=-1; awtarget=.; awlo=.; awhi=-1; end;
+   else if 1 le ady le 1 then do; avisit='Visit 1'; avisitn=1; awtarget=1; awlo=1; awhi=1; end;
+   else if 7 le ady le 9 then do; avisit='Visit 2'; avisitn=2; awtarget=8; awlo=7; awhi=9; end;
+   else if 25 le ady le 33 then do; avisit='Visit 3'; avisitn=3; awtarget=29; awlo=25; awhi=33; end;
+   else if 78 le ady le 92 then do; avisit='Visit 4'; avisitn=4; awtarget=85; awlo=78; awhi=92; end;
+   else if 166 le ady le 194 then do; avisit='Visit 5'; avisitn=5; awtarget=180; awlo=166; awhi=194; end;
+   else if 351 le ady le 379 then do; avisit='Visit 6'; avisitn=6; awtarget=365; awlo=351; awhi=379; end;
+ 
+   if nmiss(awtarget,ady)=0 then awtdiff=abs(awtarget-ady);
+ 
+   if avisit ne "" then awu="DAYS";
+   *------------------------------------------------------------------------------;
+   *other variables;
+   *------------------------------------------------------------------------------;
+ 
+   aval=isstresn;
+ 
+run;
+ 
+ 
+*==============================================================================;
+*Create baseline flag and dependent variables;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Subset the records with non-missing result which are on or before treatment start
+Create ABLFL variable by assiging a value of "Y" on the latest record identified;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adis01 out=base01;
+   by usubjid paramn adt visitnum isseq;
+   where . lt adt le trtsdt and aval ne .;
+run;
+ 
+data base02;
+   set base01;
+   by usubjid paramn adt visitnum isseq;
+   if last.paramn;
+   keep usubjid paramn adt visitnum ablfl isseq base;
+   ablfl="Y";
+   base=aval;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge the baseline flag back onto the parent dataset using appropriate by variables
+Assign AVISIT/AVISITN with appropriate values as per specification.;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adis01;
+   by usubjid paramn adt visitnum;
+run;
+ 
+data adis02;
+   merge adis01(in=a) base02(in=b keep=usubjid paramn adt visitnum isseq ablfl);
+   by usubjid paramn adt visitnum isseq;
+   if a;
+run;
+ 
+data adis03;
+   set adis02;
+   if ablfl="Y" then do;
+      avisitn=0;
+      avisit="Baseline";
+   end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Deriving base, chg, and pchg variables;
+*Derive CRIT flags;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adis03;
+   by usubjid paramn;
+run;
+ 
+proc sort data=base02;
+   by usubjid paramn;
+run;
+ 
+data adis04;
+   merge adis03(in=a) base02(in=b keep=usubjid paramn base);
+   by usubjid paramn;
+run;
+ 
+data adis05;
+   set adis04;
+   if adt gt trtsdt gt . then do;
+      anl02fl="Y";
+      if aval ne . and base ne . then do;
+         chg=aval-base;
+         if base ne 0 then r2base=round(aval/base,0.01);
+      end;
+   end;
+ 
+   *------------------------------------------------------------------------------;
+   *criteria flags;
+   *------------------------------------------------------------------------------;
+ 
+   if paramcd="TITER" then do;
+ 
+      crit1="Seroresponse - Titer >=200";
+      crit2="Seroconversion - > 4 fold increase from baseline";
+ 
+      if aval ge 200 then crit1fl="Y";
+      else if aval ne . then crit1fl="N";
+ 
+      if anl02fl="Y" and r2base gt 4 then crit2fl="Y";
+      else if anl02fl="Y" and r2base ne . then crit2fl="N";
+   end;
+run;
+ 
+*==============================================================================;
+*Create anl01fl;
+*==============================================================================;
+ 
+proc sort data=adis05;
+   by usubjid paramcd avisitn avisit awtdiff descending adt;
+run;
+ 
+data adis05;
+   set adis05;
+   by usubjid paramcd avisitn avisit awtdiff descending adt;
+   if first.avisitn and avisitn ne . then anl01fl="Y";
+run;
+ 
+proc sort data=adis05;
+   by usubjid paramn avisitn avisit adt;
+run;
+ 
+*==============================================================================;
+*Merge with adsl to fetch other subject level variables;
+*==============================================================================;
+ 
+data adis06;
+   merge adis05(in=a) adsl;
+   by studyid usubjid;
+   if a;
+run;
+ 
+*==============================================================================;
+*keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID ISSEQ ADT ADY VISITNUM VISIT AVISIT AVISITN PARAM PARAMCD
+PARAMN AVAL BASE CHG R2BASE CRIT1 CRIT1FL CRIT2 CRIT2FL AWTARGET AWTDIFF AWLO AWHI AWU ABLFL ANL01FL ANL02FL
+ 
+;
+ 
+data adis;
+   retain &varlist.;
+   set adis06;
+   keep &varlist.;
+run;
+ 
+ 

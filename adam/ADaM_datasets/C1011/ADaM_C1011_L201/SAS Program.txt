@@ -1,0 +1,52 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1011\ADaM_C1011_L201\ADaM_C1011_L201;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read inpupt datasets;
+*==============================================================================;
+ 
+data lb01;
+   set adlb;
+run;
+ 
+*==============================================================================;
+*Find the change and populate MCRIT related variables;
+*==============================================================================;
+ 
+data lb02;
+   set lb01;
+ 
+   if nmiss(atoxgrn,btoxgrn)=0 then chgtoxgrn=atoxgrn-btoxgrn;
+ 
+   length mcrit1 mcrit1ml $50;
+ 
+   if paramcd="ALT" then do;
+      mcrit1="ALT Grade Increase";
+      if avisitn gt 0 then do;
+         if . lt chgtoxgrn le 0 then do; mcrit1ml="No Grade Increase"; mcrit1mn=0; end;
+         else if chgtoxgrn=1 then do; mcrit1ml="Increase of 1 Grade"; mcrit1mn=1; end;
+         else if chgtoxgrn ge 2 then do;
+            mcrit1ml=catx(" ","Increase of", chgtoxgrn,"Grades");
+            mcrit1mn=chgtoxgrn;
+         end;
+      end;
+   end;
+run;
+ 
+data output;
+   set lb02;
+run;
+ 
+ 

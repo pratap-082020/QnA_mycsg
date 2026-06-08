@@ -1,0 +1,262 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TEG\TFL_TEG_L104\TFL_TEG_L104;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+   where saffl="Y";
+run;
+ 
+data adeg01;
+   set adeg;
+   where saffl="Y";
+run;
+ 
+/*=========================================================
+Create a variable named "treatment" to hold report level column groupings
+=========================================================*/
+ 
+data adsl02;
+   set adsl01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+data adeg02;
+   set adeg01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables (for column headers)
+=========================================================*/
+ 
+ 
+proc sql;
+   create table trttotal_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_pre;
+   do treatment=1 to 3;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummy counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_pre(in=a) trttotal_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Macro variables
+----------------------------------------------------------*/
+proc sql noprint;
+   select count(distinct usubjid) into :n1 from adsl02 where treatment=1;
+   select count(distinct usubjid) into :n2 from adsl02 where treatment=2;
+   select count(distinct usubjid) into :n3 from adsl02 where treatment=3;
+quit;
+ 
+ 
+/*=========================================================
+Obtaining counts for the table
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get counts for 'n' - number of subjects with non-missing data
+----------------------------------------------------------*/
+ 
+proc sql;
+   create table ncount as
+      select paramn,paramcd,param,avisitn,avisit,1 as avalca1n,treatment,count(distinct usubjid) as count
+      from adeg02
+      where aval ne .
+      group by paramn,paramcd,param,avisitn,avisit,treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Get counts for different levels
+----------------------------------------------------------*/
+ 
+proc sql;
+   create table levelscount as
+      select paramn,paramcd,param,avisitn,avisit,avalca1n,treatment,count(distinct usubjid) as count
+      from adeg02
+      where avalca1n ne .
+      group by paramn,paramcd,param,avisitn,avisit,avalca1n,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+Combine 'n' and 'levels' counts into a single dataset
+----------------------------------------------------------*/
+ 
+data counts01;
+   set ncount levelscount;
+run;
+ 
+/*=========================================================
+Create dummy for all visits with atleast one missing result
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get distinct values for parameter and visit
+----------------------------------------------------------*/
+ 
+proc sql;
+   create table dummy01 as
+      select distinct paramn,paramcd,param,avisitn,avisit
+      from adeg02
+      where aval ne .;
+quit;
+ 
+/*----------------------------------------------------------
+Create a record for each treatment and avalca1n level using do loops
+----------------------------------------------------------*/
+ 
+data dummy02;
+   set dummy01;
+   do treatment=1 to 3;
+      do avalca1n=1 to 5;
+         output;
+      end;
+   end;
+run;
+ 
+/*=========================================================
+Merge dummy and actual counts
+=========================================================*/
+ 
+proc sort data=dummy02;
+   by paramn paramcd param avisitn avisit treatment avalca1n;
+run;
+ 
+proc sort data=counts01;
+   by paramn paramcd param avisitn avisit treatment avalca1n;
+run;
+ 
+data counts02;
+   merge counts01(in=a) dummy02(in=b);
+   by paramn paramcd param avisitn avisit treatment avalca1n;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Populate 'n' count across all rows within a visit to use in percentage calculation
+=========================================================*/
+ 
+data counts03;
+   merge counts02(in=a) counts02(in=b rename=(count=denom) where=(avalca1n=1));
+   by paramn paramcd param avisitn avisit treatment;
+   if denom=. then denom=0;
+run;
+ 
+/*=========================================================
+Calculate percentages and create label
+=========================================================*/
+ 
+data counts04;
+   set counts03;
+   length cp label $30;
+   if avalca1n ne 1 then do;
+      if count ne 0 then cp=put(count,3.)||" ("||put(count/denom*100,5.1)||"%)";
+      else cp=put(count,3.);
+   end;
+   else do;
+      cp=put(count,3.);
+   end;
+ 
+   if avalca1n=1 then label="n";
+   else if avalca1n=2 then label="<=450";
+   else if avalca1n=3 then label=">450 to <=480";
+   else if avalca1n=4 then label=">480 to <=500";
+   else if avalca1n=5 then label=">500";
+run;
+ 
+ 
+/*=========================================================
+Transpose the data such that treatments become columns
+=========================================================*/
+ 
+proc sort data=counts04;
+   by paramn paramcd param avisitn avisit avalca1n label treatment;
+run;
+ 
+proc transpose data=counts04 out=trans01 prefix=trt;
+   by paramn paramcd param avisitn avisit avalca1n label;
+   id treatment;
+   var cp;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Categorized Absolute Value in QTcB – at Each Time Interval";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans01 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns avisitn avisit avalca1n label trt1 trt2 trt3;
+   define avisitn/ order noprint;
+   define avalca1n/ order noprint;
+   define avisit /order "Time" style(column)=[cellwidth=1.5in protectspecialchars=off]
+            style(header)=[just=left] ;
+   define label /order "Result category (msec)" style(column)=[cellwidth=2in protectspecialchars=off]
+            style(header)=[just=left] ;
+   define trt1/"Placebo" "(N=%cmpres(&n1))"  style(column)=[cellwidth=1.7in just=center] ;
+   define trt2/"Active" "(N=%cmpres(&n2))"  style(column)=[cellwidth=1.7in just=center]   ;
+   define trt3/"Total" "(N=%cmpres(&n3))"   style(column)=[cellwidth=1.7in just=center]   ;
+ 
+   compute after avisitn;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

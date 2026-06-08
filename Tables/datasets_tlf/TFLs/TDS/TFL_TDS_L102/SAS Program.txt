@@ -1,0 +1,259 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TDS\TFL_TDS_L102\TFL_TDS_L102;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Create a dataset to store the data to create formats/informats for formatting data as per tfl requirement
+=========================================================*/
+ 
+data FMASTER01;
+infile datalines dlm='|' dsd missover;
+input fmtname : $32. rawdata : $54. display : $54. sortnumber : $54.;
+label fmtname ='' rawdata ='Starting value for format' display ='Format value label' sortnumber ='Format value label';
+format ;
+datalines;
+DCTREAS|ADVERSE EVENT|Adverse Event|1
+DCTREAS|CLINICAL PROGRESSION WITHOUT RADIOLOGICAL PD BY RECIST|Clinical Progression Without Radiological PD by RECIST|8
+DCTREAS|INTOLERABLE TOXICITY|Intolerable Toxicity|6
+DCTREAS|INVESTIGATOR DISCRETION|Investigator Discretion|5
+DCTREAS|LOST TO FOLLOW-UP|Lost to Follow-up|3
+DCTREAS|OTHER|Other|9
+DCTREAS|PROGRESSIVE DISEASE PER RECIST|Progressive Disease per RECIST|7
+DCTREAS|PROTOCOL DEVIATION|Protocol Deviation|2
+DCTREAS|WITHDRAWAL BY SUBJECT|Withdrawal by Subject|4
+EOTSTT|DISCONTINUED|Discontinued|3
+EOTSTT|ONGOING|Ongoing|1
+EOTSTT|COMPLETED|Completed|2
+;
+run;
+ 
+ 
+data fordata01;
+   length fmtname $200;
+ 
+   set fmaster01(rename=(fmtname=variable));
+   hlo=' ';
+   *------------------------------------------------------------------------------;
+   *informat for converting raw data to numeric value;
+   *------------------------------------------------------------------------------;
+ 
+   type="I";
+   fmtname=variable;
+   label=sortnumber;
+   start=rawdata;
+   output;
+   *------------------------------------------------------------------------------;
+   *Format for converting number to tfl display value;
+   *------------------------------------------------------------------------------;
+ 
+   type="N";
+   fmtname=cats(variable,"n_disp");
+   label=display;
+   start=sortnumber;
+   output;
+ 
+   *------------------------------------------------------------------------------;
+   *Format for creating all levels using numeric values;
+   *------------------------------------------------------------------------------;
+ 
+   type="N";
+ 
+   fmtname=cats(variable,"N");
+   label=sortnumber;
+   start=sortnumber;
+   output;
+ 
+   keep type fmtname start label;
+run;
+ 
+proc sort data=fordata01;
+   by fmtname type;
+run;
+ 
+proc format cntlin=fordata01;
+run;
+ 
+proc format;
+   value treatment
+   1=1
+   2=2
+   3=3
+   ;
+run;
+ 
+ 
+/*=========================================================
+Read and process input dataset
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+run;
+ 
+data adsl02;
+   set adsl01;
+   where saffl="Y";
+   treatment=trt01an;
+run;
+ 
+ 
+/*=========================================================
+Fetch denominators and create macro variables to store treatment totals
+=========================================================*/
+ 
+proc summary data=adsl02 nway completetypes;
+   class treatment/preloadfmt;
+   output out=denoms(rename=(_freq_=denom) drop=_type_);
+   format treatment treatment.;
+run;
+ 
+data _null_;
+   set denoms;
+   call symputx(cats("n",treatment),denom);
+run;
+ 
+ 
+/*=========================================================
+Fetch counts for section 1 of the report
+=========================================================*/
+ 
+proc summary data=adsl02 nway completetypes;
+   class treatment/preloadfmt;
+   class eotsttn/preloadfmt;
+   output out=counts01_1(rename=(_freq_=count eotsttn=intord) drop=_type_);
+   format eotsttn eotsttn. treatment treatment.;
+run;
+ 
+ 
+/*=========================================================
+Fetch counts for section 2 of the report
+=========================================================*/
+ 
+proc summary data=adsl02 nway completetypes;
+   where dctreasn ne .;
+   class treatment/preloadfmt;
+   class dctreasn/preloadfmt;
+   output out=counts01_2(rename=(_freq_=count dctreasn=intord) drop=_type_);
+   format dctreasn dctreasn. treatment treatment.;
+run;
+ 
+/*=========================================================
+Combine section 1 and section 2 counts and create labels as per tfl presentation requirement
+=========================================================*/
+ 
+data counts01;
+   set counts01_1(in=a) counts01_2(in=b);
+   length label $200;
+   if a then do; group=1; label=put(intord,eotsttn_disp.); end;
+   if b then do; group=2; label=put(intord,dctreasn_disp.); end;
+run;
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+proc sort data=counts01;
+   by treatment;
+run;
+ 
+proc sort data=denoms;
+   by treatment;
+run;
+ 
+data counts03;
+   merge counts01(in=a) denoms(in=b);
+   by treatment;
+run;
+ 
+data counts04;
+   set counts03;
+   length cp $30;
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/denom*100,5.1)||"%)";
+   else cp=put(0,3.);
+run;
+ 
+ 
+/*=========================================================
+Transpose the data such that treatments become columns
+=========================================================*/
+ 
+proc sort data=counts04;
+   by group intord label treatment;
+run;
+ 
+proc transpose data=counts04 out=trans01(drop=_name_) prefix=trt;
+   by group intord label;
+   id treatment;
+   var cp;
+run;
+ 
+/*=========================================================
+Create dummy label for sections 1 and 2 and combine with transposed data
+=========================================================*/
+ 
+data dummylabels;
+   length label $200;
+   group=1;
+   intord=-1;
+   label="Treatment disposition";
+   output;
+   group=2;
+   intord=-1;
+   label="Primary reason for discontinuing treatment";
+   output;
+run;
+ 
+data trans02;
+   set dummylabels trans01;
+   by group intord label;
+   format intord;
+   if intord ne -1 then label="(*ESC*)\li200 "||strip(label);
+run;
+ 
+ 
+/*=========================================================
+Generate report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+ 
+title "Treatment Disposition";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd center missing
+   style(report)={just=center}
+   style(header)={just=center};
+   column group intord label trt1 trt2 trt3;
+ 
+   define group/order noprint;
+   define intord/order noprint order=data;
+ 
+   define label/ " " style(column)={just=left cellwidth=3.5in};
+   define trt1/"Placebo" "(N=&n1)" style(column)={just=center cellwidth=1.5in};
+   define trt2/"Low Dose" "(N=&n2)" style(column)={just=center cellwidth=1.5in};
+   define trt3/"High Dose" "(N=&n3)" style(column)={just=center cellwidth=1.5in};
+ 
+   compute after group;
+      line @1 " ";
+   endcomp;
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+ 

@@ -1,0 +1,37 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1004_L111;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data advs;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $40. PARAMN : best32. PARAMCD : $8. PARAM : $200. AVISITN : best32. AVISIT : $50. ADT : best32. ADY : best32. AVAL : best32. ATPT : $20. TRTSDT : best32.;
+label ;
+format ;
+datalines4;
+SUBJ201|1|SPO2|Oxygen Saturation (%)|4|Week 4|20240215|45|98|Baseline|20240101
+SUBJ201|1|SPO2|Oxygen Saturation (%)|4|Week 4|20240215|45|94|End of Test|20240101
+SUBJ202|1|SPO2|Oxygen Saturation (%)|4|Week 4|20240216|46|97|Baseline|20240101
+SUBJ202|1|SPO2|Oxygen Saturation (%)|4|Week 4|20240216|46|95|End of Test|20240101
+SUBJ203|1|SPO2|Oxygen Saturation (%)|4|Week 4|20240217|47|96|Baseline|20240101
+SUBJ203|1|SPO2|Oxygen Saturation (%)|4|Week 4|20240217|47|90|End of Test|20240101
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

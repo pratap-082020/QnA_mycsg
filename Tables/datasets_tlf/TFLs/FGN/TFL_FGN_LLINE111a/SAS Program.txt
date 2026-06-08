@@ -1,0 +1,86 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LLINE111a\TFL_FGN_LLINE111a;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Compute mean and standard deviation for each time point;
+*==============================================================================;
+proc means data=adpc noprint nway;
+    class time;
+    var conc;
+    output out=pk_summary mean=mean_conc std=sd_conc;
+run;
+ 
+*==============================================================================;
+*Prepare data for the band plot (mean ± SD);
+*==============================================================================;
+ 
+data fig01;
+    set pk_summary;
+    upper = mean_conc + sd_conc;
+    lower = mean_conc - sd_conc;
+run;
+ 
+*==============================================================================;
+* Create graph template for Mean ± SD line plot;
+*==============================================================================;
+proc template;
+define statgraph pk_meansd_plot;
+    begingraph / border=false;
+ 
+        layout overlay /
+            xaxisopts=(label="Time (hr)" linearopts=(viewmin=0 viewmax=25 tickvaluesequence=(start=0 end=24 increment=4)))
+            yaxisopts=(label="Plasma Concentration (ng/mL)" linearopts=(viewmin=0));
+ 
+            bandplot x=time limitupper=upper limitlower=lower /
+                name="band" legendlabel="Mean ± SD" fillattrs=(color=lightblue transparency=0.3);
+ 
+            seriesplot x=time y=mean_conc /
+                name="mean" lineattrs=(color=blue thickness=2) legendlabel="Mean Concentration (ng/mL)";
+ 
+            scatterplot x=time y=mean_conc /
+                markerattrs=(symbol=circlefilled color=blue size=8);
+ 
+            discretelegend "mean" "band" / location=inside valign=top halign=right;
+        endlayout;
+ 
+    endgraph;
+end;
+run;
+ 
+ 
+*==============================================================================;
+*Generate graph by associating data to graph template with sgrender procedure;
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+ 
+*------------------------------------------------------------------------------;
+*set some rtf optioons;
+*------------------------------------------------------------------------------;
+ 
+footnote "&outputname.";
+title "Line Plot – Plasma Concentration Over Time (Mean ± SD) Following Oral Dose of Drug MYCSG";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc sgrender data=fig01 template=pk_meansd_plot;
+run;
+ 
+ods listing;
+ods rtf 

@@ -1,0 +1,83 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_ODSRTF\TFL_ODSRTF_L221\TFL_ODSRTF_L221;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+ods escapechar='~';
+ 
+data report02;
+   set report01;
+   length glabel $200;
+   if paramcd="BMI" then glabel="Body Mass Index (kg/m(*ESC*){super 2})";
+   else if paramcd="CO2" then glabel="CO(*ESC*){sub 2}";
+run;
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Split treatment columns to two pages - basic example";
+title2 'Two proc report codes ';
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+*------------------------------------------------------------------------------;
+*proc report for odd page;
+*------------------------------------------------------------------------------;
+ 
+proc report data=report02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns glabel label trt1 trt2 trt3 trt4 ;
+ 
+   define glabel /order "Parameter" style(column)=[cellwidth=1.5in]
+            style(header)=[just=left] ;
+   define label /order "Categories" style(column)=[cellwidth=1in]
+            style(header)=[just=left] ;
+   define trt1/"Treatment 1"  "  n   (%)" style(column)=[cellwidth=1.25in just=center] ;
+   define trt2/"Treatment 2"  "  n   (%)" style(column)=[cellwidth=1.25in just=center]   ;
+   define trt3/"Treatment 3"  "  n   (%)"  style(column)=[cellwidth=1.25in just=center]   ;
+   define trt4/"Treatment 4"  "  n   (%)" style(column)=[cellwidth=1.25in just=center] ;
+ 
+   compute after glabel;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+*------------------------------------------------------------------------------;
+*proc report for even page;
+*------------------------------------------------------------------------------;
+ 
+proc report data=report02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns glabel label trt5 trt6 trt7;
+ 
+   define glabel /order "Parameter" style(column)=[cellwidth=1.5in]
+            style(header)=[just=left] ;
+   define label /order "Categories" style(column)=[cellwidth=1in]
+            style(header)=[just=left] ;
+ 
+   define trt5/"Treatment 5"  "  n   (%)" style(column)=[cellwidth=2in just=center]   ;
+   define trt6/"Treatment 6"  "  n   (%)"  style(column)=[cellwidth=2in just=center]   ;
+   define trt7/"Treatment 7"  "  n   (%)"  style(column)=[cellwidth=2in just=center]   ;
+ 
+   compute after glabel;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

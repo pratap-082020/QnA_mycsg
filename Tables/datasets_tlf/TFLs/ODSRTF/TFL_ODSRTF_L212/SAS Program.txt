@@ -1,0 +1,57 @@
+*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_ODSRTF\TFL_ODSRTF_L212\TFL_ODSRTF_L212;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+ods escapechar='~';
+ 
+data report02;
+   set report01;
+   if not missing(aedecod) then label='~\li220 '||strip(aedecod);
+   else if not missing(aebodsys) then label='~\b '||strip(aebodsys);
+run;
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Present SOC values in bold font in an AE SOC and PT table using RTF tag";
+title2 '~\b ';
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=report02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns aebodsys aedecod label trt1 trt2 trt3 trt4 trt5 trt6 trt7;
+   define aebodsys/ order noprint;
+   define aedecod/order noprint;
+   define label /order "System Organ Class" "    Preferred Term" style(column)=[cellwidth=1.5in]
+            style(header)=[just=left asis=on ] ;
+   define trt1/"Treatment 1"  "  n   (%)" style(column)=[cellwidth=1in just=center] ;
+   define trt2/"Treatment 2"  "  n   (%)" style(column)=[cellwidth=1in just=center]   ;
+   define trt3/"Treatment 3"  "  n   (%)"  style(column)=[cellwidth=1in just=center]   ;
+   define trt4/"Treatment 4"  "  n   (%)" style(column)=[cellwidth=1in just=center] ;
+   define trt5/"Treatment 5"  "  n   (%)" style(column)=[cellwidth=1in just=center]   ;
+   define trt6/"Treatment 6"  "  n   (%)"  style(column)=[cellwidth=1in just=center]   ;
+   define trt7/"Treatment 7"  "  n   (%)"  style(column)=[cellwidth=1in just=center]   ;
+ 
+   compute after aebodsys;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

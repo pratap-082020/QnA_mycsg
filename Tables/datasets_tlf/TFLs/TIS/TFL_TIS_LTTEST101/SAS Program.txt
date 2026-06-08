@@ -1,0 +1,213 @@
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_LTTEST101\TFL_TIS_LTTEST101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read and filter input data
+=========================================================*/
+ 
+data advs01;
+    set advs;
+    where fasfl="Y" and paramcd="BMI";
+run;
+ 
+/*=========================================================
+Process input data
+=========================================================*/
+ 
+data advs02;
+    set advs01;
+    treatment=trt01pn;
+run;
+ 
+ 
+/*=========================================================
+Obtain the descriptive statistics for the analysis variable - using proc summary
+=========================================================*/
+/*----------------------------------------------------------
+Completetypes option is used to 'Create all possible combinations of class variable values'<br>
+Preloadfmt option 'specifies that all formats are preloaded for the class variables.'
+----------------------------------------------------------*/
+proc summary data=advs02 nway completetypes;
+    class treatment;
+    var  aval;
+    output out=stats01 n= nmiss= mean= std= min= q1= median= q3= max= /autoname;
+run;
+ 
+/*=========================================================
+Process the statistics as per presentation requirements
+=========================================================*/
+data stats02;
+    set stats01;
+    length mean std q1 q3 min max nnmiss meanstd median q1q3 minmax $30;
+ 
+    *process individual statistics;
+ 
+ 
+    if aval_mean ne . then mean=put(aval_mean,7.3);
+ 
+    if aval_stddev ne . then std=" ("||strip(put(aval_stddev,8.4))||")";
+    else std=" ( - )";
+ 
+    if aval_median ne . then median=put(aval_median,7.3);
+ 
+    if aval_q1 ne . then q1=put(aval_q1,7.3);
+ 
+    if aval_q3 ne . then q3=put(aval_q3,7.3);
+ 
+    if aval_min ne . then min=put(aval_min,6.2);
+ 
+    if aval_max ne . then max=put(aval_max,6.2);
+ 
+    *create combined statistics;
+    nnmiss=put(aval_n,4.)||" ("||strip(put(aval_nmiss,4.))||")";
+    nnmiss=strip(nnmiss);
+    if aval_n ne 0 then do;
+        meanstd=strip(mean)||strip(std);
+        q1q3=strip(q1)||","||strip(q3);
+        minmax=strip(min)||","||strip(max);
+    end;
+run;
+ 
+/*----------------------------------------------------------
+Keep only the required variables - treatment and concatenated statistics
+----------------------------------------------------------*/
+data stats03;
+    set stats02;
+    keep treatment nnmiss meanstd q1q3 median minmax;
+run;
+ 
+/*=========================================================
+Restructure the statistics such that they appear as 'rows' - using proc transpose
+=========================================================*/
+proc sort data=stats03;
+    by treatment;
+run;
+ 
+proc transpose data=stats03 out=stats04;
+    by treatment;
+    var nnmiss meanstd median q1q3 minmax;
+run;
+ 
+/*=========================================================
+Create some supporting variables as per sorting and presentation requirements
+=========================================================*/
+data stats05;
+    set stats04;
+ 
+    group=1;
+ 
+    length grouplabel statistic $200;
+ 
+    grouplabel="Body Mass Index (kg/m2)";
+ 
+    _name_=upcase(_name_);
+ 
+    if _name_="NNMISS"  then do; intord=1; statistic="n (missing)"; end;
+    if _name_="MEANSTD" then do; intord=2; statistic="Mean (SD)";   end;
+    if _name_="MEDIAN"  then do; intord=3; statistic="Median";      end;
+    if _name_="Q1Q3"    then do; intord=4; statistic="Q1, Q3"; end;
+    if _name_="MINMAX"  then do; intord=5; statistic="Min, Max"; end;
+run;
+ 
+/*=========================================================
+Restructure the data such that treatments appear as 'columns' - using proc transpose
+=========================================================*/
+ 
+proc sort data=stats05;
+    by group grouplabel intord statistic;
+run;
+ 
+proc transpose data=stats05 out=stats06 prefix=trt;
+    by group grouplabel intord statistic;
+    var col1;
+    id treatment;
+run;
+ 
+*==============================================================================;
+*Sectio for Inferential statistic;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Run ttest procedure;
+*------------------------------------------------------------------------------;
+ 
+ods trace on;
+ods output ttests=infstat01;
+proc ttest data=advs02 h0=28.4;
+    var aval;
+run;
+ods trace off;
+ 
+ 
+*------------------------------------------------------------------------------;
+*process the statistic row to same structure as inferntial statistic;
+*------------------------------------------------------------------------------;
+ 
+data infstat02;
+    set infstat01;
+    length grouplabel statistic $200 trt1 $30;
+    group=1;
+    grouplabel="Body Mass Index (kg/m2)";
+    statistic="p-value";
+    intord=6;
+    trt1=put(probt,8.4);
+run;
+ 
+/*=========================================================
+Create final dataset - append descriptive and inferential statistic datasets;
+keeping only required variables
+=========================================================*/
+ 
+data final;
+    set stats06 infstat02;
+    by group intord;
+    keep group grouplabel intord statistic trt1;
+run;
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "One-Sample t-Test - analysis of Body Mass Index (kg/m2)";
+title2 "Full Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+footnote2 j=l "Hypothesized Mean value was 28.4";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data = final center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center];
+ 
+   column group grouplabel intord statistic trt1  ;
+ 
+   define group/order noprint;
+   define intord /order noprint;
+ 
+   define grouplabel/width=30 " " order style(column)=[cellwidth=2.5in protectspecialchars=off] style(header)=[just=left];
+   define statistic/width=30 "Statistic" style(column)=[cellwidth=2in protectspecialchars=off] style(header)=[just=left];
+ 
+   define trt1/"Dose level 1"   style(column)=[cellwidth=1.2in just=center] ;
+ 
+ 
+run;
+ 
+ 
+ods rtf close;
+ods listing;
+ 

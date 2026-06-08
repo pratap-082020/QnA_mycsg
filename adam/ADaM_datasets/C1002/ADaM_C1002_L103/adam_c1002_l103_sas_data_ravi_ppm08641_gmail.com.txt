@@ -1,0 +1,43 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1002_L103;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data ae;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $4. AESTDTC : $10. TRTSDT : DATE9.;
+label ;
+format TRTSDT DATE9.;;
+datalines4;
+1001|2012-03-01|15MAR2012
+1001|2012-03|15MAR2012
+1001|2012-02|15MAR2012
+1001|2010-02|15MAR2012
+1001|2012|15MAR2012
+1001|2011|15MAR2012
+1001|2011-01|15MAR2012
+1001|2011-01-01|15MAR2012
+1001|2013|15MAR2012
+1001|2013-12|15MAR2012
+1001|2013-12-17|15MAR2012
+1001|2016-02|15MAR2012
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

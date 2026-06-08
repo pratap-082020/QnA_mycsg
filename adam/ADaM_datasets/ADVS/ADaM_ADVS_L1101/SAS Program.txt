@@ -1,0 +1,225 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADVS\ADaM_ADVS_L1101\ADaM_ADVS_L1101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Get treatment start date into VS;
+*==============================================================================;
+ 
+proc sort data=vs;
+   by studyid usubjid;
+run;
+ 
+proc sort data=adsl;
+   by studyid usubjid;
+run;
+ 
+data vs01;
+   merge vs(in=a) adsl(keep=studyid usubjid trtsdt);
+   by studyid usubjid;
+   if a;
+   if vsstat ne "NOT DONE";
+run;
+ 
+*==============================================================================;
+*Create variables which are directly based on input variables;
+*==============================================================================;
+ 
+data advs01;
+   set vs01;
+ 
+   *------------------------------------------------------------------------------;
+   *parameter related variables;
+   *------------------------------------------------------------------------------;
+   length paramcd $8 param $200;
+ 
+   paramcd=vstestcd;
+   if paramcd="SYSBP" then do;
+      param="Systolic Blood Pressure (mmHg)";
+      paramn=1;
+   end;
+   else if paramcd="DIABP" then do;
+      param="Diastolic Blood Pressure (mmHg)";
+      paramn=2;
+   end;
+   else if paramcd="HR" then do;
+      param="Heart Rate (beats/min)";
+      paramn=3;
+   end;
+   else if paramcd="RESP" then do;
+      param="Respiratory Rate (breaths/min)";
+      paramn=4;
+   end;
+   else if paramcd="TEMP" then do;
+      param="Temperature (C)";
+      paramn=5;
+   end;
+   else if paramcd="HEIGHT" then do;
+      param="Height (cm)";
+      paramn=6;
+   end;
+   else if paramcd="WEIGHT" then do;
+      param="Weight (kg)";
+      paramn=7;
+   end;
+ 
+   parcat1=vscat;
+   if vscat="VITAL SIGNS" then parcat1n=1;
+   else if vscat="PHYSICAL MEASUREMENTS" then parcat1n=2;
+ 
+   *------------------------------------------------------------------------------;
+   *timing variables;
+   *------------------------------------------------------------------------------;
+   if length(vsdtc) ge 10 then adt=input(vsdtc,??yymmdd10.);
+   if nmiss(adt,trtsdt)=0 then do;
+      if adt lt trtsdt then ady =adt-trtsdt;
+      else if adt ge trtsdt then ady=adt-trtsdt+1;
+   end;
+   if find(visit,"unscheduled","i")=0 then do;
+      avisitn=visitnum;
+      avisit=visit;
+   end;
+ 
+   format adt date9.;
+ 
+   *------------------------------------------------------------------------------;
+   *other variables;
+   *------------------------------------------------------------------------------;
+ 
+   aval=vsstresn;
+run;
+ 
+*==============================================================================;
+*Create baseline flag and dependent variables;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Subset the records with non-missing result which are on or before treatment start
+Create ABLFL variable by assiging a value of "Y" on the latest record identified;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=advs01 out=base01;
+   by usubjid paramcd adt visitnum vsseq;
+   where . lt adt le trtsdt and aval ne .;
+run;
+ 
+data base02;
+   set base01;
+   by usubjid paramcd adt visitnum vsseq;
+   if last.paramcd;
+   keep usubjid paramcd adt visitnum ablfl vsseq base;
+   ablfl="Y";
+   base=aval;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge the baseline flag back onto the parent dataset using appropriate by variables
+Assign AVISIT/AVISITN with appropriate values as per specification.;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=advs01;
+   by usubjid paramcd adt visitnum;
+run;
+ 
+data advs02;
+   merge advs01(in=a) base02(in=b keep=usubjid paramcd adt visitnum vsseq ablfl);
+   by usubjid paramcd adt visitnum vsseq;
+   if a;
+run;
+ 
+data advs03;
+   set advs02;
+   if ablfl="Y" then do;
+      avisitn=0;
+      avisit="Baseline";
+   end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Deriving base, chg, and pchg variables;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=advs03;
+   by usubjid paramcd;
+run;
+ 
+proc sort data=base02;
+   by usubjid paramcd;
+run;
+ 
+data advs04;
+   merge advs03(in=a) base02(in=b keep=usubjid paramcd base);
+   by usubjid paramcd;
+run;
+ 
+data advs05;
+   set advs04;
+   if adt gt trtsdt gt . then do;
+      anl02fl="Y";
+      if aval ne . and base ne . then do;
+         chg=aval-base;
+         if base ne 0 then pchg=chg/base*100;
+      end;
+   end;
+run;
+ 
+*==============================================================================;
+*Create anl01fl;
+*==============================================================================;
+ 
+proc sort data=advs05;
+   by usubjid paramcd avisitn avisit descending adt;
+run;
+ 
+data advs05;
+   set advs05;
+   by usubjid paramcd avisitn avisit descending adt;
+   if first.avisitn and avisitn ne . then anl01fl="Y";
+run;
+ 
+proc sort data=advs05;
+   by usubjid paramn avisitn avisit adt;
+run;
+ 
+*==============================================================================;
+*Merge with adsl to fetch other subject level variables;
+*==============================================================================;
+ 
+data advs06;
+   merge advs05(in=a) adsl;
+   by studyid usubjid;
+   if a;
+run;
+ 
+proc sort data=advs06;
+    by usubjid parcat1n paramn adt;
+run;
+ 
+ 
+*==============================================================================;
+*keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID SUBJID PARAM PARAMCD PARAMN PARCAT1 PARCAT1N AVISIT AVISITN AVAL ADT ADY
+VSORRESU AVAL BASE CHG PCHG ABLFL ANL01FL ANL02FL EPOCH VISITNUM VISIT  VSPOS  VSORRES VSSEQ SITEID
+AGE AGEU SEX RACE  SAFFL RANDFL ENRLFL
+;
+ 
+data advs;
+   retain &varlist.;
+   set advs06;
+   keep &varlist.;
+run;
+ 
+ 

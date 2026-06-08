@@ -1,0 +1,245 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADEXSUM\ADaM_ADEXSUM_L1101\ADaM_ADEXSUM_L1101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read and process input datasets;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Convert dates to numeric format and calculate duration;
+*------------------------------------------------------------------------------;
+ 
+data ec01;
+    set ec;
+    ecstdt=input(ecstdtc,??yymmdd10.);
+    ecendt=input(ecendtc,??yymmdd10.);
+ 
+    if nmiss(ecstdt,ecendt)=0 then dur=ecendt-ecstdt+1;
+    format ecstdt ecendt date9.;
+run;
+ 
+*==============================================================================;
+*Create dataset to Combine start and end dates into a single variable;
+*this will be used in downstream processing for different parameters;
+*==============================================================================;
+ 
+data proc01;
+    set
+    ec01(rename=ecstdt=date)
+    ec01(rename=ecendt=date);
+run;
+ 
+*==============================================================================;
+*Create a record for each subject present in EC - this will be used as a
+template in downstream processing;
+*==============================================================================;
+ 
+proc sort data=ec01 out=template01(keep=studyid usubjid) nodupkey;
+    by studyid usubjid;
+run;
+ 
+*==============================================================================;
+*Create parameter - TRTDURD;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Get the earliest and latest dates;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=proc01 out=trtdurd01;
+    by studyid usubjid date;
+    where ecoccur="Y" and date ne .;
+run;
+ 
+data trtdurd_first(rename=(date=start))
+     trtdurd_last(rename=(date=end)) ;
+    set trtdurd01;
+    by studyid usubjid date;
+    if first.usubjid then output trtdurd_first;
+    if last.usubjid then output trtdurd_last;
+ 
+    keep studyid usubjid date;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Bring first and last date into a single dataset and calculate duration;
+*------------------------------------------------------------------------------;
+ 
+data trtdurd;
+    merge trtdurd_first trtdurd_last;
+    by studyid usubjid;
+ 
+    aval=end-start+1;
+    length paramcd $8;
+    paramcd="TRTDURD";
+ 
+    keep studyid usubjid paramcd aval;
+run;
+ 
+ 
+*==============================================================================;
+*Create parameter - NADMIN;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Sum of duration per subject where ecoccur='Y';
+*------------------------------------------------------------------------------;
+proc sql;
+    create table nadmin01 as
+        select studyid,usubjid,sum(dur) as sumdur
+        from ec01
+        where ecoccur="Y"
+        group by studyid,usubjid;
+quit;
+ 
+data nadmin;
+    set nadmin01;
+    length paramcd $8;
+    aval=sumdur;
+    paramcd="NADMIN";
+ 
+    keep studyid usubjid paramcd aval;
+run;
+ 
+*==============================================================================;
+*Create parameter - TOTPLDOS;
+*==============================================================================;
+ 
+data totpldos;
+    set template01;
+    aval=1500;
+    length paramcd $8;
+    paramcd="TOTPLDOS";
+ 
+run;
+ 
+*==============================================================================;
+*Create parameter - TOTACDOS;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*use NADMIN dataset;
+*------------------------------------------------------------------------------;
+ 
+data totacdos;
+    set nadmin(rename=(aval=ndoses));
+    length paramcd $8;
+    paramcd="TOTACDOS";
+ 
+    if ndoses ne . then aval=ndoses*100;
+ 
+    keep studyid usubjid paramcd aval;
+run;
+ 
+*==============================================================================;
+*Create parameter - NMISSDOS;
+*==============================================================================;
+ 
+ 
+*------------------------------------------------------------------------------;
+*Sum of duration per subject where ecoccur='N';
+*------------------------------------------------------------------------------;
+proc sql;
+    create table nmissdos01 as
+        select studyid,usubjid,sum(dur) as sumdur
+        from ec01
+        where ecoccur="N"
+        group by studyid,usubjid;
+quit;
+ 
+*------------------------------------------------------------------------------;
+*Merge with template - to get a row for all subjects and populate 0 when no doses
+missed;
+*------------------------------------------------------------------------------;
+ 
+data nmissdos02;
+    merge nmissdos01(in=a) template01;
+    by studyid usubjid;
+ 
+    if not a then sumdur=0;
+run;
+ 
+data nmissdos;
+    set nmissdos02;
+    length paramcd $8;
+    aval=sumdur;
+    paramcd="NMISSDOS";
+ 
+    keep studyid usubjid paramcd aval;
+run;
+ 
+*==============================================================================;
+*Create parameter - RDOSINT;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Combine TOTACDOS and TOTPLDOS datasets such tha planned and actual doses
+appear side by side;
+*------------------------------------------------------------------------------;
+ 
+data rdosint01;
+    merge
+    totacdos(keep=studyid usubjid aval rename=(aval=actual))
+    totpldos(keep=studyid usubjid aval rename=(aval=planned))
+    ;
+    by studyid usubjid;
+run;
+ 
+data rdosint;
+    set rdosint01;
+    length paramcd $8;
+    paramcd="RDOSINT";
+ 
+    if nmiss(planned,actual)=0 then aval=round(actual/planned*100,0.01);
+    keep studyid usubjid paramcd aval;
+run;
+ 
+*==============================================================================;
+*Combine the data for all parameters and create dependent variables;
+*==============================================================================;
+ 
+data allparams01;
+    set trtdurd nadmin totpldos totacdos nmissdos rdosint;
+ 
+    *------------------------------------------------------------------------------;
+    *create paramn and  param;
+    *------------------------------------------------------------------------------;
+ 
+    length param $200;
+ 
+    if paramcd="TRTDURD" then do; paramn=1; param="Treatment Duration in days"; end;
+    else if paramcd="NADMIN" then do; paramn=2; param="Nr of Actual Study Drug Administrations"; end;
+    else if paramcd="TOTPLDOS" then do; paramn=3; param="Total Planned Dose (mg)"; end;
+    else if paramcd="TOTACDOS" then do; paramn=4; param="Total Actual Dose (mg)"; end;
+    else if paramcd="NMISSDOS" then do; paramn=5; param="Number of missed doses"; end;
+    else if paramcd="RDOSINT" then do; paramn=6; param="Relative Dose Intensity (%)"; end;
+run;
+ 
+*==============================================================================;
+*Keep required variables and sort as per requirement;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID PARAM PARAMCD PARAMN AVAL;
+ 
+data adexsum;
+    retain &varlist.;
+    set allparams01;
+    keep &varlist.;
+run;
+ 
+proc sort data=adexsum;
+    by studyid usubjid paramn;
+run;
+ 

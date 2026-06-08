@@ -1,0 +1,63 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1011\ADaM_C1011_L101d\ADaM_C1011_L101d;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data vs01;
+   set vs;
+   format adt trtsdt date9.;
+run;
+ 
+/*=========================================================
+Create CRIT1 and CRIT1FL
+=========================================================*/
+ 
+ 
+data vs02;
+   set vs01;
+   length crit1 crit2 $50;
+   if paramn=1 then do;
+      crit1="Systolic Pressure > 160";
+      crit2="Change from baseline in Systolic Pressure > 15";
+      if aval gt 160 then do;
+         crit1fl="Y";
+      end;
+      if chg gt 15 then crit2fl="Y";
+   end;
+   else if paramn=2 then do;
+      crit1="Diastolic Pressure > 90";
+      crit2="Change from baseline in Diastolic Pressure > 10";
+      if aval gt 90 then do;
+         crit1fl="Y";
+      end;
+      if chg gt 10 then crit2fl="Y";
+   end;
+run;
+ 
+ 
+/*=========================================================
+Keep required variables and order the variables in a logical sequence
+=========================================================*/
+ 
+ 
+data output;
+   retain usubjid paramcd param paramn avisitn avisit adt ady aval base chg crit1 crit1fl crit2 crit2fl trtsdt  ;
+   set vs02;
+   keep usubjid paramcd param paramn avisitn avisit adt ady aval base chg crit1 crit1fl crit2 crit2fl trtsdt  ;
+run;
+ 
+ 

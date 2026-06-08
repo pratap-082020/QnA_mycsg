@@ -1,0 +1,241 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TTTE\TFL_TTTE_L101a\TFL_TTTE_L101a;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read input data
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+run;
+ 
+data tte01;
+   set adtte;
+run;
+ 
+/*=========================================================
+Creating a new variable named 'treatment' to hold report level column groupings
+=========================================================*/
+ 
+data adsl02;
+   set adsl01;
+   where saffl="Y";
+   treatment=trt01an;
+run;
+ 
+data tte02;
+   set tte01;
+   where saffl="Y";
+   treatment=trt01an;
+run;
+ 
+/*=========================================================
+Create macro variables to hold treatment totals
+=========================================================*/
+ 
+proc sql noprint;
+   select count(distinct usubjid) into :n0 from adsl02 where treatment=0;
+   select count(distinct usubjid) into :n54 from adsl02 where treatment=54;
+   select count(distinct usubjid) into :n81 from adsl02 where treatment=81;
+quit;
+ 
+/*=========================================================
+Obtain statistics using proc lifetest
+=========================================================*/
+/*----------------------------------------------------------
+Censored summary for crude incidence</br>
+Quartiles for Q1,Q2 and Q3
+----------------------------------------------------------*/
+ 
+proc sort data=tte02;
+   by treatment;
+run;
+ 
+ods output quartiles=quart01;
+ods output censoredsummary=cs01;
+ods output productlimitestimates=estimates;
+ 
+proc lifetest data=tte02 method=km timelist=(0 to 150 by 50) conftype=linear reduceout;
+   time aval*cnsr(0);
+   strata treatment;
+   survival out=surv01;
+run;
+ 
+ 
+/*=========================================================
+Process censored summary data
+=========================================================*/
+/*----------------------------------------------------------
+Dataset contains censored percentage, substracting this from 100 will give events percentage</br>
+Concatenate number of subjects with event and associated percentage
+----------------------------------------------------------*/
+data cs02;
+   set cs01;
+   where not missing(treatment);
+   pctfail=100-pctcens;
+   length cp $30 label $200;
+   cp=put(failed,3.)||" ("||put(pctfail,5.1)||"%)";
+   label="Deaths";
+   group=1;
+   order=1;
+   output;
+   cp=put(censored,3.)||" ("||put(pctcens,5.1)||"%)";
+   label="Censored";
+   order=2;
+   output;
+   keep group order label treatment cp;
+run;
+ 
+/*=========================================================
+Process quartiles dataset
+=========================================================*/
+/*----------------------------------------------------------
+Set estimate, lower limit and upper limits to 'NE' if missing
+----------------------------------------------------------*/
+data quart02;
+   set quart01;
+   length cp ul ll est $30 label $200;
+   if not missing(estimate) then est=put(round(estimate,0.1),5.1);
+   else est="NE";
+   if not missing(lowerlimit) then ll=put(round(lowerlimit,0.01),6.2);
+   else ll="NE";
+   if not missing(upperlimit) then ul=put(round(upperlimit,0.01),6.2);
+   else ul="NE";
+ 
+   cp=strip(est)||" ("||strip(ll)||", "||strip(ul)||")";
+   order=percent;
+   if percent=25 then label="25th Percentile";
+   else if percent=50 then label="50th Percentile";
+   else if percent=75 then label="75th Percentile";
+   group=2;
+   keep group order label treatment cp;
+run;
+ 
+/*=========================================================
+Process survival summary data
+=========================================================*/
+ 
+data surv02;
+   set surv01;
+   length cp ul ll est $30 label $200;
+   if not missing(survival) then est=put(round(survival*100,0.1),6.1);
+   else est="NE";
+   if not missing(sdf_lcl) then ll=put(round(sdf_lcl*100,0.01),7.2);
+   else ll="NE";
+   if not missing(sdf_ucl) then ul=put(round(sdf_ucl*100,0.01),7.2);
+   else ul="NE";
+ 
+   if timelist=50 then label="50 (days)";
+   else if timelist=100 then label="100 (days)";
+   else if timelist=150 then label="150 (days)";
+   else if timelist=0 then label="0 (days)";
+ 
+   cp=strip(est)||" ("||strip(ll)||", "||strip(ul)||")";
+   group=3;
+   if timelist ne 0 then order=timelist;
+   else order=1;
+   keep group order label treatment cp;
+run;
+ 
+ 
+/*=========================================================
+Combine processed censored summary, quartiles and survival estimate datasets
+=========================================================*/
+ 
+data sum01;
+   set cs02 quart02 surv02;
+run;
+ 
+/*=========================================================
+Transpose the dataset such that treatments become columns
+=========================================================*/
+ 
+proc sort data=sum01;
+   by group order label treatment;
+run;
+ 
+proc transpose data=sum01 out=trans01 prefix=trt;
+   by group order label;
+   var cp;
+   id treatment;
+run;
+ 
+/*=========================================================
+Create group label for quartiles
+=========================================================*/
+ 
+data rowlabels;
+   length label $200;
+   label="Censor Summary - n (%)";
+   group=1;
+   order=0;
+   output;
+   label="Survival Summary - Estimate (95% CI)";
+   group=2;
+   order=0;
+   output;
+   label="Percent Survival - Estimate (95% CI)";
+   group=3;
+   order=0;
+   output;
+run;
+ 
+/*=========================================================
+Combine group labels to actual data
+=========================================================*/
+ 
+data trans02;
+   set trans01 rowlabels;
+   if order ne 0 then label="(*ESC*)\li250 "||strip(label);
+run;
+ 
+proc sort data=trans02;
+   by group order label;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Overall Survival by Treatment Group";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns group order label  trt0 trt54 trt81;
+   define group/ order noprint;
+   define order/order noprint;
+   define label /order "" style(column)=[cellwidth=2.5in protectspecialchars=off]
+            style(header)=[just=left] ;
+   define trt0/"Placebo" "(N=%cmpres(&n0))" style(column)=[cellwidth=1.7in just=center] ;
+   define trt54/"Low Dose" "(N=%cmpres(&n54))"  style(column)=[cellwidth=1.7in just=center]   ;
+   define trt81/"High Dose" "(N=%cmpres(&n81))"  style(column)=[cellwidth=1.7in just=center]   ;
+ 
+   compute after group;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

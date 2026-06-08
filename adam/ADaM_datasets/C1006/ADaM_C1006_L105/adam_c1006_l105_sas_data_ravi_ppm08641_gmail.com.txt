@@ -1,0 +1,43 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1006_L105;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data oe;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $10. OECAT : $5. OETEST : $30. VISIT : $20. OETPT : $10. OESTRESN : best32. OESTRESU : $5. OETESTCD : $3. VISITNUM : best32.;
+label ;
+format ;
+datalines4;
+101-01|OD|Intraocular pressure|Baseline|8 AM|20|mmHg|IOP|1
+101-01|OD|Intraocular pressure|Baseline|10 AM|21|mmHg|IOP|1
+101-01|OD|Intraocular pressure|Baseline|12 PM|22|mmHg|IOP|1
+101-01|OD|Intraocular pressure|Baseline|2 PM|25|mmHg|IOP|1
+101-01|OD|Intraocular pressure|Visit 3|8 AM|24|mmHg|IOP|3
+101-01|OD|Intraocular pressure|Visit 3|10 AM|25|mmHg|IOP|3
+101-01|OD|Intraocular pressure|Visit 3|12 PM|26|mmHg|IOP|3
+101-01|OD|Intraocular pressure|Visit 3|2 PM|27|mmHg|IOP|3
+101-01|OD|Intraocular pressure|Visit 5|8 AM|23|mmHg|IOP|5
+101-01|OD|Intraocular pressure|Visit 5|10 AM|24|mmHg|IOP|5
+101-01|OD|Intraocular pressure|Visit 5|12 PM|25|mmHg|IOP|5
+101-01|OD|Intraocular pressure|Visit 5|2 PM|26|mmHg|IOP|5
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

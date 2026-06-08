@@ -1,0 +1,299 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TPE\TFL_TPE_L101\TFL_TPE_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input datasets;
+*==============================================================================;
+ 
+data adpe01;
+   set adpe;
+   where saffl="Y" and anl01fl="Y" and avisitn gt 0;
+run;
+ 
+data adsl01;
+   set adsl;
+   where saffl="Y";
+run;
+ 
+*==============================================================================;
+*Create a variable named 'treatment' to hold report level column groupings<br/>
+Also create duplicate rows for presenting total column;
+*==============================================================================;
+ 
+data adpe02;
+   set adpe01;
+   treatment=trt01an;
+   output;
+ 
+    if trt01an in (2,3) then do;
+        treatment=4;
+        output;
+    end;
+ 
+   treatment=5;
+   output;
+run;
+ 
+data adsl02;
+   set adsl01;
+   treatment=trt01an;
+   output;
+ 
+    if trt01an in (2,3) then do;
+        treatment=4;
+        output;
+    end;
+ 
+   treatment=5;
+   output;
+run;
+ 
+*==============================================================================;
+*Create a numeric variable in adpe corresponding to each level in AVALC;
+*==============================================================================;
+ 
+data adpe03;
+   set adpe02;
+    avalc=upcase(avalc);
+   if avalc="NORMAL" then result=1;
+   else if avalc="ABNORMAL" then result=2;
+   else if pestat="NOT DONE" then result=3;
+run;
+ 
+*==============================================================================;
+*Get treatment totals into a dataset and into macro variables(for column headers);
+*==============================================================================;
+ 
+ 
+*------------------------------------------------------------------------------;
+*Get treatment totals based on actual data;
+*------------------------------------------------------------------------------;
+ 
+proc sql;
+   create table trttotals_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+*------------------------------------------------------------------------------;
+*Create dummy dataset for treatement totals;
+*------------------------------------------------------------------------------;
+ 
+data dummy_trttotals;
+   do treatment=1 to 5;
+      output;
+   end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge actual counts with dummt counts;
+*------------------------------------------------------------------------------;
+ 
+data trttotals;
+   merge dummy_trttotals(in=a) trttotals_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+*------------------------------------------------------------------------------;
+*Create macro variables to present treatment totals in column headers of report;
+*------------------------------------------------------------------------------;
+ 
+data _null_;
+    set trttotals;
+    call symputx(cats("trt",treatment),trttotal);
+run;
+ 
+*==============================================================================;
+*Obtaining actual counts-for the table;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Get counts for each level of avalc - abnormality level counts;
+*------------------------------------------------------------------------------;
+ 
+proc sql noprint;
+   create table counts01 as
+      select avisitn,avisit,paramn,param,result,treatment,
+      count(distinct usubjid) as count
+      from adpe03
+      group by avisitn,avisit,paramn,param,result,treatment;
+quit;
+ 
+*==============================================================================;
+*Create zero counts for levels which are not present in actual data;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Get all available visits and parameters;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=counts01 out=dummy01(keep=avisitn avisit paramn param ) nodupkey;
+   by avisitn avisit paramn param;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Create a row for each treatment and row to be presented in table;
+*------------------------------------------------------------------------------;
+ 
+data dummy02;
+   set dummy01;
+   do treatment=1 to 5;
+      do result=1 to 3;
+         output;
+      end;
+   end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge dummy counts with actual counts;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=dummy02;
+   by avisitn avisit paramn param result treatment;
+run;
+ 
+proc sort data=counts01;
+   by avisitn avisit paramn param result treatment;
+run;
+ 
+data counts02;
+   merge dummy02(in=a) counts01(in=b);
+   by avisitn avisit paramn param result treatment;
+   if count=. then count=0;
+run;
+ 
+*==============================================================================;
+*Process the data to calculate percentages;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Denomiator: number of subjects in each treatment;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=counts02;
+   by treatment;
+run;
+ 
+data counts03;
+   merge counts02(in=a) trttotals(in=b);
+   by treatment;
+   if a;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Calculate percentages;
+*------------------------------------------------------------------------------;
+ 
+data counts04;
+   set counts03;
+   length cp $30;
+ 
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/trttotal*100,5.1)||")";
+   else cp=put(count,3.);
+ 
+run;
+ 
+*==============================================================================;
+*Create the label column;
+*==============================================================================;
+ 
+data counts05;
+   set counts04;
+   length label $200;
+   if result=1 then label="Normal";
+   else if result=2 then label="Abnormal";
+   else if result=3 then label="Not Done";
+ 
+    
+    param="(*ESC*)R'\li110'"||strip(param);
+    label="(*ESC*)R'\li220'"||strip(label);
+run;
+ 
+*==============================================================================;
+*Transpose to obtain treatment as columns;
+*==============================================================================;
+ 
+proc sort data=counts05;
+   by avisitn avisit paramn param label result treatment ;
+run;
+ 
+proc transpose data=counts05 out=trans01 prefix=trt;
+   by avisitn avisit paramn param label result;
+   var cp;
+   id treatment;
+run;
+ 
+data trans02;
+   set trans01;
+   keep avisitn avisit result paramn param label trt:;
+run;
+ 
+*==============================================================================;
+*Report generation;
+*==============================================================================;
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Physical Examination by Time Point";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd headline headskip missing style(report)=[just=center] out=report
+   style(header)=[just=center];
+   columns avisitn avisit paramn param result label trt1
+    ( "(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=c} CSG" trt2 trt3 trt4 )
+    trt5;
+ 
+   define avisitn/ order noprint;
+    define paramn/order noprint;
+    define param/order noprint;
+    define avisit/order noprint;
+   define result/ order noprint;
+ 
+ 
+   define label /order "Visit" "   Body System" "    Finding" style(column)=[cellwidth=2in protectspecialchars=off]
+            style(header)=[just=left asis=on] ;
+   define trt1/"Placebo" "(N=&trt1.)"  style(column)=[cellwidth=1in just=center] ;
+   define trt2/"Low Dose" "(N=&trt2.)"  style(column)=[cellwidth=1in just=center]   ;
+    define trt3/ "High Dose" "(N=&trt3.)"  style(column)=[cellwidth=1in just=center]   ;
+    define trt4/"Total"  "(N=&trt4.)"  style(column)=[cellwidth=1in just=center]   ;
+   define trt5/"Total" "(N=&trt5.)"   style(column)=[cellwidth=1in just=center]   ;
+ 
+    compute before avisit;
+        line @1 avisit $150.;
+    endcomp;
+ 
+    compute before param;
+        line @1 param $150.;
+    endcomp;
+ 
+   compute after paramn;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

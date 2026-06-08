@@ -1,0 +1,49 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1010\ADaM_C1010_L121\ADaM_C1010_L121;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Sort the data by timepoint;
+*==============================================================================;
+ 
+proc sort data=adre out=wocf01;
+    by usubjid paramn avisitn;
+run;
+ 
+*==============================================================================;
+*Retain the minimum value seen up to that timepoint (min is worst);
+*==============================================================================;
+ 
+data wocf02;
+   set wocf01;
+   by usubjid paramn avisitn;
+    orig_aval=aval;
+ 
+    retain minvalue;
+ 
+    if first.paramn then minvalue=.;
+ 
+    if not missing(aval) then minvalue=min(aval,minvalue);
+    else do;
+        aval=minvalue;
+        if aval ne . then dtype="WOCF";
+    end;
+run;
+ 
+data output;
+    set wocf02;
+    drop minvalue orig_aval;
+run;
+ 
+ 

@@ -1,0 +1,105 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1009\ADaM_C1009_L106\ADaM_C1009_L106;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input datasets;
+*==============================================================================;
+ 
+data lb01;
+    set adlb;
+run;
+ 
+*==============================================================================;
+*Identify the worst record for ANL04FL;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Filter the eligible records;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=lb01 out=anl04_1;
+    by studyid usubjid paramcd atoxgrl descending avisitn;
+    where atoxgrl ne "" and avisitn gt 1;
+run;
+ 
+*------------------------------------------------------------------------------;
+*subset the worst record;
+*------------------------------------------------------------------------------;
+ 
+data anl04_2;
+    set anl04_1;
+    by studyid usubjid paramcd atoxgrl descending avisitn;
+    if last.paramcd;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Keep only the identifier variables;
+*------------------------------------------------------------------------------;
+ 
+data anl04_3;
+    set anl04_2;
+    keep studyid usubjid paramcd avisitn;
+run;
+ 
+ 
+*==============================================================================;
+*Identify the worst record for ANL05FL;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Filter the eligible records;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=lb01 out=anl05_1;
+    by studyid usubjid paramcd atoxgrh descending avisitn;
+    where atoxgrh ne "" and avisitn gt 1;
+run;
+ 
+*------------------------------------------------------------------------------;
+*subset the worst record;
+*------------------------------------------------------------------------------;
+ 
+data anl05_2;
+    set anl05_1;
+    by studyid usubjid paramcd atoxgrh descending avisitn;
+    if last.paramcd;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Keep only the identifier variables;
+*------------------------------------------------------------------------------;
+ 
+data anl05_3;
+    set anl05_2;
+    keep studyid usubjid paramcd avisitn;
+run;
+ 
+*==============================================================================;
+*Using the key variables identified for anl04fl and anl05fl populate the flags;
+*==============================================================================;
+ 
+proc sort data=lb01;
+    by studyid usubjid paramcd avisitn;
+run;
+ 
+data lb02;
+    merge lb01(in=a) anl04_3(in=b) anl05_3(in=c);
+    by studyid usubjid paramcd avisitn;
+    if a;
+    if b then anl04fl="Y";
+    if c then anl05fl="Y";
+run;
+ 
+ 

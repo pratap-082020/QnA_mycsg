@@ -1,0 +1,64 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1011\ADaM_C1011_L101b\ADaM_C1011_L101b;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data vs01;
+   set vs;
+   format adt trtsdt date9.;
+run;
+ 
+/*=========================================================
+Create CRIT1 and CRIT1FL
+=========================================================*/
+ 
+ 
+data vs02;
+   set vs01;
+   if paramn=1 then do;
+      crit1="Systolic Pressure < 100";
+      if . lt aval lt 100 then do;
+         crit1fl="Y";
+      end;
+      else if aval ne . then do;
+         crit1fl="N";
+      end;
+   end;
+   else if paramn=2 then do;
+      crit1="Diastolic Pressure < 60";
+      if . lt aval lt 60 then do;
+         crit1fl="Y";
+      end;
+      else if aval ne . then do;
+         crit1fl="N";
+      end;
+   end;
+run;
+ 
+ 
+/*=========================================================
+Keep required variables and order the variables in a logical sequence
+=========================================================*/
+ 
+ 
+data output;
+   retain usubjid paramcd param paramn avisitn avisit adt ady aval crit1 crit1fl trtsdt  ;
+   set vs02;
+   keep usubjid paramcd param paramn avisitn avisit adt ady aval crit1 crit1fl trtsdt  ;
+run;
+ 
+ 

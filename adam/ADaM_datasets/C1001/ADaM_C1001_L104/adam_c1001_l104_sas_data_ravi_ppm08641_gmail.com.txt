@@ -1,0 +1,65 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1001_L104;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $14. RFSTDTC : $10.;
+label ;
+format ;
+datalines4;
+CSG-1001|2003-04-29
+CSG-1002|2003-10-15
+CSG-1003|2003-09-30
+CSG-1004|2003-10-10
+CSG-1005|
+;;;;
+run;
+
+data vs;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $14. VSTESTCD : $20. VSSTRESN : best32. VSDTC : $10.;
+label ;
+format ;
+datalines4;
+CSG-1001|HEIGHT|167.6|2003-04-15
+CSG-1001|WEIGHT|69.9|2003-04-15
+CSG-1001|WEIGHT|70.8|2003-04-29
+CSG-1001|WEIGHT|72.1|2003-05-13
+CSG-1001|WEIGHT|71.2|2003-10-13
+CSG-1002|HEIGHT|153.7|2003-10-06
+CSG-1002|WEIGHT|54.4|2003-10-06
+CSG-1002|WEIGHT|54.9|2003-10-15
+CSG-1002|WEIGHT|56.2|2003-10-31
+CSG-1002|WEIGHT|62.6|2004-03-30
+CSG-1003|HEIGHT|160|2003-09-09
+CSG-1003|WEIGHT|51.7|2003-09-09
+CSG-1003|WEIGHT|51.3|2003-09-30
+CSG-1003|WEIGHT|51.7|2003-10-14
+CSG-1003|WEIGHT|49.4|2004-02-02
+CSG-1004|HEIGHT|166.4|2003-09-18
+CSG-1004|WEIGHT|56|2003-09-18
+CSG-1004|WEIGHT|59|2003-10-10
+CSG-1004|WEIGHT|59.4|2003-10-24
+CSG-1004|WEIGHT|58.1|2004-03-29
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

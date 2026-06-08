@@ -1,0 +1,57 @@
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1010\ADaM_C1010_L101\ADaM_C1010_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Impute the AVAL value with last non-missing value prior to the collection with missing result
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Retain the non-missing value into a new variable <br/>
+On the record where result is missing set the value from the retained variable
+----------------------------------------------------------*/
+ 
+proc sort data=vs out=vs01;
+   by usubjid paramn avisitn adt;
+run;
+ 
+data vs02;
+   set vs01;
+   by usubjid paramn avisitn adt;
+ 
+   orig_aval=aval;
+ 
+   retain temp_aval;
+   if first.paramn then call missing(temp_aval);
+   if not missing(aval) then temp_aval=aval;
+   if aval=. and temp_aval ne . then do;
+      aval=temp_aval;
+      dtype="LOCF";
+   end;
+run;
+ 
+/*=========================================================
+Keep only the required variables and order the variables in a logical sequence
+=========================================================*/
+data output;
+   retain usubjid paramcd param paramn avisitn avisit adt ady aval dtype trtsdt  ;
+   set vs02;
+   keep usubjid paramcd param paramn avisitn avisit adt ady aval dtype trtsdt  ;
+run;
+ 
+data csg_formoutput;
+   set output;
+   if dtype ne "" then call missing(dtype,aval);
+run;
+ 
+ 

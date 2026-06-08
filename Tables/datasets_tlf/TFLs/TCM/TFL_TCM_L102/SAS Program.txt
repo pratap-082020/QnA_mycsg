@@ -1,0 +1,298 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TCM\TFL_TCM_L102\TFL_TCM_L102;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Read input datasets
+----------------------------------------------------------*/
+ 
+data adsl01;
+    set adsl;
+    where saffl="Y";
+run;
+ 
+data adcm01;
+    set adcm;
+    where saffl="Y";
+run;
+ 
+ 
+/*=========================================================
+Create variable named 'treatment' to hold report level column groupings
+Also create duplicate rows for presenting total column
+=========================================================*/
+ 
+data adsl02;
+   set adsl01;
+    treatment=trt01an;
+    output;
+    treatment=3;
+    output;
+run;
+ 
+data adcm02;
+    set adcm01;
+    treatment=trt01an;
+    output;
+    treatment=3;
+    output;
+run;
+ 
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables (for column headers)
+=========================================================*/
+ 
+ 
+proc sql;
+   create table trttotals_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_trttotals;
+   do treatment=1 to 3;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummy counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_trttotals(in=a) trttotals_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Macro variables
+----------------------------------------------------------*/
+data _null_;
+    set trttotals;
+    call symputx(cats("n",treatment),trttotal);
+run;
+ 
+ 
+/*=========================================================
+Obtaining actual counts-for the table
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Subject level count- top row
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table sub_count as
+   select "Overall" as label length=200,
+   treatment,
+   count(distinct usubjid) as count
+   from adcm02
+   group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+CMDECOD level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table pt_count as
+      select cmdecod,treatment,
+      count(distinct usubjid) as count
+      from adcm02
+      group by cmdecod,treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Combine toprow, and CMDECOD counts into single dataset
+----------------------------------------------------------*/
+ 
+ 
+data counts01;
+   set sub_count pt_count;
+run;
+ 
+/*=========================================================
+Create zero counts if an event is not present in a treatment
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Get all the available SOC and PT values
+----------------------------------------------------------*/
+ 
+proc sort data=counts01 out=dummy01(keep=cmdecod label) nodupkey;
+   by cmdecod label;
+run;
+ 
+/*----------------------------------------------------------
+Create a row for each treatment
+----------------------------------------------------------*/
+ 
+data dummy02;
+   set dummy01;
+   do treatment=1 to 3;
+         output;
+   end;
+run;
+ 
+/*=========================================================
+Merge dummy counts with actual counts
+=========================================================*/
+ 
+proc sort data=dummy02;
+   by cmdecod label treatment;
+run;
+ 
+ 
+proc sort data=counts01;
+   by cmdecod label treatment;
+run;
+ 
+data counts02;
+   merge dummy02(in=a) counts01(in=b);
+   by cmdecod label treatment;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+ 
+proc sort data=counts02;
+   by treatment;
+run;
+ 
+proc sort data=trttotals;
+   by treatment;
+run;
+ 
+data counts03;
+   merge counts02(in=a) trttotals(in=b);
+   by treatment;
+   if a;
+run;
+ 
+data counts04;
+   set counts03;
+   length cp $30;
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/trttotal*100,5.1)||"%)";
+   else cp=put(count,3.);
+run;
+ 
+ 
+/*=========================================================
+Create the label column
+=========================================================*/
+ 
+ 
+data counts05;
+   set counts04;
+   if cmiss(cmdecod)=1 then label=label;
+   else if not missing(cmdecod) then label=strip(cmdecod);
+run;
+ 
+ 
+/*=========================================================
+Transpose to obtain treatment as columns
+=========================================================*/
+ 
+ 
+proc sort data=counts05;
+   by cmdecod label ;
+run;
+ 
+proc transpose data=counts05 out=trans01 prefix=trt;
+   by cmdecod label;
+   var cp;
+   id treatment;
+run;
+ 
+ 
+/*=========================================================
+Create variables to sort the PTs by descending frequency in treatment 2
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Extract counts treatment 2
+----------------------------------------------------------*/
+data trans02;
+   set trans01;
+   cnt=input(scan(trt2,1,'('),best.);
+   if label="Overall" and cmdecod="" then section=1;
+   else section=2;
+run;
+ 
+/*----------------------------------------------------------
+Create order variable for PT rows by sorting based on required variables
+----------------------------------------------------------*/
+ 
+proc sort data=trans02;
+   by section descending cnt cmdecod;
+run;
+ 
+data trans03;
+   set trans02;
+   by section descending cnt cmdecod;
+   if first.section then order=1;
+   else order+1;
+run;
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Concmitant Medications by preferred term";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans03 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns section order label  trt1 trt2 trt3;
+ 
+   define section/order noprint;
+  define order/order noprint;
+ 
+   define label /order  "Preferred WHO name"
+                  style(column)=[cellwidth=3.7in protectspecialchars=off]
+            style(header)=[just=left asis=on] ;
+ 
+   define trt1/"Placebo" "(N=%cmpres(&n1))"  style(column)=[cellwidth=1.7in just=center] ;
+   define trt2/"Active" "(N=%cmpres(&n2))"  style(column)=[cellwidth=1.7in just=center]   ;
+   define trt3/"Total" "(N=%cmpres(&n3))"   style(column)=[cellwidth=1.7in just=center]   ;
+ 
+   compute after section;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close

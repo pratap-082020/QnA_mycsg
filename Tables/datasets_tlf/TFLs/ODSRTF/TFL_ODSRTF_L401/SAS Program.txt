@@ -1,0 +1,72 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_ODSRTF\TFL_ODSRTF_L401\TFL_ODSRTF_L401;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*create a variable named pagenum based on different groups;
+*==============================================================================;
+ 
+*number of groups that fit on a page will be manually identified and pagenum
+will be created;
+ 
+data report02;
+   set report01;
+   if group in (1,2) then pagenum=1;
+   else if group in (3,4) then pagenum=2;
+run;
+ 
+*==============================================================================;
+*Report generation;
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Pagination : demog table like layout which contain multiple sections";
+title2 ' ';
+ 
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data=report02 nowd missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns pagenum group grouplabel intord statistic trt1 trt2 trt3 trt4;
+ 
+   define pagenum/order order=internal noprint;
+   define group/order order=internal noprint;
+   define intord/order order=internal noprint;
+ 
+   define grouplabel /order "Parameter" style(column)=[cellwidth=1.5in]
+            style(header)=[just=left] ;
+   define statistic /order "Statistic" style(column)=[cellwidth=1in]
+            style(header)=[just=left] ;
+ 
+   define trt1/"Treatment 1"  "  n   (%)" style(column)=[cellwidth=1.5in just=center] ;
+   define trt2/"Treatment 2"  "  n   (%)" style(column)=[cellwidth=1.5in just=center]   ;
+   define trt3/"Treatment 3"  "  n   (%)"  style(column)=[cellwidth=1.5in just=center]   ;
+   define trt4/"Treatment 4"  "  n   (%)" style(column)=[cellwidth=1.5in just=center] ;
+ 
+   break after pagenum/page;
+ 
+   compute after group;
+        line @1 "";
+   endcomp;
+ 
+run;
+ods rtf close;
+ 
+ 

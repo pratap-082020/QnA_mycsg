@@ -1,0 +1,334 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_PILOT01\TFL_PILOT01_LTDS003\TFL_PILOT01_LTDS003;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Reading and basic processing of input data
+=========================================================*/
+ 
+data adsl01;
+    set adsl;
+run;
+ 
+/*----------------------------------------------------------
+Creating additional rows to use in total column creation
+----------------------------------------------------------*/
+ 
+data adsl02;
+    set adsl01;
+    treatment=trt01pn;
+    output;
+    treatment=99;
+    output;
+run;
+ 
+ 
+/*=========================================================
+Processing the data to create required subgroups
+=========================================================*/
+/*----------------------------------------------------------
+This report does not actually need subgroups but to make it readily usable for subgroups create dummy variables for subgroups
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Creating two sets of report level subgroup related variables -numeric version for sorting, character version for display label in report<br></br>
+First set: for subgroup categories.<br></br>
+Second set: for levels within a subgroup
+----------------------------------------------------------*/
+ 
+data adsl03;
+    set adsl02;
+    length rsubgroupcat rsubgroup $200;
+    rsubgroupcatn=1;
+    rsubgroupcat="";
+    rsubgroupn=1;
+    rsubgroup="";
+run;
+ 
+ 
+/*----------------------------------------------------------
+Create additional set of records to create "TOTAL" row in the table
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Also create numeric variables for display order of rows in final table<br></br>
+One for ordering "pooled id", second one for "siteid";
+----------------------------------------------------------*/
+ 
+data adsl04;
+    set adsl03;
+    length glabel label $200;
+    group=input(sitegr1,best.);
+    glabel=sitegr1;
+    order=input(siteid,best.);
+    label=siteid;
+    output;
+    group=999;
+    glabel="TOTAL";
+    order=1;
+    label="";
+    output;
+run;
+ 
+/*----------------------------------------------------------
+Create additional set of rows corresponding to each analysis population counts required to enable by group processing
+----------------------------------------------------------*/
+ 
+data adsl05;
+    set adsl04;
+    length sublabel $200;
+    if ittfl="Y" then do;
+        suborder=1;
+        sublabel="ITT";
+        output;
+    end;
+    if comp24fl="Y" then do;
+        suborder=2;
+        sublabel="Comp";
+        output;
+    end;
+    if efffl="Y" then do;
+        suborder=3;
+        sublabel="Eff";
+        output;
+    end;
+run;
+ 
+ 
+/*=========================================================
+Create the template of report level subgroups required in the table
+=========================================================*/
+ 
+data rsubgroups01;
+    do rsubgroupcatn=1;
+        do rsubgroupn=1;
+            output;
+        end;
+    end;
+run;
+ 
+data rsubgroups02;
+    set rsubgroups01;
+    length rsubgroupcat rsubgroup $200;
+ 
+    if rsubgroupcatn=1 then do;
+        rsubgroupcat="";
+        if rsubgroupn=1 then rsubgroup="";
+    end;
+run;
+ 
+data rsubgroups03;
+    set rsubgroups02;
+    do treatment=0,54,81,99;
+        output;
+    end;
+run;
+ 
+/*=========================================================
+Processing for treatment totals (denominators) within each subgroup
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get denominators into a dataset
+----------------------------------------------------------*/
+ 
+proc freq data=adsl03 noprint;
+    tables rsubgroupcatn*rsubgroupcat*rsubgroupn*rsubgroup*treatment/out=denoms01_pre(rename=(count=denom) drop=percent);
+run;
+ 
+/*----------------------------------------------------------
+Create dummy treatment dataset to have all possible treatment rows within each subgroup
+----------------------------------------------------------*/
+ 
+data dummy_trt_totals;
+    set rsubgroups03;
+run;
+ 
+/*----------------------------------------------------------
+Merge dummy and actual treatment denominators
+----------------------------------------------------------*/
+ 
+proc sort data=dummy_trt_totals;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+run;
+ 
+proc sort data=denoms01_pre;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+run;
+ 
+data denoms01;
+    merge denoms01_pre(in=a) dummy_trt_totals(in=b);
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup treatment;
+    if missing(denom) then denom=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Create macro variables to hold denominator values
+----------------------------------------------------------*/
+ 
+data _null_;
+    set denoms01;
+    call symputx(catx("_", "n",rsubgroupcatn,rsubgroupn,treatment),denom);
+run;
+ 
+/*=========================================================
+Create dummy shell as per the layout
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get the distinct pool id and siteid values available in data within each report subgroup level
+----------------------------------------------------------*/
+ 
+proc sql;
+    create table dummy_shell01 as
+        select distinct rsubgroupcatn,rsubgroupcat,rsubgroupn,rsubgroup,group,glabel,order,label
+        from adsl04;
+quit;
+ 
+/*----------------------------------------------------------
+Create a row for each suborder withina treatment for each row present in dummy_shell01 dataset
+----------------------------------------------------------*/
+ 
+data dummy_shell02;
+    set dummy_shell01;
+    do treatment=0,54,81,99;
+        do suborder=1 to 3;
+            output;
+        end;
+    end;
+run;
+ 
+data dummy_shell03;
+    set dummy_shell02;
+    length sublabel $200;
+    if suborder=1 then sublabel="ITT";
+    else if suborder=2 then sublabel="Comp";
+    else if suborder=3 then sublabel="Eff";
+run;
+ 
+ 
+/*=========================================================
+Core processing to obtain counts for the table content within each subgroup
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Obtain counts
+----------------------------------------------------------*/
+ 
+proc sql;
+    create table counts01 as
+        select rsubgroupcatn,rsubgroupcat,rsubgroupn,rsubgroup,group,glabel,order,label,suborder,sublabel,treatment,count(*) as count
+        from adsl05
+        group by rsubgroupcatn,rsubgroupcat,rsubgroupn,rsubgroup,group,glabel,order,label,suborder,sublabel,treatment;
+quit;
+ 
+/*=========================================================
+Merge dummy and actual counts
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Set the count to 0 if a row d-o-e-s not exist in actual data
+----------------------------------------------------------*/
+ 
+ 
+proc sort data=dummy_shell03;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup group glabel order label suborder sublabel treatment;
+run;
+ 
+proc sort data=counts01;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup group glabel order label suborder sublabel treatment;
+run;
+ 
+data counts02;
+    merge counts01(in=a) dummy_shell03(in=b);
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup group glabel order label suborder sublabel treatment;
+    if count=. then count=0;
+    length cp $30;
+    cp=put(count,3.);
+run;
+ 
+/*=========================================================
+Transpose the dataset to get treatment and suborder(population) counts as columns
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Create a variable named dummy after transposing to use in proc report to create spacing between columns
+----------------------------------------------------------*/
+proc sort data=counts02;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup group glabel order label treatment suborder sublabel ;
+run;
+ 
+proc transpose data=counts02 out=trans01;
+    by rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup group glabel order label;
+    var cp;
+    id sublabel treatment;
+run;
+ 
+data trans01;
+    set trans01;
+    dummy="";
+run;
+ 
+ 
+/*=========================================================
+Generate report
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Assign titles
+----------------------------------------------------------*/
+ 
+title "Protocol: CDISCPILOT01";
+title2 "Population: All Subjects";
+title3 "Table 14-1.03";
+title4 "Summary of Number of Subjects By Site";
+ 
+footnote "Note: ITT: Number of subjects in the ITT population, Eff: Number of subjects in the Efficacy population;";
+footnote2 "Com: Number of subjects completing Week 24.";
+ 
+ 
+/*----------------------------------------------------------
+Defining layout using proc report and rtf destination specific options
+----------------------------------------------------------*/
+ 
+%rtf_output_style_setup;
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans01 nowd style(header)=[protectspecialchars=off pretext="\R\qc "] missing split="~" nocenter;
+    columns rsubgroupcatn rsubgroupcat rsubgroupn rsubgroup group glabel order label
+            ("Placebo~(N=&n_1_1_0.)" "\brdrt\brdrs\brdrw1" (itt0 comp0 eff0)) dummy
+            ("Active~Low Dose~(N=&n_1_1_54.)" "\brdrt\brdrs\brdrw1" (itt54 comp54 eff54)) dummy
+            ("Active~High Dose~(N=&n_1_1_81.)" "\brdrt\brdrs\brdrw1" (itt81 comp81 eff81)) dummy
+            ("Total~(N=&n_1_1_99.)" "\brdrt\brdrs\brdrw1" (itt99 comp99 eff99))
+    ;
+ 
+    define rsubgroupcatn/order noprint;
+    define rsubgroupn/order noprint;
+    define rsubgroupcat/order noprint;
+    define rsubgroup/order noprint;
+    define group/order noprint;
+    define order/order noprint;
+    define dummy/"" style(column)=[cellwidth=0.03in] ;
+ 
+    define glabel/"Pooled Id" style(column)=[cellwidth=0.7in pretext="\R\qc " protectspecialchars=off];
+    define label/"Site Id" style(column)=[cellwidth=0.7in pretext="\R\qc " protectspecialchars=off];
+ 
+    define itt:/style(column)=[cellwidth=0.6in protectspecialchars=off asis=on pretext="\R\qc "] "ITT";
+    define comp:/style(column)=[cellwidth=0.6in protectspecialchars=off asis=on pretext="\R\qc "] "Comp";
+    define eff:/style(column)=[cellwidth=0.6in protectspecialchars=off asis=on pretext="\R\qc "] "Eff";
+ 
+run;
+ods rtf close;
+ 
+ 

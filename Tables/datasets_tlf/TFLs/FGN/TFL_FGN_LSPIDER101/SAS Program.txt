@@ -1,0 +1,126 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LSPIDER101\TFL_FGN_LSPIDER101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Create format;
+*==============================================================================;
+ 
+proc format;
+    value avisitn
+    0="Week 0"
+    4="Week 4"
+    8="Week 8"
+    12="Week 12"
+    ;
+run;
+ 
+*==============================================================================;
+*Create macro variables to hold the list of subjects in each treatment to use
+in value statement;
+*==============================================================================;
+ 
+proc sort data=adfev out=subjs01(keep=usubjid trtp) nodupkey;
+    by trtp usubjid;
+run;
+ 
+data subjs02;
+    set subjs01;
+    by trtp usubjid;
+    
+    length subjlist $32767;
+    retain subjlist;
+ 
+    if first.trtp then subjlist=quote(usubjid);
+    else subjlist=catx(" ", subjlist, quote(usubjid));
+ 
+    if last.trtp then call symputx(compress(trtp),subjlist);
+run;
+ 
+proc sort data=adfev;
+    by trtp usubjid;
+run;
+ 
+*==============================================================================;
+*create graph template ;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Set some graph options;
+*------------------------------------------------------------------------------;
+goptions reset=all;
+ods graphics on/ width=9in height=5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read)  sashelp.tmplmst(read);
+options orientation=landscape;
+ 
+*------------------------------------------------------------------------------;
+*build template;
+*------------------------------------------------------------------------------;
+ 
+proc template;
+ 
+define statgraph spider;
+begingraph;
+ 
+discreteattrmap name="trtmap"/ignorecase=true;
+ 
+    value &placebo. /lineattrs=(color=red pattern=2) markerattrs=(color=red);
+    value &drugmycsg. /lineattrs=(color=green pattern=1) markerattrs=(color=green);
+ 
+enddiscreteattrmap;
+ 
+discreteattrvar var=usubjid attrmap="trtmap" attrvar=trtcolormap;
+ 
+layout overlay/
+    xaxisopts=(type=linear label="Analysis Visit" linearopts=(tickvaluesequence=(start=0 end=12 increment=4)))
+    yaxisopts=(type=linear label="Percent Change in FEV1" griddisplay=on
+    linearopts=(tickvaluesequence=(start=-80 end=80 increment=10) viewmin=-80 viewmax=80 ))
+    ;
+    seriesplot x=avisitn y=pchg /group=trtcolormap name="line" curvelabel=usubjid;
+    scatterplot x=avisitn y=pchg/group=trtcolormap name="scatter";
+    
+    mergedlegend "line" "scatter"/location=outside halign=center valign=bottom;
+endlayout;
+endgraph;
+end;
+ 
+run;
+ 
+*==============================================================================;
+*Generate graph by associating data to graph template with sgrender procedure;
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+ 
+*------------------------------------------------------------------------------;
+*set some rtf optioons;
+*------------------------------------------------------------------------------;
+ 
+footnote "&outputname.";
+title "Spider Plot - Percent change from baseline of FEV1 over time";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc sgrender data=adfev template=spider;
+format avisitn avisitn.;
+run;
+ 
+ods listing;
+ods rtf close;
+ 
+ 

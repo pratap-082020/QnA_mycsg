@@ -1,0 +1,273 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADQS\ADaM_ADQS_L1101\ADaM_ADQS_L1101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Get treatment start date into VS;
+*==============================================================================;
+ 
+proc sort data=qs;
+   by studyid usubjid;
+run;
+ 
+proc sort data=adsl;
+   by studyid usubjid;
+run;
+ 
+data qs01;
+   merge qs(in=a) adsl(keep=studyid usubjid trtsdt);
+   by studyid usubjid;
+   if a;
+   if qsstat ne "NOT DONE";
+run;
+ 
+*==============================================================================;
+*Create variables which are directly based on input variables;
+*==============================================================================;
+ 
+data source01;
+   set qs01;
+ 
+   *------------------------------------------------------------------------------;
+   *parameter related variables;
+   *------------------------------------------------------------------------------;
+   length paramcd $8 param $200;
+ 
+   paramcd=qstestcd;
+ 
+   if qstest="MOBILITY" then param="Mobility";
+   else if qstest="SELF-CARE" then param="Self-care";
+   else if qstest="USUAL ACTIVITIES" then param="Usual activities";
+   else if qstest="PAIN / DISCOMFORT" then param="Pain/discomfort";
+   else if qstest="ANXIETY / DEPRESSION" then param="Anxiety/depression";
+   else if qstest="YOUR HEALTH TODAY" then param="Your health today";
+ 
+   paramn=input(substrn(paramcd,length(paramcd)),??best.);
+ 
+   parcat1=qscat;
+   if qscat="EQ5D-5L" then parcat1n=1;
+ 
+   *------------------------------------------------------------------------------;
+   *timing variables;
+   *------------------------------------------------------------------------------;
+   if length(qsdtc) ge 10 then adt=input(qsdtc,??yymmdd10.);
+   if nmiss(adt,trtsdt)=0 then do;
+      if adt lt trtsdt then ady =adt-trtsdt;
+      else if adt ge trtsdt then ady=adt-trtsdt+1;
+   end;
+   if find(visit,"unscheduled","i")=0 then do;
+      avisitn=visitnum;
+      avisit=visit;
+   end;
+ 
+   format adt date9.;
+ 
+   *------------------------------------------------------------------------------;
+   *other variables;
+   *------------------------------------------------------------------------------;
+ 
+   aval=qsstresn;
+ 
+   length avalc $200;
+   avalc=qsstresc;
+ 
+run;
+ 
+*==============================================================================;
+*Create derived parameter - CHI;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*assign scores for each result of parameter;
+*------------------------------------------------------------------------------;
+ 
+data chi01;
+    set source01;
+ 
+ 
+    if aval ne . then do;
+        if paramn=1 then do;
+            score=((aval=1)*0+(aval=2)*0.051 +(aval=3)*0.063 +(aval=4)*0.212 +(aval=5)*0.275);
+        end;
+        else if paramn=2 then do;
+            score=((aval=1)*0+(aval=2)*0.057 +(aval=3)*0.076 +(aval=4)*0.181 +(aval=5)*0.217);
+        end;
+        else if paramn=3 then do;
+            score=((aval=1)*0+(aval=2)*0.051 +(aval=3)*0.067 +(aval=4)*0.174 +(aval=5)*0.190);
+        end;
+        else if paramn=4 then do;
+            score=((aval=1)*0+(aval=2)*0.060 +(aval=3)*0.075 +(aval=4)*0.276 +(aval=5)*0.341);
+        end;
+        else if paramn=5 then do;
+            score=((aval=1)*0+(aval=2)*0.079 +(aval=3)*0.104 +(aval=4)*0.296 +(aval=5)*0.301);
+        end;
+    end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Transpose the data such that all scores are available side by side;
+*------------------------------------------------------------------------------;
+ 
+proc transpose data=chi01 out=chi02(drop=_name_);
+    by studyid usubjid  qsdtc epoch visitnum visit avisitn avisit adt ady trtsdt  ;
+    where paramn in (1:5);
+    var score;
+    id paramcd;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Create aval and other related variables;
+*------------------------------------------------------------------------------;
+ 
+data chi03;
+    set chi02;
+    length paramcd $8 param $200 avalc $200 paramtyp $7;
+    if nmiss(eq5d5l01,eq5d5l02,eq5d5l03,eq5d5l04,eq5d5l05)= 0 then do;
+        aval=round(1-0.9675*sum(eq5d5l01,eq5d5l02,eq5d5l03,eq5d5l04,eq5d5l05),0.001);
+    end;
+    paramcd="CHI";
+    paramn=7;
+    param='Composite health index';
+    paramtyp="DERIVED";
+    if not missing(aval) then avalc=strip(put(aval,best.));
+run;
+ 
+ 
+*==============================================================================;
+*Combine derived parameter to source parameter records;
+*==============================================================================;
+ 
+data adqs01;
+    set source01 chi03;
+run;
+ 
+*==============================================================================;
+*Create baseline flag and dependent variables;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Subset the records with non-missing result which are on or before treatment start
+Create ABLFL variable by assiging a value of "Y" on the latest record identified;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adqs01 out=base01;
+   by usubjid paramn adt visitnum qsseq;
+   where . lt adt le trtsdt and aval ne .;
+run;
+ 
+data base02;
+   set base01;
+   by usubjid paramn adt visitnum qsseq;
+   if last.paramn;
+   keep usubjid paramn adt visitnum ablfl qsseq base basec;
+   ablfl="Y";
+   base=aval;
+   basec=avalc;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge the baseline flag back onto the parent dataset using appropriate by variables
+Assign AVISIT/AVISITN with appropriate values as per specification.;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adqs01;
+   by usubjid paramn adt visitnum;
+run;
+ 
+data adqs02;
+   merge adqs01(in=a) base02(in=b keep=usubjid paramn adt visitnum qsseq ablfl);
+   by usubjid paramn adt visitnum qsseq;
+   if a;
+run;
+ 
+data adqs03;
+   set adqs02;
+   if ablfl="Y" then do;
+      avisitn=0;
+      avisit="Baseline";
+   end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Deriving base, chg, and pchg variables;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adqs03;
+   by usubjid paramn;
+run;
+ 
+proc sort data=base02;
+   by usubjid paramn;
+run;
+ 
+data adqs04;
+   merge adqs03(in=a) base02(in=b keep=usubjid paramn base basec);
+   by usubjid paramn;
+run;
+ 
+data adqs05;
+   set adqs04;
+   if adt gt trtsdt gt . then do;
+      anl02fl="Y";
+      if aval ne . and base ne . then do;
+         chg=aval-base;
+      end;
+   end;
+run;
+ 
+*==============================================================================;
+*Create anl01fl;
+*==============================================================================;
+ 
+proc sort data=adqs05;
+   by usubjid paramcd avisitn avisit descending adt;
+run;
+ 
+data adqs05;
+   set adqs05;
+   by usubjid paramcd avisitn avisit descending adt;
+   if first.avisitn and avisitn ne . then anl01fl="Y";
+run;
+ 
+proc sort data=adqs05;
+   by usubjid paramn avisitn avisit adt;
+run;
+ 
+*==============================================================================;
+*Merge with adsl to fetch other subject level variables;
+*==============================================================================;
+ 
+data adqs06;
+   merge adqs05(in=a) adsl;
+   by studyid usubjid;
+   if a;
+run;
+ 
+*==============================================================================;
+*keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID SUBJID  ADT ADY
+AVISIT AVISITN PARAM PARAMCD PARAMN PARAMTYP PARCAT1
+PARCAT1N AVAL AVALC BASE BASEC CHG ABLFL ANL01FL ANL02FL EPOCH VISITNUM VISIT  SITEID AGE AGEU SEX RACE QSSEQ
+SAFFL RANDFL ENRLFL
+;
+ 
+data adqs;
+   retain &varlist.;
+   set adqs06;
+   keep &varlist.;
+run;
+ 
+ 

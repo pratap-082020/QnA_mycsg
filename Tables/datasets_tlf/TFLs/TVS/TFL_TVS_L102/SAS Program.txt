@@ -1,0 +1,274 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TVS\TFL_TVS_L102\TFL_TVS_L102;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data advs01;
+   set advs;
+   where saffl="Y";
+run;
+ 
+data adsl01;
+   set adsl;
+   where saffl="Y";
+run;
+ 
+/*=========================================================
+Create a variable named 'treatment' to hold report level column groupings<br/>
+Also create duplicate rows for presenting total column
+=========================================================*/
+ 
+data advs02;
+   set advs01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+data adsl02;
+   set adsl01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables(for column headers)
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get treatment totals based on actual data
+----------------------------------------------------------*/
+proc sql;
+   create table trttotal_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_pre;
+   do treatment=1 to 3;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummt counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_pre(in=a) trttotal_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Create macro variables to present treatment totals in column headers of report
+----------------------------------------------------------*/
+ 
+proc sql noprint;
+   select count(distinct usubjid) into :n1 from adsl02 where treatment=1;
+   select count(distinct usubjid) into :n2 from adsl02 where treatment=2;
+   select count(distinct usubjid) into :n3 from adsl02 where treatment=3;
+quit;
+ 
+ 
+/*=========================================================
+Restructure the dataset such that all criteria are stacked in a common variable
+=========================================================*/
+/*----------------------------------------------------------
+Create a common variable to hold the criteria</br>
+Create a corresponding numeric variable to sort the criteria within each parameter</br>
+----------------------------------------------------------*/
+data advs03;
+   set advs02;
+ 
+   length criteria $200 criteriaflag $1;
+   if not missing(crit1) then do;
+      criteria=crit1;
+      criteriaflag=crit1fl;
+      criterian=1;
+      output;
+   end;
+   if not missing(crit2) then do;
+      criteria=crit2;
+      criteriaflag=crit2fl;
+      criterian=2;
+      output;
+   end;
+   if not missing(crit3) then do;
+      criteria=crit3;
+      criteriaflag=crit3fl;
+      criterian=3;
+      output;
+   end;
+run;
+ 
+ 
+/*=========================================================
+Get 'n' counts
+=========================================================*/
+proc sql;
+   create table ncounts as
+      select paramn,paramcd,param,treatment,criterian,criteria,
+      count(distinct usubjid) as ncount
+      from advs03
+      where criteriaflag="Y"
+      group by paramn,paramcd,param,treatment,criterian,criteria
+;
+quit;
+ 
+/*=========================================================
+Get 'm' counts
+=========================================================*/
+ 
+proc sql;
+   create table mcounts as
+      select paramn,paramcd,param,treatment,criterian,criteria,
+      count(distinct usubjid) as mcount
+      from advs03
+      where criteriaflag in ("Y" "N")
+      group by paramn,paramcd,param,treatment,criterian,criteria
+;
+quit;
+ 
+ 
+/*=========================================================
+Create dummy to hold each criteria (within a parameter) for all treaments
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Get unique criteria values within each parameter
+----------------------------------------------------------*/
+ 
+proc sql;
+   create table dummy01 as
+      select distinct paramn,paramcd,param,criterian,criteria
+      from advs03
+      ;
+quit;
+ 
+/*----------------------------------------------------------
+Create a row for each treament using do loops
+----------------------------------------------------------*/
+ 
+data dummy02;
+   set dummy01;
+   do treatment=1 to 3;
+      output;
+   end;
+run;
+ 
+/*=========================================================
+Merge dummy and actual counts
+=========================================================*/
+ 
+proc sort data=ncounts;
+   by paramn paramcd param criterian criteria treatment;
+run;
+ 
+proc sort data=mcounts;
+   by paramn paramcd param criterian criteria treatment;
+run;
+ 
+proc sort data=dummy02;
+   by paramn paramcd param criterian criteria treatment;
+run;
+ 
+data counts01;
+   merge ncounts mcounts dummy02;
+   by paramn paramcd param criterian criteria treatment;
+   if ncount=. then ncount=0;
+   if mcount=. then mcount=0;
+run;
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+ 
+data counts02;
+   set counts01;
+   length cp $30;
+ 
+   if mcount ne 0 then cp=put(ncount,3.)||"/"||put(mcount,3.)||" ("||put(ncount/mcount*100,5.1)||"%)";
+   else cp=put(0,3.)||"/"||put(0,3.);
+run;
+ 
+/*=========================================================
+Transpose the data such that treatments become columns
+=========================================================*/
+ 
+proc sort data=counts02;
+   by paramn paramcd param criterian criteria treatment;
+run;
+ 
+proc transpose data=counts02 out=trans01 prefix=trt;
+   by paramn paramcd param criterian criteria;
+   id treatment;
+   var cp;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Potentially Clinically Significant Vital Signs";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data = trans01 center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center];
+ 
+   column  paramn param criterian criteria trt1 trt2 trt3  ;
+ 
+   define paramn/order noprint;
+   define criterian /order noprint;
+ 
+   define param/"Vital Sign" order style(column)=[cellwidth=2.5in protectspecialchars=off] style(header)=[just=left];
+   define criteria/"Criteria" style(column)=[cellwidth=2in protectspecialchars=off] style(header)=[just=left];
+ 
+   define trt1/"Placebo" "(N=%cmpres(&n1))"  style(column)=[cellwidth=1.2in just=center] ;
+   define trt2/"Active" "(N=%cmpres(&n2))"  style(column)=[cellwidth=1.2in just=center]   ;
+   define trt3/"Total" "(N=%cmpres(&n3))"   style(column)=[cellwidth=1.2in just=center]   ;
+ 
+   compute after paramn;
+      line @1 "";
+   endcomp;
+ 
+run;
+ 
+ 
+ods rtf close;
+ 
+ 

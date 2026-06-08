@@ -1,0 +1,36 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1003_L101;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data ae;
+infile datalines dlm='|' dsd missover;
+input usubjid : $40. aedecod : $50. aestdtc : $10. aeendtc : $10. trtsdt : DATE9.;
+label ;
+format trtsdt DATE9.;;
+datalines4;
+CSG-1001|Headache|2010-01-03|2010-01-04|06JAN2010
+CSG-1001|Headache|2010-01-07|2010-01-07|06JAN2010
+CSG-1001|Nausea|2010-02-01|2010-02-10|06JAN2010
+CSG-1001|Pepticuclcer|2009-01|2009-10|06JAN2010
+CSG-1001|Neuropathy|2009-05-10|2010-03-01|06JAN2010
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

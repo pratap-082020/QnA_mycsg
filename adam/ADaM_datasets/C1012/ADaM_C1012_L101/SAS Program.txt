@@ -1,0 +1,39 @@
+Thank you for your R subscription. Adding SAS can also help you practice the same lesson workflow with SAS input data. Explore subscriptions
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1012\ADaM_C1012_L101\ADaM_C1012_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input datasets;
+*==============================================================================;
+ 
+data lb01;
+    set adlb;
+run;
+ 
+*==============================================================================;
+*Derived shift1 variable;
+*==============================================================================;
+ 
+data lb02;
+    set lb01;
+ 
+    length shift1 $100;
+ 
+    if avisitn gt 0 and anrind ne "" and bnrind ne "" then do;
+        shift1=catx(" to ", bnrind, anrind);
+    end;
+run;
+ 
+ 

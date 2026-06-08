@@ -1,0 +1,207 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TEG\TFL_TEG_L102\TFL_TEG_L102;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data adeg01;
+   set adeg;
+   where saffl="Y";
+run;
+ 
+data adsl01;
+   set adsl;
+   where saffl="Y";
+run;
+ 
+/*=========================================================
+Create a variable named 'treatment' to hold report level column groupings<br/>
+Also create duplicate rows for presenting total column
+=========================================================*/
+ 
+data adeg02;
+   set adeg01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+data adsl02;
+   set adsl01;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+/*=========================================================
+Obtain descriptive statistics for result and chg
+=========================================================*/
+ 
+ 
+proc sort data=adeg02;
+   by paramn param treatment avisitn avisit;
+run;
+ 
+proc summary data=adeg02;
+   by paramn param treatment avisitn avisit;
+   var aval chg;
+   output out=stats01 n= mean= std= min= median= max=/autoname;
+run;
+ 
+/*----------------------------------------------------------
+Process the statistics of result and change variable
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Convert to character values<br/>
+----------------------------------------------------------*/
+ 
+data stats02;
+   set stats01;
+ 
+   length c2-c13 $20;
+   if not missing(aval_n) then c2=put(aval_n,4.);
+   if not missing(aval_mean) then c3=put(aval_mean,6.1);
+   if not missing(aval_stddev) then c4=put(aval_stddev,6.1);
+   if not missing (aval_min) then c5=put(aval_min,4.);
+   if not missing(aval_median) then c6=put(aval_median,6.1);
+   if not missing(aval_max) then c7=put(aval_max,4.);
+ 
+   if not missing(chg_n) then c8=put(chg_n,4.);
+   if not missing(chg_mean) then c9=put(chg_mean,6.1);
+   if not missing(chg_stddev) then c10=put(chg_stddev,6.1);
+   if not missing (chg_min) then c11=put(chg_min,4.);
+   if not missing(chg_median) then c12=put(chg_median,6.1);
+   if not missing(chg_max) then c13=put(chg_max,4.);
+ 
+   keep paramn param treatment avisitn avisit c2-c13;
+run;
+ 
+ 
+/*=========================================================
+Get treatment totals to concatenate to treatment lables
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Obtain treatment totals
+----------------------------------------------------------*/
+proc sql;
+   create table denoms as
+      select treatment,count(distinct usubjid) as denom
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Bring treatment totals into statistics dataset
+----------------------------------------------------------*/
+ 
+proc sort data=stats02;
+   by treatment;
+run;
+ 
+proc sort data=denoms;
+   by treatment;
+run;
+ 
+data stats03;
+   merge stats02(in=a) denoms(in=b);
+   by treatment;
+   if a;
+run;
+ 
+/*=========================================================
+Process the data for report formatting
+=========================================================*/
+/*----------------------------------------------------------
+Indent avisit column</br>
+Concatenate treatment total to treatment label
+----------------------------------------------------------*/
+ 
+data final;
+   set stats03;
+   length c1 treatmentc $50;
+   c1='(*ESC*)R"\pnhang\fi220\li220 "'||strip(avisit);
+   if treatment=1 then treatmentc="Placebo (N="||cats(denom)||")";
+   else if treatment=2 then treatmentc="Active (N="||cats(denom)||")";
+   else if treatment=3 then treatmentc="Total (N="||cats(denom)||")";
+   blank="";
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "ECG Results: Result and Change From Baseline";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+proc report data=final nowd headline headskip missing spacing=0 style(report)=[just=center]
+   style(header)=[just=center];
+   columns paramn param treatment treatmentc avisitn  c1
+   ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=c} Result" c2-c7) blank
+   ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=c} Change" c8-c13);
+ 
+   define paramn/ order noprint ;
+   define param/order noprint ;
+   define treatment /order noprint ;
+   define treatmentc /order noprint;
+   define blank/"" style(column)=[cellwidth=0.05in];
+   define avisitn/order noprint ;
+   define c1 /order order=data "Treatment Group/" "Analysis Visit"  style(column)=[cellwidth=1.5in just=left];
+   define c2 / "n" style(column)=[cellwidth=0.25in just=center] ;
+   define c3 / "Mean" style(column)=[cellwidth=0.5in just=center];
+   define c4 / "SD" style(column)=[cellwidth=0.5in just=center];
+   define c5 / "Min" style(column)=[cellwidth=0.5in just=center];
+   define c6 / "Median" style(column)=[cellwidth=0.5in just=center];
+   define c7 / "Max" style(column)=[cellwidth=0.5in just=center];
+   define c8 / "n" style(column)=[cellwidth=0.25in just=center] ;
+   define c9 / "Mean" style(column)=[cellwidth=0.5in just=center];
+   define c10 / "SD" style(column)=[cellwidth=0.5in just=center];
+   define c11 / "Min" style(column)=[cellwidth=0.5in just=center];
+   define c12/ "Median" style(column)=[cellwidth=0.5in just=center];
+   define c13/ "Max" style(column)=[cellwidth=0.5in just=center];
+ 
+   break after param/page;
+ 
+   compute before _page_;
+      length text $150;
+      text=repeat('-', (150-length(param))/2)||strip(param)||repeat('-', (150-length(param))/2);
+      line @1 text $;
+      line @1 "";
+   endcomp;
+ 
+   compute before treatmentc;
+      line @2 treatmentc $;
+   endcomp;
+ 
+   compute after treatmentc;
+      line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

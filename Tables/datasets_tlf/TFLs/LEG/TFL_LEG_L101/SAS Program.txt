@@ -1,0 +1,180 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_LEG\TFL_LEG_L101\TFL_LEG_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read and process input datasets
+=========================================================*/
+ 
+data adeg01;
+  set adeg;
+  where saffl="Y";
+run;
+ 
+ 
+/*=========================================================
+create columns as per listing requirement
+=========================================================*/
+ 
+ 
+data list01;
+  set adeg01;
+  *------------------------------------------------------------------------------;
+  *usubjid-col2,trtgrp-col3 ;
+  *------------------------------------------------------------------------------;
+  length col1 col2 col3 $200;
+  col1="Investigator site="||strip(siteid);
+  col2=usubjid;
+  col3=trt01a;
+  *------------------------------------------------------------------------------;
+  * age,sex,race,weight-col4;
+  *------------------------------------------------------------------------------;
+    length agec sexc racec weightc col4 $200;
+    if age ne . then agec=catx(" ",put(age,3.));
+    else agec="-";
+    if sex ne "" and sex="F" then sexc="F";
+    else if sex ne "" and sex="M" then sexc="M";
+    else sexc="-";
+    if arace ne "" then racec=arace;
+    else racec="-";
+    if weightbl ne . then weightc=put(weightbl,5.1);
+    else weightc="-";
+ 
+    col4=catx("/{\line} ",agec,sexc,racec,weightc);
+    *------------------------------------------------------------------------------;
+    *date of last dose-col5;
+    *------------------------------------------------------------------------------;
+    length col5 col6 $200;
+    if trtedy ne . and trtedt ne . then col5=catx("/",put(trtedy,3.),put(trtedt,yymmdd10.));
+    *------------------------------------------------------------------------------;
+    * visit date--col6,avisit-col7,visit-col8,Scheduledtime-col9,visittime-col10;
+    *------------------------------------------------------------------------------;
+    length col7 col8 $200 ady_ adt_ $10;
+    if ady ne . then ady_=put(ady,4.);
+    else ady_="-";
+ 
+    if adt ne . then adt_=put(adt,yymmdd10.);
+    else adt_="-";
+ 
+    col6=strip(ady_)||"/"||strip(adt_);
+ 
+     if avisit ne "" then col7=avisit;
+     if visit ne "" then col8=visit;
+ 
+    *------------------------------------------------------------------------------;
+    *aval-col9,chg-col10;
+    *------------------------------------------------------------------------------;
+     length col9 col10 $200;
+     if (paramcd="QT" and aval gt 500) or (paramcd="PR" and aval gt 240) or (paramcd="QRS" and aval gt 120)
+     then col9=cats(aval,"H");
+     else if aval ne . then col9=cats(aval);
+ 
+     if ady  gt 1 then pchg=chg/base*100;
+     if pchg gt 25 and chg ne . then col10=cats(chg,"H");
+     else if chg ne . then col10=cats(chg);
+ 
+run;
+ 
+ 
+/*=========================================================
+Transpose the result and change based variables to have a column for each parameter
+=========================================================*/
+ 
+proc sort data=list01;
+  by col1 usubjid col2 col3 col4 col5 adt col6 col7 col8 ;
+run;
+ 
+proc transpose data=list01 out=trans01(drop=_name_) prefix=P_;
+  by col1 usubjid col2 col3 col4 col5 adt col6 col7 col8 ;
+  var col9;
+  id paramcd;
+run;
+ 
+proc transpose data=list01 out=c_trans01(drop=_name_ ) prefix=C_;
+  by col1 usubjid col2 col3 col4 col5 adt col6 col7 col8 ;
+  var col10;
+  id paramcd;
+run;
+ 
+data final;
+merge trans01(in=b) c_trans01(in=c);
+by col1 usubjid col2 col3 col4 col5 adt col6 col7 col8 ;
+run;
+ 
+ 
+/*=========================================================
+Sort the data and create a sequence variable
+=========================================================*/
+proc sort data=final;
+  by col1 col2 adt;
+run;
+data list02;
+  set final;
+  listseq=_n_;
+  if mod(_n_,10)=1 then page+1;
+run;
+ 
+ 
+/*=========================================================
+Generate report
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote " ";
+title "ECG Results";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+proc report data=list02 nowd missing  split="~"
+   style(report)={just=center}
+   style(header)={just=left}
+   style(column)={just=left protectspecialchars=off};
+     columns page col1 usubjid col2 col3 col4 col5 col6 col7 col8 p_pr c_pr p_qrs c_qrs ;
+ 
+     define col1/order order=data noprint;
+     define page/order noprint;
+     define usubjid/order noprint;
+ 
+     define col2/"Subject ID" order style(column)={cellwidth=0.75in};
+     define col3/"Treatment" "group" order style(column)={cellwidth=0.75in};
+     define col4/"Age/" "Sex/" "Race/" "Weight" order style(column)={cellwidth=0.75in};
+     define col5/"Last dose"  "Day/Date" order style(column)={cellwidth=.8in};
+     define col6/"Visit" "Day/Date" style(column)={cellwidth=1in};
+     define col7/"Analysis" "Visit" style(column)={cellwidth=0.75in};
+     define col8/"CRF" "Visit" style(column)={cellwidth=1in};
+     define p_pr/"RR" "(Unit)" style(column)={cellwidth=.75in};
+     define c_pr/"Change From" "Baseline" "RR" "(Unit)" style(column)={cellwidth=.75 in};
+     define p_qrs/"QRS"  "(Unit)" style(column)={cellwidth=.5 in};
+     define c_qrs/"Change From" "Baseline" "QRS" "(Unit)" style(column)={cellwidth=.75 in};
+ 
+     *define avalc/"Normal/" "Abnormal" style(column)={cellwidth=.75 in};
+      break after page/page;
+ 
+   compute after usubjid;
+      line @1 " ";
+   endcomp;
+ 
+   compute before col1;
+      line @1 col1 $150.;
+      line @1 " ";
+   endcomp;
+ 
+run;
+ods rtf close;
+ods listing;
+ 
+ 

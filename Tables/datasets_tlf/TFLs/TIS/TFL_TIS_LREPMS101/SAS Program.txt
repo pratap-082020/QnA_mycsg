@@ -1,0 +1,240 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_LREPMS101\TFL_TIS_LREPMS101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Filter the input data for required subset;
+*==============================================================================;
+ 
+data adlb01;
+    set adlb;
+    where paramcd="HBA1C" and saffl="Y" and avisitn gt 0;
+    treatment=trtpn;
+run;
+ 
+proc sort data=adlb01;
+    by paramn paramcd param avisitn treatment;
+run;
+ 
+*==============================================================================;
+*Section for descriptive statistics;
+*==============================================================================;
+ 
+ 
+proc summary data=adlb01 nway;
+    class  paramn paramcd param avisitn avisit treatment   ;
+    where 1=1;
+    var  chg;
+    output out=stats01 n=numobs;
+run;
+ 
+data stats02;
+    set stats01;
+    length n $30;
+    if numobs ne . then n=put(numobs,3.);
+run;
+ 
+*==============================================================================;
+*Inferential statistics using proc mixed;
+*==============================================================================;
+ 
+ods trace on;
+ods output lsmeans=lsmeans01
+                  diffs=diff01;
+ 
+proc mixed data=adlb01 method=reml;
+    by paramn paramcd param;
+     where avisitn gt 0;
+    class treatment(ref='1') avisitn usubjid  ;
+    model chg = base treatment avisitn treatment*avisitn   / ddfm=KR residual;
+    repeated avisitn / subject=usubjid type=UN ;
+    lsmeans treatment*avisitn  / pdiff cl alpha=.05;
+run;
+ 
+ods trace off;
+ 
+*=====================================================start or section=========;
+*process inferential statistics;
+*------------------------------------------------------------------------------;
+ 
+ 
+*==============================================================================;
+*Treatment and visit level;
+*==============================================================================;
+ 
+ 
+data lsmeans02;
+   set lsmeans01;
+ 
+    *------------------------------------------------------------------------------;
+    *LSMeans and SE;
+    *------------------------------------------------------------------------------;
+ 
+   length lsm se lsm_se $30;
+   if estimate ne . then lsm=strip(put(round(estimate,0.01),6.2));
+   else lsm="NE";
+   if stderr ne . then se=strip(put(round(stderr,0.001),7.3));
+   else se="NE";
+ 
+   lsm_se=strip(lsm)||"("||strip(se)||")";
+ 
+    *------------------------------------------------------------------------------;
+    *95% CI;
+    *------------------------------------------------------------------------------;
+ 
+    length lcl ucl ci $30;
+ 
+    if lower ne . then lcl=strip(put(round(lower,0.01),6.2));
+   else lcl="NE";
+   if upper ne . then ucl=strip(put(round(upper,0.01),6.2));
+   else ucl="NE";
+ 
+   ci="("||strip(lcl)||","||strip(ucl)||")";
+ 
+   keep paramn paramcd param treatment avisitn lsm_se ci;
+ 
+run;
+ 
+*==============================================================================;
+*Differences;
+*==============================================================================;
+ 
+proc sort data=diff01 out=temp_diff01;
+    by treatment _treatment avisitn _avisitn;
+run;
+ 
+data diff02;
+    set diff01;
+    where treatment=2 and _treatment=1;
+    where also avisitn=_avisitn;
+ 
+    *------------------------------------------------------------------------------;
+    *LSMeans and SE;
+    *------------------------------------------------------------------------------;
+ 
+   length dlsm dse dlsm_se $30;
+   if estimate ne . then dlsm=strip(put(round(estimate,0.01),6.2));
+   else dlsm="NE";
+   if stderr ne . then dse=strip(put(round(stderr,0.001),7.3));
+   else dse="NE";
+ 
+   dlsm_se=strip(dlsm)||"("||strip(dse)||")";
+ 
+    *------------------------------------------------------------------------------;
+    *95% CI;
+    *------------------------------------------------------------------------------;
+ 
+    length dlcl ducl dci dpval $30;
+ 
+    if lower ne . then dlcl=strip(put(round(lower,0.01),6.2));
+   else lcl="NE";
+   if upper ne . then ducl=strip(put(round(upper,0.01),6.2));
+   else ducl="NE";
+ 
+   dci="("||strip(dlcl)||","||strip(ducl)||")";
+ 
+    if probt ne . then dpval=put(probt,6.4);
+ 
+   keep paramn paramcd param treatment avisitn dlsm_se dci dpval;
+run;
+ 
+*------------------------------------------------------end of section----------;
+ 
+*==============================================================================;
+*Bring descriptive stats and inferential stats together;
+*==============================================================================;
+ 
+proc sort data=lsmeans02;
+   by paramn paramcd param avisitn treatment;
+run;
+ 
+proc sort data=diff02;
+   by paramn paramcd param avisitn treatment;
+run;
+ 
+data stats03;
+   merge stats02(in=a)
+         lsmeans02(in=b)
+            diff02;
+   by paramn paramcd param avisitn treatment;
+run;
+ 
+*==============================================================================;
+*Create supporting variables;
+*==============================================================================;
+ 
+data stats04;
+    set stats03;
+ 
+    length treatmentc $100;
+    if treatment=1 then treatmentc="Placebo";
+    else if treatment=2 then treatmentc="Drug X";
+run;
+ 
+*==============================================================================;
+*Generate report;
+*==============================================================================;
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote j=l "&outputname.";
+footnote2 j=l "LS = Least squares; SE = Standard error;";
+footnote3 j=l "a LS means, standard errors, confidence intervals are from a repeated measures model on change from baseline in HBA1C with fixed factors for treatment, visit, visit*treatment and a covariate for baseline HBA1C measurement. An unstructured covariance matrix was used to account for within-subject variability.";
+footnote4 j=l "b p-values, LS mean differences and associated confidence intervals are presented for DrugX arm minus placebo treatment arm.";
+ 
+title "Change from baseline analysis of HBA1C - MMRM";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=stats04 center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center]
+   style(column)=[just=center];
+   columns paramn param avisitn avisit treatment treatmentc
+   n lsm_se ci
+   ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=c} Difference" dlsm_se dci dpval)
+   ;
+ 
+   define paramn/order noprint;
+   define param/order noprint;
+ 
+   define avisitn/order noprint;
+   define treatment/order noprint;
+ 
+   define avisit/"Analysis Visit" order style(column)={cellwidth=1in just=left} style(header)={just=left};
+   define treatmentc/"Treatment Group" order style(column)={cellwidth=1.5in just=left} style(header)={just=left};
+   define n/ display "n"  style(column)={cellwidth=0.5in};
+   define lsm_se/"LS Mean (SE) (*ESC*){super a}" style(column)={cellwidth=1in};
+   define ci/"95% CI (*ESC*){super a}" style(column)={cellwidth=1in};
+   define dlsm_se/"LS Mean (SE)(*ESC*){super b}" style(column)={cellwidth=1in};
+   define dci/"95% CI(*ESC*){super b}" style(column)={cellwidth=1in};
+   define dpval/"p-value" style(column)={cellwidth=0.5in };
+ 
+   compute before _page_;
+      text1=cats("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=l}",param);
+      line @1 text1  $150.;
+   endcomp;
+ 
+   compute after avisit;
+      line @1 "";
+   endcomp;
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+ 

@@ -1,0 +1,151 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1001\ADaM_C1001_L102\ADaM_C1001_L102;
+
+%include "&root2._data.sas";
+
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+
+/*=========================================================
+Processing for RFICDT
+=========================================================*/
+data RFICDT;
+    set ds;
+    where DSCAT="PROTOCOL MILESTONE" and DSSCAT="INFORMED CONSENT OBTAINED" and
+          DSDECOD="SUBJECT INFORMED CONSENT";
+    if not missing(dsstdtc) then RFICDT=input(substrn(dsstdtc,1,10),yymmdd10.);
+    format RFICDT yymmdd10.;
+    keep usubjid RFICDT;
+run;
+
+/*=========================================================
+Processing for RANDDT
+=========================================================*/
+
+data randdt;
+    set ds;
+    where DSCAT="PROTOCOL MILESTONE" and DSDECOD="RANDOMIZED";
+    if not missing(dsstdtc) then randdt=input(substrn(dsstdtc,1,10),yymmdd10.);
+    format randdt yymmdd10.;
+    keep usubjid randdt;
+run;
+
+/*=========================================================
+Processing for TRTSDT
+=========================================================*/
+
+proc sort data=ex out=trtsdt01;
+    by usubjid exstdtc;
+    where EXCAT="TREATMENT PERIOD" and not missing(EXSTDTC);
+run;
+
+data trtsdt;
+    set trtsdt01;
+    by usubjid exstdtc;
+    if first.usubjid;
+    if not missing(exstdtc) then trtsdt=input(substrn(exstdtc,1,10),yymmdd10.);
+    format trtsdt yymmdd10.;
+    keep usubjid trtsdt;
+run;
+
+/*=========================================================
+Processing for TRTEDT
+=========================================================*/
+proc sort data=ex out=TRTEDT01;
+    by usubjid EXENDTC;
+    where EXCAT="TREATMENT PERIOD" and not missing(EXENDTC);
+run;
+
+data TRTEDT;
+    set TRTEDT01;
+    by usubjid EXENDTC;
+    if last.usubjid;
+    if not missing(EXENDTC) then TRTEDT=input(substrn(EXENDTC,1,10),yymmdd10.);
+    format TRTEDT yymmdd10.;
+    keep usubjid TRTEDT;
+run;
+
+/*=========================================================
+Processing LB dataset for HBA1C
+=========================================================*/
+data hba1c;
+    set lb;
+    hba1cdt=input(substrn(lbdtc,1,10),yymmdd10.);
+    format hba1cdt yymmdd10.;
+    keep usubjid hba1cdt;
+run;
+
+data hba1c;
+    merge hba1c(in=a) trtsdt(in=b);
+    by usubjid;
+    if a and b;
+    if hba1cdt gt trtsdt gt .;
+run;
+
+/*=========================================================
+Process all the information to derive final variables
+=========================================================*/
+/*----------------------------------------------------------
+Identify the subjects who had atleast one HBA1C collection
+----------------------------------------------------------*/
+proc sort data=hba1c out=hba1cdt(keep=usubjid) nodupkey;
+    by usubjid;
+run;
+
+/*----------------------------------------------------------
+Identify the subjects who had atleast one deviation
+----------------------------------------------------------*/
+
+proc sort data=dv out=dv01(keep=usubjid) nodupkey;
+    by usubjid;
+run;
+
+/*----------------------------------------------------------
+Identify the subjects who did not meet entrance criteria
+----------------------------------------------------------*/
+
+proc sort data=ds out=SCRFFL(keep=usubjid) nodupkey;
+    where dsdecod="DID NOT MEET ENTRANCE CRITERIA";
+    by usubjid;
+run;
+
+/*=========================================================
+Combine all the information to create final variables
+=========================================================*/
+data adsl;
+   merge dm(in=a) RFICDT(in=b) randdt(in=c) trtsdt(in=d) trtedt(in=e)
+         hba1cdt(in=h) dv01(in=i) SCRFFL(in=j);
+   by usubjid;
+   if a;
+   if j then SCRFFL="Y";
+   else SCRFFL="N";
+   if randdt ne . then randfl="Y";
+   else randfl="N";
+
+   if trtsdt ne . and randdt ne . then saffl="Y";
+   else saffl="N";
+   if h then fasfl="Y";
+   else fasfl="N";
+
+   if fasfl="Y" and (not i ) then pprotfl="Y";
+   else pprotfl="N";
+
+run;
+
+/*=========================================================
+Keep only required variables
+=========================================================*/
+data output;
+    set adsl;
+    keep usubjid SCRFFL randfl saffl fasfl pprotfl trtsdt trtedt RFICDT randdt;
+run;
+
+data csg_formoutput;
+    set adsl;
+    call missing(SCRFFL,randfl,saffl,fasfl,pprotfl);
+    keep usubjid SCRFFL randfl saffl fasfl pprotfl trtsdt trtedt RFICDT randdt;
+run;

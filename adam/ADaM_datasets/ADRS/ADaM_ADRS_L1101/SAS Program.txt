@@ -1,0 +1,127 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADRS\ADaM_ADRS_L1101\ADaM_ADRS_L1101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Bring TRTSDT from ADSL into RS;
+*==============================================================================;
+ 
+proc sort data=rs out=rs01;
+    by usubjid;
+run;
+ 
+proc sort data=adsl out=adsl01;
+    by usubjid;
+run;
+ 
+data adrs01;
+    merge rs01(in=a) adsl01(in=b keep=usubjid trtsdt);
+    by usubjid;
+    if a and b;
+run;
+ 
+*==============================================================================;
+*Create variables which are directly based on source variables for source parameters;
+*==============================================================================;
+ 
+data adrs02;
+    set adrs01;
+ 
+    length paramcd $8 param $200;
+ 
+    paramcd=rstestcd;
+ 
+    if paramcd='TRGRESP' then do; param='Target Response';  paramn=1; end;
+    else if paramcd='NTRGRESP' then do; param='Non-target Response';  paramn=2; end;
+    else if paramcd='NEWLPROG' then do; param='New Lesion Progression';  paramn=3; end;
+    else if paramcd='OVRLRESP' then do; param='Overall Response';  paramn=4; end;
+ 
+    adt=input(rsdtc,??yymmdd10.);
+ 
+    if adt ne . and trtsdt ne . then do;
+        if adt ge trtsdt then ady=adt-trtsdt+1;
+        else ady=adt-trtsdt;
+    end;
+ 
+    avalc=rsstresc;
+    avisitn=visitnum;
+    avisit=visit;
+*------------------------------------------------------------------------------;
+*create a temporary numeric variable to identify the best response;
+*------------------------------------------------------------------------------;
+ 
+    if paramcd="OVRLRESP" then do;
+        if avalc="CR" then tempresn=1;
+        else if avalc="PR" then tempresn=2;
+        else if avalc="SD" then tempresn=3;
+        else if avalc="PD" then tempresn=4;
+        else if avalc="NE" then tempresn=5;
+    end;
+ 
+    format adt date9.;
+    keep studyid usubjid paramcd param paramn avisitn avisit adt ady avalc tempresn;
+run;
+ 
+*==============================================================================;
+*Create the derived parameter BESTRESP;
+*==============================================================================;
+ 
+proc sort data=adrs02 out=bestresp01;
+    by usubjid tempresn adt;
+    where paramcd="OVRLRESP" and tempresn ne .;
+run;
+ 
+data bestresp02;
+    set bestresp01;
+    by usubjid tempresn adt;
+    if first.usubjid;
+ 
+*------------------------------------------------------------------------------;
+*Assign param related variables;
+*------------------------------------------------------------------------------;
+ 
+    paramcd="BESTRESP";
+    param="Best Overall Response";
+    paramn=5;
+ 
+ 
+run;
+ 
+*==============================================================================;
+*Combine source and derived parameter records;
+*==============================================================================;
+ 
+data adrs03;
+    set adrs02 bestresp02;
+    drop tempresn;
+run;
+ 
+proc sort data=adrs03;
+    by usubjid paramn adt;
+run;
+ 
+*==============================================================================;
+*Keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID PARAM PARAMCD PARAMN ADT ADY AVISIT
+AVISITN AVALC;
+ 
+data adrs;
+    retain &varlist.;
+    set adrs03;
+    keep &varlist.;
+run;
+ 
+ 

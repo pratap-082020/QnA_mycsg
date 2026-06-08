@@ -1,0 +1,325 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TAE\TFL_TAE_L113\TFL_TAE_L113;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data adae01;
+    set adae;
+    where saffl="Y" and trtemfl="Y";
+run;
+ 
+ 
+data adsl01;
+    set adsl;
+    where saffl="Y";
+run;
+ 
+ 
+/*=========================================================
+Duplicate the records for creating required layout
+=========================================================*/
+/*----------------------------------------------------------
+Duplicate the records for counting each 'grade >= x' row
+----------------------------------------------------------*/
+data adae01;
+   set adae01;
+   toxgrn=1;
+   output;
+   if atoxgrn ge 2 then do;
+      toxgrn=2;
+      output;
+   end;
+   if atoxgrn ge 3 then do;
+      toxgrn=3;
+      output;
+   end;
+   if atoxgrn ge 4 then do;
+      toxgrn=4;
+      output;
+   end;
+   if atoxgrn ge 5 then do;
+      toxgrn=5;
+      output;
+   end;
+run;
+ 
+ 
+/*=========================================================
+Create variable named 'treatment' to hold report level column groupings
+=========================================================*/
+ 
+ 
+data adae02;
+    set adae01;
+    treatment=trtan;
+    output;
+run;
+ 
+data adsl02;
+   set adsl01;
+    treatment=trt01an;
+    output;
+run;
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables (for column headers)
+=========================================================*/
+ 
+ 
+proc sql;
+   create table trttotal_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_pre;
+   do treatment=1,2,3;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummy counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_pre(in=a) trttotal_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Macro variables
+----------------------------------------------------------*/
+proc sql noprint;
+   select count(distinct usubjid) into :n1 from adsl02 where treatment=1;
+   select count(distinct usubjid) into :n2 from adsl02 where treatment=2;
+   select count(distinct usubjid) into :n3 from adsl02 where treatment=3;
+quit;
+ 
+ 
+/*=========================================================
+Obtaining actual counts-for the table
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Subject level count- top row
+----------------------------------------------------------*/
+ 
+proc sql noprint;
+   create table sub_count as
+   select "Overall" as label length=200,toxgrn,
+   treatment,
+   count(distinct usubjid) as count
+   from adae02
+   group by toxgrn,treatment;
+quit;
+ 
+/*----------------------------------------------------------
+SOC level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table soc_count as
+      select aebodsys,toxgrn, treatment,
+      count(distinct usubjid) as count
+      from adae02
+      group by aebodsys,toxgrn,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+Preferred term level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table pt_count as
+      select aebodsys,aedecod,toxgrn,treatment,
+      count(distinct usubjid) as count
+      from adae02
+      group by aebodsys,aedecod,toxgrn,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+Combine toprow, SOC, and PT level counts into single dataset
+----------------------------------------------------------*/
+ 
+ 
+data counts01;
+   set sub_count soc_count(in=a) pt_count;
+run;
+ 
+/*=========================================================
+Create zero counts if an event is not present in a treatment
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Get all the available SOC and PT values
+----------------------------------------------------------*/
+ 
+proc sort data=counts01 out=dummy01(keep=aebodsys aedecod label) nodupkey;
+   by aebodsys aedecod  label;
+run;
+ 
+/*----------------------------------------------------------
+Create a row for each treatment
+----------------------------------------------------------*/
+ 
+data dummy02;
+   set dummy01;
+   do toxgrn=1,2,3,4,5;
+      do treatment=1,2,3;
+            output;
+      end;
+   end;
+run;
+ 
+/*=========================================================
+Merge dummy counts with actual counts
+=========================================================*/
+ 
+proc sort data=dummy02;
+   by aebodsys aedecod label toxgrn treatment;
+run;
+ 
+ 
+proc sort data=counts01;
+   by aebodsys aedecod label toxgrn treatment;
+run;
+ 
+data counts02;
+   merge dummy02(in=a) counts01(in=b);
+   by aebodsys aedecod label toxgrn treatment;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+ 
+proc sort data=counts02;
+   by treatment;
+run;
+ 
+proc sort data=trttotals;
+   by treatment;
+run;
+ 
+data counts03;
+   merge counts02(in=a) trttotals(in=b);
+   by treatment;
+   if a;
+run;
+ 
+data counts04;
+   set counts03;
+   length cp $30 ;
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/trttotal*100,5.1)||"%)";
+   else cp=put(count,3.);
+run;
+ 
+ 
+/*=========================================================
+Create the label column
+=========================================================*/
+ 
+ 
+data counts05;
+   set counts04;
+   if missing(aebodsys) and missing(aedecod) then label=label;
+   else if not missing(aebodsys) and missing(aedecod) then label=strip(aebodsys);
+   else if not missing(aebodsys) and not missing(aedecod) then label='(*ESC*)\li220 '||strip(aedecod);
+   length toxlabel $30;
+   if toxgrn=1 then toxlabel="Total";
+   else if toxgrn=2 then toxlabel="Grade >=2";
+   else if toxgrn=3 then toxlabel="Grade >=3";
+   else if toxgrn=4 then toxlabel="Grade >=4";
+   else if toxgrn=5 then toxlabel="Fatal";
+run;
+ 
+ 
+/*=========================================================
+Transpose to obtain treatment as columns
+=========================================================*/
+ 
+ 
+proc sort data=counts05;
+   by aebodsys aedecod label toxgrn;
+run;
+ 
+proc transpose data=counts05 out=trans01 prefix=trt;
+   by aebodsys aedecod label toxgrn toxlabel;
+   var cp;
+   id treatment;
+run;
+ 
+ 
+data trans02;
+   set trans01;
+   keep aebodsys aedecod label toxgrn toxlabel trt:;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "TEAE by SOC, PT and Grade";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns aebodsys aedecod label toxgrn toxlabel  trt1 trt2 trt3;
+   define aebodsys/ order noprint;
+   define aedecod/order noprint;
+   define toxgrn/ order noprint;
+   define label /order "System Organ Class" '(*ESC*)R"\fi-420\li420 "Preferred Term' style(column)=[cellwidth=3.7in protectspecialchars=off]
+            style(header)=[just=left] ;
+   define toxlabel/" " style(column)=[cellwidth=1in just=left] ;
+   define trt1/"Placebo" "(N=%cmpres(&n1))" "  n   (%)" style(column)=[cellwidth=1.3in just=center] ;
+   define trt2/"Low Dose" "(N=%cmpres(&n2))" "  n   (%)" style(column)=[cellwidth=1.3in just=center]   ;
+   define trt3/"High Dose" "(N=%cmpres(&n3))" "  n   (%)"  style(column)=[cellwidth=1.3in just=center]   ;
+ 
+   compute after aedecod;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+ 

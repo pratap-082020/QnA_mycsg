@@ -1,0 +1,172 @@
+*==============================================================================;
+*Create format for Race representation;
+*==============================================================================;
+
+proc format;
+    value $race
+        'ASIAN'                                    = 'A'
+        'BLACK OR AFRICAN AMERICAN'                = 'B'
+        'AMERICAN INDIAN OR ALASKA NATIVE'         = 'I'
+        'NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER' = 'P'
+        'WHITE'                                    = 'W'
+        'OTHER'                                    = 'O'
+        'UNKNOWN'                                  = 'U'
+        'NOT REPORTED'                             = 'NR';
+run;
+
+*==============================================================================;
+*Subset the required data;
+*==============================================================================;
+
+data adpe01;
+    set adpe;
+    where saffl="Y";
+run;
+
+*==============================================================================;
+*Create columns required for listing;
+*==============================================================================;
+
+data list01;
+    set adpe01;
+    
+    *------------------------------------------------------------------------------;
+    *col0 - Actual treatment;
+    *------------------------------------------------------------------------------;
+    length col0 $1000;
+    if trt01an=1 then col0="Placebo";
+    else if trt01an=2 then col0="CSG Low Dose";
+    else if trt01an=3 then col0="CSG High Dose";
+
+    col0="(*ESC*)S={borderbottomcolor=black borderbottomwidth=1} Actual Treatment: "||strip(col0);
+
+    *------------------------------------------------------------------------------;
+    *col1 Subject ID/AGE/SEX/RACE;
+    *------------------------------------------------------------------------------;
+    length col1 $1000 agec $10;
+
+    if age=. then agec="-";
+    else agec=cats(age);
+
+    if sex="" then sex="-";
+
+    race=put(race,$race.);
+
+    col1=catx("/",scan(usubjid,2,"-"),age,sex,race);
+
+
+    *------------------------------------------------------------------------------;
+    *col2 - Visit;
+    *------------------------------------------------------------------------------;
+    col2=avisit;
+
+    *------------------------------------------------------------------------------;
+    *col3 - Assessment Date (Day);
+    *------------------------------------------------------------------------------;
+
+    if ady ne . then dayc=cats("(",ady,")");
+    else dayc="";
+
+    col3=catx(" ",pedtc,dayc);
+
+    *------------------------------------------------------------------------------;
+    *col4 - Body System;
+    *------------------------------------------------------------------------------;
+
+    col4=param;
+
+    *------------------------------------------------------------------------------;
+    *col5 - result;
+    *------------------------------------------------------------------------------;
+
+    if pestat="NOT DONE" then col5="Not Done";
+    else col5=avalc;
+
+    *------------------------------------------------------------------------------;
+    *col6 - Abnormality;
+    *------------------------------------------------------------------------------;
+
+    if upcase(avalc)="ABNORMAL" then col6=peorres;
+
+    *------------------------------------------------------------------------------;
+    *col7 - clinically significant;
+    *------------------------------------------------------------------------------;
+    length col7 $10;
+    if peclsig="Y" then col7="Yes";
+    else if peclsig="N" then col7="No";
+
+run;
+
+*==============================================================================;
+*Keep only required columns;
+*==============================================================================;
+
+data list02;
+    set list01;
+    
+    keep trt01an col0 usubjid col1 avisitn col2 pedtc col3 paramn col4 
+    col5 col6 col7;
+run;
+
+*==============================================================================;
+*Sort the data as per requirement;
+*==============================================================================;
+
+proc sort data=list02;
+    by trt01an usubjid avisitn pedtc paramn;
+run;
+
+*==============================================================================;
+*Generate the report;
+*==============================================================================;
+
+%rtf_output_style_setup;
+ 
+option nobyline;
+ 
+footnote "";
+title "Physical Examinations";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+*title4 "#byval2";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=list02 missing  split="~"
+   style(report)={just=center }
+   style(column)={just=left protectspecialchars=off}
+   style(header)={just=left protectspecialchars=off};
+ 
+   column trt01an col0 usubjid col1 avisitn col2 pedtc col3 paramn col4 col5 col6 blank col7;
+ 
+   define trt01an/order order=data noprint;
+   define col0/noprint;
+
+    define usubjid/order order=data noprint;
+   define avisitn/order order=data noprint;
+   define pedtc/order order=data noprint;
+   define paramn/order order=data noprint;
+ 
+   define col1/"Subject ID/" "Age/Race/Sex" style(column)={cellwidth=1in} order;
+   define col2/"Visit" style(column)={cellwidth=1in just=left} order ;
+   define col3/"Assessment Date (Day)/" style(column)={cellwidth=1.5in} order;
+   define col4/"Body System" style(column)={cellwidth=2in};
+   define col5/"Result" style(column)={cellwidth=0.75in};
+   define col6/"Abnormality" style(column)={cellwidth=1.5in};
+   define col7/"Clinically" "Significant" style(column)={cellwidth=0.75in};
+   define blank/" " style(column)={cellwidth=0.1};
+ 
+   break after trt01an/page;
+ 
+   compute after avisitn;
+      line @1 "";
+   endcomp;
+ 
+ 
+   compute before _page_;
+      line @1 col0 $150.;
+   endcomp;
+run;
+ods rtf close;
+ods listing;

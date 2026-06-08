@@ -1,0 +1,56 @@
+#source("D:/SAS/Home/dev/clinical_sas_samples/mycsg/mycsg_config.R")
+#rmac1-std1
+#rmac1-std2
+#rmac1-std3
+ 
+ 
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+ 
+ 
+library(glue)
+library(tidyverse)
+library(haven)
+library(assertthat)
+library(huxtable)
+library(data.table)
+library(hms)
+library(lubridate)
+library(pharmaRTF)
+ 
+ 
+source("./ADaM_C1001_L103_data.r")
+ 
+ 
+# Derive treatment start date
+trtsdt <- ex %>%
+ filter(excat == "TREATMENT PERIOD" & !is.na(exstdtc)) %>%
+ arrange(usubjid,exstdtc) %>%
+ mutate(trtsdt = as.Date(substr(exstdtc, 1, 10), format = "%Y-%m-%d")) %>%
+ group_by(usubjid) %>%
+ slice(1)
+ 
+# Derive treatment end date
+trtedt <- ex %>%
+ filter(excat == "TREATMENT PERIOD" & !is.na(exendtc)) %>%
+ arrange(usubjid,exendtc) %>%
+ mutate(trtedt = as.Date(substr(exendtc, 1, 10), format = "%Y-%m-%d")) %>%
+ group_by(usubjid) %>%
+ slice(n())
+ 
+# Merge required variables and derive TRT01P and TRT01A
+adsl <- dm %>%
+ left_join(trtsdt, by = "usubjid") %>%
+ left_join(trtedt, by = "usubjid") %>%
+ mutate(
+ tr01sdt = trtsdt,
+ tr01edt = trtedt,
+ trt01p = ifelse(arm != "Screen Failure", arm, NA_character_),
+ trt01a = ifelse(arm != "Screen Failure", actarm, NA_character_)
+ ) %>%
+ select(usubjid, trt01p, trt01a, trtsdt, trtedt)
+ 
+# Keep required variables in final dataset
+output <- adsl %>%
+ select(usubjid, trt01p, trt01a, trtsdt, trtedt)
+ 
+#==============================================================================;

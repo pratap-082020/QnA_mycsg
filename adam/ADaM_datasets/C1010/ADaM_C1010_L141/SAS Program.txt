@@ -1,0 +1,75 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1010\ADaM_C1010_L141\ADaM_C1010_L141;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Populate the previous non-missing value onto the current record;
+*==============================================================================;
+ 
+proc sort data=adre out=prev01;
+    by usubjid paramcd adt;
+run;
+ 
+data prev02;
+    set prev01;
+    by usubjid paramcd adt;
+ 
+    retain prev_aval;
+    if first.paramcd then call missing(prev_aval);
+    if not missing(aval) then prev_aval=aval;
+run;
+ 
+*==============================================================================;
+*Populate the next non-missing value onto the current record;
+*==============================================================================;
+ 
+proc sort data=prev02 out=next01;
+    by usubjid paramcd descending adt;
+run;
+ 
+data next02;
+    set next01;
+    by usubjid paramcd descending adt;
+    
+    retain next_aval;
+    if first.paramcd then call missing(next_aval);
+    if not missing(aval) then next_aval=aval;
+run;
+ 
+*==============================================================================;
+*Populate the average for result when both previous and next results are present;
+*==============================================================================;
+ 
+proc sort data=next02 out=interpol01;
+    by usubjid paramcd adt avisitn;
+run;
+ 
+data interpol02;
+    set interpol01;
+    
+    orig_aval=aval;
+ 
+    if prev_aval ne . and next_aval ne . and aval=. then do;
+        aval=(prev_aval+next_aval)/2;
+        aval=round(aval,0.1);
+        dtype="INTERPOL";
+    end;
+run;
+ 
+data output;
+    set interpol02;
+    drop next_aval prev_aval orig_aval;
+run;
+ 
+ 

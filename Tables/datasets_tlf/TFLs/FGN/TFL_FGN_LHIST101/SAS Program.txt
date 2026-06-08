@@ -1,0 +1,87 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LHIST101\TFL_FGN_LHIST101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+*==============================================================================;
+*create graph template ;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Set some graph options;
+*------------------------------------------------------------------------------;
+goptions reset=all;
+ods graphics on/ width=9in height=4.5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read)  sashelp.tmplmst(read);
+options orientation=landscape;
+ 
+*------------------------------------------------------------------------------;
+*build template;
+*------------------------------------------------------------------------------;
+ 
+proc template;
+ 
+define statgraph histogram2;
+ 
+begingraph/border=false;
+ 
+ 
+layout overlay/
+xaxisopts=(
+type=linear linearopts=(viewmin=60 viewmax=360 tickvaluesequence=(start=60 end=360 increment=20))
+label="Systolic Blood Pressure"
+offsetmin=0.05
+)
+yaxisopts=(
+type=linear linearopts=(minorticks=true minorgrid=true minorgridattrs=(pattern=2) viewmin=0 viewmax=1200 tickvaluesequence=(start=0 end=1200 increment=100))
+griddisplay=on
+ 
+label="Frequency"
+offsetmin=0
+)
+;
+histogram aval/scale=count binwidth=10 datalabeltype=count;
+ 
+endlayout;
+ 
+ 
+endgraph;
+ 
+end;
+run;
+quit;
+ 
+*==============================================================================;
+*Generate graph by associating data to graph template with sgrender procedure;
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+ 
+*------------------------------------------------------------------------------;
+*set some rtf optioons;
+*------------------------------------------------------------------------------;
+ 
+footnote "&outputname.";
+title "Histogram - Systolic Blood Pressure";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc sgrender data=advs template=histogram2;
+run;
+ 
+ods listing;
+ods rtf close;
+
+ 
+ 

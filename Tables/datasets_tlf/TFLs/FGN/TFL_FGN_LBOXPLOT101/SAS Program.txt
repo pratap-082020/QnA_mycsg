@@ -1,0 +1,125 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LBOXPLOT101\TFL_FGN_LBOXPLOT101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input dataset;
+*==============================================================================;
+ 
+data graph01;
+    set adlb;
+    treatment=trtan;
+    where avisitn gt 0;
+run;
+ 
+*==============================================================================;
+*Create formats;
+*==============================================================================;
+proc format;
+    value treatment
+    2="Placebo"
+    1="Drug MYCSG"
+    ;
+run;
+ 
+*==============================================================================;
+*create graph template ;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Set some graph options;
+*------------------------------------------------------------------------------;
+goptions reset=all;
+ods graphics on/ width=9in height=4.5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read)  sashelp.tmplmst(read);
+options orientation=landscape;
+ 
+*------------------------------------------------------------------------------;
+*build template;
+*------------------------------------------------------------------------------;
+ 
+proc template;
+ 
+define statgraph boxplotplot;
+ 
+begingraph/border=false;
+ 
+    discreteattrmap name="boxplotattrs"/ignorecase=true;
+        value "Placebo"/markerattrs=(symbol=diamondfilled size=7 color=black) fillattrs=(color=red) lineattrs=(color=black);
+        value "Drug MYCSG"/markerattrs=(symbol=circlefilled size=7 color=black) fillattrs=(color=blue) lineattrs=(color=black);
+    enddiscreteattrmap;
+ 
+    discreteattrvar var=treatment  attrmap="boxplotattrs" attrvar=treatmentboxplot ;
+ 
+    layout overlay/
+        xaxisopts=(
+        label="Analysis Visit"
+        offsetmin=0.2
+ 
+        )
+        yaxisopts=(
+            label="Change from baseline"
+            offsetmin=0.05
+ 
+ 
+        )
+        ;
+        boxplot x=avisit y=chg/
+            name="boxplot"
+            group=treatmentboxplot
+            groupdisplay=cluster
+            boxwidth=0.25
+                    display=(mean median fill caps)
+            ;
+ 
+        discretelegend "boxplot"/
+            location=outside
+            halign=center
+            valign=bottom
+            ;
+    endlayout;
+ 
+ 
+endgraph;
+ 
+end;
+run;
+quit;
+ 
+*==============================================================================;
+*Generate graph by associating data to graph template with sgrender procedure;
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+ 
+*------------------------------------------------------------------------------;
+*set some rtf optioons;
+*------------------------------------------------------------------------------;
+ 
+footnote "&outputname.";
+title "Boxplot of change from baseline value of Hemoglobin over time";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc sgrender data=graph01 template=boxplotplot;
+format treatment treatment.;
+run;
+ 
+ods listing;
+ods rtf close;
+ 
+ 

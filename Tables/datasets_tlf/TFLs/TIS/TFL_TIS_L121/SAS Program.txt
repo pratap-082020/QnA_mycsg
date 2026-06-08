@@ -1,0 +1,225 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_LTTEST102\TFL_TIS_LTTEST102;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read and filter input data
+=========================================================*/
+ 
+data adlb01;
+    set adlb;
+    where avisit="Week 12";
+run;
+ 
+/*=========================================================
+Process input data
+=========================================================*/
+ 
+data adlb02;
+    set adlb01;
+    treatment=trtpn;
+     if trtpn=0 then swaptreatment=1;
+     else if trtpn=1 then swaptreatment=0;
+run;
+ 
+ 
+/*=========================================================
+Obtain the descriptive statistics for the analysis variable - using proc summary
+=========================================================*/
+/*----------------------------------------------------------
+Completetypes option is used to 'Create all possible combinations of class variable values'<br>
+Preloadfmt option 'specifies that all formats are preloaded for the class variables.'
+----------------------------------------------------------*/
+proc summary data=adlb02 nway completetypes;
+    class treatment;
+    var  chg;
+    output out=stats01 n= nmiss= mean= std= min= q1= median= q3= max= /autoname;
+run;
+ 
+/*=========================================================
+Process the statistics as per presentation requirements
+=========================================================*/
+data stats02;
+    set stats01;
+    length mean std q1 q3 min max nnmiss meanstd median q1q3 minmax $30;
+ 
+    *process individual statistics;
+ 
+ 
+    if chg_mean ne . then mean=put(chg_mean,6.1);
+ 
+    if chg_stddev ne . then std=" ("||strip(put(chg_stddev,7.2))||")";
+    else std=" ( - )";
+ 
+    if chg_median ne . then median=put(chg_median,6.1);
+ 
+    if chg_q1 ne . then q1=put(chg_q1,6.1);
+ 
+    if chg_q3 ne . then q3=put(chg_q3,6.1);
+ 
+    if chg_min ne . then min=put(chg_min,4.0);
+ 
+    if chg_max ne . then max=put(chg_max,4.0);
+ 
+    *create combined statistics;
+    nnmiss=put(chg_n,4.)||" ("||strip(put(chg_nmiss,4.))||")";
+    nnmiss=strip(nnmiss);
+    if chg_n ne 0 then do;
+        meanstd=strip(mean)||strip(std);
+        q1q3=strip(q1)||","||strip(q3);
+        minmax=strip(min)||","||strip(max);
+    end;
+run;
+ 
+/*----------------------------------------------------------
+Keep only the required variables - treatment and concatenated statistics
+----------------------------------------------------------*/
+data stats03;
+    set stats02;
+    keep treatment nnmiss meanstd q1q3 median minmax;
+run;
+ 
+/*=========================================================
+Restructure the statistics such that they appear as 'rows' - using proc transpose
+=========================================================*/
+proc sort data=stats03;
+    by treatment;
+run;
+ 
+proc transpose data=stats03 out=stats04;
+    by treatment;
+    var nnmiss meanstd median q1q3 minmax;
+run;
+ 
+/*=========================================================
+Create some supporting variables as per sorting and presentation requirements
+=========================================================*/
+data stats05;
+    set stats04;
+ 
+    group=1;
+ 
+    length grouplabel statistic $200;
+ 
+    grouplabel="Triglycerides";
+ 
+    _name_=upcase(_name_);
+ 
+    if _name_="NNMISS"  then do; intord=1; statistic="n (missing)"; end;
+    if _name_="MEANSTD" then do; intord=2; statistic="Mean (SD)";   end;
+    if _name_="MEDIAN"  then do; intord=3; statistic="Median";      end;
+    if _name_="Q1Q3"    then do; intord=4; statistic="Q1, Q3"; end;
+    if _name_="MINMAX"  then do; intord=5; statistic="Min, Max"; end;
+run;
+ 
+/*=========================================================
+Restructure the data such that treatments appear as 'columns' - using proc transpose
+=========================================================*/
+ 
+proc sort data=stats05;
+    by group grouplabel intord statistic;
+run;
+ 
+proc transpose data=stats05 out=stats06 prefix=trt;
+    by group grouplabel intord statistic;
+    var col1;
+    id treatment;
+run;
+ 
+*==============================================================================;
+*Section for Inferential statistic;
+*==============================================================================;
+proc format;
+    value swaptrts
+    0=2
+    1=1;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Run ttest procedure;
+*------------------------------------------------------------------------------;
+ 
+ods trace on;
+ods output ttests=infstat01;
+proc ttest data=adlb02;
+    var chg;
+     class swaptreatment;
+     *format treatment swaptrts.;
+run;
+ods trace off;
+ 
+ 
+*------------------------------------------------------------------------------;
+*process the statistic row to same structure as inferntial statistic;
+*------------------------------------------------------------------------------;
+ 
+data infstat02;
+    set infstat01;
+     where method="Pooled";
+    length grouplabel statistic $200 trt1 $30;
+    group=1;
+    grouplabel="Triglycerides";
+    statistic="p-value";
+    intord=6;
+     if probt lt 0.0001 then trt1="<0.0001";
+     else trt2=put(probt,8.4);
+     format probt ;
+run;
+ 
+*=========================================================
+Create final dataset - append descriptive and inferential statistic datasets
+keeping only required variables
+=========================================================;
+ 
+data final;
+    set stats06 infstat02;
+    by group intord;
+    keep group grouplabel intord statistic trt0 trt1;
+run;
+ 
+*=========================================================
+Report generation
+=========================================================;
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Two-Sample t-Test - analysis of Triglycerides (mg/dL)";
+title2 "Full Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data = final center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center];
+ 
+   column group grouplabel intord statistic trt0 trt1  ;
+ 
+   define group/order noprint;
+   define intord /order noprint;
+ 
+   define grouplabel/width=30 " " order style(column)=[cellwidth=2.5in protectspecialchars=off] style(header)=[just=left];
+   define statistic/width=30 "Statistic" style(column)=[cellwidth=2in protectspecialchars=off] style(header)=[just=left];
+ 
+   define trt0/"Placebo"   style(column)=[cellwidth=1.2in just=center] ;
+    define trt1/"Drug MYCSG"   style(column)=[cellwidth=1.2in just=center] ;
+ 
+ 
+run;
+ 
+ 
+ods rtf close;
+ods listing;
+ 

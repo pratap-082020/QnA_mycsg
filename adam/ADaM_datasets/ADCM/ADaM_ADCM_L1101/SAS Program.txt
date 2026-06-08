@@ -1,0 +1,129 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADCM\ADaM_ADCM_L1101\ADaM_ADCM_L1101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read and process input datasets;
+*==============================================================================;
+ 
+proc sort data=cm out=cm01;
+    by studyid usubjid;
+run;
+ 
+proc sort data=adsl;
+    by studyid usubjid;
+run;
+ 
+data cm02;
+    merge cm01(in=a) adsl(in=b);
+    by studyid usubjid;
+    if a and b;
+run;
+ 
+*==============================================================================;
+*Create derived variables;
+*==============================================================================;
+ 
+data cm03;
+    set cm02;
+ 
+*------------------------------------------------------------------------------;
+*ASTDT/ASTDTF;
+*------------------------------------------------------------------------------;
+ 
+    if length(cmstdtc)=10 then do;
+        astdt=input(cmstdtc,??yymmdd10.);
+    end;
+    else if missing(cmstdtc) then do;
+        astdt=trtsdt;
+        astdtf="Y";
+    end;
+    else if length(cmstdtc)=7 then do;
+        astdt=input(cats(cmstdtc,"-01"),??yymmdd10.);
+        astdtf="D";
+    end;
+    else if length(cmstdtc)=4 then do;
+        astdt=input(cats(cmstdtc,"-01-01"),??yymmdd10.);
+        astdtf="M";
+    end;
+ 
+    format astdt date9.;
+ 
+*------------------------------------------------------------------------------;
+*AENDT/AENDTF;
+*------------------------------------------------------------------------------;
+ 
+    if trtedt ne . then trtey=put(year(trtedt),4.);
+ 
+    if length(cmendtc)=10 then do;
+        aendt=input(cmendtc,??yymmdd10.);
+    end;
+    else if missing(cmendtc) then do;
+        aendt=trtedt;
+        aendtf="Y";
+    end;
+    else if length(cmendtc)=7 then do;
+        aendt=intnx("month",input(cats(cmendtc,"-01"),??yymmdd10.),0,"e");
+        aendtf="D";
+    end;
+    else if length(cmendtc)=4 then do;
+        if cmendtc=trtey then aendt=trtedt;
+        else aendt=input(cats(cmendtc,"-12-31"),??yymmdd10.);
+        aendtf="M";
+    end;
+ 
+    format aendt date9.;
+ 
+*------------------------------------------------------------------------------;
+*ONTRTFL/PREFL;
+*------------------------------------------------------------------------------;
+ 
+    if . lt aendt lt trtsdt then prefl="Y";
+    if (. lt trtsdt le astdt le trtedt) or
+       (. lt trtsdt le aendt le trtedt) or
+       (. lt astdt lt trtsdt and aendt gt trtedt gt .)
+       then ontrtfl="Y";
+*------------------------------------------------------------------------------;
+*Other variables;
+*------------------------------------------------------------------------------;
+ 
+    trtan=trt01an;
+    trta=trt01a;
+ 
+    if nmiss(astdt,trtsdt)=0 then astdy=astdt-trtsdt+(astdt>=trtsdt);
+    if nmiss(aendt,trtsdt)=0 then aendy=aendt-trtsdt+(aendt>=trtsdt);
+ 
+run;
+ 
+ 
+*==============================================================================;
+*Keep only required variables and sort the final dataset;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID CMSEQ CMTRT CMMODIFY CMDECOD ATC1CD ATC2CD ATC3CD
+ATC1 ATC2 ATC3 CMINDC CMDOSFRM CMDOSE CMDOSU CMDOSFRQ CMROUTE CMSTDTC ASTDT
+ASTDTF ASTDY CMENDTC AENDT AENDTF CMENRF AENDY ONTRTFL PREFL SAFFL TRTA
+TRTAN TRTSDT TRTEDT AGE AGEGR1 SEX RACE;
+ 
+data adcm;
+    retain &varlist.;
+    set cm03;
+    keep &varlist.;
+run;
+ 
+proc sort data=adcm;
+    by studyid usubjid astdt cmdecod aendt;
+run;
+ 
+ 

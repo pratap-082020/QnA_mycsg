@@ -1,0 +1,64 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1013\ADaM_C1013_L102\ADaM_C1013_L102;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input datasets;
+*==============================================================================;
+ 
+data adsl01;
+    set adsl;
+    where saffl="Y";
+run;
+ 
+*==============================================================================;
+*Create records for T2DEATH;
+*==============================================================================;
+ 
+data tte01;
+    set adsl01;
+ 
+    paramcd="T2DEATH";
+    param="Time to Death (Days)";
+    startdt=trtsdt;
+ 
+    length evntdesc $200;
+ 
+    if dthdt ne . then do;
+        adt=dthdt;
+        cnsr=0;
+        evntdesc="Death";
+    end;
+    else do;
+        adt=eosdt;
+        cnsr=1;
+        evntdesc=dcsreas;
+    end;
+ 
+    if nmiss(startdt,adt)=0 then aval=adt-startdt+1;
+ 
+    format startdt adt date9.;
+run;
+ 
+*==============================================================================;
+*Keep only required variables;
+*==============================================================================;
+ 
+data tte02;
+    retain studyid usubjid paramcd param aval startdt adt cnsr evntdesc saffl;
+    set tte01;
+    keep studyid usubjid paramcd param aval startdt adt cnsr evntdesc saffl;
+run;
+ 
+ 

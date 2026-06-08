@@ -1,0 +1,222 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_L141\TFL_TIS_L141;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read and process input datasets
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+run;
+ 
+data adrs01;
+   set adrs;
+run;
+ 
+data adsl02;
+   set adsl01;
+   where fasfl="Y";
+   treatment=trt01pn;
+run;
+ 
+data adrs02;
+   set adrs01;
+   where fasfl="Y";
+   treatment=trt01pn;
+run;
+ 
+ 
+/*=========================================================
+Fetch denominator counts into a dataset and create macro variables to hold denominator values
+=========================================================*/
+ 
+proc freq data=adsl02 noprint;
+   tables treatment/out=denoms(drop=percent rename=(count=denom));
+run;
+ 
+data _null_;
+   set denoms;
+   call symputx(cats("n",treatment),denom);
+run;
+ 
+ 
+/*=========================================================
+Using adsl dataset create record for non-responders
+=========================================================*/
+ 
+data adrs03;
+   merge adrs02(in=a keep=usubjid avalc) adsl02(in=b);
+   by usubjid;
+   if b and not a then avalc="N";
+run;
+ 
+/*=========================================================
+Fetch counts for responders and non-responders
+=========================================================*/
+ 
+proc freq data=adrs03 noprint;
+   tables treatment*avalc/out=counts01(drop=percent);
+run;
+ 
+/*=========================================================
+Calculate percentages and create appropriate variables for tfl presentation requirement
+=========================================================*/
+ 
+data counts02;
+   merge counts01 denoms;
+   by treatment;
+run;
+ 
+data counts03;
+   set counts02;
+   length label $200 cp $30 ;
+   group=1;
+   if avalc="Y" then do; intord=1; label="Responders"; end;
+   else if avalc="N" then do; intord=2; label="Non-responders"; end;
+ 
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/denom*100,5.1)||")";
+   else cp=put(0,3.);
+   keep group intord label treatment cp;
+run;
+ 
+/*=========================================================
+Perform logistic regression to fetch odds ratio, associated confidence intervals and p-value
+=========================================================*/
+ 
+ods trace on;
+ods output oddsratios=odds01;
+ods output parameterestimates=est01;
+ods output globaltests=p_val01;
+proc logistic data=adrs03;
+   by treatment;
+   model avalc(ref="N")=age;
+run;
+ods trace off;
+ 
+/*=========================================================
+Process the inferential statistics datasets as per table presentation requirement
+=========================================================*/
+ 
+/*----------------------------------------------------------
+Odd ratio and 95% confidence intervals
+----------------------------------------------------------*/
+ 
+data odds02;
+   set odds01;
+    length lower upper $10;
+   if oddsratioest ne . then or=put(round(oddsratioest,0.01),5.2);
+   else lower="NE";
+   if lowercl ne . then lower=put(round(lowercl,0.01),5.2);
+   else lower="NE";
+   if uppercl ne . then upper=put(round(uppercl,0.01),5.2);
+   else upper="NE";
+ 
+   length cp $30 label $200;
+   cp=strip(or)||"("||strip(lower)||","||strip(upper)||")";
+   group=2;
+   intord=1;
+   label="Odds Ratio (95% CI)";
+   keep group intord label treatment cp;
+run;
+ 
+ 
+/*----------------------------------------------------------
+P-value
+----------------------------------------------------------*/
+ 
+data p_val02;
+    set p_val01;
+    where test="Wald";
+    length cp $30 ;
+    if . lt probchisq lt 0.0001 then cp="<.0001";
+    else cp=strip(put(probchisq,6.4));
+    intord=2;
+    group=2;
+    label="p-value";
+run;
+ 
+/*----------------------------------------------------------
+Combine odds ratio and p-value
+----------------------------------------------------------*/
+ 
+data infstats01;
+   set odds02 p_val02;
+   keep group intord label treatment cp;
+run;
+ 
+/*=========================================================
+Combine descriptive statistics and inferential statistics and process for table requirement
+=========================================================*/
+ 
+ 
+data counts04;
+   set counts03 infstats01;
+run;
+ 
+proc sort data=counts04;
+   by group intord label treatment;
+run;
+ 
+proc transpose data=counts04 out=trans01 prefix=trt;
+   by group intord label;
+   var cp;
+   id treatment;
+run;
+ 
+data final;
+   set trans01;
+   drop _name_;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+footnote2 "The odds ratio and p-value were derived from a simple logistic regression model, with responder status as the binary dependent variable,
+and age as the continuous independent variable. ";
+ 
+title "Odds Ratio: Simple Logistic Regression - Responder Analysis";
+title2 "ITT Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data = final center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center];
+ 
+   column group intord label trt1  ;
+ 
+   define group/order noprint;
+   define intord /order noprint;
+ 
+   define label/width=30 " " order style(column)=[cellwidth=3in protectspecialchars=off] style(header)=[just=left];
+   define trt1/"Test Drug" "(N=%cmpres(&n1))"  style(column)=[cellwidth=2in just=center] ;
+ 
+   compute after group;
+      line @1 "";
+   endcomp;
+ 
+run;
+ 
+ 
+ods rtf close;
+ods listing;
+ 

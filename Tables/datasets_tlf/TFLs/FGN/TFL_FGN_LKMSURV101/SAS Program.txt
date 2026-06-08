@@ -1,0 +1,116 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LKMSURV101\TFL_FGN_LKMSURV101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Read input dataset;
+*==============================================================================;
+ 
+data graph01;
+    set adtte;
+    treatment = trtpn;
+run;
+ 
+*==============================================================================;
+*Create formats;
+*==============================================================================;
+proc format;
+    value treatment
+        1 = "Placebo"
+        2 = "Drug MYCSG"
+    ;
+run;
+ 
+*==============================================================================;
+*Create graph template;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Set some graph options;
+*------------------------------------------------------------------------------;
+goptions reset=all;
+ods graphics on / width=8in height=4.5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read) sashelp.tmplmst(read);
+options orientation=landscape;
+ 
+*------------------------------------------------------------------------------;
+*Build template;
+*------------------------------------------------------------------------------;
+proc template;
+define statgraph km_plot2;
+    begingraph / border=false;
+ 
+    discreteattrmap name="kmattrs" / ignorecase=true;
+        value "Placebo" / lineattrs=(color=red pattern=dash thickness=2) markerattrs=(color=red symbol=plus size=2);
+        value "Drug MYCSG" / lineattrs=(color=blue pattern=solid thickness=2) markerattrs=(color=blue symbol=plus size=2);
+    enddiscreteattrmap;
+ 
+    discreteattrvar attrvar=trtattr var=treatment attrmap="kmattrs";
+ 
+    layout overlay /
+        xaxisopts=(label="Time (Days)" linearopts=(viewmax=200 tickvaluesequence=(start=0 end=200 increment=25)))
+        yaxisopts=(label="Survival Probability" linearopts=(viewmin=0 viewmax=1 tickvaluelist=(0 .2 .4 .6 .8 1)));
+ 
+        stepplot x=aval y=survival / group=trtattr name="surv" legendlabel="Treatment" lineattrs=(thickness=2);
+        scatterplot x=aval y=survival / name="scatter" group=trtattr
+                    datatransparency=0.5 markercharacter=censored;
+ 
+        discretelegend "surv" / location=inside valign=top halign=right;
+    endlayout;
+    endgraph;
+end;
+run;
+quit;
+ 
+*==============================================================================;
+*Run PROC LIFETEST and plot using SGRENDER;
+*==============================================================================;
+ 
+ods trace on;
+ods output ProductLimitEstimates=estimates;
+ods output quartiles=quart01;
+ods output censoredsummary=cs01;
+ 
+proc lifetest data=graph01 plots=survival(atrisk=0 to 200 by 25) /*timelist=(0 to 200 by 25)*/
+               outsurv=surv01 ;
+    time aval*cnsr(1);
+    strata treatment;
+run;
+ 
+ods trace off;
+ 
+data surv02;
+    set surv01;
+    treatmentc = put(stratum, treatment.);
+    censored = ifc(_censor_=1, "+", "");
+run;
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Step plot - Kaplan-Meier Plot of Overall Survival";
+title2 "Safety Population";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc sgrender data=surv02 template=km_plot2;
+    format treatment treatment.;
+run;
+ 
+ods listing;
+ods rtf close;
+ 

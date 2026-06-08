@@ -1,0 +1,271 @@
+*==============================================================================;
+*Program for the task;
+*==============================================================================;
+
+
+*==============================================================================;
+*Read and process input data;
+*==============================================================================;
+
+data adeff01;
+    set adeff;
+    where saffl="Y" and avisit="Week 12";
+run;
+
+*------------------------------------------------------------------------------;
+*Create a variable named treatment to extend the code for other treatments/studies when needed;
+*------------------------------------------------------------------------------;
+
+data adeff02;
+    set adeff01;
+    treatment=trt01an;
+run;
+
+*==============================================================================;
+*Fetch all the analysis variables into a single variable using output statement;
+*==============================================================================;
+
+*------------------------------------------------------------------------------;
+*Create the group variables to indicate the rows for each analysis variable;
+*------------------------------------------------------------------------------;
+
+data adeff03;
+    set adeff02;
+    group=1;
+    result=base;
+    output;
+
+    group=2;
+    result=aval;
+    output;
+
+    group=3;
+    result=chg;
+    output;
+run;
+
+*==============================================================================;
+*Create a format for treatment levels - using proc format;
+*==============================================================================;
+
+proc format;
+    value treatment
+    1=1
+    ;
+run;
+
+*==============================================================================;
+*Obtain the descriptive statistics for the analysis variable - using proc summary;
+*==============================================================================;
+
+*------------------------------------------------------------------------------;
+*Completetypes option is used to 'Create all possible combinations of class variable values'
+Preloadfmt option 'specifies that all formats are preloaded for the class variables.'
+By statement is used to fetch the statistics within each group;
+*------------------------------------------------------------------------------;
+
+proc sort data=adeff03 out=adeff04;
+    by group;
+run;
+
+proc summary data=adeff04 nway completetypes;
+    by group;
+    class treatment/preloadfmt;
+    var  result;
+    output out=stats01 n= nmiss= mean= std= min= q1= median= q3= max= /autoname;
+    format treatment treatment.;
+run;
+
+*==============================================================================;
+*Process the statistics as per presentation requirements;
+*==============================================================================;
+
+data stats02;
+    set stats01;
+    length mean std q1 q3 min max nnmiss meanstd median q1q3 minmax $30;
+
+    *------------------------------------------------------------------------------;
+    *process individual statistics;
+    *------------------------------------------------------------------------------;
+   
+    if result_mean ne . then mean=put(result_mean,5.1);
+
+    if result_stddev ne . then std=" ("||put(result_stddev,6.2)||")";
+    else std=" ( - )";
+
+    if result_median ne . then median=put(result_median,5.1);
+    if result_q1 ne . then q1=put(result_q1,5.1);
+    if result_q3 ne . then q3=put(result_q3,5.1);
+    if result_min ne . then min=put(result_min,3.);
+    if result_max ne . then max=put(result_max,3.);
+
+    *------------------------------------------------------------------------------;
+    *create combined statistics;
+    *------------------------------------------------------------------------------;
+   
+    nnmiss=put(result_n,3.)||" ("||put(result_nmiss,3.)||")";
+    if result_n ne 0 then do;
+        meanstd=trim(mean)||trim(std);
+        q1q3=trim(q1)||","||trim(q3);
+        minmax=trim(min)||","||trim(max);
+    end;
+run;
+
+*------------------------------------------------------------------------------;
+*Keep only the required variables - treatment and concatenated statistics;
+*------------------------------------------------------------------------------;
+
+data stats03;
+    set stats02;
+    keep group treatment nnmiss meanstd q1q3 median minmax;
+run;
+
+*==============================================================================;
+*Restructure the statistics such that they appear as 'rows' - using proc transpose;
+*==============================================================================;
+
+proc sort data=stats03;
+    by group treatment;
+run;
+
+proc transpose data=stats03 out=stats04;
+    by group treatment;
+    var nnmiss meanstd median q1q3 minmax;
+run;
+
+*==============================================================================;
+*Create some supporting variables as per sorting and presentation requirements;
+*==============================================================================;
+
+data stats05;
+    set stats04;
+     length statistic $200;
+    _name_=upcase(_name_);
+
+    if _name_="NNMISS"  then do; intord=1; statistic="n (missing)"; end;
+    if _name_="MEANSTD" then do; intord=2; statistic="Mean (SD)";   end;
+    if _name_="MEDIAN"  then do; intord=3; statistic="Median";      end;
+    if _name_="Q1Q3"    then do; intord=4; statistic="Q1, Q3"; end;
+    if _name_="MINMAX"  then do; intord=5; statistic="Min, Max"; end;
+run;
+
+*==============================================================================;
+*Restructure the data such that treatments appear as 'columns' - using proc transpose;
+*==============================================================================;
+
+proc sort data=stats05;
+    by treatment intord statistic group;
+run;
+
+proc transpose data=stats05 out=stats06 prefix=grp;
+    by treatment intord statistic;
+    var col1;
+    id group;
+run;
+
+*==============================================================================;
+*Create final dataset for descriptive statistiscs - keeping only required variables;
+*==============================================================================;
+
+data desc01;
+    set stats06;
+     section=1;
+
+    keep section treatment intord statistic grp1 grp2 grp3;
+run;
+
+
+*==============================================================================;
+*Section for inferential statistics;
+*==============================================================================;
+
+*------------------------------------------------------------------------------;
+*run proc ttest and get statistics into datasets;
+*------------------------------------------------------------------------------;
+
+ods trace on ;
+ods output ttests=ttest01;
+ods output conflimits=conf01;
+proc ttest data=adeff02 sides=2 alpha=0.05;
+   paired aval*base;
+run;
+ods trace off;
+
+
+*------------------------------------------------------------------------------;
+*process statistics;
+*------------------------------------------------------------------------------;
+
+data inf01;
+    set ttest01(in=a) conf01(in=b);
+
+    section=2;
+    length statistic $200 grp3 lower upper$30;
+    if a then do;
+        intord=2;
+        statistic="p-value [2]";
+        grp3=put(probt,6.4);
+    end;
+    else if b then do;
+        introd=1;
+        statistic="95% of Mean Change[1]";
+        if lowerclmean ne . then lower=put(lowerclmean,7.2);
+        else lower="-";
+
+        if upperclmean ne . then upper=put(upperclmean,7.2);
+        else upper="-";
+
+        grp3="["||strip(lower)||", "||strip(upper)||"]";
+    end;
+
+    keep section intord statistic grp3;
+run;
+
+*==============================================================================;
+*Combine the descriptive and inferential statistics datasets;
+*==============================================================================;
+
+data final;
+    set desc01 inf01;
+run;
+
+proc sort data=final;
+    by section intord;
+run;
+
+*==============================================================================;
+*Report generation;
+*==============================================================================;
+
+%rtf_output_style_setup;
+
+footnote "&outputname.";
+title "Paired t-Test – Analysis of Within-Subject Change in a Single-Arm Study";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+footnote2 j=l "[1] Confidence Interval for the mean change is based on the t-distribution.";
+footnote3 j=l "[2] p-value is calculated using a Paired t-test comparing the Week 12 value to the Baseline value for each subject.";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+
+proc report data = final center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center];
+
+   column section intord statistic grp1 grp2 grp3 ;
+
+   define section/order noprint;
+   define intord /order noprint;
+
+   define statistic/width=30 "Statistic" style(column)=[cellwidth=2in protectspecialchars=off] style(header)=[just=left];
+
+   define grp1/"Baseline (A)"   style(column)=[cellwidth=2in just=center] ;
+   define grp2/"Week 12 (B)"   style(column)=[cellwidth=2in just=center]   ;
+   define grp3/"Change from Baseline (B-A)"   style(column)=[cellwidth=2in just=center]   ;
+
+   compute after section;
+     line @1 "";
+   endcomp;
+run;
+
+ods rtf close;
+ods 

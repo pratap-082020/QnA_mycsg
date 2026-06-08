@@ -1,0 +1,87 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1016\ADaM_C1016_L101\ADaM_C1016_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data ae01;
+   set ae;
+run;
+ 
+/*=========================================================
+Create ASTDT variable
+=========================================================*/
+ 
+data ae02;
+   set ae01;
+   if length(aestdtc)=10 then astdt=input(aestdtc,yymmdd10.);
+   format astdt date9.;
+run;
+ 
+/*=========================================================
+Create AOCCFL
+=========================================================*/
+ 
+proc sort data=ae02;
+   by usubjid descending trtemfl astdt;
+run;
+ 
+data ae03;
+   set ae02;
+   by usubjid descending trtemfl astdt;
+   if first.usubjid and trtemfl="Y" then aoccfl="Y";
+run;
+ 
+/*=========================================================
+Create AOCCSFL
+=========================================================*/
+proc sort data=ae03;
+   by usubjid aebodsys descending trtemfl astdt;
+run;
+ 
+data ae04;
+   set ae03;
+   by usubjid aebodsys descending trtemfl astdt;
+   if first.aebodsys and trtemfl="Y" then aoccsfl="Y";
+run;
+ 
+/*=========================================================
+Create AOCCPFL
+=========================================================*/
+proc sort data=ae04;
+   by usubjid aebodsys aedecod descending trtemfl astdt;
+run;
+ 
+data ae05;
+   set ae04;
+   by usubjid aebodsys aedecod descending trtemfl astdt;
+   if first.aedecod and trtemfl="Y" then aoccpfl="Y";
+run;
+ 
+proc sort data=ae05;
+   by usubjid aedecod astdt;
+run;
+ 
+ 
+/*=========================================================
+Keep only the required variables and order the variables in a logical sequence
+=========================================================*/
+ 
+data output;
+   retain usubjid aedecod aebodsys astdt trtemfl aoccfl aoccsfl aoccpfl trtsdt;
+   set ae05;
+   keep usubjid aedecod aebodsys astdt trtemfl aoccfl aoccsfl aoccpfl trtsdt;
+run;

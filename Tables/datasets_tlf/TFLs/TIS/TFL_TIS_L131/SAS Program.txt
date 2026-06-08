@@ -1,0 +1,185 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TIS\TFL_TIS_L131\TFL_TIS_L131;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read input dataset
+=========================================================*/
+data adrs01;
+   set adrs;
+run;
+ 
+/*=========================================================
+Process input dataset
+=========================================================*/
+ 
+data adrs02;
+   set adrs01;
+   treatment=trt01pn;
+run;
+ 
+/*=========================================================
+Fetch denomintaor
+=========================================================*/
+ 
+proc freq data=adrs02 noprint;
+   tables treatment/out=denoms(rename=(count=denom) drop=percent);
+run;
+ 
+data _null_;
+   set denoms;
+   call symputx(cats("n",treatment),denom);
+run;
+ 
+ 
+/*=========================================================
+Create macro variable to hold treatment totals for header
+=========================================================*/
+/*=========================================================
+Fetch response level count and percent
+=========================================================*/
+ 
+proc freq data=adrs02 noprint;
+   tables treatment*aval/out=counts01;
+run;
+ 
+/*=========================================================
+Process the count, percent data as per table presentation requirement
+=========================================================*/
+ 
+data counts02;
+   set counts01;
+   length cp $30 label $200;
+   where aval=1;
+   if count ne . and percent ne . then cp=put(count,3.)||" ("||put(percent,5.1)||")";
+   intord=1;
+   group=1;
+   label="n (%)";
+   keep group intord label treatment cp;
+run;
+ 
+/*=========================================================
+Fetch confidence intervals using binomial test
+=========================================================*/
+ 
+ods trace on;
+ods output binomial=ci01;
+proc freq data=adrs02;
+   by treatment;
+   tables aval/binomial(level=1) exact;
+run;
+ods trace off;
+ 
+/*=========================================================
+Process confidence intervals dataset as per table presentation requirement
+=========================================================*/
+proc sort data=ci01;
+   by treatment;
+run;
+ 
+proc transpose data=ci01 out=ci02;
+   by treatment;
+   where name1 in ("XL_BIN" "XU_BIN");
+   id name1;
+   var nvalue1;
+run;
+ 
+data ci03;
+   set ci02;
+   if xl_bin ne . then lower=put(round(xl_bin,0.01),5.2);
+   else lower="NE";
+   if xu_bin ne . then upper=put(round(xu_bin,0.01),5.2);
+   else upper="NE";
+ 
+   length cp $30 label $200;
+   cp=strip(lower)||","||strip(upper);
+   group=1;
+   intord=2;
+   label="95% CI [1]";
+   keep group intord label treatment cp;
+run;
+ 
+ 
+/*=========================================================
+Combine count percent and confidence interval datasets and process further
+=========================================================*/
+ 
+data all01;
+   set counts02 ci03;
+run;
+ 
+proc sort data=all01;
+   by group intord label treatment;
+run;
+ 
+proc transpose data=all01 out=trans01(drop=_name_) prefix=trt;
+   by group intord label;
+   id treatment;
+   var cp;
+run;
+ 
+/*----------------------------------------------------------
+Create dummy group label
+----------------------------------------------------------*/
+ 
+data label01;
+   length label $200;
+   group=1;
+   intord=0;
+   label="Responders";
+run;
+ 
+data final;
+   set label01 trans01;
+   by group intord;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+footnote2 "[1] The exact 2-sided 95% binomial confidence interval is calculated";
+title "Binomial Test: Inference about a proportion - Responder analysis";
+title2 "ITT Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc report data = final center headline headskip nowd split='~' missing style(report)=[just=center]
+   style(header)=[just=center];
+ 
+   column group intord label trt1  ;
+ 
+   define group/order noprint;
+   define intord /order noprint;
+ 
+   define label/width=30 " " order style(column)=[cellwidth=3in protectspecialchars=off] style(header)=[just=left];
+   define trt1/"Test Drug" "(N=%cmpres(&n1))"  style(column)=[cellwidth=2in just=center] ;
+ 
+   compute after group;
+      line @1 "";
+   endcomp;
+ 
+run;
+ 
+ 
+ods rtf close;
+ods listing;
+ 

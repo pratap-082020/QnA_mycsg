@@ -1,0 +1,331 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADQS\ADaM_ADQS_LEASI01\ADaM_ADQS_LEASI01;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Get treatment start date into VS;
+*==============================================================================;
+ 
+proc sort data=qs;
+   by studyid usubjid;
+run;
+ 
+proc sort data=adsl;
+   by studyid usubjid;
+run;
+ 
+data qs01;
+   merge qs(in=a) adsl(keep=studyid usubjid trtsdt);
+   by studyid usubjid;
+   if a;
+run;
+ 
+*==============================================================================;
+*Create variables which are directly based on input variables;
+*==============================================================================;
+ 
+data source01;
+   set qs01;
+ 
+   *------------------------------------------------------------------------------;
+   *parameter related variables;
+   *------------------------------------------------------------------------------;
+   length paramcd $8 param $200 testcd $8;
+ 
+   if qsloc="HEAD AND NECK" then loc="HN";
+   else if qsloc="TRUNK" then loc="TR";
+   else if qsloc="UPPER LIMBS" then loc="UL";
+   else if qsloc="LOWER LIMBS" then loc="LL";
+ 
+   if qstestcd="SCRATCH" then testcd="SCRTCH";
+   else if qstestcd="LICHEN" then testcd="LIC";
+   else testcd=qstestcd;
+ 
+   paramcd=cats(loc,testcd);
+ 
+   if paramcd='HNAREA' then do; param='Head and Neck-Area Impacted';  paramn=101; end;
+   else if paramcd='HNRED' then do; param='Head and Neck-Redness';  paramn=102; end;
+   else if paramcd='HNTHICK' then do; param='Head and Neck-Thickening';  paramn=103; end;
+   else if paramcd='HNSCRTCH' then do; param='Head and Neck-Scratching';  paramn=104; end;
+   else if paramcd='HNLIC' then do; param='Head and Neck-Lichenification';  paramn=105; end;
+   else if paramcd='TRAREA' then do; param='Trunk-Area Impacted';  paramn=201; end;
+   else if paramcd='TRRED' then do; param='Trunk-Redness';  paramn=202; end;
+   else if paramcd='TRTHICK' then do; param='Trunk-Thickening';  paramn=203; end;
+   else if paramcd='TRSCRTCH' then do; param='Trunk-Scratching';  paramn=204; end;
+   else if paramcd='TRLIC' then do; param='Trunk-Lichenification';  paramn=205; end;
+   else if paramcd='ULAREA' then do; param='Upper Limbs-Area Impacted';  paramn=301; end;
+   else if paramcd='ULRED' then do; param='Upper Limbs-Redness';  paramn=302; end;
+   else if paramcd='ULTHICK' then do; param='Upper Limbs-Thickening';  paramn=303; end;
+   else if paramcd='ULSCRTCH' then do; param='Upper Limbs-Scratching';  paramn=304; end;
+   else if paramcd='ULLIC' then do; param='Upper Limbs-Lichenification';  paramn=305; end;
+   else if paramcd='LLAREA' then do; param='Lower Limbs-Area Impacted';  paramn=401; end;
+   else if paramcd='LLRED' then do; param='Lower Limbs-Redness';  paramn=402; end;
+   else if paramcd='LLTHICK' then do; param='Lower Limbs-Thickening';  paramn=403; end;
+   else if paramcd='LLSCRTCH' then do; param='Lower Limbs-Scratching';  paramn=404; end;
+   else if paramcd='LLLIC' then do; param='Lower Limbs-Lichenification';  paramn=405; end;
+ 
+ 
+   *------------------------------------------------------------------------------;
+   *timing variables;
+   *------------------------------------------------------------------------------;
+   if length(qsdtc) ge 10 then adt=input(qsdtc,??yymmdd10.);
+   if nmiss(adt,trtsdt)=0 then do;
+      if adt lt trtsdt then ady =adt-trtsdt;
+      else if adt ge trtsdt then ady=adt-trtsdt+1;
+   end;
+ 
+   length avisit $50;
+ 
+        if   1 le ady le   1 then do; avisit='Day 1';   avisitn=1; awtarget=1;   awlo=1;   awhi=1; end;
+   else if  80 le ady le  90 then do; avisit='Week 12'; avisitn=2; awtarget=85;  awlo=80;  awhi=90; end;
+   else if 164 le ady le 174 then do; avisit='Week 24'; avisitn=3; awtarget=169; awlo=164; awhi=174; end;
+   else if 248 le ady le 258 then do; avisit='Week 36'; avisitn=4; awtarget=253; awlo=248; awhi=258; end;
+   else if 332 le ady le 342 then do; avisit='Week 48'; avisitn=5; awtarget=337; awlo=332; awhi=342; end;
+   else if 416 le ady le 426 then do; avisit='Week 60'; avisitn=6; awtarget=421; awlo=416; awhi=426; end;
+   else if 500 le ady le 510 then do; avisit='Week 72'; avisitn=7; awtarget=505; awlo=500; awhi=510; end;
+   else if 584 le ady le 594 then do; avisit='Week 84'; avisitn=8; awtarget=589; awlo=584; awhi=594; end;
+   else if 668 le ady le 678 then do; avisit='Week 96'; avisitn=9; awtarget=673; awlo=668; awhi=678; end;
+   else if 750 le ady le 764 then do; avisit='Week 108'; avisitn=10; awtarget=757; awlo=750; awhi=764; end;
+ 
+ 
+   format adt date9.;
+ 
+   if awtarget ne . and ady ne . then awtdiff=abs(ady-awtarget);
+ 
+   if avisit ne "" then awu="DAYS";
+   *------------------------------------------------------------------------------;
+   *other variables;
+   *------------------------------------------------------------------------------;
+ 
+ 
+   aval=qsstresn;
+ 
+   length avalc $200;
+   avalc=qsstresc;
+ 
+run;
+ 
+*==============================================================================;
+*Create derived parameters;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Transpose the data such that all scores are available side by side;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=source01 out=der01;
+    by studyid usubjid qsdtc visitnum visit avisitn avisit aw: adt ady trtsdt qsloc loc  ;
+run;
+ 
+proc transpose data=der01 out=der02(drop=_name_);
+    by studyid usubjid qsdtc visitnum visit avisitn avisit aw: adt ady trtsdt qsloc loc   ;
+    var aval;
+    id testcd;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Location based parameters;
+*------------------------------------------------------------------------------;
+ 
+data der03;
+    set der02;
+    by studyid usubjid qsdtc visitnum visit avisitn avisit aw: adt ady trtsdt qsloc loc   ;
+    length paramcd $8 ;
+ 
+   *------------------------------------------------------------------------------;
+   *one parameter per location;
+   *------------------------------------------------------------------------------;
+ 
+    sevsum=sum(red,thick,scrtch,lic);
+ 
+    if loc="HN" then mult=0.1;
+    else if loc="TR" then mult=0.4;
+    else if loc="UL" then mult=0.3;
+    else if loc="LL" then mult=0.3;
+ 
+    if area ne . and sevsum ne . and mult ne . then aval=area*sevsum*mult;
+ 
+    paramcd=cats(loc,"SCORE");
+ 
+    output;
+    *------------------------------------------------------------------------------;
+    *Total score;
+    *------------------------------------------------------------------------------;
+ 
+ 
+    if first.avisitn then cumaval=aval;
+    else cumaval+aval;
+ 
+    if last.avisitn then do;
+      paramcd="TOTSCORE";
+      aval=cumaval;
+      output;
+    end;
+ 
+run;
+ 
+data der04;
+   set der03;
+   length param $200;
+ 
+        if paramcd='HNSCORE' then do; param='Head and Neck-Score';  paramn=106; end;
+   else if paramcd='TRSCORE' then do; param='Trunk-Score';  paramn=206; end;
+   else if paramcd='ULSCORE' then do; param='Upper Limbs-Score';  paramn=306; end;
+   else if paramcd='LLSCORE' then do; param='Lower Limbs-Score';  paramn=406; end;
+   else if paramcd='TOTSCORE' then do; param='Total Score';  paramn=501; end;
+run;
+ 
+*==============================================================================;
+*Combine derived parameter to source parameter records;
+*==============================================================================;
+ 
+data adqs01;
+    set source01 der04;
+run;
+ 
+*==============================================================================;
+*Create baseline flag and dependent variables;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Subset the records with non-missing result which are on or before treatment start
+Create ABLFL variable by assiging a value of "Y" on the latest record identified;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adqs01 out=base01;
+   by usubjid paramcd adt visitnum qsseq;
+   where . lt adt le trtsdt and aval ne .;
+run;
+ 
+data base02;
+   set base01;
+   by usubjid paramcd adt visitnum qsseq;
+   if last.paramcd;
+   keep usubjid paramcd adt visitnum ablfl qsseq base basec;
+   ablfl="Y";
+   base=aval;
+   basec=avalc;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Merge the baseline flag back onto the parent dataset using appropriate by variables
+Assign AVISIT/AVISITN with appropriate values as per specification.;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adqs01;
+   by usubjid paramcd adt visitnum;
+run;
+ 
+data adqs02;
+   merge adqs01(in=a) base02(in=b keep=usubjid paramcd adt visitnum qsseq ablfl);
+   by usubjid paramcd adt visitnum qsseq;
+   if a;
+run;
+ 
+data adqs03;
+   set adqs02;
+   if ablfl="Y" then do;
+      avisitn=0;
+      avisit="Baseline";
+   end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Deriving base, chg, and pchg variables;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=adqs03;
+   by usubjid paramcd;
+run;
+ 
+proc sort data=base02;
+   by usubjid paramcd;
+run;
+ 
+data adqs04;
+   merge adqs03(in=a) base02(in=b keep=usubjid paramcd base basec);
+   by usubjid paramcd;
+run;
+ 
+data adqs05;
+   set adqs04;
+   if adt gt trtsdt gt . then do;
+      anl02fl="Y";
+      if aval ne . and base ne . then do;
+         chg=aval-base;
+         if base ne 0 then pchg=round(chg/base*100,0.01);
+      end;
+   end;
+run;
+ 
+*==============================================================================;
+*Create anl01fl;
+*==============================================================================;
+ 
+proc sort data=adqs05;
+   by usubjid paramcd avisitn avisit awtdiff descending adt;
+run;
+ 
+data adqs05;
+   set adqs05;
+   by usubjid paramcd avisitn avisit awtdiff descending adt;
+   if first.avisitn and avisitn ne . then anl01fl="Y";
+ 
+   *------------------------------------------------------------------------------;
+   *Criteria flags;
+   *------------------------------------------------------------------------------;
+   if paramcd="TOTSCORE" then do;
+      crit1="More than 50% Decrease";
+      crit2="More than 75% Decrease";
+ 
+      if . lt pchg lt -50 then crit1fl="Y";
+      else if pchg ne . then crit1fl="N";
+ 
+      if . lt pchg lt -75 then crit2fl="Y";
+      else if pchg ne . then crit2fl="N";
+ 
+   end;
+run;
+ 
+proc sort data=adqs05;
+   by usubjid paramn avisitn avisit adt;
+run;
+ 
+*==============================================================================;
+*Merge with adsl to fetch other subject level variables;
+*==============================================================================;
+ 
+data adqs06;
+   merge adqs05(in=a) adsl;
+   by studyid usubjid;
+   if a;
+run;
+ 
+*==============================================================================;
+*keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID QSSEQ ADT ADY VISITNUM VISIT AVISIT AVISITN PARAM
+PARAMCD PARAMN AVAL AVALC BASE CHG PCHG CRIT1 CRIT1FL CRIT2 CRIT2FL AWTARGET AWTDIFF
+AWLO AWHI AWU ABLFL ANL01FL ANL02FL
+ 
+;
+ 
+data adqseasi;
+   retain &varlist.;
+   set adqs06;
+   keep &varlist.;
+run;
+ 
+ 

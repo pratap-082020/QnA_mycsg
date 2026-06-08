@@ -1,0 +1,16 @@
+dm<-tribble(
+~usubjid,~arm,~actarm,
+"CSG-1001","Screen Failure","Screen Failure",
+"CSG-1002","Sitagliptin 100 mg and Placebo","Sitagliptin 100 mg and Placebo",
+"CSG-1003","CSG 50 mg and Placebo","CSG 50 mg and Placebo",
+)
+
+ex<-tribble(
+~usubjid,~excat,~exstdtc,~exendtc,
+"CSG-1002","RUN-IN PERIOD","2011-11-21","2011-12-06",
+"CSG-1002","TREATMENT PERIOD","2011-12-07","2012-03-01",
+"CSG-1002","TREATMENT PERIOD","2012-03-04","2012-03-15",
+"CSG-1003","RUN-IN PERIOD","2011-09-20","2011-10-03",
+"CSG-1003","TREATMENT PERIOD","2011-10-04","2011-10-04",
+)
+

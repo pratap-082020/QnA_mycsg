@@ -1,0 +1,289 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TMH\TFL_TMH_L101\TFL_TMH_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Read input datasets
+----------------------------------------------------------*/
+ 
+data admh01;
+    set admh;
+    where saffl="Y";
+run;
+ 
+ 
+data adsl01;
+    set adsl;
+    where saffl="Y";
+run;
+ 
+ 
+/*=========================================================
+Create variable named 'treatment' to hold report level column groupings
+=========================================================*/
+ 
+ 
+data admh02;
+    set admh01;
+    treatment=trt01an;
+    output;
+run;
+ 
+data adsl02;
+   set adsl01;
+    treatment=trt01an;
+    output;
+run;
+ 
+/*=========================================================
+Get treatment totals into a dataset and into macro variables (for column headers)
+=========================================================*/
+ 
+ 
+proc sql;
+   create table trttotal_pre as
+      select treatment,
+      count(distinct usubjid) as trttotal
+      from adsl02
+      group by treatment;
+quit;
+ 
+/*----------------------------------------------------------
+Create dummy dataset for treatement totals
+----------------------------------------------------------*/
+ 
+data dummy_pre;
+   do treatment=0,54,81;
+      output;
+   end;
+run;
+ 
+/*----------------------------------------------------------
+Merge actual counts with dummy counts
+----------------------------------------------------------*/
+ 
+data trttotals;
+   merge dummy_pre(in=a) trttotal_pre(in=b);
+   by treatment;
+   if trttotal=. then trttotal=0;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Macro variables
+----------------------------------------------------------*/
+proc sql noprint;
+   select count(distinct usubjid) into :n0 from adsl02 where treatment=0;
+   select count(distinct usubjid) into :n54 from adsl02 where treatment=54;
+   select count(distinct usubjid) into :n81 from adsl02 where treatment=81;
+quit;
+ 
+ 
+/*=========================================================
+Obtaining actual counts-for the table
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Subject level count- top row
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table sub_count as
+   select "Overall" as label length=200,
+   treatment,
+   count(distinct usubjid) as count
+   from admh02
+   group by treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+SOC level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table soc_count as
+      select mhbodsys, treatment,
+      count(distinct usubjid) as count
+      from admh02
+      group by mhbodsys,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+Preferred term level counts
+----------------------------------------------------------*/
+ 
+ 
+proc sql noprint;
+   create table pt_count as
+      select mhbodsys,mhdecod,treatment,
+      count(distinct usubjid) as count
+      from admh02
+      group by mhbodsys,mhdecod,treatment;
+quit;
+ 
+ 
+/*----------------------------------------------------------
+Combine toprow, SOC, and PT level counts into single dataset
+----------------------------------------------------------*/
+ 
+ 
+data counts01;
+   set sub_count soc_count pt_count;
+run;
+ 
+/*=========================================================
+Create zero counts if an event is not present in a treatment
+=========================================================*/
+ 
+ 
+/*----------------------------------------------------------
+Get all the available SOC and PT values
+----------------------------------------------------------*/
+ 
+proc sort data=counts01 out=dummy01(keep=mhbodsys mhdecod label) nodupkey;
+   by mhbodsys mhdecod label;
+run;
+ 
+/*----------------------------------------------------------
+Create a row for each treatment
+----------------------------------------------------------*/
+ 
+data dummy02;
+   set dummy01;
+   do treatment=0,54,81;
+         output;
+   end;
+run;
+ 
+/*=========================================================
+Merge dummy counts with actual counts
+=========================================================*/
+ 
+proc sort data=dummy02;
+   by mhbodsys mhdecod label treatment;
+run;
+ 
+ 
+proc sort data=counts01;
+   by mhbodsys mhdecod label treatment;
+run;
+ 
+data counts02;
+   merge dummy02(in=a) counts01(in=b);
+   by mhbodsys mhdecod label treatment;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Calculate percentages
+=========================================================*/
+ 
+proc sort data=counts02;
+   by treatment;
+run;
+ 
+proc sort data=trttotals;
+   by treatment;
+run;
+ 
+data counts03;
+   merge counts02(in=a) trttotals(in=b);
+   by treatment;
+   if a;
+run;
+ 
+data counts04;
+   set counts03;
+   length cp $30;
+   if count ne 0 then cp=put(count,3.)||" ("||put(count/trttotal*100,5.1)||"%)";
+   else cp=put(count,3.);
+run;
+ 
+ 
+/*=========================================================
+Create the label column
+=========================================================*/
+ 
+ 
+data counts05;
+   set counts04;
+   if missing(mhbodsys) and missing(mhdecod) then label=label;
+   else if not missing(mhbodsys) and missing(mhdecod) then label=strip(mhbodsys);
+   else if not missing(mhbodsys) and not missing(mhdecod) then label='(*ESC*)R"\pnhang\fi220\li220 "'||strip(mhdecod);
+run;
+ 
+ 
+/*=========================================================
+Transpose to obtain treatment as columns
+=========================================================*/
+ 
+ 
+proc sort data=counts05;
+   by mhbodsys mhdecod label ;
+run;
+ 
+proc transpose data=counts05 out=trans01 prefix=trt;
+   by mhbodsys mhdecod label;
+   var cp;
+   id treatment;
+run;
+ 
+ 
+data trans02;
+   set trans01;
+   keep mhbodsys mhdecod c1 trt:;
+   c1=label;
+run;
+ 
+ 
+/*=========================================================
+Report generation
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Meidcal History by SOC and PT";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd headline headskip missing style(report)=[just=center]
+   style(header)=[just=center];
+   columns mhbodsys mhdecod c1  trt0 trt54 trt81;
+   define mhbodsys/ order noprint;
+   define mhdecod/order noprint;
+   define c1 /order "System Organ Class" '(*ESC*)R"\fi-420\li420 "Preferred Term' style(column)=[cellwidth=3.7in protectspecialchars=off]
+            style(header)=[just=left] ;
+   define trt0/"Placebo" "(N=%cmpres(&n0))" "  n   (%)" style(column)=[cellwidth=1.7in just=center] ;
+   define trt54/"Low Dose" "(N=%cmpres(&n54))" "  n   (%)" style(column)=[cellwidth=1.7in just=center]   ;
+   define trt81/"High Dose" "(N=%cmpres(&n81))" "  n   (%)"  style(column)=[cellwidth=1.7in just=center]   ;
+ 
+   compute after mhbodsys;
+        line @1 "";
+   endcomp;
+ 
+run;
+ 
+ods rtf close;
+ 
+ 

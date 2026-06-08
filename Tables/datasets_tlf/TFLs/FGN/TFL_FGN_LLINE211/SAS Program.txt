@@ -1,0 +1,115 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LLINE211\TFL_FGN_LLINE211;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+*------------------------------------------------------------------------------
+*Offset AVISITN so confidence intervals do not overlap (within TRTP)
+*------------------------------------------------------------------------------;
+data stats02;
+    set stats01;
+    if trtp="Placebo" then avisitn = avisitn - 0.05;
+    else                  avisitn = avisitn + 0.05;
+run;
+ 
+*------------------------------------------------------------------------------
+*Sort input for consistent order
+*------------------------------------------------------------------------------;
+proc sort data=stats02;
+    by param agegr1n avisitn trtp;
+run;
+ 
+ 
+*==============================================================================
+*GTL Template using DATAPANEL
+*==============================================================================;
+ 
+goptions reset=all;
+ods graphics on / width=8in height=5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read) sashelp.tmplmst(read);
+options orientation=landscape;
+options nobyline;
+ 
+ 
+proc template;
+ 
+define statgraph line_datapanel_2x2;
+begingraph;
+ 
+discreteattrmap name="trtmap"/ignorecase=true;
+    value "Placebo" /lineattrs=(color=red pattern=2)
+                    markerattrs=(color=red symbol=diamondfilled);
+    value "Active"  /lineattrs=(color=green pattern=1)
+                    markerattrs=(color=green symbol=circlefilled);
+enddiscreteattrmap;
+ 
+discreteattrvar var=trtp attrmap="trtmap" attrvar=trtcolormap;
+ 
+layout datapanel classvars = (agegr1) / columns = 2 rows=2 columndatarange=union rowdatarange=union
+    columnaxisopts=(
+        type=linear
+        label="Analysis Visit"
+    )
+    rowaxisopts=(
+        type=linear
+        label=""
+        griddisplay=on
+        linearopts=(
+            minorticks=true
+        )
+    );
+ 
+    layout prototype;
+ 
+        seriesplot  x=avisitn y=meanaval / group=trtcolormap name="line";
+        scatterplot x=avisitn y=meanaval / group=trtcolormap
+                    yerrorlower=lclm yerrorupper=uclm name="scatter";
+ 
+    endlayout;
+ 
+    sidebar / align=bottom;
+        discretelegend "line" / title="Treatment";
+    endsidebar;
+ 
+endlayout;
+ 
+endgraph;
+end;
+ 
+run;
+ 
+*==============================================================================
+*Render: BY PAGE gives one RTF page for each group of 4 parameters
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+title "Line Plot - Hematology results comparison over different age groups";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ods rtf startpage=now;
+ 
+proc sgrender data=stats02 template=line_datapanel_2x2;
+    format avisitn avisitn.;
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+title;
+footnote;
+ 
+ 

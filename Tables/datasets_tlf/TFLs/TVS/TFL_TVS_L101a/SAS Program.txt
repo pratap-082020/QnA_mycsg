@@ -1,0 +1,199 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TVS\TFL_TVS_L101a\TFL_TVS_L101a;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read and process input datasets
+=========================================================*/
+data adsl01;
+   set adsl;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+data advs01;
+   set advs;
+   treatment=trt01an;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+data advs02;
+   set advs01;
+   order=1;
+   result=aval;
+   output;
+   if ablfl ne "Y";
+   order=2;
+   result=chg;
+   output;
+run;
+ 
+/*=========================================================
+Fetch treatment totals and create macro variables
+=========================================================*/
+ 
+proc freq data=adsl01 noprint;
+   table treatment/out=denoms(rename=(count=denom));
+run;
+ 
+data _null_;
+   set denoms;
+   call symputx(cats("n",treatment),denom);
+run;
+ 
+ 
+/*=========================================================
+Obtain and process descriptive statistics
+=========================================================*/
+ 
+proc sort data=advs02;
+   by paramn param avisitn avisit treatment order;
+run;
+ 
+proc summary data=advs02;
+   by paramn param avisitn avisit treatment order;
+   var result;
+   output out=stats01 n=_n mean=_mean std=_sd median=_median min=_min max=_max;
+run;
+ 
+data stats02;
+   set stats01;
+   length n mean sd meansd median min max minmax $50;
+   if not missing(_n) then n=put(_n,4.);
+   if not missing(_mean) then mean=put(_mean,7.1);
+   if not missing(_sd) then sd=put(_sd,7.2);
+   else sd="-";
+   if not missing(_median) then median=put(_median,7.1);
+   if not missing(_min) then min=put(_min,7.0);
+   if not missing(_max) then max=put(_max,7.0);
+ 
+   meansd=trim(mean)||" ("||strip(sd)||")";
+   minmax=trim(min)||", "||strip(max);
+run;
+ 
+proc transpose data=stats02 out=stats03;
+   by paramn param avisitn avisit treatment order;
+   var n meansd median minmax;
+run;
+ 
+ 
+/*=========================================================
+Create labels and variables to sort the statistics as per shell requirement
+=========================================================*/
+ 
+data stats04;
+   set stats03;
+   length label $50;
+   _name_=lowcase(_name_);
+   if _name_="n" then do; intord=1; label="n"; end;
+   else if _name_="meansd" then do; intord=2; label="Mean (SD)"; end;
+   else if _name_="median" then do; intord=3; label="Median"; end;
+   else if _name_="minmax" then do; intord=4; label="Min, Max"; end;
+run;
+ 
+ 
+/*=========================================================
+Transpose the data such treatments become columns
+=========================================================*/
+proc sort data=stats04;
+   by paramn param avisitn avisit intord label treatment order;
+run;
+ 
+proc transpose data=stats04 out=trans01 prefix=trt;
+   by paramn param avisitn avisit intord label;
+   var col1;
+   id treatment order;
+run;
+ 
+ 
+/*=========================================================
+Create visit labels and combine with statstics column
+=========================================================*/
+ 
+data visitlabels;
+   set trans01;
+   by paramn param avisitn avisit;
+   if first.avisitn;
+   intord=0;
+   keep paramn param avisitn avisit intord;
+run;
+ 
+data trans02;
+   length param $200;
+   set trans01(in=a) visitlabels(in=b);
+   by paramn param avisitn avisit intord;
+   if b then label=avisit;
+   if a then label="(*ESC*)\li200 "||strip(label);
+   blank="";
+   param="(*ESC*)S={borderbottomcolor=black borderbottomwidth=1} "||strip(param);
+run;
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+ 
+title "Vital Signs: Result and Change From Baseline";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 nowd missing split='~'
+   style(report)={just=center}
+   style(header)={just=center}
+   style(column)={just=center}
+   ;
+   column paramn param avisitn intord label
+      ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1} Arm A ~(N=&n1) " trt11 trt12) blank
+      ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1} Arm B ~(N=&n2) " trt21 trt22) blank
+      ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1} Total ~(N=&n3) " trt31 trt32) blank
+    ;
+ 
+   define paramn/order noprint;
+   define avisitn/order noprint;
+   define intord/order noprint;
+   define param/noprint;
+ 
+   define blank/" " style(column)={cellwidth=0.05in};
+ 
+   define label/"Study Visit" style(header)={just=left} style(column)={cellwidth=1in just=left};
+   define trt11/"Observed Value~at Visit" style(column)={cellwidth=1in};
+   define trt12/"Change From~Baseline" style(column)={cellwidth=1in};
+   define trt21/"Observed Value~at Visit" style(column)={cellwidth=1in};
+   define trt22/"Change From~Baseline" style(column)={cellwidth=1in};
+   define trt31/"Observed Value~at Visit" style(column)={cellwidth=1in};
+   define trt32/"Change From~Baseline" style(column)={cellwidth=1in};
+ 
+   break after paramn/page;
+ 
+   compute before _page_;
+      line @1 param $200.;
+   endcomp;
+   compute after avisitn;
+      line @1 " ";
+   endcomp;
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+ 

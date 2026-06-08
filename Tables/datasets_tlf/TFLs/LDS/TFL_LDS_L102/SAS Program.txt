@@ -1,0 +1,104 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_LDS\TFL_LDS_L102\TFL_LDS_L102;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Read input data
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+   where trt01pn ne .;
+run;
+ 
+/*=========================================================
+Create columns as per listing requirment
+=========================================================*/
+ 
+data list01;
+   set adsl01;
+ 
+   length col1 $100;
+   col1="Investigator Site = "||strip(siteid);
+ 
+   col2=usubjid;
+   col3=trt01p;
+ 
+   array oldv[*] fasfl pprotfl saffl pkasfl;
+   array newv[4] $3 col4 col5 col6 col7;
+   do i=1 to dim(oldv);
+      if oldv(i)="Y" then newv(i)="Yes";
+      else if oldv(i)="N" then newv(i)="No";
+   end;
+ 
+   drop i;
+run;
+ 
+/*=========================================================
+Sort the observations as per listing requirment and create a sequence variable
+=========================================================*/
+ 
+proc sort data=list01;
+   by siteid usubjid;
+run;
+ 
+data list02;
+   set list01;
+   by siteid usubjid;
+   listseq=_n_;
+run;
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote " ";
+title "Inclusion/Exclusion From Analysis Sets";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01 ;
+ 
+proc report data=list02 nowd missing split="~"
+   style(report)={just=center}
+   style(header)={just=left}
+   style(column)={just=left};
+   columns siteid col1 usubjid col2 trt01pn col3 col4 col5 col6 col7;
+ 
+   define siteid/order order=data noprint;
+   define usubjid/order order=data noprint;
+   define trt01pn/order order=data noprint;
+   define col1/order order=data noprint;
+ 
+   define col2/"Subject ID" style(column)={cellwidth=1in};
+   define col3/"Treatment" "Group" style(column)={cellwidth=0.75 in};
+   define col4/"Full" "Analysis" "Set" style(column)={cellwidth=0.75in};
+   define col5/"Per" "Protocol" "Set" style(column)={cellwidth=0.75in};
+   define col6/"Safety" "Analysis" "Set" style(column)={cellwidth=0.75in};
+   define col7/"Pharmacokinetic" "Analysis" "Set" style(column)={cellwidth=1in};
+ 
+   compute after siteid;
+      line @1 " ";
+   endcomp;
+ 
+   compute before col1;
+      line @1 col1 $150.;
+      line @1 " ";
+   endcomp;
+run;
+ods rtf close;
+ods listing;
+ 
+ 

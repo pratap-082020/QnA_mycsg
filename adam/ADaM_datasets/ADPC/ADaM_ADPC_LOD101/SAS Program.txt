@@ -1,0 +1,199 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_ADPC\ADaM_ADPC_LOD101\ADaM_ADPC_LOD101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+*==============================================================================;
+*Read and process input dataset;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Pull treatment start date into pc data;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=pc;
+   by usubjid;
+run;
+ 
+proc sort data=adsl;
+   by usubjid;
+run;
+ 
+data pc01;
+   merge pc(in=a) adsl(in=b keep=usubjid trtsdt);
+   by usubjid;
+   if a and b;
+run;
+ 
+*------------------------------------------------------------------------------;
+*Create variables that are directly based on sdtm variables;
+*------------------------------------------------------------------------------;
+ 
+data pc02;
+   set pc01;
+ 
+   *------------------------------------------------------------------------------;
+   *parameter related variables;
+   *------------------------------------------------------------------------------;
+ 
+   paramcd=pctestcd;
+   param="MYCSG Med01 (ng/mL)";
+ 
+   *------------------------------------------------------------------------------;
+   *Timing variables;
+   *------------------------------------------------------------------------------;
+ 
+   adt=input(pcdtc,??yymmdd10.);
+   adtm=input(pcdtc,??is8601dt19.);
+ 
+   arftdtm=input(pcrftdtc,??is8601dt19.);
+ 
+   format adt date9. adtm arftdtm is8601dt.;
+ 
+ 
+   length avisit $50 atpt $30;
+ 
+   if visit="Cycle 1 Day 1" and pctpt="PRE-DOSE" then avisit="Baseline";
+   else avisit=visit;
+ 
+   if upcase(avisit)="BASELINE" then avisitn=1;
+   else if upcase(avisit)="CYCLE 1 DAY 1" then avisitn=1.01;
+   else if upcase(avisit)="CYCLE 1 DAY 2" then avisitn=1.02;
+   else if upcase(avisit)="CYCLE 1 DAY 15" then avisitn=1.15;
+   else if upcase(avisit)="CYCLE 1 DAY 16" then avisitn=1.16;
+   else if upcase(avisit)="CYCLE 2 DAY 1" then avisitn=2.01;
+   else if upcase(avisit)="CYCLE 4 DAY 1" then avisitn=4.01;
+   else if upcase(avisit)="CYCLE 6 DAY 1" then avisitn=6.01;
+   else if upcase(avisit)="CYCLE 8 DAY 1" then avisitn=8.01;
+ 
+   atpt=pctpt;
+ 
+   if upcase(atpt)="PRE-DOSE" then atptn=0;
+   else if upcase(atpt)="0.5 HR POST DOSE" then atptn=0.5;
+   else if upcase(atpt)="7 HR POST DOSE" then atptn=7;
+ 
+ 
+   if upcase(visit)="CYCLE 1 DAY 1" then atarget=1;
+   else if upcase(visit)="CYCLE 1 DAY 2" then atarget=2;
+   else if upcase(visit)="CYCLE 1 DAY 15" then atarget=15;
+   else if upcase(visit)="CYCLE 1 DAY 16" then atarget=16;
+   else if upcase(visit)="CYCLE 2 DAY 1" then atarget=22;
+   else if upcase(visit)="CYCLE 4 DAY 1" then atarget=64;
+   else if upcase(visit)="CYCLE 6 DAY 1" then atarget=141;
+   else if upcase(visit)="CYCLE 8 DAY 1" then atarget=197;
+ 
+   if adt ne . and trtsdt ne . then ady=adt-trtsdt+(adt>=trtsdt);
+   *------------------------------------------------------------------------------;
+   *Result variables;
+   *------------------------------------------------------------------------------;
+ 
+   if pcstresc='< 0.0500' then aval=0;
+   else aval=pcstresn;
+ 
+   avalc=pcstresc;
+ 
+   *------------------------------------------------------------------------------;
+   *Other derived variables;
+   *------------------------------------------------------------------------------;
+ 
+   if adtm ne . and arftdtm ne . then areltm=(adtm-arftdtm)/60;
+   if ady ne . and atarget ne . then adiff=ady-atarget;
+ 
+   if areltm ne . then areltmu="Minutes";
+ 
+   if adiff gt 2 then anl81fl="Y";
+ 
+   if (areltm=.) or
+      (atptn=0 and (. lt areltm lt -30 or areltm gt 0)) or
+      (atptn=0.5 and (. lt areltm lt 20 or areltm gt 40)) or
+      (atptn=7 and (. lt areltm lt 300 or areltm gt 540))
+      then anl82fl="Y";
+ 
+ 
+   if upcase(avisit)="CYCLE 1 DAY 1" and find(pcstresc,'<') then anl83fl="Y";
+   tempseq=_n_;
+run;
+ 
+*==============================================================================;
+*Derive variables which are based on EC;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*process EC data;
+*------------------------------------------------------------------------------;
+ 
+data ec01;
+   set ec;
+ 
+   ecstdt=input(ecstdtc,??yymmdd10.);
+   ecendt=input(ecendtc,??yymmdd10.);
+ 
+   format ecstdt ecendt date9.;
+run;
+ 
+*------------------------------------------------------------------------------;
+*DOSE;
+*------------------------------------------------------------------------------;
+ 
+proc sql;
+   create table pc03 as
+      select a.*,b.ecdose as dose
+      from pc02 as a
+      left join
+      ec01(where=(ECCAT="PK DOSING")) as b
+      on a.usubjid=b.usubjid and upcase(a.visit)=upcase(b.cycle) and upcase(a.pctptref)=upcase(b.dosref)
+      order by a.usubjid,a.avisitn,a.adtm
+      ;
+quit;
+ 
+*------------------------------------------------------------------------------;
+*ACTDOSE and ADOSE, ANL91FL;
+*------------------------------------------------------------------------------;
+ 
+proc sql;
+   create table pc04_pre1 as
+      select a.*,b.ecdose as actdose
+      from pc03 as a
+      left join
+      ec01(where=(ECCAT="MED01 ADMINISTRATION")) as b
+      on a.usubjid=b.usubjid and (. lt ecstdt lt adt)
+      order by a.usubjid,a.tempseq,b.ecstdt
+      ;
+quit;
+ 
+ 
+data pc04;
+   set pc04_pre1;
+   by usubjid tempseq;
+   if last.tempseq;
+ 
+   if dose ne . then adose=dose;
+   else adose=actdose;
+ 
+   if anl81fl="" and anl82fl="" and anl83fl="" then anl91fl="Y";
+run;
+ 
+*==============================================================================;
+*Keep only required variables;
+*==============================================================================;
+ 
+%let varlist=STUDYID USUBJID PCSEQ ADT ADTM ADY VISITNUM VISIT AVISIT AVISITN
+             ATPT ATPTN PCSPEC PCSTAT PCREASND PCLLOQ PCRFTDTC PARAM PARAMCD
+             PCSTRESC PCSTRESN AVAL AVALC DOSE ACTDOSE ADOSE ARFTDTM ARELTM
+             ARELTMU ATARGET ADIFF ANL81FL ANL82FL ANL83FL ANL91FL;
+ 
+data adpc;
+   retain &varlist.;
+   set pc04;
+   keep &varlist.;
+run;
+ 

@@ -1,0 +1,125 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LLINE101\TFL_FGN_LLINE101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Get descriptive statistics - mean, lclm, uclm;
+*==============================================================================;
+ 
+proc sort data=adlb out=adlb_line;
+    by trtp avisitn;
+run;
+ 
+proc means data=adlb_line noprint nway;
+    class trtp avisitn;
+    var aval;
+    output out=stats01 mean=meanaval lclm=lclm uclm=uclm;
+run;
+ 
+*------------------------------------------------------------------------------;
+*adjust avisitn values so that the confidence intervals do not overlap;
+*------------------------------------------------------------------------------;
+ 
+data stats02;
+    set stats01;
+    if trtp="Placebo" then avisitn=avisitn-0.05;
+    else avisitn=avisitn+0.05;
+run;
+ 
+*==============================================================================;
+*Create format;
+*==============================================================================;
+ 
+proc format;
+    value avisitn
+    1="Baseline"
+    2="Month 1"
+    3="Month 2"
+    4="Month 3"
+    5="Month 4"
+    ;
+run;
+ 
+ 
+*==============================================================================;
+*create graph template ;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Set some graph options;
+*------------------------------------------------------------------------------;
+goptions reset=all;
+ods graphics on/ width=8in height=5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read)  sashelp.tmplmst(read);
+options orientation=landscape;
+ 
+*------------------------------------------------------------------------------;
+*build template;
+*------------------------------------------------------------------------------;
+ 
+proc template;
+ 
+define statgraph line;
+begingraph;
+ 
+discreteattrmap name="trtmap"/ignorecase=true;
+ 
+    value "Placebo" /lineattrs=(color=red pattern=2) markerattrs=(color=red symbol=diamondfilled);
+    value "MYCSG" /lineattrs=(color=green pattern=1) markerattrs=(color=green symbol=circlefilled);
+ 
+enddiscreteattrmap;
+ 
+discreteattrvar var=trtp attrmap="trtmap" attrvar=trtcolormap;
+ 
+layout overlay/
+    xaxisopts=(type=linear label="Analysis Visit" linearopts=(tickvaluesequence=(start=1 end=5 increment=1)))
+    yaxisopts=(type=linear label="Hemoglobin value`(mg/dL)" griddisplay=on
+    linearopts=(tickvaluesequence=(start=12 end=16 increment=0.5) viewmin=12 viewmax=16 minorticks=true )  labelsplitchar='`' labelfitpolicy=splitalways)
+    ;
+    seriesplot x=avisitn y=meanaval /group=trtcolormap name="line" ;
+    scatterplot x=avisitn y=meanaval/group=trtcolormap yerrorlower=lclm yerrorupper=uclm name="scatter";
+    
+    mergedlegend "line" "scatter"/location=inside halign=left valign=top;
+endlayout;
+endgraph;
+end;
+ 
+run;
+ 
+*==============================================================================;
+*Generate graph by associating data to graph template with sgrender procedure;
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+ 
+*------------------------------------------------------------------------------;
+*set some rtf optioons;
+*------------------------------------------------------------------------------;
+ 
+footnote "&outputname.";
+title "Line Plot - Hemoglobin Over Time (Mean ± 95% CI) by Treatment Group";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ 
+proc sgrender data=stats02 template=line;
+format avisitn avisitn.;
+run;
+ 
+ods listing;
+ods rtf close;
+ 

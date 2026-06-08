@@ -1,0 +1,105 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_LDS\TFL_LDS_L104\TFL_LDS_L104;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input data
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+run;
+ 
+/*=========================================================
+Create columns as per listing requirement
+=========================================================*/
+ 
+data list01;
+   set adsl01;
+ 
+   col1="Investigator Site = "||strip(siteid);
+   col2=usubjid;
+   col3=trt01p;
+   if rficdt ne . then col4=put(rficdt,yymmdd10.);
+   else col4="-";
+ 
+   if rfpendt ne . then col5=put(rfpendt,yymmdd10.);
+   else col5="-";
+ 
+   col6=cats(amendno);
+run;
+ 
+ 
+/*=========================================================
+Sort the records as per listing requirement and create a sequence variable
+=========================================================*/
+ 
+proc sort data=list01;
+   by siteid usubjid;
+run;
+ 
+data list02;
+   set list01;
+   by siteid usubjid;
+   listseq=_n_;
+run;
+ 
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "[1] Date of informed consent";
+footnote2 "[2] Date of last study visit";
+ 
+title "Dates of First and Last Evaluations";
+title2 "All Subjects";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=list02 nowd missing
+   style(report)={just=center}
+   style(column)={just=left}
+   style(header)={just=left};
+ 
+   column siteid col1 usubjid col2 col3 col4 col5 col6;
+ 
+   define siteid/order order=data noprint;
+   define usubjid/order order=data noprint;
+   define col1/order order=data noprint;
+ 
+   define col2/"Subject ID" style(column)={cellwidth=1in};
+   define col3/"Treatment" "group" style(column)={cellwidth=1in};
+   define col4/"Date of First" "Evaluation [1]" style(column)={cellwidth=1in};
+   define col5/"Date of First" "Evaluation [1]" style(column)={cellwidth=1in};
+   define col6/"Subject Enrolled Under" "Protocol Version" style(column)={cellwidth=1.5in};
+ 
+   compute after siteid;
+      line @1 " ";
+   endcomp;
+ 
+   compute before col1;
+      line @1 col1 $150.;
+      line @1 " ";
+   endcomp;
+ 
+run;
+ods rtf close;
+ods listing;
+ 
+ 

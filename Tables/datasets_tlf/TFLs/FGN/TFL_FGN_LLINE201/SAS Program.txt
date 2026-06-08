@@ -1,0 +1,186 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_FGN\TFL_FGN_LLINE201\TFL_FGN_LLINE201;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================
+*Formats for display;
+*==============================================================================;
+ 
+proc format;
+    value avisitn
+    1="Baseline"
+    2="Month 1"
+    3="Month 2"
+    4="Month 3"
+    5="Month 4"
+    ;
+ 
+    value paramymin
+    1=12
+    2=5
+    3=200
+    ;
+ 
+    value paramymax
+    1=16
+    2=8
+    3=300
+    ;
+ 
+    value paramystep
+    1=0.5
+    2=0.5
+    3=20
+    ;
+ 
+run;
+ 
+*==============================================================================
+*Get descriptive statistics - mean, lclm, uclm (now by param);
+*==============================================================================;
+ 
+proc sort data=adlb out=adlb_line;
+    by param trtp avisitn;
+run;
+ 
+proc means data=adlb_line noprint nway;
+    class param paramcd trtp avisitn;
+    var aval;
+    output out=stats01 mean=meanaval lclm=lclm uclm=uclm;
+run;
+ 
+*------------------------------------------------------------------------------
+*Adjust avisitn so that the confidence intervals do not overlap (within param);
+*------------------------------------------------------------------------------;
+ 
+data stats02;
+    set stats01;
+    if trtp="Placebo" then avisitn=avisitn-0.05;
+    else avisitn=avisitn+0.05;
+run;
+ 
+*------------------------------------------------------------------------------
+*Add per-parameter axis control values to the plotting dataset;
+*------------------------------------------------------------------------------;
+ 
+data stats03;
+    set stats02;
+ 
+    length ylabel param $200;
+ 
+     ylabel=param;
+ 
+    if paramcd="HGB" then do;
+        ymin=12; ymax=16; ystep=0.5;
+    end;
+    else if paramcd="WBC" then do;
+        ymin=5; ymax=8; ystep=0.5;
+    end;
+    else if paramcd="PLT" then do;
+        ymin=200; ymax=300; ystep=20;
+    end;
+ 
+run;
+ 
+proc sort data=stats03;
+    by param;
+run;
+ 
+*==============================================================================
+*Create graph template (use DYNAMIC so axis label/range changes per param);
+*==============================================================================;
+ 
+goptions reset=all;
+ods graphics on/ width=8in height=5in;
+ods path(p) work.template(update) work.styles(read) sasuser.templat(read) sashelp.tmplmst(read);
+options orientation=landscape;
+ 
+options nobyline;
+*param ylabel ymin ymax ystep;
+ 
+proc template;
+ 
+define statgraph line_by_param;
+dynamic _byval_ _byval2_ _byval3_ _byval4_ _byval5_;
+ 
+begingraph;
+entrytitle "Parameter: " _byval_;
+discreteattrmap name="trtmap"/ignorecase=true;
+    value "Placebo" /lineattrs=(color=red pattern=2) markerattrs=(color=red symbol=diamondfilled);
+    value "Active"  /lineattrs=(color=green pattern=1) markerattrs=(color=green symbol=circlefilled);
+enddiscreteattrmap;
+ 
+discreteattrvar var=trtp attrmap="trtmap" attrvar=trtcolormap;
+ 
+layout overlay/
+    xaxisopts=(
+        type=linear
+        label="Analysis Visit"
+        linearopts=(tickvaluesequence=(start=1 end=5 increment=1))
+    )
+    yaxisopts=(
+        type=linear
+        label=_byval2_
+        griddisplay=on
+        linearopts=(
+            tickvaluesequence=(start=_byval3_ end=_byval4_ increment=_byval5_)
+            viewmin=_byval3_
+            viewmax=_byval4_
+            minorticks=true
+        )
+        labelsplitchar='`'
+        labelfitpolicy=splitalways
+    )
+    ;
+ 
+    seriesplot   x=avisitn y=meanaval /group=trtcolormap name="line";
+    scatterplot  x=avisitn y=meanaval /group=trtcolormap yerrorlower=lclm yerrorupper=uclm name="scatter";
+ 
+    mergedlegend "line" "scatter"/location=inside halign=left valign=top;
+ 
+endlayout;
+ 
+endgraph;
+end;
+ 
+run;
+ 
+*==============================================================================
+*Generate graphs (separate RTF page for each param);
+*==============================================================================;
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+ 
+title "Line Plot - Hematology Results Over Time (Mean ± 95% CI) by Treatment Group";
+title2 "Safety Analysis Set";
+title3 bcolor="#e6f9ec" "Copyright @ www.mycsg.in";
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+ods rtf startpage=now;
+ 
+proc sgrender data=stats03 template=line_by_param;
+    by param ylabel ymin ymax ystep;
+    format avisitn avisitn.;
+run;
+ 
+ods rtf close;
+ods listing;
+ 
+title;
+footnote;
+ 

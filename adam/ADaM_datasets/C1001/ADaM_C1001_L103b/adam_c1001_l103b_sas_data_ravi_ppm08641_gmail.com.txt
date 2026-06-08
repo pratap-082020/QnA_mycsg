@@ -1,0 +1,35 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: ADaM_C1001_L103b;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data dm;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $12. ARM : $14. ACTARM : $14.;
+label ;
+format ;
+datalines4;
+CSG-1001|Screen Failure|Screen Failure
+CSG-1002|Placebo|Placebo
+CSG-1003|CSG 25 mg|CSG 25 mg
+CSG-1004|CSG 50 mg|CSG 50 mg
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

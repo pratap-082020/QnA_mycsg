@@ -1,0 +1,120 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.ADaM\ADaM_C1013\ADaM_C1013_L101\ADaM_C1013_L101;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Read input datasets
+=========================================================*/
+ 
+data adsl01;
+   set adsl;
+   where saffl="Y";
+run;
+ 
+data cm01;
+   set cm;
+run;
+ 
+/*=========================================================
+Convert CMSTDTC to numeric format
+=========================================================*/
+ 
+data cm02;
+   set cm01;
+   if length(cmstdtc)=10 then cmstdt=input(cmstdtc,yymmdd10.);
+   format cmstdt date9.;
+run;
+ 
+/*=========================================================
+Merge ADSL and CM datasets
+=========================================================*/
+ 
+proc sort data=cm02;
+   by usubjid;
+run;
+ 
+proc sort data=adsl01;
+   by usubjid;
+run;
+ 
+data cm03;
+   merge cm02(in=a) adsl01(in=b);
+   by usubjid;
+   if a and b;
+run;
+ 
+ 
+/*=========================================================
+Get the earliest start date of insulin
+=========================================================*/
+ 
+proc sort data=cm03 out=resmed01;
+   by usubjid cmstdt;
+   where cmdecod="Insulin" and cmstdt ge trtsdt gt .;
+run;
+ 
+data resmed02;
+   set resmed01;
+   by usubjid cmstdt;
+   if first.usubjid;
+   keep usubjid resmeddt;
+   resmeddt=cmstdt;
+   format resmeddt date9.;
+run;
+ 
+/*=========================================================
+Get rescue medication start date into adsl
+=========================================================*/
+ 
+data adsl02;
+   merge adsl01(in=a) resmed02(in=b);
+   by usubjid;
+   if a;
+run;
+ 
+ 
+/*=========================================================
+Create PARAMCD,PARAM,STARTDT,ADT,AVAL and CNSR Variables
+=========================================================*/
+ 
+data t2resmed;
+   set adsl02;
+ 
+   paramcd="T2RESMED";
+   param="Time to first Rescue Medication";
+   startdt=trtsdt;
+   if resmeddt ne . then do;
+      adt=resmeddt;
+      cnsr=0;
+   end;
+   else do;
+      adt=trtedt;
+      cnsr=1;
+   end;
+ 
+   if startdt ne . and adt ne . then aval=adt-startdt+1;
+   format startdt adt trtsdt trtedt date9.;
+run;
+ 
+/*=========================================================
+Keep only required variables and order the variables in a logical sequence
+=========================================================*/
+ 
+data output;
+   retain usubjid paramcd param startdt adt aval cnsr trtsdt trtedt;
+   set t2resmed;
+   keep usubjid paramcd param startdt adt aval cnsr trtsdt trtedt;
+run;
+ 
+ 

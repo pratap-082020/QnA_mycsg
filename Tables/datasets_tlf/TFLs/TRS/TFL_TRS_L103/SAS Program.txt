@@ -1,0 +1,254 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TFL\TFL_TRS\TFL_TRS_L103\TFL_TRS_L103;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+proc format;
+   value resp
+   1="CR"
+   2="PR"
+   3="SD"
+   4="PD"
+   5="NE";
+run;
+ 
+ 
+/*=========================================================
+Process ADRS dataset to transpose parameters as variables
+=========================================================*/
+ 
+proc transpose data=adrs out=adrs01;
+   by usubjid trt01pn;
+   id paramcd;
+   var avalc;
+run;
+ 
+/*=========================================================
+Process adrs and adsl datasets
+=========================================================*/
+ 
+ 
+data adrs02;
+   set adrs01;
+   treatment=trt01pn;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+proc sort data=adrs02;
+   by usubjid treatment;
+run;
+ 
+data adsl01;
+   set adsl;
+   treatment=trt01pn;
+   output;
+   treatment=3;
+   output;
+run;
+ 
+ 
+/*=========================================================
+Create dummy to have all levels
+=========================================================*/
+ 
+data dummy01;
+   length irc inv $200;
+   do treatment=1 to 3;
+      do ircn=1 to 5;
+         do invn=1 to 5;
+            irc=put(ircn,resp.);
+            inv=put(invn,resp.);
+            output;
+         end;
+      end;
+   end;
+run;
+ 
+ 
+/*=========================================================
+Fetch treatment totals and create macro variables
+=========================================================*/
+proc freq data= adsl01  ;
+    tables treatment   /list missing out=denoms(rename=(count=denom) drop=percent);
+    where 1=1;
+run;
+ 
+data _null_;
+   set denoms;
+   call symputx(cats("n",treatment),denom);
+run;
+ 
+ 
+/*=========================================================
+Fetch counts for overall concordance
+=========================================================*/
+ 
+proc sql;
+   create table concnum01 as
+      select treatment,count(distinct usubjid) as num
+      from adrs02
+      where irc=inv and inv ne "" and irc ne ""
+      group by treatment;
+   create table concdenom01 as
+      select treatment,count(distinct usubjid) as denom
+      from adrs02
+      where inv ne "" and irc ne ""
+      group by treatment;
+   create table conc01 as
+      select coalesce(a.treatment,b.treatment) as treatment,a.num,b.denom
+      from concnum01 as a
+      full join
+      concdenom01 as b
+      on a.treatment=b.treatment;
+quit;
+ 
+data concdummy01;
+   do treatment=1 to 3;
+      output;
+   end;
+run;
+ 
+ 
+/*=========================================================
+Get IRC vs INV counts and merge with dummy dataset containing all levels
+=========================================================*/
+ 
+proc freq data=adrs02   ;
+    tables  treatment*irc*inv  /list missing out=counts01(drop=percent);
+    where 1=1;
+run;
+ 
+proc sort data=dummy01;
+   by treatment irc inv;
+run;
+ 
+data counts02;
+   merge counts01(in=a) dummy01(in=b);
+   by treatment irc inv;
+   if count=. then count=0;
+run;
+ 
+ 
+/*=========================================================
+Calculate percentages using the number of subjects with irc and inv data from concdenom01 dataset
+=========================================================*/
+ 
+proc sort data=counts02;
+   by treatment;
+run;
+ 
+proc sort data=concdenom01;
+   by treatment;
+run;
+ 
+data counts03;
+   merge counts02(in=a) concdenom01(in=b);
+   by treatment;
+run;
+ 
+data counts04;
+   set counts03;
+   length cp $200;
+   if count ne 0 then cp=put(count,3.)||"("||put(count/denom*100,5.1)||")";
+   else cp="0";
+run;
+ 
+/*=========================================================
+Transpose the data such that investigator result levels become columns
+=========================================================*/
+ 
+proc sort data=counts04;
+   by treatment ircn irc invn inv;
+run;
+ 
+proc transpose data=counts04 out=trans01;
+   by treatment ircn irc;
+   id inv;
+   var cp;
+run;
+ 
+ 
+/*=========================================================
+Creat row for overall concordance and combine with irc/inv level counts
+=========================================================*/
+ 
+data conc02;
+   merge conc01 concdummy01;
+   by treatment;
+   if num=. then num=0;
+   if denom=. then denom=0;
+   length sd $200;
+   if num ne 0 then sd=put(num,3.)||"("||put(num/denom*100,5.1)||")";
+   else sd="0(0.0)";
+   ircn=99;
+   keep treatment sd ircn;
+run;
+ 
+data trans02;
+   length irc trtlabel $200 ;
+   set trans01(in=a) conc02(in=b);
+   by treatment;
+   if a then group=1;
+   if b then do; group=2;irc="Overall Concordance Rate"; end;
+ 
+   if treatment=1 then trtlabel="Arm A (N=&n1)";
+   else if treatment=2 then trtlabel="Arm B (N=&n2)";
+   else if treatment=3 then trtlabel="Total (N=&n3)";
+run;
+ 
+/*=========================================================
+Generate Report
+=========================================================*/
+ 
+%rtf_output_style_setup;
+ 
+footnote "&outputname.";
+footnote "Percentages are calculated based on the number of subjects with both IRC and Investigator data available";
+ 
+title "Concordance between IRC and Investigator Best Response Analysis";
+title2 "Full Analysis Set";
+title3 bcolor="#e9f6ec" "Copyright @ www.mycsg.in";
+title4 #byval2;
+ 
+ods listing close;
+ods rtf file="&outputpath.\&outputname." style=csgpool01;
+ 
+proc report data=trans02 missing nowd
+   style(report)={just=center}
+   style(header)={just=center}
+   style(column)={just=center}
+   ;
+   by treatment trtlabel;
+   columns group ircn irc
+   ("(*ESC*)S={borderbottomcolor=black borderbottomwidth=1 just=center}Investigator Assessed" cr pr sd pd ne);
+ 
+   define group/order noprint;
+   define ircn/order noprint order=data;
+ 
+   define irc/"IRC Assessment" style(column)={cellwidth=1.5in};
+   define cr/"CR" style(column)={cellwidth=1in};
+   define pr/"PR" style(column)={cellwidth=1in};
+   define sd/"SD" style(column)={cellwidth=1in};
+   define pd/"PD" style(column)={cellwidth=1in};
+   define ne/"NE" style(column)={cellwidth=1in};
+ 
+   compute after group;
+      line @1 " ";
+   endcomp;
+ 
+run;
+ods rtf close;
+ods listing;
+ 
+ 
