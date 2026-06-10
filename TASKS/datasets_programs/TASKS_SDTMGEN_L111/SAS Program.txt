@@ -1,0 +1,81 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L111\TASKS_SDTMGEN_L111;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Create a copy of the input data
+=========================================================*/
+data ec01;
+    set ec;
+run;
+ 
+/*=========================================================
+Create supplementary dataset
+=========================================================*/
+/*----------------------------------------------------------
+Create a row for each non-standard variable with non-missing result<br>
+The name of the variable will become the value in QNAM variable<br>
+A descriptive label for the QNAM is shown in QLABEL variable<br>
+The value in the non-standard variable is shown in QVAL variable<br>
+The name of the identifer variable is shown in IDVAR variable<br>
+The value of the identifier variable is shown in IDVARVAL variable<br>
+The origin for the QNAM (CRF, Derived, Assigned etc) is shown in QORIG variable<br>
+The person who provided the response for the question (Evaluator) is shown in QEVAL variable<br>
+----------------------------------------------------------*/
+ 
+data suppec01;
+    set ec;
+    length rdomain $2 idvar$8 idvarval $200 qnam $8 qlabel $40 qval $200 qorig $20 qeval $100;
+    rdomain="EC";
+    if not missing(ecdosint) then do;
+        idvar="ECSEQ";
+        idvarval=strip(put(ecseq,best.));
+        qnam="ECDOSINT";
+        qlabel="Dose interrupted";
+        qval=ecdosint;
+        qorig="CRF";
+        qeval="";
+        output;
+    end;
+    if not missing(ecintrs) then do;
+        idvar="ECSEQ";
+        idvarval=strip(put(ecseq,best.));
+        qnam="ECINTRS";
+        qlabel="Reason for dose interruption";
+        qval=ecintrs;
+        qorig="CRF";
+        qeval="";
+        output;
+    end;
+    if not missing(ecdosres) then do;
+        idvar="ECSEQ";
+        idvarval=strip(put(ecseq,best.));
+        qnam="ECDOSRES";
+        qlabel="Dose resumed";
+        qval=ecdosres;
+        qorig="CRF";
+        qeval="";
+        output;
+    end;
+run;
+ 
+data suppec;
+    set suppec01;
+    keep studyid usubjid rdomain idvar idvarval qnam qlabel qval qorig qeval;
+run;
+ 
+proc sort data=suppec;
+    by studyid usubjid rdomain idvar idvarval qnam;
+run;
+ 
+ 

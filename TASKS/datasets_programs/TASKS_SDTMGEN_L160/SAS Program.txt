@@ -1,0 +1,81 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root. TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L160\TASKS_SDTMGEN_L160;
+
+
+%include "&root2._data.sas";
+
+
+validvarname=upcase options;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+
+
+*==============================================================================;
+*find how many variables will be required and build a macro variable to use
+in array;
+*==============================================================================;
+
+data maxvars;
+set comments end=last;
+
+rough_nvars=floor(length(comment)/200);
+
+retain maxvars 0;
+if rough_nvars gt maxvars then maxvars=rough_nvars;
+
+*------------------------------------------------------------------------------;
+*create macro variables to use in array statement in next step;
+*------------------------------------------------------------------------------;
+
+if last then do;
+if maxvars gt 0 then call symputx("subvarlist",cats(" coval coval1-coval",maxvars));
+else call symputx("subvarlist","coval");
+end;
+run;
+
+*==============================================================================;
+*Create as many variables as required per row;
+*==============================================================================;
+
+data comments01;
+set comments;
+
+length temptext final $32767;
+
+temptext=comment;
+
+array cvars[*] $200 &subvarlist.;
+
+do i=1 to dim(cvars);
+this200=substrn(temptext,1,200);
+lastspace=find(this200," ",-200);
+cvars[i]=substrn(temptext,1,lastspace);
+temptext=substrn(temptext,lastspace);
+*output;
+end;
+
+final=catx("", of coval:);
+
+same=(final=comment);
+drop i;
+run;
+
+*==============================================================================;
+*drop temporary variables;
+*==============================================================================;
+
+data comments02;
+set comments01;
+drop temptext final same this200 lastspace;
+run;
+
+/**/
+/*proc compare base=comments01 compare=comments01;*/
+/* var comment;*/
+/* with final;*/
+/*run;*/
+ 
+ 

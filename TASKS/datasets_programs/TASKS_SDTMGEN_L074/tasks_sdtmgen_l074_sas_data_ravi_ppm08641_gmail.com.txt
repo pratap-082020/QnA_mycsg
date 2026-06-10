@@ -1,0 +1,96 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: TASKS_SDTMGEN_L074;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data demog;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $7. SEX : $6. ETHNIC : $22. RACE : $41.;
+label STUDY ='Study Number' PT ='Subject Identifier' SEX ='Sex' ETHNIC ='Ethniciy' RACE ='Race 1';
+format ;
+datalines4;
+CSG001|1001|Male|Hispanic or Latino|White
+CSG001|1002|Female|Not Hispanic or Latino|Asian
+CSG001|1003|Male|Hispanic or Latino|Other
+CSG001|1004|Male|Hispanic or Latino|White
+CSG001|1005|Male|Not Hispanic or Latino|American Indian or Alaska Native
+CSG001|1006|Female|Not Hispanic or Latino|Native Hawaiian or Other Pacific Islander
+CSG001|1007|Male|Not Hispanic or Latino|Unknown
+CSG001|1008|Female|Not Hispanic or Latino|Not Reported
+;;;;
+run;
+
+data ipadmin;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $4. FOLDER : $6. IPSTDT_RAW : $11. IPQTY_RAW : $3.;
+label STUDY ='Study Number' PT ='Subject Identifier' FOLDER ='Folder' IPSTDT_RAW ='Start Date' IPQTY_RAW ='Quantity';
+format ;
+datalines4;
+CSG001|1004|WEEK 1|05/JAN/2010|2
+CSG001|1004|WEEK 2|12/JAN/2010|2
+CSG001|1004|WEEK 3|18/JAN/2010|1
+CSG001|1004|WEEK 4|25/JAN/2010|2
+CSG001|1005|WEEK 1|05/FEB/2010|2
+CSG001|1005|WEEK 2|12/FEB/2010|2
+CSG001|1005|WEEK 3|19/FEB/2010|0
+CSG001|1006|WEEK 1|2/MAR/2010|1.9
+CSG001|1006|WEEK 2|10/MAR/2010|2
+CSG001|1007|WEEK 1|15/APR/2010|2
+CSG001|1007|WEEK 2|22/APR/2010|2
+CSG001|1007|WEEK 3|29/APR/2010|2
+CSG001|1007|WEEK 4|6/MAY/2010|2
+CSG001|1008|WEEK 1|27/JUN/2010|2
+CSG001|1008|WEEK 2|4/JUL/2010|2
+CSG001|1008|WEEK 3|11/JUL/2010|2
+;;;;
+run;
+
+data enrlment;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $4. ICDT_RAW : $11. RANDDT_RAW : $11.;
+label STUDY ='Study Number' PT ='Subject Identifier' ICDT_RAW ='Informed Consent Date' RANDDT_RAW ='Randomization Date';
+format ;
+datalines4;
+CSG001|1001|1/JAN/2010|
+CSG001|1002|1/JAN/2010|
+CSG001|1003|1/JAN/2010|3/JAN/2010
+CSG001|1004|1/JAN/2010|5/JAN/2010
+CSG001|1005|15/JAN/2010|5/FEB/2010
+CSG001|1006|18/FEB/2010|1/MAR/2010
+CSG001|1007|4/APR/2010|14/APR/2010
+CSG001|1008|20/JUN/2010|27/JUN/2010
+;;;;
+run;
+
+data eos;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $4. EOSTDT_RAW : $11.;
+label STUDY ='Study Number' PT ='Subject Identifier' EOSTDT_RAW ='Subject Ended Date';
+format ;
+datalines4;
+CSG001|1002|5/JAN/2010
+CSG001|1003|5/JAN/2010
+CSG001|1004|28/FEB/2010
+CSG001|1006|25/MAR/2010
+CSG001|1007|12/JUN/2010
+CSG001|1008|18/AUG/2010
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

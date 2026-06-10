@@ -1,0 +1,88 @@
+nclude the data file
+=========================================================*/
+%let root2=&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L110\TASKS_SDTMGEN_L110;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+/*=========================================================
+Create a copy of input dataset
+=========================================================*/
+data cv04;
+   set cv;
+run;
+ 
+ 
+/*=========================================================
+Create EPOCH variable
+=========================================================*/
+/*----------------------------------------------------------
+Process SE dataset such start date and end date of each epoch comes onto a single record
+----------------------------------------------------------*/
+data se02;
+   set se;
+ 
+   length short $3;
+   if epoch="SCREENING" then short="SCR";
+   else if epoch="TREATMENT" then short="TRT";
+   else if epoch="FOLLOW-UP" then short="FU";
+run;
+ 
+proc sort data=se02;
+   by usubjid;
+run;
+ 
+proc transpose data=se02 out=epochstart(drop=_:) prefix=start_;
+   by usubjid;
+   var sestdtc;
+   id short;
+run;
+ 
+proc transpose data=se02 out=epochend(drop=_:) prefix=end_;
+   by usubjid;
+   var seendtc;
+   id short;
+run;
+ 
+data epochdates;
+   merge epochstart epochend;
+   by usubjid;
+run;
+ 
+ 
+/*----------------------------------------------------------
+Compare cvdtc with each epoch's start and end dates and assign epoch value
+----------------------------------------------------------*/
+ 
+proc sort data=cv04 out=cv05;
+   by usubjid;
+run;
+ 
+data cv06;
+   merge cv05(in=a) epochdates;
+   by usubjid;
+   if a;
+run;
+ 
+data cv07;
+   set cv06;
+   ymd=cvdtc;
+   length epoch $40;
+ 
+ 
+   if ("" lt start_scr le ymd lt end_scr) or (start_trt="" and "" lt start_scr le ymd lt end_scr) then epoch="SCREENING";
+   else if "" lt start_trt le ymd le end_trt then epoch="TREATMENT";
+   else if "" lt start_fu lt ymd le end_fu then epoch="FOLLOW-UP";
+run;
+ 
+data cv08;
+    set cv07;
+    drop start_: end_:;
+run;
+ 

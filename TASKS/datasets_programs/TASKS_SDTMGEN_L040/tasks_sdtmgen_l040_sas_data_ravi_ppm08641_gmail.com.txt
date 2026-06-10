@@ -1,0 +1,56 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: TASKS_SDTMGEN_L040;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data demog;
+infile datalines dlm='|' dsd missover;
+input SUBJECT : $10. SEX : best32. RACE : $5. ETHNICITY : $30. COUNTRY : $30.;
+label SEX ='Sex' RACE ='Race' ETHNICITY ='Ethnicity' COUNTRY ='Country';
+format ;
+datalines4;
+MYCSG1001|1|AIAN|NOT HISPANIC OR LATINO|UNITED STATES OF AMERICA
+MYCSG1002|2|AS|NOT HISPANIC OR LATINO|INDIA
+MYCSG1003|1|BAA|NOT HISPANIC OR LATINO|JAPAN
+MYCSG1004|1|NHOP|NOT HISPANIC OR LATINO|UNITED STATES OF AMERICA
+MYCSG1005|2|WHITE|NOT REPORTED|UNITED STATES OF AMERICA
+MYCSG1006|2|NR|NOT HISPANIC OR LATINO|UNITED STATES OF AMERICA
+MYCSG1007|1|UNK|NOT HISPANIC OR LATINO|MEXICO
+MYCSG1008|2|WHITE|UNKNOWN|UNITED STATES OF AMERICA
+MYCSG1009|1|WHITE|HISPANIC OR LATINO|UNITED STATES OF AMERICA
+;;;;
+run;
+
+data metadata;
+infile datalines dlm='|' dsd missover;
+input VARIABLE : $30. COLLECTED_VALUE : $100. STANDARD_VALUE : $100.;
+label ;
+format ;
+datalines4;
+RACE|AIAN|AMERICAN INDIAN OR ALASKA NATIVE
+RACE|AS|ASIAN
+RACE|BAA|BLACK OR AFRICAN AMERICAN
+RACE|NHOP|NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER
+RACE|WHITE|WHITE
+RACE|NR|NOT REPORTED
+RACE|UNK|UNKNOWN
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

@@ -1,0 +1,43 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L221\TASKS_SDTMGEN_L221;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Create SAS v5 compatible xpt files
+=========================================================*/
+/*----------------------------------------------------------
+Convert EC.sas7bdat to ec.xpt
+----------------------------------------------------------*/
+/*----------------------------------------------------------
+Create a new library using xport engine name on the libname statement<br>
+Note that the file path on the libname statement has the file name (ec.xpt)<br>
+Use proc copy to create the xpt file<br>
+Deassign the libref used to create xpt file using an empty libname statement
+----------------------------------------------------------*/
+libname ec xport "&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L221\ec.xpt";
+proc copy in=work out=ec;
+select ec;
+run;
+libname ec;
+ 
+/*----------------------------------------------------------
+Convert SUPPEC.sas7bdat to suppec.xpt
+----------------------------------------------------------*/
+libname suppec xport "&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L221\suppec.xpt";
+ 
+proc copy in=work out=suppec;
+select suppec;
+run;
+libname suppec;
+ 

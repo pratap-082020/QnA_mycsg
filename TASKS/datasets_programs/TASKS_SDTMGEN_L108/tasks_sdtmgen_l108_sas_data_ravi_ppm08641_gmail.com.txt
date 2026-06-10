@@ -1,0 +1,35 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: TASKS_SDTMGEN_L108;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data echo;
+infile datalines dlm='|' dsd missover;
+input PROJECT : $5. SUBJECT : $4. FOLDERSEQ : best32. FOLDERNAME : $11. RECORDPOSITION : best32. ECHO_YN : $3. ECHODAT : $11. LVEF : $2. RVEF : $2.;
+label PROJECT ='project' SUBJECT ='subject' FOLDERSEQ ='folderseq' FOLDERNAME ='foldername' RECORDPOSITION ='recordposition' ECHO_YN ='ECHO_YN' ECHODAT ='ECHODAT' LVEF ='LVEF' RVEF ='RVEF';
+format ;
+datalines4;
+MYCSG|1001|101|Screening|0|No|||
+MYCSG|1001|201|Day 1|0|Yes|15/JAN/2010|67|60
+MYCSG|1001|203|Day 3|0|Yes|17/JAN/2010|65|
+MYCSG|1001|999|Unscheduled|0|Yes|23/JAN/2010|68|59
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

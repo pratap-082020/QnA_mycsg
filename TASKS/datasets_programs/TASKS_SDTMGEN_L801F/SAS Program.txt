@@ -1,0 +1,40 @@
+*==============================================================================;
+*program for the task;
+*==============================================================================;
+
+*------------------------------------------------------------------------------;
+*Identify the deviations that are at site level;
+*------------------------------------------------------------------------------;
+
+data site01;
+   set protdev;
+   where subjid="";
+   drop subjid;
+   rename siteid=dvsiteid;
+run;
+
+*------------------------------------------------------------------------------;
+*create a record for all subjects of that site via cartesian product at site level;
+*------------------------------------------------------------------------------;
+
+
+proc sql;
+   create table site02 as
+      select a.siteid,a.usubjid,a.subjid,a.rficdtc,a.rfpendtc,b.*
+      from dm as a,site01 as b
+      where a.siteid=b.dvsiteid
+      ;
+quit;
+
+*------------------------------------------------------------------------------;
+*keep only applicable records;
+*------------------------------------------------------------------------------;
+
+
+data site03;
+   set site02;
+   if "" lt dvstdtc le rficdtc and (dvendtc ge rficdtc gt "" or dvendtc="") then flag1=1 ;
+   if dvstdtc gt rficdtc gt "" and ("" lt dvendtc le rfpendtc or dvendtc="") then flag2=1;
+
+   if flag1=1 or flag2=1;
+run;

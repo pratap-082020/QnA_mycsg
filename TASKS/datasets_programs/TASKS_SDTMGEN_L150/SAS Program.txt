@@ -1,0 +1,95 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L150\TASKS_SDTMGEN_L150;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Fetch the conversion factors into parent dataset
+=========================================================*/
+ 
+proc sort data=lblc out=lb01;
+    by lbtestcd lborresu;
+run;
+ 
+proc sort data=conversion out=conv01;
+    by lbtestcd lborresu;
+run;
+ 
+data lb02;
+    merge lb01(in=a) conv01(in=b);
+    by lbtestcd lborresu;
+    if a;
+run;
+ 
+/*=========================================================
+Converst results in original units to standard units
+=========================================================*/
+/*----------------------------------------------------------
+Create temporary variable to store the numeric components<br>
+Create another temporary variable to store the special signs like <,<=,>,>=
+----------------------------------------------------------*/
+ 
+data lb03;
+    set lb02;
+ 
+    length tempsign $30;
+    if substrn(lborres,1,2) in ("<=" ">=") then do;
+        tempresn=input(substrn(lborres,3),??best.);
+        tempsign=substrn(lborres,1,2);
+    end;
+    else if substrn(lborres,1,1) in ("<" ">") then do;
+        tempresn=input(substrn(lborres,2),??best.);
+        tempsign=substrn(lborres,1,1);
+    end;
+    else tempresn=input(lborres,??best.);
+run;
+ 
+ 
+/*----------------------------------------------------------
+Create LBSTRESN, LBSTRESC<br>
+Also, apply rounding to the result
+----------------------------------------------------------*/
+ 
+data lb04;
+    set lb03;
+ 
+    if nmiss(tempresn,conv_mult)=0 then do;
+        tempstresn=tempresn*conv_mult;
+    end;
+ 
+    length lbstresc $30;
+ 
+    if tempsign="" then do;
+        lbstresn=tempstresn;
+        lbstresc=strip(put(tempstresn,best.));
+    end;
+    else if tempsign ne "" then do;
+        if tempstresn ne . then lbstresc=cats(tempsign,put(tempstresn,best.));
+    end;
+ 
+run;
+ 
+proc sort data=lb04 out=lb05;
+    by usubjid lbtestcd lbdtc;
+run;
+ 
+/*=========================================================
+Keep only required variables
+=========================================================*/
+ 
+data lb06;
+    retain usubjid lbtestcd lbdtc lborres lborresu lbstresn lbstresc lbstresu;
+    set lb05;
+    keep usubjid lbtestcd lbdtc lborres lborresu lbstresn lbstresc lbstresu;
+run;
+ 

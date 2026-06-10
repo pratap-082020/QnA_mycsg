@@ -1,0 +1,71 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root. TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L201\TASKS_SDTMGEN_L201;
+
+
+%include "&root2._data.sas";
+
+
+validvarname=upcase options;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+
+/*=========================================================
+Create copies of input datasets
+=========================================================*/
+
+data ec01;
+set ec;
+where;
+run;
+
+data suppec01;
+set suppec;
+run;
+
+/*=========================================================
+Process supplementary dataset
+=========================================================*/
+/*----------------------------------------------------------
+Create matching identifier variables
+----------------------------------------------------------*/
+data suppec02;
+set suppec01;
+where idvar="ECSEQ";
+ecseq=input(idvarval,best.);
+run;
+/*----------------------------------------------------------
+Transpose the supplementary dataset to contain one record for idvar value per subject<br>
+with the qnams restructed as columns
+----------------------------------------------------------*/
+proc sort data=suppec02;
+by studyid usubjid ecseq;
+run;
+
+proc transpose data=suppec02 out=suppec03(drop=_name_ _label_);
+by studyid usubjid ecseq;
+var qval;
+id qnam;
+idlabel qlabel;
+run;
+
+
+/*----------------------------------------------------------
+Merge the process supplementary dataset to parent dataset
+----------------------------------------------------------*/
+proc sort data=ec01;
+by studyid usubjid ecseq;
+run;
+
+data ec02;
+merge ec01 suppec03;
+by studyid usubjid ecseq;
+run;
+
+data output;
+set ec02;
+run;
+ 
+ 

@@ -1,0 +1,36 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L112\TASKS_SDTMGEN_L112;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+/*=========================================================
+Create CVSEQ variable
+=========================================================*/
+ 
+proc sort data=cv08;
+   by usubjid cvtestcd cvdtc visitnum visit;
+run;
+ 
+data cv09;
+   set cv08;
+   retain cvseq;
+   by usubjid cvtestcd cvdtc visitnum visit;
+   if first.usubjid then cvseq=1;
+   else cvseq=cvseq+1;
+run;
+ 
+data output;
+    set cv09;
+run;
+ 
+ 

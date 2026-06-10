@@ -1,0 +1,58 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root. TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L109\TASKS_SDTMGEN_L109;
+
+
+%include "&root2._data.sas";
+
+
+validvarname=upcase options;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+
+
+/*=========================================================
+Create VISITNUM and VISIT
+=========================================================*/
+
+/*----------------------------------------------------------
+Use SV to fetch the sequenced unscheduled visit number
+----------------------------------------------------------*/
+data cv03;
+set CV02;
+length visit $50;
+visitnum=folderseq;
+visit=upcase(FOLDERNAME);
+run;
+
+data sched01 unsched01;
+set CV03;
+if find(visit,"UNSCHEDULED",'i') then output unsched01;
+else output sched01;
+run;
+
+proc sql;
+Create table unsched02 as
+select a.*,b.visitnum,b.visit length=50
+from unsched01(drop=visitnum visit) as a
+left join
+sv as b
+on a.usubjid=b.usubjid and svstdtc le cvdtc le svendtc;
+quit;
+
+
+data cv04;
+set sched01 unsched02;
+run;
+
+proc sort data=cv04;
+by studyid usubjid cvtestcd cvdtc;
+run;
+
+data output;
+Set CV04;
+run;
+ 
+ 

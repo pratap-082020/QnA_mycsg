@@ -1,0 +1,42 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: TASKS_SDTMGEN_L050;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data ae;
+infile datalines dlm='|' dsd missover;
+input USUBJID : $20. AESTDAT_RAW : $20. AESTTM : $10.;
+label ;
+format ;
+datalines4;
+MYCSG-1001||
+MYCSG-1001|UNK UNK 2008|
+MYCSG-1001|UNK MAR 2009|
+MYCSG-1001|15 FEB 2010|
+MYCSG-1001|22 UNK 2010|
+MYCSG-1001|1 MAR 2010|
+MYCSG-1001|10 JUN 2010|
+MYCSG-1001|12 JUN 2010|10
+MYCSG-1001|14 JUN 2010|21:30
+MYCSG-1001|14 UNK 2010|22:53
+MYCSG-1001||23:16
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

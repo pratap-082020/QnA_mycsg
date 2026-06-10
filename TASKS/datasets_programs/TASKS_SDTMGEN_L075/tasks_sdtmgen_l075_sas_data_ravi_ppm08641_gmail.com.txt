@@ -1,0 +1,54 @@
+* ============================================================;
+* Downloaded from myCSG lesson content;
+* Lesson: TASKS_SDTMGEN_L075;
+* Content Type: sas_data;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;
+
+*----------------------------------------------------;
+*Copyright @ www.mycsg.in;
+*This is sample data from www.mycsg.in;
+*----------------------------------------------------;
+
+
+
+data demog;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $7. SEX : $6. ETHNIC : $22. RACE : $41.;
+label STUDY ='Study Number' PT ='Subject Identifier' SEX ='Sex' ETHNIC ='Ethniciy' RACE ='Race 1';
+format ;
+datalines4;
+CSG001|1001|Male|Hispanic or Latino|White
+CSG001|1002|Female|Not Hispanic or Latino|Asian
+CSG001|1003|Male|Hispanic or Latino|Other
+CSG001|1004|Male|Hispanic or Latino|White
+CSG001|1005|Male|Not Hispanic or Latino|American Indian or Alaska Native
+CSG001|1006|Female|Not Hispanic or Latino|Native Hawaiian or Other Pacific Islander
+CSG001|1007|Male|Not Hispanic or Latino|Unknown
+CSG001|1008|Female|Not Hispanic or Latino|Not Reported
+;;;;
+run;
+
+data eos;
+infile datalines dlm='|' dsd missover;
+input STUDY : $6. PT : $4. EOSCAT : $12. EOTYPE : $1. EOSTDT_RAW : $11. EOTERM : $20.;
+label STUDY ='Study Number' PT ='Subject Identifier' EOSCAT ='End of subcategory' EOTYPE ='End of Type' EOSTDT_RAW ='Subject Ended Date' EOTERM ='Primary Reason for Ending';
+format ;
+datalines4;
+CSG001|1002|End of Study||5/JAN/2010|Withdrawl of consent
+CSG001|1003|End of Study||5/JAN/2010|Death
+CSG001|1004|End of Study||28/FEB/2010|Completed
+CSG001|1006|End of Study||25/MAR/2010|Adverse Event
+CSG001|1007|End of Study||12/JUN/2010|Completed
+CSG001|1008|End of Study||18/AUG/2010|Subject Request
+;;;;
+run;
+
+
+
+* ============================================================;
+* End of downloaded content;
+* Downloaded By: Ravi;
+* Email: ppm08641@gmail.com;
+* ============================================================;

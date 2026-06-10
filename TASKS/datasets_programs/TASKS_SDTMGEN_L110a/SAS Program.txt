@@ -1,0 +1,83 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.TASKS\TASKS_SDTMGEN\TASKS_SDTMGEN_L110a\TASKS_SDTMGEN_L110a;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Create EPOCH variable;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*create lowest possible date and highest possible dates for partial dates;
+*------------------------------------------------------------------------------;
+ 
+data cm05;
+    set cm04;
+    tempseq=_n_;
+    ymd=cmstdtc;
+ 
+    if length(ymd)=10 then do;
+        firstdate=ymd;
+        lastdate=ymd;
+    end;
+    else if length(ymd)=7 then do;
+        firstdate=cats(ymd,"-01");
+        lastdate=put(intnx("month",input(cats(ymd,"-01"),yymmdd10.),0,"e"),yymmdd10.);
+    end;
+    else if length(ymd)=4 then do;
+        firstdate=cats(ymd,"-01-01");
+        lastdate=cats(ymd,"-12-31");
+    end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*get the epoch by comparing the date with sestdtc and seendtc of all ;
+*create a temporary numeric variable to give preference for a specific
+epoch when the date falls on boundaries.;
+*------------------------------------------------------------------------------;
+ 
+proc sql;
+    create table cm06 as
+    select a.*,b.epoch,sestdtc,seendtc,
+    case
+        when b.epoch="TREATMENT" then 2
+        else 1
+    end as epochseq
+ 
+    from cm05 as a
+    left join
+    se as b
+    on a.usubjid=b.usubjid and "" lt sestdtc le firstdate le lastdate le seendtc
+    order by tempseq,epochseq;
+quit;
+ 
+*------------------------------------------------------------------------------;
+*give preference to specic epoch (treatment here);
+*------------------------------------------------------------------------------;
+ 
+data cm07;
+    set cm06;
+    by tempseq epochseq;
+    if first.tempseq;
+run;
+ 
+*------------------------------------------------------------------------------;
+*keep only required variables;
+*------------------------------------------------------------------------------;
+ 
+data output;
+    set cm06;
+    keep studyid usubjid cmstdtc epoch;
+run;
+ 
+ 
