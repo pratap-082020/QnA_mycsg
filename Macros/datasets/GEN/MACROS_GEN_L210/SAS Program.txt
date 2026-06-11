@@ -1,0 +1,82 @@
+Include the data file
+********************************************************************************/
+
+%let root2=&root.MACROS\MACROS_GEN\MACROS_GEN_L210\MACROS_GEN_L210;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+
+/********************************************************************************
+
+Programming for the Task
+
+********************************************************************************/
+
+ 
+*==============================================================================;
+*manually import multiple sheets;
+*==============================================================================;
+ 
+proc import datafile="&root.\macros\macros_gen\macros_gen_l210\macros_gen_l210_import.xlsx"
+	out=class01
+	dbms=xlsx
+	replace;
+	sheet="class";
+run;
+ 
+proc import datafile="&root.\macros\macros_gen\macros_gen_l210\macros_gen_l210_import.xlsx"
+	out=males01
+	dbms=xlsx
+	replace;
+	sheet="males";
+run;
+ 
+proc import datafile="&root.\macros\macros_gen\macros_gen_l210\macros_gen_l210_import.xlsx"
+	out=females01
+	dbms=xlsx
+	replace;
+	sheet="females";
+run;
+ 
+ 
+*==============================================================================;
+*write a macro to import multiple sheeets;
+*==============================================================================;
+%macro csg_import_multiple_sheets(file=,dbms=xlsx,sheetlist=,outdslist=);
+ 
+%let nsheets=%sysfunc(countw(&sheetlist.,%str(|)));
+%let ndsn=%sysfunc(countw(&outdslist.,%str(|)));
+ 
+%if &nsheets. ne &ndsn. %then %do;
+	%put %str(ERR)OR: number of datasets and sheets does not match;
+	%goto exit;
+%end;
+%else %do;
+	%do _i=1 %to &ndsn.;
+  		%let cursheet=%scan(&sheetlist.,&_i.,%str(|));
+  		%let curdsn=%scan(&outdslist.,&_i.,%str(|));
+  		proc import datafile="&file."
+   			out=&curdsn.
+   			dbms=&dbms.
+   			replace;
+   			sheet="&cursheet.";
+  		run;
+	%end;
+%end;
+%exit:
+%mend csg_import_multiple_sheets;
+ 
+ 
+*------------------------------------------------------------------------------;
+*execute the macro;
+*------------------------------------------------------------------------------;
+ 
+%csg_import_multiple_sheets(file=&root.\macros\macros_gen\macros_gen_l210\macros_gen_l210_import.xlsx,
+sheetlist=class|males|females,
+outdslist=class02|males02|females02);
+ 
+ 
+

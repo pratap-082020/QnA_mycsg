@@ -1,0 +1,71 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_SDTM\MACROS_SDTM_L271\MACROS_SDTM_L271;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*open code to create sequence variable;
+*==============================================================================;
+ 
+proc sort data=ae out=ae01;
+   by usubjid aestdtc aeterm aeendtc;
+run;
+ 
+data ae01;
+   set ae01;
+   by usubjid aestdtc aeterm aeendtc;
+   if first.usubjid then aeseq=1;
+   else aeseq+1;
+run;
+*==============================================================================;
+*create macro;
+*==============================================================================;
+ 
+%macro csg_sdtm_create_seq(indsn=,outdsn=,sortvars=,seqvar=);
+ 
+%*-----------------------------------------------------------------------------;
+%*sort the records and store them in output dataset specified;
+%*-----------------------------------------------------------------------------;
+ 
+proc sort data=&indsn. out=&outdsn.;
+   by &sortvars.;
+run;
+ 
+%*-----------------------------------------------------------------------------;
+%*create sequence variable;
+%*-----------------------------------------------------------------------------;
+ 
+data &outdsn.;
+   set &outdsn.;
+   by &sortvars.;
+   if first.usubjid then &seqvar.=1;
+   else &seqvar.+1;
+run;
+ 
+ 
+%mend csg_sdtm_create_seq;
+ 
+*==============================================================================;
+*create sequence variable using macro;
+*==============================================================================;
+ 
+%csg_sdtm_create_seq(indsn=ae,outdsn=mac_ae01,sortvars=usubjid aestdtc aeterm aeendtc,seqvar=aeseq);
+ 
+*==============================================================================;
+*compare the output;
+*==============================================================================;
+ 
+proc compare base=ae01 compare=mac_ae01;
+run;
+ 
+ 

@@ -1,0 +1,58 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_GEN\MACROS_GEN_L314\MACROS_GEN_L314;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Filter all the records of a date where there exists more than one record per parameter within a subject;
+*==============================================================================;
+ 
+proc sort data=advs   out=advs_x uniqueout=advs_y nouniquekeys;
+    by usubjid paramcd adt ;
+run;
+ 
+proc sort data=adeg   out=adeg_x uniqueout=adeg_y nouniquekeys;
+    by usubjid paramcd adt ;
+run;
+ 
+*==============================================================================;
+*Create a macro;
+*==============================================================================;
+ 
+ 
+%macro multuniq(dsnlist=%str( ),byvars=%str( ),where=%str());
+ 
+%local _dsncount _dsni _currentdsn;
+ 
+%let _dsncount=%sysfunc(countw(&dsnlist,%str( )));
+%do _dsni=1 %to &_dsncount.;
+   %let _currentdsn=%scan(&dsnlist.,&_dsni,%str( ));
+ 
+   proc sort data= &_currentdsn. out=%scan(&_currentdsn.,-1,%str(.))_nonuniq uniqueout=%scan(&_currentdsn.,-1,%str(.))_uniq nouniquekeys;
+      by &byvars.;
+      &where.;
+   run;
+%end;
+%mend multuniq;
+ 
+*==============================================================================;
+*Achieve the same result using macro;
+*==============================================================================;
+ 
+%multuniq(
+dsnlist=%str(advs adeg)
+,byvars=%str(usubjid paramcd adt)
+,where=%str()
+);
+ 
+ 

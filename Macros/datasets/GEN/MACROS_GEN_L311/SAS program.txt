@@ -1,0 +1,58 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_GEN\MACROS_GEN_L311\MACROS_GEN_L311;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Sort males and females dataset based on age and create new datasets;
+*==============================================================================;
+ 
+proc sort data=males out=males_sort;
+    by age;
+run;
+ 
+proc sort data=females out=females_sort;
+    by age;
+run;
+ 
+*==============================================================================;
+*Create macro;
+*==============================================================================;
+ 
+ 
+%macro multsort(dsnlist=%str( ),byvars=%str( ),where=%str());
+ 
+%local _dsncount _dsni _currentdsn;
+ 
+%let _dsncount=%sysfunc(countw(&dsnlist,%str( )));
+%do _dsni=1 %to &_dsncount.;
+   %let _currentdsn=%scan(&dsnlist.,&_dsni,%str( ));
+ 
+   proc sort data= &_currentdsn. out=%scan(&_currentdsn.,-1,%str(.))_out;
+      by &byvars.;
+      where &where.;
+   run;
+%end;
+%mend multsort;
+ 
+*==============================================================================;
+*Sort males and females by age using macro - and also filter for age gt 11;
+*==============================================================================;
+options mprint;
+%multsort(
+dsnlist=%str(males females )
+,byvars=%str(age)
+,where=%str( age gt 11;)
+);
+ 
+ 

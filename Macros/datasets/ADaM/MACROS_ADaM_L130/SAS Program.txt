@@ -1,0 +1,168 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_ADaM\MACROS_ADaM_L130\MACROS_ADaM_L130;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+option mautosource append=sasautos=(sasautos "&root.\MACROS\MACROS_ADaM");
+ 
+data vs01;
+    set vs;
+    %adam_make_date_time(dtcdate=VSDTC, date_var=ADT);
+run;
+ 
+*------------------------------------------------------------------------------;
+*subset eligible records;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=vs01 out=base01;
+   by usubjid paramcd adt;
+   where . lt adt le trtsdt and aval ne .;
+run;
+ 
+*------------------------------------------------------------------------------;
+*find the latest record and create baseline related variables;
+*------------------------------------------------------------------------------;
+ 
+data base02;
+   set base01;
+   by usubjid paramcd adt;
+   if last.paramcd;
+   keep usubjid paramcd adt ablfl basedt base bnrind;
+ 
+   ablfl="Y";
+ 
+    base=aval;
+    basedt=adt;
+    bnrind=anrind;
+run;
+ 
+*------------------------------------------------------------------------------;
+*populate baseline flag;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=vs01;
+    by usubjid paramcd adt;
+run;
+ 
+data vs01;
+    merge vs01(in=a) base02(keep=usubjid paramcd adt ablfl);
+    by usubjid paramcd adt;
+run;
+ 
+*------------------------------------------------------------------------------;
+*populate baseline related variables;
+*------------------------------------------------------------------------------;
+ 
+data vs02;
+   merge vs01(in=a)
+         base02(in=b keep=usubjid paramcd basedt base bnrind);
+   by usubjid paramcd;
+run;
+ 
+ 
+*==============================================================================;
+*create macro for populating baseline flag and dependent variables;
+*==============================================================================;
+ 
+%macro adam_create_ablfl_basevars(
+indsn=
+,outdsn=
+,filtercondition=%str(. lt adt le trtsdt and aval ne .)
+,byvars=usubjid paramcd adt
+,lastdot=paramcd
+,sourcevars=%str(adt aval)
+,basevars=%str(basedt base)
+);
+ 
+%*-----------------------------------------------------------------------------;
+%*processing some macro variables;
+%*-----------------------------------------------------------------------------;
+%let srcvarcount=%sysfunc(countw(&sourcevars.,%str( )));
+ 
+ 
+*------------------------------------------------------------------------------;
+*subset eligible records;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=&indsn. out=base01;
+   by &byvars.;
+   where &filtercondition.;
+run;
+ 
+*------------------------------------------------------------------------------;
+*find the latest record and create baseline related variables;
+*------------------------------------------------------------------------------;
+ 
+data base02;
+   set base01;
+   by &byvars.;
+   if last.&lastdot.;
+   keep &byvars. ablfl &basevars.;
+ 
+   ablfl="Y";
+%do _i=1 %to &srcvarcount.;
+    %scan(&basevars.,&_i.)=%scan(&sourcevars.,&_i.);
+%end;
+run;
+ 
+*------------------------------------------------------------------------------;
+*populate baseline flag;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=&indsn.;
+    by &byvars.;
+run;
+ 
+data &outdsn.;
+    merge &indsn.(in=a) base02(keep=&byvars. ablfl);
+    by &byvars.;
+run;
+ 
+*------------------------------------------------------------------------------;
+*populate baseline related variables;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=&outdsn.;
+    by usubjid paramcd;
+run;
+ 
+proc sort data=base02;
+    by usubjid paramcd;
+run;
+ 
+data &outdsn.;
+   merge &outdsn.(in=a)
+         base02(in=b keep=usubjid paramcd &basevars.);
+   by usubjid paramcd;
+run;
+ 
+%mend adam_create_ablfl_basevars;
+ 
+*==============================================================================;
+*Run the macro;
+*==============================================================================;
+ 
+%adam_create_ablfl_basevars(
+indsn=vs01
+,outdsn=vs02m
+,filtercondition=%str(. lt adt le trtsdt and aval ne .)
+,byvars=usubjid paramcd adt
+,lastdot=paramcd
+,sourcevars=%str(adt aval anrind)
+,basevars=%str(basedt base bnrind)
+);
+ 
+proc compare base=vs02 compare=vs02m;
+run;
+ 
+ 

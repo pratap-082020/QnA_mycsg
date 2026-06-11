@@ -1,0 +1,81 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_SDTM\MACROS_SDTM_L261\MACROS_SDTM_L261;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Open code to create study day variables;
+*==============================================================================;
+ 
+data ae01;
+    set ae;
+    if length(rfstdtc) ge 10 then rfstdtn=input(rfstdtc,??yymmdd10.);
+    if length(aestdtc) ge 10 then aestdtn=input(aestdtc,??yymmdd10.);
+    if length(aeendtc) ge 10 then aeendtn=input(aeendtc,??yymmdd10.);
+ 
+    if nmiss(aestdtn,rfstdtn)=0 then aestdy=aestdtn-rfstdtn+(aestdtn>=rfstdtn);
+    if nmiss(aeendtn,rfstdtn)=0 then aeendy=aeendtn-rfstdtn+(aeendtn>=rfstdtn);
+ 
+    format aestdtn aeendtn rfstdtn date9.;
+run;
+ 
+data ae02;
+    set ae01;
+    drop aestdtn aeendtn rfstdtn;
+run;
+ 
+*==============================================================================;
+*create macro;
+*==============================================================================;
+ 
+%macro csg_sdtm_create_studyday(dtcvar=,dyvar=);
+ 
+%*-----------------------------------------------------------------------------;
+%*create numeric versions of date and reference date variables;
+%*-----------------------------------------------------------------------------;
+ 
+rfstdtn=input(rfstdtc,?? yymmdd10.);
+&dtcvar.n=input(&dtcvar.,?? yymmdd10.);
+ 
+%*-----------------------------------------------------------------------------;
+%*create study day value;
+%*-----------------------------------------------------------------------------;
+ 
+if nmiss(rfstdtn,&dtcvar.n)=0 then &dyvar.=&dtcvar.n-rfstdtn+(&dtcvar.n>=rfstdtn);
+ 
+%*-----------------------------------------------------------------------------;
+%*drop temporary variables;
+%*-----------------------------------------------------------------------------;
+ 
+drop rfstdtn &dtcvar.n;
+ 
+%mend csg_sdtm_create_studyday;
+ 
+*==============================================================================;
+*generate study day variables with macro;
+*==============================================================================;
+ 
+data mac_ae01;
+    set ae;
+    %csg_sdtm_create_studyday(dtcvar=aestdtc,dyvar=aestdy);
+    %csg_sdtm_create_studyday(dtcvar=aeendtc,dyvar=aeendy);
+run;
+ 
+*==============================================================================;
+*compare output;
+*==============================================================================;
+ 
+proc compare base=ae02 compare=mac_ae01;
+run;
+ 
+ 

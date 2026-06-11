@@ -1,0 +1,68 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_GEN\MACROS_GEN_L313\MACROS_GEN_L313;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Identify the list of subjects who has at least one event and who has taken atleast one medication;
+*==============================================================================;
+ 
+proc sort data=ae out=ae_subj nodupkey;
+   by usubjid;
+run;
+ 
+proc sort data=cm out=cm_subj nodupkey;
+   by usubjid;
+run;
+ 
+*==============================================================================;
+*Create a macro to Run proc sort nodupkey on multile datasets using same by variables;
+*==============================================================================;
+ 
+%macro multdup(dsnlist=%str( ),byvars=%str( ),where=%str());
+ 
+%local _dsncount _dsni _currentdsn;
+ 
+%let _dsncount=%sysfunc(countw(&dsnlist,%str( )));
+%do _dsni=1 %to &_dsncount.;
+   %let _currentdsn=%scan(&dsnlist.,&_dsni,%str( ));
+ 
+   proc sort data= &_currentdsn. out=%scan(&_currentdsn.,-1,%str(.))_firstocc dupout=%scan(&_currentdsn.,-1,%str(.))_subsqoccs nodupkey;
+      by &byvars.;
+      &where.;
+   run;
+%end;
+%mend multdup;
+ 
+*==============================================================================;
+*Achieve the same result using macro;
+*==============================================================================;
+ 
+%multdup(
+dsnlist=%str(ae cm)
+,byvars=%str(usubjid)
+,where=%str()
+);
+ 
+data dm01;
+   merge dm(in=a)
+         ae_firstocc(in=b keep=usubjid)
+         cm_firstocc(in=c keep=usubjid);
+   by usubjid;
+ 
+   if a;
+   if b then hasae="Y";
+   if c then hascm="Y";
+run;
+ 
+ 

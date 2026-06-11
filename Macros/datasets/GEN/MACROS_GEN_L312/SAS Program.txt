@@ -1,0 +1,67 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_GEN\MACROS_GEN_L312\MACROS_GEN_L312;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Get the frequency of age variable in males and females datasets;
+*==============================================================================;
+ 
+ 
+proc freq data=males   ;
+    tables sex*age   /list missing out=u01;
+    where 1=1;
+run;
+ 
+proc freq data=females   ;
+    tables sex*age   /list missing out=u02;
+    where 1=1;
+run;
+ 
+*==============================================================================;
+*Create the macro;
+*==============================================================================;
+ 
+%macro multfreq(dsnlist=%str( ),tables=%str( ),where=%str());
+ 
+%local _dsncount _dsni _tablesi _tablescount _currentdsn _currentable;
+ 
+%let _dsncount=%sysfunc(countw(&dsnlist,%str( )));
+%let _tablescount=%sysfunc(countw(&tables,%str( )));
+ 
+%do _dsni=1 %to &_dsncount.;
+   %let _currentdsn=%scan(&dsnlist.,&_dsni,%str( ));
+   title "&_currentdsn";
+ 
+   proc freq data= &_currentdsn  ;
+      %do _tablesi=1 %to &_tablescount.;
+        %let _currenttable=%scan(&tables.,&_tablesi,%str( ));
+          tables  &_currenttable.  /list missing out=%scan(&_currentdsn.,-1,%str(.))_freq0&_tablesi.;
+      %end;
+        &where.;
+   run;
+ 
+%end;
+%mend multfreq;
+ 
+*==============================================================================;
+*Get the frequency of age variable in males and females datasets - using macro;
+*==============================================================================;
+ 
+%multfreq(
+dsnlist=%str(males females)
+,tables=%str(sex*age)
+,where=%str()
+);
+ 
+ 

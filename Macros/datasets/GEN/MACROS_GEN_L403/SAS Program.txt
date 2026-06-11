@@ -1,0 +1,106 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_GEN\MACROS_GEN_L403\MACROS_GEN_L403;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Create macro;
+*==============================================================================;
+ 
+%macro csg_create_temp_file_copy_001(
+createdelete=,
+filepath=,
+filename=
+);
+ 
+%*-----------------------------------------------------------------------------;
+%*create temporary filename;
+%*-----------------------------------------------------------------------------;
+%let temp_filename=temp_&filename.;
+ 
+%*-----------------------------------------------------------------------------;
+%*assign system commands based on type of request;
+%*-----------------------------------------------------------------------------;
+ 
+%if %lowcase(&createdelete)=create %then %do;
+ 
+    %*-----------------------------------------------------------------------------;
+    %*check and write a note to log on file exis-tence;
+    %*-----------------------------------------------------------------------------;
+    %if %sysfunc(fileexist("&filepath.\&filename.")) %then %do;
+        %put &filename. exists in the folder &filepath.;
+        
+        %sysexec copy "&filepath.\&filename." "&filepath.\temp_&filename.";
+ 
+        %*-----------------------------------------------------------------------------;
+        %*check if newly created file exists;
+        %*-----------------------------------------------------------------------------;
+ 
+        %if %sysfunc(fileexist("&filepath.\temp_&filename.")) %then %do;
+                    %put &temp_filename. is created in folder &filepath.;
+                
+                    %sysexec copy "&filepath.\&filename." "&filepath.\temp_&filename.";
+ 
+        %end;
+    %end;
+    %else %do;
+        %put &filename. does not exi-st in the folder &filepath.;
+    %end;
+ 
+%end;
+ 
+%if %lowcase(&createdelete)=delete %then %do;
+    %if %sysfunc(fileexist("&filepath.\temp_&filename.")) %then %do;
+        %put temp_&filename. exists in the folder &filepath.;
+        
+        %sysexec del "&filepath.\temp_&filename.";
+ 
+    %end;
+    %if not %sysfunc(fileexist("&filepath.\temp_&filename.")) %then %do;
+        %put temp_&filename. is deleted from the folder &filepath.;
+    %end;
+%end;
+ 
+%mend csg_create_temp_file_copy_001;
+ 
+*==============================================================================;
+*Use macro to create a temporary copy of an xlsx file;
+*==============================================================================;
+ 
+%csg_create_temp_file_copy_001(
+createdelete=create,
+filepath=C:\Users\curio\Documents\rough\,
+filename=master_index.xlsx
+);
+ 
+*------------------------------------------------------------------------------;
+*import the temporary file;
+*------------------------------------------------------------------------------;
+ 
+proc import datafile="C:\Users\curio\Documents\rough\temp_master_index.xlsx"
+    out=import01
+    dbms=xlsx
+    replace;
+run;
+ 
+*------------------------------------------------------------------------------;
+*delete the temporary file;
+*------------------------------------------------------------------------------;
+ 
+%csg_create_temp_file_copy_001(
+createdelete=delete,
+filepath=C:\Users\curio\Documents\rough\,
+filename=master_index.xlsx
+);
+ 
+ 

@@ -5,7 +5,7 @@ library(jsonlite)
 # OUTPUT FOLDER
 # =====================================================
 
-main_path <- "TFL_PDFs"
+main_path <- "Macros"
 
 dir.create(
   main_path,
@@ -18,58 +18,22 @@ dir.create(
 # =====================================================
 
 urls <- c(
-  "https://mycsg.in/tfl.php?area=tfl&concept=TABGEN&lesson=TFL_TABGEN_L201",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TABGEN&lesson=TFL_TABGEN_L202",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TABGEN&lesson=TFL_TABGEN_L301",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TABGEN&lesson=TFL_TABGEN_L302",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TABGEN&lesson=TFL_TABGEN_L401",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L100",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L102",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L103",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L103a",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L103b",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L104",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L105",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L105a",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L105a1",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L106",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L107",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L107a",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L108",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L108a",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L109",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L110",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L111",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L112",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TAE&lesson=TFL_TAE_L113",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TCM&lesson=TFL_TCM_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TCM&lesson=TFL_TCM_L102",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TDM&lesson=TFL_TDM_L100",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TDM&lesson=TFL_TDM_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TDS&lesson=TFL_TDS_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TDS&lesson=TFL_TDS_L102",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TDS&lesson=TFL_TDS_L102a",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L102",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L103",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L104",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L105",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L106",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L106a",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEG&lesson=TFL_TEG_L106b",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TEX&lesson=TFL_TEX_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TLB&lesson=TFL_TLB_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TLB&lesson=TFL_TLB_L102",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TLB&lesson=TFL_TLB_L103",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TLB&lesson=TFL_TLB_L104",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TLB&lesson=TFL_TLB_L105",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TLB&lesson=TFL_TLB_L106",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TMH&lesson=TFL_TMH_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TPC&lesson=TFL_TPC_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TPE&lesson=TFL_TPE_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TPP&lesson=TFL_TPP_L101",
-  "https://mycsg.in/tfl.php?area=tfl&concept=TRS&lesson=TFL_TRS_L103"
+  "https://mycsg.in/macros.php?area=macros&concept=ADaM&lesson=MACROS_ADaM_L110",
+  "https://mycsg.in/macros.php?area=macros&concept=ADaM&lesson=MACROS_ADaM_L120",
+  "https://mycsg.in/macros.php?area=macros&concept=ADaM&lesson=MACROS_ADaM_L130",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L210",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L310",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L311",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L312",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L313",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L401",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L401",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L402",
+  "https://mycsg.in/macros.php?area=macros&concept=GEN&lesson=MACROS_GEN_L403",
+  "https://mycsg.in/macros.php?area=macros&concept=SDTM&lesson=MACROS_SDTM_L251",
+  "https://mycsg.in/macros.php?area=macros&concept=SDTM&lesson=MACROS_SDTM_L261",
+  "https://mycsg.in/macros.php?area=macros&concept=SDTM&lesson=MACROS_SDTM_L271",
+  "https://mycsg.in/macros.php?area=macros&concept=SDTM&lesson=MACROS_SDTM_L281"
 )
 
 # =====================================================
@@ -83,7 +47,8 @@ sections <- c(
   "SASDATA",
   "TIDYVERSEPROG",
   "CD",
-  "IMG"
+  "IMG",
+  "SPEC"
 )
 
 # =====================================================

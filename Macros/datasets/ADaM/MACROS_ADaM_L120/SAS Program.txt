@@ -1,0 +1,93 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_ADaM\MACROS_ADaM_L120\MACROS_ADaM_L120;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*add autocall macro location to existing autocall libraries;
+*==============================================================================;
+ 
+options mautosource;
+option append=sasautos=(sasautos "&root.\MACROS\MACROS_ADaM");
+ 
+*==============================================================================;
+*Create study day variables for ASTDT and AENDT;
+*we will make use of previously created macro for ASTDT and AENDT from AESTDTC and AEENDTC;
+*==============================================================================;
+ 
+data ae01;
+    set ae;
+    %adam_make_date_time(dtcdate=AESTDTC, date_var=ASTDT,time_var=ASTTM, date_time_var=ASTDTM);
+    %adam_make_date_time(dtcdate=AEENDTC, date_var=AENDT,time_var=AENTM, date_time_var=AENDTM);
+ 
+    if nmiss(trtsdt,astdt)=0 then astdy=astdt-trtsdt+(astdt>=trtsdt);
+    if nmiss(trtsdt,aendt)=0 then aendy=aendt-trtsdt+(aendt>=trtsdt);
+run;
+ 
+ 
+*==============================================================================;
+*create macro for study day variable creation;
+*==============================================================================;
+ 
+%macro adam_make_study_day(date=,refdate=,studyday=);
+ 
+    if nmiss(&refdate.,&date.)=0 then &studyday.=&date.-&refdate.+(&date.>=&refdate.);
+ 
+%mend adam_make_study_day;
+ 
+ 
+*==============================================================================;
+*Use study day creation macro;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*AE;
+*------------------------------------------------------------------------------;
+ 
+data ae01m;
+    set ae;
+    %adam_make_date_time(dtcdate=AESTDTC, date_var=ASTDT,time_var=ASTTM, date_time_var=ASTDTM);
+    %adam_make_date_time(dtcdate=AEENDTC, date_var=AENDT,time_var=AENTM, date_time_var=AENDTM);
+ 
+    %adam_make_study_day(date=astdt,refdate=trtsdt,studyday=astdy);
+    %adam_make_study_day(date=aendt,refdate=trtsdt,studyday=aendy);
+ 
+run;
+ 
+*compare manual and macro based approaches;
+proc compare base=ae01 compare=ae01m;
+run;
+ 
+*------------------------------------------------------------------------------;
+*LB;
+*------------------------------------------------------------------------------;
+ 
+data lb01;
+    set lb;
+    %adam_make_date_time(dtcdate=LBDTC, date_var=ADT);
+    %adam_make_study_day(date=adt,refdate=trtsdt,studyday=ady);
+run;
+ 
+*------------------------------------------------------------------------------;
+*DM;
+*------------------------------------------------------------------------------;
+ 
+data dm01;
+    set dm;
+    %adam_make_date_time(dtcdate=RFXSTDTC, date_var=TRTSDT);
+    %adam_make_date_time(dtcdate=RFXENDTC, date_var=TRTEDT);
+ 
+    %adam_make_study_day(date=trtedt,refdate=trtsdt,studyday=trtedy);
+run;
+ 
+ 

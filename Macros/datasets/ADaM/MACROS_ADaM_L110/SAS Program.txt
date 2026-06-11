@@ -1,0 +1,121 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_ADaM\MACROS_ADaM_L110\MACROS_ADaM_L110;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Open SAS code to create date and time variables;
+*==============================================================================;
+ 
+data ae01;
+    set ae;
+ 
+*------------------------------------------------------------------------------;
+*Start date based variables;
+*------------------------------------------------------------------------------;
+ 
+    if length(aestdtc) ge 16 then do;
+      astdt=input(substrn(aestdtc,1,10),?? yymmdd10.);
+      asttm=input(scan(aestdtc,2,'T'),time8.);
+      astdtm=input(aestdtc,is8601dt19.);
+   end;
+   else if length(aestdtc) ge 10 then do;
+      astdt=input(substrn(aestdtc,1,10),?? yymmdd10.);
+   end;
+ 
+   format astdt date9. asttm time8. astdtm datetime20.;
+ 
+ 
+*------------------------------------------------------------------------------;
+*End date based variables;
+*------------------------------------------------------------------------------;
+ 
+    if length(aeendtc) ge 16 then do;
+      aendt=input(substrn(aeendtc,1,10),?? yymmdd10.);
+      aentm=input(scan(aeendtc,2,'T'),time8.);
+      aendtm=input(aeendtc,is8601dt19.);
+   end;
+   else if length(aeendtc) ge 10 then do;
+      aendt=input(substrn(aeendtc,1,10),?? yymmdd10.);
+   end;
+ 
+   format aendt date9. aentm time8. aendtm datetime20.;
+ 
+run;
+ 
+ 
+*==============================================================================;
+*create macro for converting ISO DTC to date and time variables;
+*==============================================================================;
+ 
+%macro adam_make_date_time(dtcdate=, date_var=,time_var=, date_time_var=);
+ 
+%if &dtcdate. ne %then %do;
+ 
+    %if &date_var. ne %then %do;
+        if length(&dtcdate.) ge 10 then &date_var.=input(substr(&dtcdate.,1,10),yymmdd10.);
+        format  &date_var. date9.;
+    %end;
+ 
+    %if &time_var. ne %then %do;
+        if length(&dtcdate.) ge 16 then &time_var.=input(substr(&dtcdate.,12),time8.);
+        format  &time_var. time8.;
+    %end;
+ 
+    %if &date_time_var. ne %then %do;
+        if length(&dtcdate.) ge 16 then &date_time_var.=input(&dtcdate,is8601dt.);
+        format  &date_time_var. datetime19.;
+    %end;
+ 
+%end;
+ 
+%mend adam_make_date_time;
+ 
+ 
+*==============================================================================;
+*test macro on sample datasets;
+*==============================================================================;
+ 
+options mprint;
+ 
+data ae01m;
+    set ae;
+    %adam_make_date_time(dtcdate=AESTDTC, date_var=ASTDT,time_var=ASTTM, date_time_var=ASTDTM);
+    %adam_make_date_time(dtcdate=AEENDTC, date_var=AENDT,time_var=AENTM, date_time_var=AENDTM);
+ 
+run;
+ 
+proc compare base=ae01 compare=ae01m;
+run;
+ 
+data lb01m;
+    set lb;
+    %adam_make_date_time(dtcdate=LBDTC, date_var=ADT,time_var=ATM, date_time_var=ADTM);
+run;
+ 
+data lb02m;
+    set lb;
+    %adam_make_date_time(dtcdate=LBDTC, date_var=ADT,time_var=, date_time_var=);
+run;
+ 
+data lb03m;
+    set lb;
+    %adam_make_date_time(dtcdate=LBDTC, date_var=,time_var=ATM, date_time_var=ADTM);
+run;
+ 
+data lb04m;
+    set lb;
+    %adam_make_date_time(dtcdate=, date_var=,time_var=ATM, date_time_var=ADTM);
+run;
+ 
+ 

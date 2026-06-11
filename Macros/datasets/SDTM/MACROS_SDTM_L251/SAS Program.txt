@@ -1,0 +1,161 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_SDTM\MACROS_SDTM_L251\MACROS_SDTM_L251;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Manually create date in iso8601 format;
+*==============================================================================;
+ 
+data ae01;
+   set ae;
+ 
+   stdayn=input(scan(aestdat_raw,1,' '),?? best.);
+   if stdayn ne . then stday=put(stdayn,z2.);
+   else stday="-";
+ 
+   stmonthc=upcase(scan(aestdat_raw,2,' '));
+   if stmonthc="JAN" then stmonth="01";
+   else if stmonthc="FEB" then stmonth="02";
+   else if stmonthc="MAR" then stmonth="03";
+   else if stmonthc="APR" then stmonth="04";
+   else if stmonthc="MAY" then stmonth="05";
+   else if stmonthc="JUN" then stmonth="06";
+   else if stmonthc="JUL" then stmonth="07";
+   else if stmonthc="AUG" then stmonth="08";
+   else if stmonthc="SEP" then stmonth="09";
+   else if stmonthc="OCT" then stmonth="10";
+   else if stmonthc="NOV" then stmonth="11";
+   else if stmonthc="DEC" then stmonth="12";
+   else stmonth="-";
+ 
+   styear=scan(aestdat_raw,3,' ');
+   if styear="" then styear="-";
+ 
+   aestdate=catx("-",styear,stmonth,stday);
+ 
+   aestdtc=catx("T",aestdate,aesttm);
+   if aestdtc="-----" then aestdtc="";
+   if substrn(strip(reverse(aestdtc)),1,4)="----" then aestdtc=substrn(aestdtc,1,length(aestdtc)-4);
+   if substrn(strip(reverse(aestdtc)),1,2)="--" then aestdtc=substrn(aestdtc,1,length(aestdtc)-2);
+ 
+run;
+ 
+data ae02;
+    set ae01;
+ 
+    drop stdayn stday stmonthc stmonth styear aestdate;
+run;
+*==============================================================================;
+*create macro;
+*==============================================================================;
+ 
+%macro csg_sdtm_create_isodtc(indatevar=,intimevar=,outdtcvar=);
+ 
+    %*-----------------------------------------------------------------------------;
+    %*process for day component;
+    %*-----------------------------------------------------------------------------;
+ 
+    stdayn=input(scan(&indatevar.,1,' /'),?? best.);
+    if stdayn ne . then stday=put(stdayn,z2.);
+    else stday="-";
+ 
+    %*-----------------------------------------------------------------------------;
+    %*process for month component;
+    %*-----------------------------------------------------------------------------;
+ 
+    stmonthc=upcase(scan(&indatevar.,2,' /'));
+    if stmonthc="JAN" then stmonth="01";
+    else if stmonthc="FEB" then stmonth="02";
+    else if stmonthc="MAR" then stmonth="03";
+    else if stmonthc="APR" then stmonth="04";
+    else if stmonthc="MAY" then stmonth="05";
+    else if stmonthc="JUN" then stmonth="06";
+    else if stmonthc="JUL" then stmonth="07";
+    else if stmonthc="AUG" then stmonth="08";
+    else if stmonthc="SEP" then stmonth="09";
+    else if stmonthc="OCT" then stmonth="10";
+    else if stmonthc="NOV" then stmonth="11";
+    else if stmonthc="DEC" then stmonth="12";
+    else stmonth="-";
+ 
+    %*-----------------------------------------------------------------------------;
+    %*process for year component;
+    %*-----------------------------------------------------------------------------;
+ 
+    styear=scan(&indatevar.,3,' /');
+    if styear="" then styear="-";
+ 
+ 
+    stdate=catx("-",styear,stmonth,stday);
+ 
+    %*-----------------------------------------------------------------------------;
+    %*check if time component is passed or not and control processing;
+    %*-----------------------------------------------------------------------------;
+ 
+    %if &intimevar. ne %str() %then %do;
+        &outdtcvar.=catx("T",stdate,&intimevar.);
+    %end;
+    %else %do;
+        &outdtcvar.=stdate;
+    %end;
+ 
+    %*-----------------------------------------------------------------------------;
+    %*post process the dtc value;
+    %*-----------------------------------------------------------------------------;
+ 
+    if &outdtcvar.="-----" then &outdtcvar.="";
+    if substrn(strip(reverse(&outdtcvar.)),1,4)="----" then &outdtcvar.=substrn(&outdtcvar.,1,length(&outdtcvar.)-4);
+    if substrn(strip(reverse(&outdtcvar.)),1,2)="--" then &outdtcvar.=substrn(&outdtcvar.,1,length(&outdtcvar.)-2);
+ 
+    %*-----------------------------------------------------------------------------;
+    %*set all temporary variable values to null to prevent carry forwarding
+    of values when macro is called more than once in a single data step;
+    %*-----------------------------------------------------------------------------;
+ 
+    call missing(stdayn,stday,stmonthc,stmonth,styear,stdate);
+ 
+    %*-----------------------------------------------------------------------------;
+    %*drop the temporary variables;
+    %*-----------------------------------------------------------------------------;
+ 
+    drop stdayn stday stmonthc stmonth styear stdate;
+ 
+%mend csg_sdtm_create_isodtc;
+ 
+*==============================================================================;
+*create dates using macros;
+*==============================================================================;
+ 
+data mac_ae01;
+    set ae;
+    %csg_sdtm_create_isodtc(indatevar=aestdat_raw,intimevar=aesttm,outdtcvar=aestdtc);
+    %csg_sdtm_create_isodtc(indatevar=aeendat_raw,intimevar=aeentm,outdtcvar=aeendtc);
+run;
+ 
+data mac_enrl01;
+    set enrlment;
+    %csg_sdtm_create_isodtc(indatevar=enrldt_raw,outdtcvar=enrldtc);
+    %csg_sdtm_create_isodtc(indatevar=icdt_raw,outdtcvar=rficdtc);
+    %csg_sdtm_create_isodtc(indatevar=randdt_raw,outdtcvar=randdtc);
+run;
+ 
+*==============================================================================;
+*compare the outputs;
+*==============================================================================;
+ 
+proc compare base=ae01 compare=mac_ae01;
+var aestdtc;
+run;
+ 
+ 

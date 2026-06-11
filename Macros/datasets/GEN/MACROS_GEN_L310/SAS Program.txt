@@ -1,0 +1,92 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_GEN\MACROS_GEN_L310\MACROS_GEN_L310;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Create USUBJID using open code for demog medhis and conmeds datasets;
+*==============================================================================;
+ 
+data demog01;
+    set demog;
+    length usubjid $20;
+    usubjid=catx("-",study,pt);
+run;
+ 
+data medhis01;
+    set medhis;
+    length usubjid $20;
+    usubjid=catx("-",study,pt);
+run;
+ 
+data conmeds01;
+    set conmeds;
+    length usubjid $20;
+    usubjid=catx("-",study,pt);
+run;
+ 
+*==============================================================================;
+*Create macro;
+*==============================================================================;
+ 
+%macro multdata2(indsnlist=%str( ),outdsnlist=%str( ),code=%nrbquote());
+ 
+%local _dsncount _dsni _currentindsn _currentoutdsn;
+%if &outdsnlist= %then %let outdsnlist=&indsnlist.;
+ 
+%let _dsncount=%sysfunc(countw(&indsnlist,%str( )));
+%do _dsni=1 %to &_dsncount.;
+   %let _currentindsn=%scan(&indsnlist.,&_dsni,%str( ));
+   %let _currentoutdsn=%scan(&outdsnlist.,&_dsni,%str( ));
+    %let _currentoutdsn=%scan(&_currentoutdsn,-1);
+data &_currentoutdsn.;
+   set &_currentindsn.;
+   %unquote(&code.);
+run;
+ 
+%end;
+%mend multdata2;
+ 
+*==============================================================================;
+*Create usubjid across all input datasets using macro;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*Create USUBJID;
+*------------------------------------------------------------------------------;
+ 
+%multdata2(
+indsnlist=%str(demog medhis conmeds)
+,outdsnlist=%str(demog02 medhis02 conmeds02)
+,code=%nrbquote(
+    length usubjid $20;
+    usubjid=catx("-",study,pt);
+    )
+);
+ 
+ 
+*------------------------------------------------------------------------------;
+*Create USUBJID and drop STUDY and PT;
+*------------------------------------------------------------------------------;
+ 
+%multdata2(
+indsnlist=%str(demog medhis conmeds)
+,outdsnlist=%str(demog03 medhis03 conmeds03)
+,code=%nrbquote(
+    length usubjid $20;
+    usubjid=catx("-",study,pt);
+    drop study pt;
+    )
+);
+ 
+ 

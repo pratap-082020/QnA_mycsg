@@ -1,0 +1,137 @@
+/*=========================================================
+Include the data file
+=========================================================*/
+%let root2=&root.MACROS\MACROS_SDTM\MACROS_SDTM_L281\MACROS_SDTM_L281;
+ 
+ 
+%include "&root2._data.sas";
+ 
+ 
+options validvarname=upcase;
+/*=========================================================
+Programming for the Task
+=========================================================*/
+ 
+ 
+*==============================================================================;
+*Create baseline flag with open code;
+*==============================================================================;
+ 
+*------------------------------------------------------------------------------;
+*subset qualifying records;
+*------------------------------------------------------------------------------;
+ 
+proc sort data=lb out=lb01;
+    by usubjid lbcat lbtestcd lbdtc;
+run;
+ 
+data base01;
+   set lb01;
+   where lborres ne "" and "" lt lbdtc le rfstdtc;
+run;
+ 
+*------------------------------------------------------------------------------;
+*identify the latest records;
+*------------------------------------------------------------------------------;
+proc sort data=base01;
+   by usubjid lbcat lbtestcd lbdtc;
+run;
+ 
+data base02;
+   set base01;
+   by usubjid lbcat lbtestcd lbdtc;
+   if last.lbtestcd;
+run;
+ 
+*------------------------------------------------------------------------------;
+*populate baseline flag on the chosen record;
+*------------------------------------------------------------------------------;
+ 
+data lb02;
+   merge lb01(in=a) base02(in=b keep=usubjid lbcat lbtestcd lbdtc);
+   by usubjid lbcat lbtestcd lbdtc;
+   if b then lbblfl="Y";
+run;
+ 
+*==============================================================================;
+*Create macro;
+*==============================================================================;
+ 
+ 
+%macro csg_sdtm_create_baseline_flag(
+indsn=
+,outdsn=
+,flagvar=
+,filtercondition=%str()
+,byvars=
+,additionalkeepbyvars=
+,lastdot=
+);
+ 
+ 
+proc sort data=&indsn.;
+   by &byvars.;
+run;
+ 
+%*-----------------------------------------------------------------------------;
+%*subset eligible records;
+%*-----------------------------------------------------------------------------;
+ 
+data &indsn._base01;
+    set &indsn.;
+    if (&filtercondition.) then output;
+run;
+ 
+%*-----------------------------------------------------------------------------;
+%*find the latest record;
+%*-----------------------------------------------------------------------------;
+ 
+proc sort data=&indsn._base01;
+   by &byvars.;
+run;
+ 
+data &indsn._base02;
+   set &indsn._base01;
+   by &byvars.;
+   if last.&lastdot.;
+ 
+   &flagvar.="Y";
+ 
+   keep &byvars. &flagvar.;
+ 
+run;
+ 
+%*-----------------------------------------------------------------------------;
+%*populate baseline flag;
+%*-----------------------------------------------------------------------------;
+ 
+data &outdsn.;
+    merge &indsn.(in=a) &indsn._base02;
+    by &byvars.;
+run;
+ 
+%mend csg_sdtm_create_baseline_flag;
+ 
+*==============================================================================;
+*Create baseline flag with macro;
+*==============================================================================;
+ 
+%csg_sdtm_create_baseline_flag(
+indsn=lb
+,outdsn=mac_lb02
+,flagvar=lbblfl
+,filtercondition=%str(lborres ne "" and "" lt lbdtc le rfstdtc)
+,byvars=usubjid lbcat lbtestcd lbdtc
+,additionalkeepbyvars=
+,lastdot=lbtestcd
+);
+ 
+ 
+*==============================================================================;
+*Compare the outputs;
+*==============================================================================;
+ 
+proc compare base=lb02 compare=mac_lb02;
+run;
+ 
+ 
